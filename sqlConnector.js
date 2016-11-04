@@ -1,11 +1,10 @@
 var mysql = require("mysql");
 var pool  = mysql.createPool({
   connectionLimit : 100,
-  host            : '127.0.0.1',
-  user            : 'tdudzins',
-  password        : 'Password',
-  database        : 'ihotestdatabase',
-  port            : '3300'
+  host            : '192.232.218.129', //ns6153.hostgator.com
+  user            : 'thadyou_backend',
+  password        : 'w8ggkSWGaOPI',
+  database        : 'thadyoun_ihoTestDB'
 });
 
 /**
@@ -15,12 +14,12 @@ var pool  = mysql.createPool({
  * @return ?
  */
 exports.addRow = function addRow(table, data) {
-  pool.query('INSERT INTO ? SET ?', [table, data] , function(err,res){
-  if(err)
-      console.log('code ' + err.code + ': Error adding to table: ' + table, err);
-  else
-      console.log('Inserted into table ' + table + ' successfully with row ID:' + res.insertId);
-  });
+    pool.query('INSERT INTO ? SET ?', [table, data] , function(err,res){
+        if(err)
+            console.log('Row not added to table: ' + table);
+        else
+            console.log('Last insert ID:', res.insertId);
+    });
 };
 
 /**
@@ -144,80 +143,3 @@ exports.getAllRelationData = function getAllRelationData(eventID){
         return res;
     });
 }
-
-/**
- * Queries the users table by email and checks if the email exists. If so then the
- * user object will be returned as the result.
- * @param {varchar} email the email to search the users table for
- * @return returns an array
- */
-exports.getUser = function getUser(email){
-  pool.query('SELECT * FROM user WHERE email=?', email, function(err,res){
-    if(err){
-      console.log('Failed to find the email in database: ' + email, err);
-      return '';
-    }
-    return res;
-  });
-};
-
-/**
- * Inserts a row to the user table in the dataBase
- * @param {object} data the data object being added to the user table in the required format (firstName, lastName, email, password)
- * @return error and array containing any attributes that should be sent back to the callback function.
- */
-exports.addUser = function addUser(data, callback) {
-  pool.getConnection(function(err,connection){
-    if (err) {
-      console.log('Code ' + err.code + ': Error in connection database. ', err);
-      callback(err, null);
-    }
-    else {
-      console.log('Connected to MySQL database using Thread ID: ' + connection.threadId);
-    }
-
-    var result = connection.query('INSERT INTO user (firstName, lastName, email, password) VALUES (?, ?, ?, ?)', data, function(err,user){
-      if(user) {
-        console.log('Inserted into table user successfully. Inserted ID: ' + user.insertId);
-        var dbRes = new Array();
-        dbRes['userID'] = user.insertId;
-        callback(err, dbRes);
-      }
-      else {
-        console.log('Code ' + err.code + ': Error adding data to user table.');
-        callback(err, null)
-      }
-    });
-    // close connection with database
-    connection.release();
-  });
-};
-
-/**
- * Inserts a row to the user table in the dataBase
- * @param {object} data the data object being added to the user table in the required format (firstName, lastName, email, password)
- * @return error and array containing any attributes that should be sent back to the callback function.
- */
-exports.getUser = function getUser(data, callback) {
-  pool.getConnection(function(err,connection){
-    if (err) {
-      console.log('Code ' + err.code + ': Error in connection database. ', err);
-      callback(err, null);
-    }
-    else {
-      console.log('Connected to MySQL database using Thread ID: ' + connection.threadId);
-    }
-
-    var result = connection.query('SELECT * FROM user WHERE email = ?', data, function(err,user){
-      if(user) {
-        callback(err, user[0]);
-      }
-      else {
-        console.log('Code ' + err.code + ': Error adding data to user table.');
-        callback(err, null)
-      }
-    });
-    // close connection with database
-    connection.release();
-  });
-};
