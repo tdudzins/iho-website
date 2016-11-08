@@ -1,0 +1,177 @@
+/*Stylesheet for IHO Dynamic Timeline*/
+
+/*CSS Reset*/
+
+/* http://meyerweb.com/eric/tools/css/reset/
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+/*End of CSS Reset*/
+
+
+
+/* Tab Style */
+
+ul.tab {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+}
+
+/* Float the list items side by side */
+ul.tab li {float: left;}
+
+/* Style the links inside the list items */
+ul.tab li a {
+    display: inline-block;
+    color: black;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    transition: 0.3s;
+    font-size: 17px;
+}
+
+/* Change background color of links on hover */
+ul.tab li a:hover {background-color: #ddd;}
+
+/* Create an active/current tablink class */
+ul.tab li a:focus, .active {background-color: #ccc;}
+
+/* Style the tab content */
+.tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+
+/*End of tab style*/
+
+
+/*Login page Style*/
+
+body{
+	font-family: Tahoma, Geneva, sans-serif;
+}
+
+header{
+	height: 150px;
+	background-color: #0066cc;
+}
+
+/*Make the footer stickey*/
+.Site {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+.Site-content {
+  flex: 1;
+}
+
+footer{
+	height: 100px;
+	background-color: #0066cc;
+}
+
+footer p{
+	text-align: center;
+	line-height: 5em;
+}
+
+h1{
+	font-size: 3em;
+	text-align: center;
+	line-height: 1.5em;
+	font-family: Impact, Charcoal, sans-serif;
+}
+
+#logo{
+	float: left;
+	height: 130px;
+	width: 210px;
+	margin-right: -210px; /*accounts for logo size so that the header will be centered*/
+}
+
+#register{
+	width: 600px;
+	margin-left: auto ;
+	margin-right: auto ;
+	display: block;
+	margin-top: 15px;
+	padding: 15px;
+}
+
+input[type=text], input[type=email], input[type=password] {
+    width: 600px;
+    padding: 12px;
+    margin: 8px 0px;
+    display: block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+/* Set a style for all buttons */
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px;
+    margin: 12px 0px;
+    border: none;
+    cursor: pointer;
+    width: 600px;
+	display: block;
+	font-size: 1.7em;
+}
+
+/*End of login page style*/

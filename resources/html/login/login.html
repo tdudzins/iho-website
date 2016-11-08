@@ -2,24 +2,22 @@
 <html>
 <head>
 	<title>IHO DB | Login</title>
-	<link rel = "stylesheet" type = "text/css" href = "style.css">
-	<script src="script.js"></script>
+	<link rel = "stylesheet" type = "text/css" href = "/resources/html/login/style.css">
 </head>
 
 	<body class = "Site">
 		<header>
-			<img id = "logo" src="src/IHO.jpg" alt="Institute of Human Origins Logo">
+			<img id = "logo" src="/resources/html/login/IHO.jpg" alt="Institute of Human Origins Logo">
 			<h1>Database Management Portal Login</h1>
 		</header>
-		
-		
+
+
 		<main class="Site-content">
-			
+
 			<form id="login" method="post">
 
 				<div class="container">
 					<label style="color:red"> <%= error %> </label>
-					<input(type="hidden", name="_csrf", value="<%=csrfToken%>" >
 					<label><b>Email</b></label>
 					<input type="email" placeholder="Enter Email" name="email" required>
 
@@ -29,9 +27,9 @@
 					<button type="submit">Login</button>
 				</div>
 			</form>
-		
+
 		</main>
-		
+
 		<footer>
 			<p>Copyright 2016. Institute of Human Origins. All rights reserved</p>
 		</footer>
