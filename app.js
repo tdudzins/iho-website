@@ -1,27 +1,26 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var bcrypt = require('bcryptjs');
-var csrf = require('csurf');
 var dataBase = require('./sqlConnector.js');
 var sessions = require('client-sessions');
-//var session = require('express-session');
-/*app.use(session({
-	secret: 'MAGICALEXPRESSKEY',
-	resave: true,
-	saveUninitialized: true
-}));
-*/
+var cookieParser = require('cookie-parser');
+var path = require('path');
+var ejs = require('ejs');
+
 var app = express();
-app.set('view engine', 'jade');
 app.locals.pretty = true;
+app.set('views', './login');
+app.set('view engine', 'ejs');
+app.engine('html', ejs.renderFile);
 
 // middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+app.use(express.static(__dirname));
 app.use(sessions({
   cookieName: 'session',
-  secret: 'asldkjasl38t93jv9mesf0qw3mrgt90w54',
+  secret: 'fkajsdlkajds;aljdc89237r9hf9w83f02jf02fj30ee',
   duration: 60 * 60 * 1000, // duration of cookie lasts 60 minutes
   activeduration: 10 * 60 * 1000,
   httpOnly: true, // dont let browser javascript access cookies ever
@@ -29,7 +28,7 @@ app.use(sessions({
   ephemeral: true // delete this cookie when browser is closed
 }))
 
-app.use(csrf());
+//app.use(cookieParser());
 
 app.use(function(req, res, next) {
   if (req.session && req.session.user) {
@@ -61,7 +60,7 @@ app.get('/', function(req, res){ // main page
 });
 
 app.get ('/register', requireLogin, function(req, res) {
-  res.render('register.jade', {csrfToken: req.csrfToken() });
+  res.render('register.jade');
 });
 
 app.post ('/register', function(req, res) {
@@ -85,7 +84,9 @@ app.post ('/register', function(req, res) {
 });
 
 app.get ('/login', function(req, res) {
-  res.render('login.jade', {csrfToken: req.csrfToken() });
+  res.render('login.html', { error: '', csrfToken: req.csrfToken() }, function(err, html) {
+    res.send(html);
+  });
 });
 
 app.post ('/login', function(req, res) {
@@ -93,14 +94,19 @@ app.post ('/login', function(req, res) {
   var data = [ req.body.email ];
   dataBase.getUser(data, function(err, dbUser) {
     if(!dbUser) {
-      res.render('login.jade', { error: 'Invalid email or password.' });
+      res.render('login.html', { error: 'Invalid email or password', csrfToken: req.csrfToken() }, function(err, html) {
+        res.send(html);
+      });
     }
     else {
       if(bcrypt.compareSync(req.body.password, dbUser.password)) {
         req.session.user = dbUser;
         res.redirect('/adminpanel');
-      } else {
-        res.render('login.jade', { error: 'Invalid email or password.' });
+      }
+      else {
+        res.render('login.html', { error: 'Invalid email or password', csrfToken: req.csrfToken() }, function(err, html) {
+          res.send(html);
+        });
       }
     }
   });
@@ -112,7 +118,9 @@ app.get ('/adminpanel', requireLogin, function(req, res) {
 });
 
 app.get ('/logout', function(req, res) {
-	console.log('Logout Redirect');
+  if (req.session) {
+    req.session.reset();
+  }
   res.redirect('/');
 });
 

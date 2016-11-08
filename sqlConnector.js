@@ -146,22 +146,6 @@ exports.getAllRelationData = function getAllRelationData(eventID){
 }
 
 /**
- * Queries the users table by email and checks if the email exists. If so then the
- * user object will be returned as the result.
- * @param {varchar} email the email to search the users table for
- * @return returns an array
- */
-exports.getUser = function getUser(email){
-  pool.query('SELECT * FROM user WHERE email=?', email, function(err,res){
-    if(err){
-      console.log('Failed to find the email in database: ' + email, err);
-      return '';
-    }
-    return res;
-  });
-};
-
-/**
  * Inserts a row to the user table in the dataBase
  * @param {object} data the data object being added to the user table in the required format (firstName, lastName, email, password)
  * @return error and array containing any attributes that should be sent back to the callback function.
