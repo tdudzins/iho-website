@@ -33,14 +33,13 @@ function requireLogin(req, res, next) {
     }
 };
 
-// Routing
+// Routing Web Pages
 app.use(function(req, res, next) {
     if (req.session && req.session.user) {
         dataBase.getUser(req.session.user.email, function(err, dbUser) {
             if(dbUser) {
                 req.user = dbUser;
                 delete req.user.password;
-                res.locals.user = dbUser;
             }
             next();
         });
@@ -70,15 +69,11 @@ app.post ('/register', function(req, res) {
         req.body.email,
         encryptedPassword ];
 
-        dataBase.addUser(data, function(err,dbRes) {
-            if(dbRes) {
-                console.log('New administator created with userID: ' + dbRes['userID']);
+        dataBase.addRow('user', data, function(err,dbRes) {
+            if(dbRes)
                 res.redirect('/login');
-            }
-            else {
-                console.log(err);
+            else
                 res.redirect('/register');
-            }
         });
 });
 
@@ -112,7 +107,7 @@ app.post ('/login', function(req, res) {
 });
 
 app.get ('/adminpanel', requireLogin, function(req, res) {
-    res.render('adminpanel/adminpanel.html', function(err, html) {
+    res.render('adminpanel/adminpanel.html', {firstName: req.user.firstName, lastName: req.user.lastName}, function(err, html) {
         res.send(html);
     });
 });
@@ -122,6 +117,30 @@ app.get ('/logout', function(req, res) {
         req.session.reset();
     }
     res.redirect('/login');
+});
+
+// Routing AJAX/JQUERY
+app.post('/adminpostdata', requireLogin, function(req, res){
+    switch (req.body.action) {
+        case 'c':
+
+        break;
+        case 'r':
+
+        break;
+        case 'u':
+
+        break;
+        case 'd':
+
+        break;
+        case 's':
+
+        break;
+        default:
+
+    }
+
 });
 
 // File Serving
