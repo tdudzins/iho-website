@@ -120,27 +120,87 @@ app.get ('/logout', function(req, res) {
 });
 
 // Routing AJAX/JQUERY
-app.post('/adminpostdata', requireLogin, function(req, res){
-    switch (req.body.action) {
-        case 'c':
+app.post('/datatoserver', requireLogin, function(req, res){
+    if(req.body.table !== 'user'){
+        switch (req.body.action) {
+            case 'c':
+                    dataBase.addRow(req.body.table, req.body.data, function(err, data){
+                        if(err){
+                            res.status(409);
+                            res.end(err);
+                        }
+                        else
+                            res.end(JSON.stringify(data));
+                    });
 
-        break;
-        case 'r':
+                break;
+            case 'u':
+                dataBase.editRow(req.body.table, req.body.key, req.body.value, req.body.data, function(err, data){
+                    if(err){
+                        res.status(409);
+                        res.end(err);
+                    }
+                    else
+                        res.end(JSON.stringify(data));
+                });
+                break;
+            case 'd':
+                if(req.body.table === category){
 
-        break;
-        case 'u':
-
-        break;
-        case 'd':
-
-        break;
-        case 's':
-
-        break;
-        default:
-
+                }
+                else{
+                    dataBase.removeRow(req.body.table, req.body.key, req.body.value, function(err, data){
+                        if(err){
+                            res.status(409);
+                            res.end(err);
+                        }
+                        else
+                            res.end(JSON.stringify(data));
+                    });
+                }
+                break;
+            default:
+                res.status(404);
+                res.end("unknown action");
+        }
     }
-
+    else{
+        res.status(403);
+        res.end("cannot edit user table");
+    }
+});
+app.post('/datafromserver', function(req, res){
+    if(req.body.table !== 'user'){
+        switch (req.body.action) {
+            case 'r':
+                dataBase.addRow(req.body.table, req.body.data, function(err, data){
+                    if(err){
+                        res.status(409);
+                        res.end(err);
+                    }
+                    else
+                        res.end(JSON.stringify(data));
+                });
+                break;
+            case 's':
+                dataBase.editRow(req.body.table, req.body.key, req.body.value, req.body.data, function(err, data){
+                    if(err){
+                        res.status(409);
+                        res.end(err);
+                    }
+                    else
+                        res.end(JSON.stringify(data));
+                });
+                break;
+            default:
+                res.status(404);
+                res.end("unknown action");
+        }
+    }
+    else{
+        res.status(403);
+        res.end("cannot view user table");
+    }
 });
 
 // File Serving

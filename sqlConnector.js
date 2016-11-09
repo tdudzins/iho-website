@@ -33,7 +33,7 @@ exports.addRow = function addRow(table, data, callback) {
                         callback(err, null)
                     });
                     break;
-                case 'relation':
+                case 'relationship':
                     var temp = connection.query('INSERT INTO relationships (primaryEventID, secondaryEventID, precondition) VALUES (?, ?, ?)', data, function(err,result){
                         connection.release();
                         if(result) {
@@ -46,7 +46,7 @@ exports.addRow = function addRow(table, data, callback) {
                     });
                     break;
                 case 'media':
-                    var temp = connection.query('INSERT INTO relation (mediaPath, MediaDescription, eventID) VALUES (?, ?, ?)', data, function(err,result){
+                    var temp = connection.query('INSERT INTO media (mediaPath, MediaDescription, eventID) VALUES (?, ?, ?)', data, function(err,result){
                         connection.release();
                         if(result) {
                             var dbRes = new Array();
@@ -97,7 +97,7 @@ exports.addRow = function addRow(table, data, callback) {
 * @param {string} value the value of the primary key
 * @param {function} callback is the callback function to be run when complete
 */
-exports.removeRow = function removeRow(table, key, value callback) {
+exports.removeRow = function removeRow(table, key, value, callback) {
     pool.getConnection(function(err,connection){
         if (err) callback(err, null);
         else
@@ -107,6 +107,27 @@ exports.removeRow = function removeRow(table, key, value callback) {
                     callback(err, null)
                 else
                     callback(err, res[0]);
+            });
+    });
+};
+
+/**
+* Removes a row from the table
+* @param {string} table is the name of the table that the row is in
+* @param {string} key the primary key name in the table
+* @param {string} value the value of the primary key
+* @param {function} callback is the callback function to be run when complete
+*/
+exports.removeCategory = function removeCategory(table, key, value, callback) {
+    pool.getConnection(function(err,connection){
+        if (err) callback(err, null);
+        else
+            var result = connection.query('UPDATE event SET category=1 WHERE category = ?', value ,function (err, res) {
+                connection.release();
+                if(err)
+                    callback(err, null)
+                else
+                    removeRow(table, key, value, callback);
             });
     });
 };
@@ -240,6 +261,31 @@ exports.getUser = function getUser(data, callback) {
         if (err) callback(err, null);
 
         var result = connection.query('SELECT * FROM user WHERE email = ?', data, function(err,user){
+            if(user) {
+                callback(err, user[0]);
+            }
+            else {
+                console.log('Code ' + err.code + ': Error adding data to user table.');
+                callback(err, null)
+            }
+        });
+        // close connection with database
+        connection.release();
+    });
+};
+
+/**
+* Inserts a row to the user table in the dataBase
+* @param {string} table the table name
+* @param {string} col the column
+* @param {string} term a single word to search for
+* @return error and array containing any attributes that should be sent back to the callback function.
+*/
+exports.getData = function getData(table, col, term, callback) {
+    pool.getConnection(function(err,connection){
+        if (err) callback(err, null);
+
+        var result = connection.query('SELECT * FROM ? WHERE ? LIKE ?', [table, col, term], function(err,user){
             if(user) {
                 callback(err, user[0]);
             }
