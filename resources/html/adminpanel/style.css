@@ -1,0 +1,144 @@
+.header {
+	height: 90px;
+  vertical-align: top;
+  background-color: #3b73af;
+	border-radius: 10px;
+	color: white;
+}
+
+.header-text {
+	width: 80%;
+	height: 100%;
+	float: left;
+}
+
+.apHeader1 {
+	font-family: georgia;
+	font-size: 150%;
+	margin: 10px;
+	padding: 0px;
+}
+
+.apHeader2 {
+	font-family: georgia;
+	font-size: 80%;
+	margin-left: 10px;
+	padding: 0px;
+}
+
+.logout-container {
+	width: 20%;
+	float:right;
+}
+
+.logout-button {
+	float: right;
+	margin: 10px;;
+  font-family: "Bitter",serif;
+}
+
+.list-panel {
+	float: left;
+	height: calc(100vh - 110px);
+	width: 300px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+.sorting-panel {
+	vertical-align: top;
+	padding: 5px;
+	height: 25px;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	background-color: lightgrey;
+}
+
+.searchbar-text {
+	float: left;
+	width: 250px;
+	vertical-align: middle;
+	line-height: 1.2;
+	margin-top: 1px;
+}
+
+.searchbutton {
+	float: right;
+	width: 35px;
+	vertical-align: middle;
+	height: 100%;
+}
+
+.database-collection {
+	height: calc(100vh - 175px);
+	vertical-align: middle;
+	background-color: lightgrey;
+}
+
+.adaptation-items {
+	background-color: white;
+	height: 100%;
+	margin-left: 5px;
+	margin-right: 5px;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	padding-left: 0px;
+	list-style:none;
+	overflow-x: hidden;
+}
+
+.database-buttons {
+	vertical-align: bottom;
+	height: 35px;
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+	background-color: lightgrey;
+}
+
+.createAdaptation {
+	float: left;
+	margin: 5px;
+	width: 140px;
+	vertical-align: middle;
+}
+
+.createAdaptationButton {
+	width: 100%;
+	line-height: 1.5;
+}
+
+.deleteAdaptation {
+	float: right;
+	margin: 5px;
+	width: 140px;
+	vertical-align: middle;
+}
+
+.deleteAdaptationButton {
+	width: 100%;
+	line-height: 1.5;
+}
+
+.adpt-focused {
+	background-color: #ebf2f9;
+	font-weight: bold;
+}
+
+.content-panel {
+	float: right;
+	height: calc(100vh - 110px);
+	width: calc(100vw - 334px);
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+/* Applys to every element of specified type */
+ul li {
+	border-bottom-width: 2px;
+	border-bottom-style: solid;
+	cursor: pointer;
+	padding: 5px 0 5px 5px;
+	position: relative;
+	border-bottom-color: #ccc;
+	color: #3b73af;
+}

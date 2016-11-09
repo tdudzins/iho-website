@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html style="background-color: white">
+<head>
+	<title>IHO DB | Admin Panel</title>
+	<link rel="stylesheet" type="text/css" href="/resources/html/adminpanel/style.css">
+</head>
+
+<body>
+	<div id="main" class="main">
+
+		<div id="header" class="header">
+			<div id="header-text" class="header-text">
+				<h1 class=apHeader1>Database Management Portal</h1>
+				<h2 class="apHeader2">Welcome <%=firstName%> <%=lastName%></h2>
+			</div>
+			<div id=logout-container class=logout-container>
+				<form id="logout" method="post" action="#">
+					<input id="logout-button" class="logout-button" type="submit" value="Log Out">
+				</form>
+			</div>
+		</div>
+
+		<div id="list-panel" class="list-panel">
+				<div id="sorting-panel" class="sorting-panel">
+					<form id="search-filter" method="post" action="#">
+						<input id="searchbar-text" class="searchbar-text" type="text" placeholder="Search for an adaptation..." >
+						<input id="searchbutton" class="searchbutton" type="submit" value="Go">
+					</form>
+				</div>
+				<div id="database-collection" class="database-collection" >
+					<ul id="adaptation-items" class="adaptation-items">
+					</ul>
+				</div>
+				<div id="database-buttons" class="database-buttons">
+					<div id="createAdaptation" class="createAdaptation">
+						<form id="database-add" method="post" action="#">
+							<input id="createAdaptationButton" class="createAdaptationButton" type="submit" value="Create Adaptation">
+						</form>
+					</div>
+					<div id="deleteAdaptation" class="deleteAdaptation">
+						<form id="database-delete" method="post" action="#">
+							<input id="deleteAdaptationButton" class="deleteAdaptationButton" type="submit" value="Delete Adaptation">
+						</form>
+					</div>
+			</div>
+		</div>
+
+		<div id="content-panel" class="content-panel">
+		</div>
+
+	</div>
+</body>
