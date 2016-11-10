@@ -125,10 +125,8 @@ app.post('/datatoserver', requireLogin, function(req, res){
         switch (req.body.action) {
             case 'c':
                     dataBase.addRow(req.body.table, req.body.data, function(err, data){
-                        if(err){
-                            res.status(409);
-                            res.end(err);
-                        }
+                        if(err)
+                            res.status(500).end();
                         else
                             res.end(JSON.stringify(data));
                     });
@@ -136,10 +134,8 @@ app.post('/datatoserver', requireLogin, function(req, res){
                 break;
             case 'u':
                 dataBase.editRow(req.body.table, req.body.key, req.body.value, req.body.data, function(err, data){
-                    if(err){
-                        res.status(409);
-                        res.end(err);
-                    }
+                    if(err)
+                        res.status(500).end();
                     else
                         res.end(JSON.stringify(data));
                 });
@@ -147,20 +143,16 @@ app.post('/datatoserver', requireLogin, function(req, res){
             case 'd':
                 if(req.body.table === category){
                     dataBase.removeCategory(req.body.table, req.body.key, req.body.value, function(err, data){
-                        if(err){
-                            res.status(409);
-                            res.end(err);
-                        }
+                        if(err)
+                            res.status(500).end();
                         else
                             res.end(JSON.stringify(data));
                     });
                 }
                 else{
                     dataBase.removeRow(req.body.table, req.body.key, req.body.value, function(err, data){
-                        if(err){
-                            res.status(409);
-                            res.end(err);
-                        }
+                        if(err)
+                            res.status(500).end();
                         else
                             res.end(JSON.stringify(data));
                     });
@@ -177,14 +169,13 @@ app.post('/datatoserver', requireLogin, function(req, res){
     }
 });
 app.post('/datafromserver', function(req, res){
+    console.log(req.body);
     if(req.body.table !== 'user'){
         switch (req.body.action) {
             case 'r':
                 dataBase.getData(req.body.table, req.body.field, req.body.term, function(err, data){
-                    if(err){
-                        res.status(409);
-                        res.end(err);
-                    }
+                    if(err)
+                        res.status(500).end();
                     else
                         res.end(JSON.stringify(data));
                 });
@@ -193,40 +184,32 @@ app.post('/datafromserver', function(req, res){
                 switch (req.body.table) {
                     case "event":
                         dataBase.getEvent(req.body.eventid, function(err, data){
-                            if(err){
-                                res.status(409);
-                                res.end(err);
-                            }
+                            if(err)
+                                res.status(500).end();
                             else
                                 res.end(JSON.stringify(data));
                         });
                         break;
                     case "media":
                         dataBase.getMedia(req.body.eventid, function(err, data){
-                            if(err){
-                                res.status(409);
-                                res.end(err);
-                            }
+                            if(err)
+                                res.status(500).end();
                             else
                                 res.end(JSON.stringify(data));
                         });
                         break;
                     case "relationships":
                         dataBase.getRelations(req.body.eventid, function(err, data){
-                            if(err){
-                                res.status(409);
-                                res.end(err);
-                            }
+                            if(err)
+                                res.status(500).end();
                             else
                                 res.end(JSON.stringify(data));
                         });
                         break;
                     case "category":
                         dataBase.getCategory(req.body.eventid, function(err, data){
-                            if(err){
-                                res.status(409);
-                                res.end(err);
-                            }
+                            if(err)
+                                res.status(500).end();
                             else
                                 res.end(JSON.stringify(data));
                         });
@@ -239,10 +222,8 @@ app.post('/datafromserver', function(req, res){
                 break;
             case 't':
                 dataBase.getNamesandIDs(function(err, data){
-                    if(err){
-                        res.status(409);
-                        res.end(err);
-                    }
+                    if(err)
+                        res.status(500).end();
                     else
                         res.end(JSON.stringify(data));
                 });
@@ -250,20 +231,16 @@ app.post('/datafromserver', function(req, res){
 
             case 's':
                 dataBase.getAllRelationData(req.body.eventid, function(err, data){
-                    if(err){
-                        res.status(409);
-                        res.end(err);
-                    }
+                    if(err)
+                        res.status(500).end();
                     else
                         res.end(JSON.stringify(data));
                 });
                 break;
             case 'v':
                 dataBase.getCategories(function(err, data){
-                    if(err){
-                        res.status(409);
-                        res.end(err);
-                    }
+                    if(err)
+                        res.status(500).end();
                     else
                         res.end(JSON.stringify(data));
                 });
@@ -284,10 +261,7 @@ app.get('/resources/html/mainpage/:name', function(req, res){
     var options = {
         root:  __dirname + '/resources/html/mainpage/',
         dotfiles: 'deny',
-        headers: {
-            'x-timestamp': Date.now(),
-            'x-sent': true
-        }
+        headers: {'x-timestamp': Date.now(),'x-sent': true}
     };
     res.sendFile(req.params.name, options, function (err) {
         if (err) {
@@ -295,16 +269,12 @@ app.get('/resources/html/mainpage/:name', function(req, res){
           res.status(err.status).end();
         }
     });
-
 });
 app.get('/resources/html/login/:name', function(req, res){
     var options = {
         root:  __dirname + '/resources/html/login/',
         dotfiles: 'deny',
-        headers: {
-            'x-timestamp': Date.now(),
-            'x-sent': true
-        }
+        headers: {'x-timestamp': Date.now(), 'x-sent': true}
     };
     res.sendFile(req.params.name, options, function (err) {
         if (err) {
@@ -312,16 +282,12 @@ app.get('/resources/html/login/:name', function(req, res){
           res.status(err.status).end();
         }
     });
-
 });
 app.get('/resources/html/register/:name', function(req, res){
     var options = {
         root:  __dirname + '/resources/html/register/',
         dotfiles: 'deny',
-        headers: {
-            'x-timestamp': Date.now(),
-            'x-sent': true
-        }
+        headers: {'x-timestamp': Date.now(), 'x-sent': true}
     };
     res.sendFile(req.params.name, options, function (err) {
         if (err) {
@@ -329,16 +295,12 @@ app.get('/resources/html/register/:name', function(req, res){
           res.status(err.status).end();
         }
     });
-
 });
 app.get('/resources/html/adminpanel/:name', function(req, res){
     var options = {
         root:  __dirname + '/resources/html/adminpanel/',
         dotfiles: 'deny',
-        headers: {
-            'x-timestamp': Date.now(),
-            'x-sent': true
-        }
+        headers: {'x-timestamp': Date.now(), 'x-sent': true}
     };
     res.sendFile(req.params.name, options, function (err) {
         if (err) {
@@ -346,16 +308,12 @@ app.get('/resources/html/adminpanel/:name', function(req, res){
           res.status(err.status).end();
         }
     });
-
 });
 app.get('/resources/pictures/:name', function(req, res){
     var options = {
         root:  __dirname + '/resources/pictures/',
         dotfiles: 'deny',
-        headers: {
-            'x-timestamp': Date.now(),
-            'x-sent': true
-        }
+        headers: {'x-timestamp': Date.now(), 'x-sent': true}
     };
     res.sendFile(req.params.name, options, function (err) {
         if (err) {
@@ -363,7 +321,6 @@ app.get('/resources/pictures/:name', function(req, res){
           res.status(err.status).end();
         }
     });
-
 });
 
 app.listen(80);
