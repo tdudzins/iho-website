@@ -43,4 +43,32 @@ function updateDiscription(eID) {
 
 }
 
+function tabConfig(id) {
+    $('#'+id).removeClass("tab-content").addClass("active");
+    $("ui.active").removeClass("active").addClass("tab-content");
+    switch (id) {
+        case 'firstLoad':
+
+            break;
+        case 'tab-description':
+
+            break;
+        case 'tab-media':
+
+            break;
+        case 'tab-relations':
+
+            break;
+        default:
+
+    }
+}
+
 $("#adaptation-items").ready(loadEventList);
+
+$("#tabs").ready(function(){
+    $("li.tab-content").click(function(){
+        tabConfig($(this).attr("id"));
+    });
+    tabConfig("firstLoad");
+});
