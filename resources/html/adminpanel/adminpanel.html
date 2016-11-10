@@ -16,18 +16,14 @@
 				<h2 class="apHeader2">Welcome <%=firstName%> <%=lastName%></h2>
 			</div>
 			<div id=logout-container class=logout-container>
-				<form id="logout" method="post" action="#">
-					<input id="logout-button" class="logout-button" type="submit" value="Log Out">
-				</form>
+				<input id="logout-button" class="logout-button" type="submit" value="Log Out">
 			</div>
 		</div>
 
 		<div id="list-panel" class="list-panel">
 				<div id="sorting-panel" class="sorting-panel">
-					<form id="search-filter" method="post" action="#">
-						<input id="searchbar-text" class="searchbar-text" type="text" placeholder="Search for an adaptation..." >
-						<input id="searchbutton" class="searchbutton" type="submit" value="Go">
-					</form>
+					<input id="searchbar-text" class="searchbar-text" type="text" placeholder="Search for an adaptation..." >
+					<input id="searchbutton" class="searchbutton" type="submit" value="Go">
 				</div>
 				<div id="database-collection" class="database-collection" >
 					<ul id="adaptation-items" class="adaptation-items">
@@ -35,14 +31,10 @@
 				</div>
 				<div id="database-buttons" class="database-buttons">
 					<div id="createAdaptation" class="createAdaptation">
-						<form id="database-add" method="post" action="#">
-							<input id="createAdaptationButton" class="createAdaptationButton" type="submit" value="Create Adaptation">
-						</form>
+						<input id="createAdaptationButton" class="createAdaptationButton" type="submit" value="Create Adaptation">
 					</div>
 					<div id="deleteAdaptation" class="deleteAdaptation">
-						<form id="database-delete" method="post" action="#">
-							<input id="deleteAdaptationButton" class="deleteAdaptationButton" type="submit" value="Delete Adaptation">
-						</form>
+						<input id="deleteAdaptationButton" class="deleteAdaptationButton" type="submit" value="Delete Adaptation">
 					</div>
 			</div>
 		</div>
@@ -51,9 +43,9 @@
 
 			<div id="navigation-bar" class="navigation-bar">
 				<ul id="tabs" class="tabs">
-					<li class="tab-content">Description</li>
-					<li class="tab-content">Media</li>
-					<li class="tab-content">Relations</li>
+					<li id="tab-description" class="tab-content">Description</li>
+					<li id="tab-media" class="tab-content">Media</li>
+					<li id="tab-relations" class="tab-content">Relations</li>
 			</div>
 
 			<div id="information-container" class="information-container">
