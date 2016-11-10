@@ -19,10 +19,21 @@ function loadEventList() {
 }
 
 function updateDiscription(eID) {
-    $.post("/datafromserver", {action:"q", table:"event", eventid: eID.toFixed(0)}, function(data, status) {
+    $.post("/datafromserver", {action:"q", table:"event", eventid: eID}, function(data, status) {
         var obj = JSON.parse(data);
         console.log(data);
-
+        $.("#adaptationName").val(obj[0].eventName);
+        $.("#earliestDirectEvidence").val((obj[0].earliestDirectEvidence > 1000000)? obj[0].earliestDirectEvidence / 1000000: obj[0].earliestDirectEvidence / 1000);
+        $.("#earliestDirectEvidence-units").val((obj[0].earliestDirectEvidence > 1000000)? "Ma": "Ka" );
+        $.("#earliestIndirectEvidence").val((obj[0].earliestIndirectEvidence > 1000000)? obj[0].earliestIndirectEvidence / 1000000: obj[0].earliestIndirectEvidence / 1000);
+        $.("#earliestIndirectEvidence-units").val(obj[0].(obj[0].earliestIndirectEvidence > 1000000)? "Ma": "Ka" );
+        $.("#ageBoundaryStart").val((obj[0].boundaryStart > 1000000)? obj[0].boundaryStart / 1000000: obj[0].boundaryStart / 1000);
+        $.("#ageBoundaryStart-units").val((obj[0].boundaryStart > 1000000)? "Ma": "Ka" );
+        $.("#ageBoundaryEnd").val((obj[0].boundaryEnd > 1000000)? obj[0].boundaryEnd / 1000000: obj[0].boundaryEnd / 1000);
+        $.("#ageBoundaryEnd-units").val((obj[0].boundaryEnd > 1000000)? "Ma": "Ka" );
+        $.("#adaptationCategory").val(obj[0].category);
+        $.("#adaptationDescription").val(obj[0].comments);
+        $.("#adaptationReferences").val(obj[0].)reference;
     })
     .fail(function(response) {
         console.log("Failed to load data");
