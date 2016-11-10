@@ -15,11 +15,10 @@ function loadEventList() {
 }
 function setEventListners() {
     $("li.adpt-unfocused").click(function(){
-            $(this).removeClass("adpt-unfocused").addClass("adpt-focused");
-            $("li.adpt-focused").click(function(){
-                $(this).removeClass("adpt-focused").addClass("adpt-unfocused");
-            });
-        });
+        $("li.adpt-focused").removeClass("adpt-focused").addClass("adpt-unfocused");
+        $(this).removeClass("adpt-unfocused").addClass("adpt-focused");
+        setEventListners();
+    });
 }
 
 $("#adaptation-items").ready(loadEventList);
