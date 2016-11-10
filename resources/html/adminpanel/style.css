@@ -1,5 +1,5 @@
 .header {
-	height: 90px;
+	height: 75px;
   vertical-align: top;
   background-color: #3b73af;
 	border-radius: 10px;
@@ -39,7 +39,7 @@
 
 .list-panel {
 	float: left;
-	height: calc(100vh - 110px);
+	height: calc(100vh - 95px);
 	width: 300px;
 	margin-top: 5px;
 	margin-bottom: 5px;
@@ -70,7 +70,7 @@
 }
 
 .database-collection {
-	height: calc(100vh - 175px);
+	height: calc(100vh - 165px);
 	vertical-align: middle;
 	background-color: lightgrey;
 }
@@ -85,6 +85,21 @@
 	padding-left: 0px;
 	list-style:none;
 	overflow-x: hidden;
+}
+
+ul.adaptation-items li {
+	border-bottom-width: 2px;
+	border-bottom-style: solid;
+	cursor: pointer;
+	padding: 5px 0 5px 5px;
+	position: relative;
+	border-bottom-color: #ccc;
+	color: #3b73af;
+}
+
+.adpt-focused {
+	background-color: #ebf2f9;
+	font-weight: bold;
 }
 
 .database-buttons {
@@ -119,15 +134,10 @@
 	line-height: 1.5;
 }
 
-.adpt-focused {
-	background-color: #ebf2f9;
-	font-weight: bold;
-}
-
 .content-panel {
 	float: right;
-	height: calc(100vh - 110px);
-	width: calc(100vw - 334px);
+	height: calc(100vh - 95px);
+	width: calc(100vw - 340px);
 	margin-top: 5px;
 	margin-bottom: 5px;
 }
@@ -140,7 +150,6 @@
 }
 
 ul.tabs {
-	height: 100%;
   list-style-type: none;
   margin: 0;
   padding: 0;
@@ -148,21 +157,32 @@ ul.tabs {
 }
 
 ul.tabs li {
-	width: 33.333%;
+	width: 25%;
 	height: 100%;
 	border-top-left-radius: 10px;
 	border-top-right-radius: 10px;
 	float: left;
-	background-color: lightgrey;
-	padding-top: 3px;
+	background-color: grey;
+	border-top-color: darkgrey;
+	border-top-style: solid;
+	border-top-width: medium;
+	border-left-color: darkgrey;
+	border-left-style: solid;
+	border-left-width: medium;
+	border-right-color: darkgrey;
+	border-right-style: solid;
+	border-right-width: medium;
+	border-bottom-color: darkgrey;
+	border-bottom-style: solid;
+	border-bottom-width: medium;
 }
 
 ul.tabs li:hover {
-	background-color: grey;
+	background-color: darkgrey;
 }
 
 ul.tabs li:focus, .active {
-	background-color: darkgrey;
+	background-color: lightgrey;
 }
 
 .tab-content {
@@ -172,12 +192,27 @@ ul.tabs li:focus, .active {
 	font-weight: bold;
 }
 
-ul.adaptation-items li {
-	border-bottom-width: 2px;
-	border-bottom-style: solid;
-	cursor: pointer;
-	padding: 5px 0 5px 5px;
-	position: relative;
-	border-bottom-color: #ccc;
-	color: #3b73af;
+.information-container {
+	vertical-align: bottom;
+	overflow-x: hidden;
+	height: calc(100vh - 143px);
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+	border-top-right-radius: 10px;
+	background-color: lightgrey;
+	margin-top: -2px;
+	padding: 10px;
+}
+
+.save-edit-container {
+	vertical-align: top;
+	height: 30px;
+}
+
+.editButton {
+	float: right;
+}
+
+.saveButton {
+	float: right;
 }
