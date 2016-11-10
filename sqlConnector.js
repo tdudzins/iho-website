@@ -8,6 +8,8 @@ var pool  = mysql.createPool({
     port            : '3300'
 });
 
+// Admin functions
+
 /**
 * Inserts a row to the table of choice in the dataBase
 * @param {string} table is the table the row is being added to
@@ -155,23 +157,30 @@ exports.editRow = function editRow(table, key, value, data, callback) {
 };
 
 /**
-* Queries the database for all the eventID and the eventName
-* @param {function} callback is the callback function to be run when complete
-* returns all the data in an array of objects {eventID:1, eventName:"Name"},{}...
+* Inserts a row to the user table in the dataBase
+* @param {object} data the data object being added to the user table in the required format (firstName, lastName, email, password)
+* @return error and array containing any attributes that should be sent back to the callback function.
 */
-exports.getNamesandIDs = function getNamesandIDs(callback){
+exports.getUser = function getUser(data, callback) {
     pool.getConnection(function(err,connection){
         if (err) callback(err, null);
-        else
-            var result = connection.query( 'SELECT eventID,eventName FROM event', function (err, res) {
-                connection.release();
-                if(err)
-                    callback(err, null)
-                else
-                    callback(err, res);
-            });
+
+        var result = connection.query('SELECT * FROM user WHERE email = ?', data, function(err,user){
+            if(user) {
+                callback(err, user[0]);
+            }
+            else {
+                console.log('Code ' + err.code + ': Error adding data to user table.');
+                callback(err, null)
+            }
+        });
+        // close connection with database
+        connection.release();
     });
-}
+};
+
+
+// Get data by eventID
 
 /**
 * Queries the database by the eventID and gets all the data associated with the event
@@ -220,7 +229,76 @@ exports.getRelations = function getRelations(eventID, callback){
     pool.getConnection(function(err,connection){
         if (err) callback(err, null);
         else
-            var result = connection.query('SELECT * FROM relationships WHERE eventID=?', eventID, function (err, res) {
+            var result = connection.query('SELECT * FROM relationships WHERE primaryEventID=?', eventID, function (err, res) {
+                connection.release();
+                if(err)
+                    callback(err, null)
+                else
+                    callback(err, res);
+            });
+    });
+}
+
+/**
+* Queries the database by the categoryID
+* @param {int} categoryID the categoryID for the required data
+* @param {function} callback is the callback function to be run when complete
+*/
+exports.getCategory = function getCategory(categoryID, callback){
+    pool.getConnection(function(err,connection){
+        if (err) callback(err, null);
+        else
+            var result = connection.query('SELECT * FROM category WHERE categoryID=?', categoryID, function (err, res) {
+                connection.release();
+                if(err)
+                    callback(err, null)
+                else
+                    callback(err, res);
+            });
+    });
+}
+
+
+// General Searches
+
+/**
+* Inserts a row to the user table in the dataBase
+* @param {string} table the table name
+* @param {string} col the column
+* @param {string} term a single word to search for
+* @return error and array containing any attributes that should be sent back to the callback function.
+*/
+exports.getData = function getData(table, col, term, callback) {
+    pool.getConnection(function(err,connection){
+        if (err) callback(err, null);
+
+        var result = connection.query('SELECT * FROM ? WHERE ? LIKE ?', [table, col, term], function(err,user){
+            if(user) {
+                callback(err, user[0]);
+            }
+            else {
+                console.log('Code ' + err.code + ': Error adding data to user table.');
+                callback(err, null)
+            }
+        });
+        // close connection with database
+        connection.release();
+    });
+};
+
+
+// Premade searches
+
+/**
+* Queries the database by the categoryID and returns it in abc order
+* @param {int} categoryID the categoryID for the required data
+* @param {function} callback is the callback function to be run when complete
+*/
+exports.getCategories = function getCategories(callback){
+    pool.getConnection(function(err,connection){
+        if (err) callback(err, null);
+        else
+            var result = connection.query('SELECT * FROM category ORDER BY categoryName', function (err, res) {
                 connection.release();
                 if(err)
                     callback(err, null)
@@ -252,49 +330,20 @@ exports.getAllRelationData = function getAllRelationData(eventID, callback){
 }
 
 /**
-* Inserts a row to the user table in the dataBase
-* @param {object} data the data object being added to the user table in the required format (firstName, lastName, email, password)
-* @return error and array containing any attributes that should be sent back to the callback function.
+* Queries the database for all the eventID and the eventName
+* @param {function} callback is the callback function to be run when complete
+* returns all the data in an array of objects {eventID:1, eventName:"Name"},{}...
 */
-exports.getUser = function getUser(data, callback) {
+exports.getNamesandIDs = function getNamesandIDs(callback){
     pool.getConnection(function(err,connection){
         if (err) callback(err, null);
-
-        var result = connection.query('SELECT * FROM user WHERE email = ?', data, function(err,user){
-            if(user) {
-                callback(err, user[0]);
-            }
-            else {
-                console.log('Code ' + err.code + ': Error adding data to user table.');
-                callback(err, null)
-            }
-        });
-        // close connection with database
-        connection.release();
+        else
+            var result = connection.query( 'SELECT eventID,eventName,category FROM event ORDER BY eventName', function (err, res) {
+                connection.release();
+                if(err)
+                    callback(err, null)
+                else
+                    callback(err, res);
+            });
     });
-};
-
-/**
-* Inserts a row to the user table in the dataBase
-* @param {string} table the table name
-* @param {string} col the column
-* @param {string} term a single word to search for
-* @return error and array containing any attributes that should be sent back to the callback function.
-*/
-exports.getData = function getData(table, col, term, callback) {
-    pool.getConnection(function(err,connection){
-        if (err) callback(err, null);
-
-        var result = connection.query('SELECT * FROM ? WHERE ? LIKE ?', [table, col, term], function(err,user){
-            if(user) {
-                callback(err, user[0]);
-            }
-            else {
-                console.log('Code ' + err.code + ': Error adding data to user table.');
-                callback(err, null)
-            }
-        });
-        // close connection with database
-        connection.release();
-    });
-};
+}

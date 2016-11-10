@@ -25,6 +25,14 @@ READ
     "{"action":"r", "table":"event", "field":"eventName", "term":"someterm"}"
 
 SPECIAL FUNCTIONS
+    Get a data for an event by eventID
+        "{"action":"q", "table":"event", "eventid": 1234}"
 
+    Get all event names and ids
+        "{"action":"t"}"
 
-    "{"action":"s", "table":"event", "key":"eventID", "value": 1234}"
+    Get all preconditions and their data
+        "{"action":"s", "eventid": 1234}"
+
+    Get all Categories
+        "{"action":"v"}"

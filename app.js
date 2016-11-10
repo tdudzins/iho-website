@@ -146,7 +146,14 @@ app.post('/datatoserver', requireLogin, function(req, res){
                 break;
             case 'd':
                 if(req.body.table === category){
-
+                    dataBase.removeCategory(req.body.table, req.body.key, req.body.value, function(err, data){
+                        if(err){
+                            res.status(409);
+                            res.end(err);
+                        }
+                        else
+                            res.end(JSON.stringify(data));
+                    });
                 }
                 else{
                     dataBase.removeRow(req.body.table, req.body.key, req.body.value, function(err, data){
@@ -173,7 +180,7 @@ app.post('/datafromserver', function(req, res){
     if(req.body.table !== 'user'){
         switch (req.body.action) {
             case 'r':
-                dataBase.addRow(req.body.table, req.body.data, function(err, data){
+                dataBase.getData(req.body.table, req.body.field, req.body.term, function(err, data){
                     if(err){
                         res.status(409);
                         res.end(err);
@@ -182,8 +189,77 @@ app.post('/datafromserver', function(req, res){
                         res.end(JSON.stringify(data));
                 });
                 break;
+            case 'q':
+                switch (req.body.table) {
+                    case "event":
+                        dataBase.getEvent(req.body.eventid, function(err, data){
+                            if(err){
+                                res.status(409);
+                                res.end(err);
+                            }
+                            else
+                                res.end(JSON.stringify(data));
+                        });
+                        break;
+                    case "media":
+                        dataBase.getMedia(req.body.eventid, function(err, data){
+                            if(err){
+                                res.status(409);
+                                res.end(err);
+                            }
+                            else
+                                res.end(JSON.stringify(data));
+                        });
+                        break;
+                    case "relationships":
+                        dataBase.getRelations(req.body.eventid, function(err, data){
+                            if(err){
+                                res.status(409);
+                                res.end(err);
+                            }
+                            else
+                                res.end(JSON.stringify(data));
+                        });
+                        break;
+                    case "category":
+                        dataBase.getCategory(req.body.eventid, function(err, data){
+                            if(err){
+                                res.status(409);
+                                res.end(err);
+                            }
+                            else
+                                res.end(JSON.stringify(data));
+                        });
+                        break;
+
+                    default:
+                        res.status(404);
+                        res.end("unknown action");
+                }
+                break;
+            case 't':
+                dataBase.getNamesandIDs(function(err, data){
+                    if(err){
+                        res.status(409);
+                        res.end(err);
+                    }
+                    else
+                        res.end(JSON.stringify(data));
+                });
+                break;
+
             case 's':
-                dataBase.editRow(req.body.table, req.body.key, req.body.value, req.body.data, function(err, data){
+                dataBase.getAllRelationData(req.body.eventid, function(err, data){
+                    if(err){
+                        res.status(409);
+                        res.end(err);
+                    }
+                    else
+                        res.end(JSON.stringify(data));
+                });
+                break;
+            case 'v':
+                dataBase.getCategories(function(err, data){
                     if(err){
                         res.status(409);
                         res.end(err);
