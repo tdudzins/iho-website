@@ -57,10 +57,59 @@
 			</div>
 
 			<div id="information-container" class="information-container">
-
+				<div id="save-edit-container" class="save-edit-container">
+					<form id="saveeditForm" class="saveeditForm" method="post" action="#">
+						<input id="editButton" class="editButton" value="Edit" type="submit">
+						<input id="saveButton" class="saveButton" value="Save" type="submit">
+					</form>
+				</div>
+				<div id="discription-pane" class="discription-pane">
+					<form id="description-form" class="description-form" method="post" action="#">
+						<label class="description-labels"> Adaptation Name: </label>
+						<input id="adaptationName" class="adaptationName" type="text">
+						<br>
+						<label class="description-labels"> Earliest Direct Evidence: </label>
+						<input id="earliestDirectEvidence" class="earliestDirectEvidence" type="text">
+						<select id="earliestDirectEvidence-units" class="units-combobox">
+							<option value="Ma">Ma</option>
+							<option value="Ka">Ka</option>
+						</select>
+						<br>
+						<label class="description-labels"> Earliest Indirect Evidence: </label>
+						<input id="earliestIndirectEvidence" class="earliestIndirectEvidence" type="text">
+						<select id="earliestIndirectEvidence-units" class="units-combobox">
+							<option value="Ma">Ma</option>
+							<option value="Ka">Ka</option>
+						</select>
+						<br>
+						<label class="description-labels"> Age Boundary Start: </label>
+						<input id="ageBoundaryStart" class="ageBoundaryStart" type="text">
+						<select id="ageBoundaryStart-units" class="units-combobox">
+							<option value="Ma">Ma</option>
+							<option value="Ka">Ka</option>
+						</select>
+						<br>
+						<label class="description-labels"> Age Boundary End: </label>
+						<input id="ageBoundaryEnd" class="ageBoundaryEnd" type="text">
+						<select id="ageBoundaryEnd-units" class="units-combobox">
+							<option value="Ma">Ma</option>
+							<option value="Ka">Ka</option>
+						</select>
+						<br>
+						<label class="description-labels"> Adaptation Description: </label>
+						<br>
+						<input id="adaptationDescription" class="adaptationDescription" type="text">
+						<br>
+						<label class="description-labels"> References: </label>
+						<br>
+						<input id="adaptationReferences" class="adaptationReferences" type="text">
+						<br>
+						<label class="description-labels"> Comments: </label>
+						<br>
+						<input id="adaptationComments" class="adaptationComments" type="text">
+					</form>
+				</div>
 			</div>
-
 		</div>
-
 	</div>
 </body>
