@@ -90,16 +90,23 @@
 ul.adaptation-items li {
 	border-bottom-width: 2px;
 	border-bottom-style: solid;
+	border-radius: 5px;
 	cursor: pointer;
 	padding: 5px 0 5px 5px;
 	position: relative;
 	border-bottom-color: #ccc;
-	color: #3b73af;
 }
 
 .adpt-focused {
-	background-color: #ebf2f9;
+	background-color: #3b73af;
 	font-weight: bold;
+	color: white;
+}
+
+.adpt-unfocused {
+	background-color: white;
+	font-weight: bold;
+	color: black;
 }
 
 .database-buttons {
@@ -209,10 +216,40 @@ ul.tabs li:focus, .active {
 	height: 30px;
 }
 
-.editButton {
-	float: right;
+.saveeditForm {
+	height: 100%;
+	vertical-align: middle;
 }
 
-.saveButton {
+.editsaveButton {
 	float: right;
+	height: 100%;
+	width: 60px;
+	margin-right: 10px;
+}
+
+.description-pane {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.description-labels {
+	font-family: georgia;
+	font-weight: bold;
+	font-size: 125%;
+}
+
+.description-text {
+	margin-bottom: 10px;
+	margin-left: 20px;
+	width: 250px;
+	vertical-align: middle;
+	height: 25px;
+}
+
+.units-combobox {
+	margin-bottom: 10px;
+	margin-left: 5px;
+	vertical-align: middle;
+	height: 25px;
 }
