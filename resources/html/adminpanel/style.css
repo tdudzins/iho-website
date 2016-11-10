@@ -132,8 +132,47 @@
 	margin-bottom: 5px;
 }
 
-/* Applys to every element of specified type */
-ul li {
+.navigation-bar {
+	vertical-align: top;
+	height: 30px;
+	width: 100%;
+
+}
+
+ul.tabs {
+	height: 100%;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+ul.tabs li {
+	width: 33.333%;
+	height: 100%;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	float: left;
+	background-color: lightgrey;
+	padding-top: 3px;
+}
+
+ul.tabs li:hover {
+	background-color: grey;
+}
+
+ul.tabs li:focus, .active {
+	background-color: darkgrey;
+}
+
+.tab-content {
+	font-size: 125%;
+	text-align: center;
+	font-family: georgia;
+	font-weight: bold;
+}
+
+ul.adaptation-items li {
 	border-bottom-width: 2px;
 	border-bottom-style: solid;
 	cursor: pointer;
