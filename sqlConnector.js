@@ -23,7 +23,7 @@ exports.addRow = function addRow(table, data, callback) {
             switch (table) {
                 case 'event':
                     var temp = connection.query('INSERT INTO event \
-                    (eventName, description, earliestDirectEveidence, earliestIndirectEveidence, boundaryStart, boundaryEnd, reference, comments, category)\
+                    (eventName, description, earliestDirectEvidence, earliestIndirectEvidence, boundaryStart, boundaryEnd, reference, comments, category)\
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', data, function(err,result){
                         connection.release();
                         if(result) {

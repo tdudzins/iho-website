@@ -10,7 +10,7 @@ function loadEventList() {
 }
 $.post("/datatoserver",
 {action:"c",
- table:"event", data:["e1","text", 1000000, 100000000, 123, 1234, "reference", "comments", 1]}, function(data, status) {
+ table:"event", data:["e2","text", 1000000, 100000000, 123, 1234, "reference", "comments", 1]}, function(data, status) {
     console.log(data);
 })
 .fail(function(response) {
