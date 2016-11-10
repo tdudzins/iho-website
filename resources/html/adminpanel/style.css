@@ -76,6 +76,7 @@
 }
 
 .adaptation-items {
+	background-color: white;
 	height: 100%;
 	margin-left: 5px;
 	margin-right: 5px;
@@ -215,11 +216,6 @@ ul.tabs li:focus, .active {
 	height: 30px;
 }
 
-.saveeditForm {
-	height: 100%;
-	vertical-align: middle;
-}
-
 .editsaveButton {
 	float: right;
 	height: 100%;
@@ -232,51 +228,112 @@ ul.tabs li:focus, .active {
 	margin-bottom: 10px;
 }
 
+.adaptation-name-div {
+	width: 100%;
+	height: 25px;
+	padding: 5px;
+}
+
+.adaptation-name-label {
+	float: left;
+	width: 35%;
+}
+
+.adaptation-name-field {
+	float: right;
+	width: 65%;
+}
+
 .description-labels {
 	font-family: georgia;
 	font-weight: bold;
-	font-size: 125%;
-	vertical-align: top;
-	margin: 10px;
+	font-size: 120%;
 }
 
 .description-text {
-	margin-bottom: 10px;
-	margin-left: 20px;
-	width: 250px;
-	vertical-align: middle;
-	height: 20px;
+	width: 60%;
 }
-
-.units-combobox {
-	margin-bottom: 10px;
-	margin-left: 5px;
-	vertical-align: middle;
-	height: 20px;
-}
-
-.adaptationCategory {
-	margin-bottom: 10px;
-	margin-left: 5px;
-	vertical-align: middle;
-	height: 20px;
-	width: 150px;
-}
-
-.adaptationDescription {
+.adaptation-de-div {
 	width: 100%;
-	height: 150px;
-	margin-bottom: 10px;
+	height: 25px;
+	padding: 5px;
 }
 
-.adaptationReferences {
-	width: 100%;
-	height: 100px;
-	margin-bottom: 10px;
+.adaptation-de-label {
+	float: left;
+	width: 35%;
 }
 
-.adaptationComments {
+.adaptation-de-field {
+	float: right;
+	width: 65%;
+}
+
+.adaptation-ie-div {
 	width: 100%;
-	height: 100px;
-	margin-bottom: 10px;
+	height: 25px;
+	padding: 5px;
+}
+
+.adaptation-ie-label {
+	float: left;
+	width: 35%;
+}
+
+.adaptation-ie-field {
+	float: right;
+	width: 65%;
+}
+
+.boundary-start-div {
+	width: 100%;
+	height: 25px;
+	padding: 5px;
+}
+
+.boundary-start-label {
+	float: left;
+	width: 35%;
+}
+
+.boundary-start-field {
+	float: right;
+	width: 65%;
+}
+
+.boundary-end-div {
+	width: 100%;
+	height: 25px;
+	padding: 5px;
+}
+
+.boundary-end-label {
+	float: left;
+	width: 35%;
+}
+
+.boundary-end-field {
+	float: right;
+	width: 65%;
+}
+
+.adaptation-category-div {
+	width: 100%;
+	height: 25px;
+	padding: 5px;
+}
+
+.adaptation-category-label {
+	float: left;
+	width: 35%;
+}
+
+.adaptation-category-field {
+	float: right;
+	width: 65%;
+}
+
+.adaptation-category-combo {
+	width: 60%;
+	height: 20px;
 }
