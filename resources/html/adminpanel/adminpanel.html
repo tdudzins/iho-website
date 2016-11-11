@@ -16,7 +16,9 @@
 				<h2 class="apHeader2">Welcome <%=firstName%> <%=lastName%></h2>
 			</div>
 			<div id=logout-container class=logout-container>
-				<input id="logout-button" class="logout-button" type="submit" value="Log Out">
+				<form method="get" action="/logout">
+					<input id="logout-button" class="logout-button" type="submit" value="Log Out">
+				</form>
 			</div>
 		</div>
 
