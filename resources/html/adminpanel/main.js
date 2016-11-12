@@ -44,8 +44,8 @@ function updateDiscription(eID) {
 }
 
 function tabConfig(id) {
-    $('#'+id).removeClass("tab-content").addClass("active");
-    $("ui.active").removeClass("active").addClass("tab-content");
+    $('#'+id).removeClass("nonactive").addClass("active");
+    $("ui.active").removeClass("active").addClass("nonactive");
     switch (id) {
         case 'firstLoad':
 

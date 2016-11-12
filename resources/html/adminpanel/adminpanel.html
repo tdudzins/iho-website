@@ -7,161 +7,162 @@
 	<link rel="stylesheet" type="text/css" href="/resources/html/adminpanel/style.css">
 </head>
 
-<body>
-	<div id="main" class="main">
+	<body>
+		<div id="main" class="main">
 
-		<div id="header" class="header">
-			<div id="header-text" class="header-text">
-				<h1 class=apHeader1>Database Management Portal</h1>
-				<h2 class="apHeader2">Welcome <%=firstName%> <%=lastName%></h2>
+			<div id="header" class="header">
+				<div id="header-text" class="header-text">
+					<h1 class=apHeader1>Database Management Portal</h1>
+					<h2 class="apHeader2">Welcome <%=firstName%> <%=lastName%></h2>
+				</div>
+				<div id=logout-container class=logout-container>
+					<form method="get" action="/logout">
+						<input id="logout-button" class="logout-button" type="submit" value="Log Out">
+					</form>
+				</div>
 			</div>
-			<div id=logout-container class=logout-container>
-				<form method="get" action="/logout">
-					<input id="logout-button" class="logout-button" type="submit" value="Log Out">
-				</form>
+
+			<div id="list-panel" class="list-panel">
+					<div id="sorting-panel" class="sorting-panel">
+						<input id="searchbar-text" class="searchbar-text" type="text" placeholder="Search for an adaptation..." >
+						<input id="searchbutton" class="searchbutton" type="submit" value="Go">
+					</div>
+					<div id="database-collection" class="database-collection" >
+						<ul id="adaptation-items" class="adaptation-items">
+						</ul>
+					</div>
+					<div id="database-buttons" class="database-buttons">
+						<div id="createAdaptation" class="createAdaptation">
+							<input id="createAdaptationButton" class="createAdaptationButton" type="submit" value="Create Adaptation">
+						</div>
+						<div id="deleteAdaptation" class="deleteAdaptation">
+							<input id="deleteAdaptationButton" class="deleteAdaptationButton" type="submit" value="Delete Adaptation">
+						</div>
+				</div>
+			</div>
+
+			<div id="content-panel" class="content-panel">
+
+				<div id="navigation-bar" class="navigation-bar">
+					<ul id="tabs" class="tabs">
+						<li id="tab-description" class="nonactive">Description</li>
+						<li id="tab-media" class="nonactive">Media</li>
+						<li id="tab-relations" class="nonactive">Relations</li>
+				</div>
+
+				<div id="information-container" class="information-container">
+
+					<!-- SAVE EDIT BUTTON DIV -->
+					<div id="save-edit-container" class="save-edit-container">
+						<input id="editsaveButton" class="editsaveButton" value="Edit" type="submit">
+					</div>
+
+
+					<!-- DESCRIPTION PANE DIV -->
+					<div id="description-pane" class="description-pane">
+
+						<div id="adaptation-name-div" class="adaptation-name-div">
+							<div id="adaptation-name-label" class="adaptation-name-label">
+								<label class="description-labels"> Adaptation Name: </label>
+							</div>
+							<div id="adaptation-name-field" class="adaptation-name-field">
+								<input id="adaptationName" class="description-text" type="text">
+							</div>
+						</div>
+
+						<div id="adaptation-de-div" class="adaptation-de-div">
+							<div id="adaptation-de-label" class="adaptation-de-label">
+								<label class="description-labels"> Earliest Direct Evidence: </label>
+							</div>
+							<div id="adaptation-de-field" class="adaptation-de-field">
+								<input id="earliestDirectEvidence" class="description-text" type="text">
+								<select id="earliestDirectEvidence-units" class="units-combobox">
+									<option value="Ma">Ma</option>
+									<option value="Ka">Ka</option>
+								</select>
+							</div>
+						</div>
+
+						<div id="adaptation-ie-div" class="adaptation-ie-div">
+							<div id="adaptation-ie-label" class="adaptation-ie-label">
+								<label class="description-labels"> Earliest Indirect Evidence: </label>
+							</div>
+							<div id="adaptation-ie-field" class="adaptation-ie-field">
+								<input id="earliestIndirectEvidence" class="description-text" type="text">
+								<select id="earliestIndirectEvidence-units" class="units-combobox">
+									<option value="Ma">Ma</option>
+									<option value="Ka">Ka</option>
+								</select>
+							</div>
+						</div>
+
+
+						<div id="boundary-start-div" class="boundary-start-div">
+							<div id="boundary-start-label" class="boundary-start-label">
+								<label class="description-labels"> Age Boundary Start: </label>
+							</div>
+							<div id="boundary-start-field" class="boundary-start-field">
+								<input id="ageBoundaryStart" class="description-text" type="text">
+								<select id="ageBoundaryStart-units" class="units-combobox">
+									<option value="Ma">Ma</option>
+									<option value="Ka">Ka</option>
+								</select>
+							</div>
+						</div>
+
+						<div id="boundary-end-div" class="boundary-end-div">
+							<div id="boundary-end-label" class="boundary-end-label">
+								<label class="description-labels"> Age Boundary End: </label>
+							</div>
+							<div id="boundary-end-field" class="boundary-end-field">
+								<input id="ageBoundaryEnd" class="description-text" type="text">
+								<select id="ageBoundaryEnd-units" class="units-combobox">
+									<option value="Ma">Ma</option>
+									<option value="Ka">Ka</option>
+								</select>
+							</div>
+						</div>
+
+						<div id="adaptation-category-div" class="adaptation-category-div">
+							<div id="adaptation-category-label" class="adaptation-category-label">
+								<label class="description-labels"> Category: </label>
+							</div>
+							<div id="adaptation-category-field" class="adaptation-category-field">
+								<select id="adaptation-category-combo" class="adaptation-category-combo">
+								</select>
+							</div>
+						</div>
+
+						<div id="adaptation-description-div" class="adaptation-description-div">
+							<div id="adaptation-description-label" class="adaptation-description-label">
+								<label class="description-labels"> Adaptation Description: </label>
+							</div>
+							<div id="adaptation-description-field" class="adaptation-description-field">
+								<textarea id="adaptationDescription" class="adaptationDescription"></textarea>
+							</div>
+						</div>
+
+						<div id="adaptation-references-div" class="adaptation-references-div">
+							<div id="adaptation-references-label" class="adaptation-references-label">
+								<label class="description-labels"> References: </label>
+							</div>
+							<div id="adaptation-references-field" class="adaptation-references-field">
+								<textarea id="adaptationReferences" class="adaptationReferences"></textarea>
+							</div>
+						</div>
+
+						<div id="adaptation-comments-div" class="adaptation-comments-div">
+							<div id="adaptation-comments-label" class="adaptation-comments-label">
+								<label class="description-labels"> Comments: </label>
+							</div>
+							<div id="adaptation-comments-field" class="adaptation-comments-field">
+								<textarea id="adaptationComments" class="adaptationComments"></textarea>
+							</div>
+						</div>
+
+					</div>
+				</div>
 			</div>
 		</div>
-
-		<div id="list-panel" class="list-panel">
-				<div id="sorting-panel" class="sorting-panel">
-					<input id="searchbar-text" class="searchbar-text" type="text" placeholder="Search for an adaptation..." >
-					<input id="searchbutton" class="searchbutton" type="submit" value="Go">
-				</div>
-				<div id="database-collection" class="database-collection" >
-					<ul id="adaptation-items" class="adaptation-items">
-					</ul>
-				</div>
-				<div id="database-buttons" class="database-buttons">
-					<div id="createAdaptation" class="createAdaptation">
-						<input id="createAdaptationButton" class="createAdaptationButton" type="submit" value="Create Adaptation">
-					</div>
-					<div id="deleteAdaptation" class="deleteAdaptation">
-						<input id="deleteAdaptationButton" class="deleteAdaptationButton" type="submit" value="Delete Adaptation">
-					</div>
-			</div>
-		</div>
-
-		<div id="content-panel" class="content-panel">
-
-			<div id="navigation-bar" class="navigation-bar">
-				<ul id="tabs" class="tabs">
-					<li id="tab-description" class="tab-content">Description</li>
-					<li id="tab-media" class="tab-content">Media</li>
-					<li id="tab-relations" class="tab-content">Relations</li>
-			</div>
-
-			<div id="information-container" class="information-container">
-
-				<!-- SAVE EDIT BUTTON DIV -->
-				<div id="save-edit-container" class="save-edit-container">
-					<input id="editsaveButton" class="editsaveButton" value="Edit" type="submit">
-				</div>
-
-
-				<!-- DESCRIPTION PANE DIV -->
-				<div id="description-pane" class="description-pane">
-
-					<div id="adaptation-name-div" class="adaptation-name-div">
-						<div id="adaptation-name-label" class="adaptation-name-label">
-							<label class="description-labels"> Adaptation Name: </label>
-						</div>
-						<div id="adaptation-name-field" class="adaptation-name-field">
-							<input id="adaptationName" class="description-text" type="text">
-						</div>
-					</div>
-
-					<div id="adaptation-de-div" class="adaptation-de-div">
-						<div id="adaptation-de-label" class="adaptation-de-label">
-							<label class="description-labels"> Earliest Direct Evidence: </label>
-						</div>
-						<div id="adaptation-de-field" class="adaptation-de-field">
-							<input id="earliestDirectEvidence" class="description-text" type="number">
-							<select id="earliestDirectEvidence-units" class="units-combobox">
-								<option value="Ma">Ma</option>
-								<option value="Ka">Ka</option>
-							</select>
-						</div>
-					</div>
-
-					<div id="adaptation-ie-div" class="adaptation-ie-div">
-						<div id="adaptation-ie-label" class="adaptation-ie-label">
-							<label class="description-labels"> Earliest Indirect Evidence: </label>
-						</div>
-						<div id="adaptation-ie-field" class="adaptation-ie-field">
-							<input id="earliestIndirectEvidence" class="description-text" type="number">
-							<select id="earliestIndirectEvidence-units" class="units-combobox">
-								<option value="Ma">Ma</option>
-								<option value="Ka">Ka</option>
-							</select>
-						</div>
-					</div>
-
-
-					<div id="boundary-start-div" class="boundary-start-div">
-						<div id="boundary-start-label" class="boundary-start-label">
-							<label class="description-labels"> Age Boundary Start: </label>
-						</div>
-						<div id="boundary-start-field" class="boundary-start-field">
-							<input id="ageBoundaryStart" class="description-text" type="number">
-							<select id="ageBoundaryStart-units" class="units-combobox">
-								<option value="Ma">Ma</option>
-								<option value="Ka">Ka</option>
-							</select>
-						</div>
-					</div>
-
-					<div id="boundary-end-div" class="boundary-end-div">
-						<div id="boundary-end-label" class="boundary-end-label">
-							<label class="description-labels"> Age Boundary End: </label>
-						</div>
-						<div id="boundary-end-field" class="boundary-end-field">
-							<input id="ageBoundaryEnd" class="description-text" type="number">
-							<select id="ageBoundaryEnd-units" class="units-combobox">
-								<option value="Ma">Ma</option>
-								<option value="Ka">Ka</option>
-							</select>
-						</div>
-					</div>
-
-					<div id="adaptation-category-div" class="adaptation-category-div">
-						<div id="adaptation-category-label" class="adaptation-category-label">
-							<label class="description-labels"> Category: </label>
-						</div>
-						<div id="adaptation-category-field" class="adaptation-category-field">
-							<select id="adaptation-category-combo" class="adaptation-category-combo">
-							</select>
-						</div>
-					</div>
-
-					<div id="adaptation-description-div" class="adaptation-description-div">
-						<div id="adaptation-description-label" class="adaptation-description-label">
-							<label class="description-labels"> Adaptation Description: </label>
-						</div>
-						<div id="adaptation-description-field" class="adaptation-description-field">
-							<textarea id="adaptationDescription" class="adaptationDescription"></textarea>
-						</div>
-					</div>
-
-					<div id="adaptation-references-div" class="adaptation-references-div">
-						<div id="adaptation-references-label" class="adaptation-references-label">
-							<label class="description-labels"> References: </label>
-						</div>
-						<div id="adaptation-references-field" class="adaptation-references-field">
-							<textarea id="adaptationReferences" class="adaptationReferences"></textarea>
-						</div>
-					</div>
-
-					<div id="adaptation-comments-div" class="adaptation-comments-div">
-						<div id="adaptation-comments-label" class="adaptation-comments-label">
-							<label class="description-labels"> Comments: </label>
-						</div>
-						<div id="adaptation-comments-field" class="adaptation-comments-field">
-							<textarea id="adaptationComments" class="adaptationComments"></textarea>
-						</div>
-					</div>
-
-				</div>
-			</div>
-		</div>
-	</div>
-</body>
+	</body>
+</html>

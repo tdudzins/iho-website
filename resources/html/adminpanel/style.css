@@ -63,9 +63,9 @@
 
 .searchbutton {
 	float: right;
-	width: 35px;
+	width: 30px;
 	vertical-align: middle;
-	height: 23px;
+	height: 25px;
 }
 
 .database-collection {
@@ -168,7 +168,39 @@ ul.tabs li {
 	border-top-left-radius: 10px;
 	border-top-right-radius: 10px;
 	float: left;
+}
+
+ul.tabs li:hover {
+	background-color: darkgrey;
+}
+
+ul.tabs li:focus, .active {
+	background-color: lightgrey;
+	font-size: 125%;
+	text-align: center;
+	font-family: georgia;
+	font-weight: bold;
+	background-color: lightgrey;
+	border-top-color: darkgrey;
+	border-top-style: solid;
+	border-top-width: medium;
+	border-left-color: darkgrey;
+	border-left-style: solid;
+	border-left-width: medium;
+	border-right-color: darkgrey;
+	border-right-style: solid;
+	border-right-width: medium;
+	border-bottom-color: lightgrey;
+	border-bottom-style: solid;
+	border-bottom-width: medium;
+}
+
+ul.tabs li:focus, .nonactive {
 	background-color: grey;
+	font-size: 125%;
+	text-align: center;
+	font-family: georgia;
+	font-weight: bold;
 	border-top-color: darkgrey;
 	border-top-style: solid;
 	border-top-width: medium;
@@ -181,21 +213,6 @@ ul.tabs li {
 	border-bottom-color: darkgrey;
 	border-bottom-style: solid;
 	border-bottom-width: medium;
-}
-
-ul.tabs li:hover {
-	background-color: darkgrey;
-}
-
-ul.tabs li:focus, .active {
-	background-color: lightgrey;
-}
-
-.tab-content {
-	font-size: 125%;
-	text-align: center;
-	font-family: georgia;
-	font-weight: bold;
 }
 
 .information-container {
@@ -335,4 +352,72 @@ ul.tabs li:focus, .active {
 .adaptation-category-combo {
 	width: 60%;
 	height: 20px;
+}
+
+.adaptation-description-div {
+	width: 100%;
+	height: 150px;
+	padding: 5px;
+}
+
+.adaptation-description-label {
+	width: 100%;
+	height: 30px;
+	vertical-align: top;
+}
+
+.adaptation-description-field {
+	height: 120px;
+	width: 100%;
+	vertical-align: bottom;
+}
+
+.adaptationDescription {
+	height: 95%;
+	width: 99%;
+}
+
+.adaptation-references-div {
+	width: 100%;
+	height: 95px;
+	padding: 5px;
+}
+
+.adaptation-references-label {
+	width: 100%;
+	vertical-align: top;
+}
+
+.adaptation-references-field {
+	height: 90%;
+	width: 100%;
+	vertical-align: bottom;
+}
+
+.adaptationReferences {
+	height: 80%;
+	width: 99%;
+}
+
+.adaptation-comments-div {
+	width: 100%;
+	height: 100px;
+	padding: 5px;
+}
+
+.adaptation-comments-label {
+	width: 100%;
+	height: 30px;
+	vertical-align: top;
+}
+
+.adaptation-comments-field {
+	height: 70px;
+	width: 100%;
+	vertical-align: bottom;
+}
+
+.adaptationComments {
+	height: 80%;
+	width: 99%;
 }
