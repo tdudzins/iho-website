@@ -48,6 +48,7 @@
 						<li id="tab-description" class="nonactive">Description</li>
 						<li id="tab-media" class="nonactive">Media</li>
 						<li id="tab-relations" class="nonactive">Relations</li>
+					</ul>
 				</div>
 
 				<div id="information-container" class="information-container">
@@ -57,6 +58,13 @@
 						<input id="editsaveButton" class="editsaveButton" value="Edit" type="submit">
 					</div>
 
+					<!-- FIRST LOAD PANE DIV -->
+					<div id="first-load-pane" class="first-load-pane">
+
+						<div id="select-an-adaptation-div" class="select-an-adaptation-div">
+							<label id="select-an-adaptation-label" class="select-an-adaptation-label"> Please create an adaptation or select an adaptation <br> from the list on the left side of the browser. </label>
+						</div>
+					</div>
 
 					<!-- DESCRIPTION PANE DIV -->
 					<div id="description-pane" class="description-pane">
@@ -160,6 +168,41 @@
 							</div>
 						</div>
 
+					</div>
+
+					<!-- MEDIA PANE DIV -->
+					<div id="media-pane" class="media-pane">
+						<div id="adaptation-media-list" class="adaptation-media-list">
+							<div id="media-list-header" class="media-list-header">
+								<label id="media-list-label" class="media-list-label">Adaptation's Associated Media</label>
+							</div>
+							<div id="media-collection" class="media-collection">
+								<ul id="media-items" class="media-items">
+									<li class="media-unfocused">laskjdflsd</li>
+									<li class="media-unfocused">laskjdflsd</li>
+									<li class="media-focused">laskjdflsd</li>
+									<li class="media-unfocused">laskjdflsd</li>
+									<li class="media-unfocused">laskjdflsd</li>
+									<li class="media-unfocused">laskjdflsd</li>
+								</ul>
+							</div>
+							<div id="media-buttons" class="media-buttons">
+								<div id="addMedia" class="addMedia">
+									<input id="addMediaButton" class="addMediaButton" type="submit" value="Add Media">
+								</div>
+								<div id="removeMedia" class="removeMedia">
+									<input id="removeMediaButton" class="removeMediaButton" type="submit" value="Remove Media">
+								</div>
+							</div>
+						</div>
+						<div id="media-description-div" class="media-description-div">
+							<div id="media-description-label" class="media-description-label">
+								<label class="description-labels"> Media Description: </label>
+							</div>
+							<div id="media-description-field" class="media-description-field">
+								<textarea id="mediaDescription" class="mediaDescription"></textarea>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>

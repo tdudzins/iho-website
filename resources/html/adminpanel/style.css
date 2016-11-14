@@ -239,6 +239,26 @@ ul.tabs li:focus, .nonactive {
 	margin-right: 10px;
 }
 
+/* First Load Pane */
+.first-load-pane {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.select-an-adaptation-div {
+	width: 100%;
+	height: 55px;
+	padding: 10px;
+	text-align: center;
+}
+
+.select-an-adaptation-label {
+	font-family: georgia;
+	font-weight: bold;
+	font-size: 150%;
+}
+
+/* Description Pane */
 .description-pane {
 	margin-top: 10px;
 	margin-bottom: 10px;
@@ -420,4 +440,142 @@ ul.tabs li:focus, .nonactive {
 .adaptationComments {
 	height: 80%;
 	width: 99%;
+}
+
+/* Media Pane */
+.media-pane {
+	vertical-align: bottom;
+	height: calc(100vh - 185px);
+	width: 100%;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+.adaptation-media-list {
+	float: left;
+	height: calc(100vh - 195px);
+	width: 20%;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+.media-list-header {
+	vertical-align: top;
+	padding: 5px;
+	height: 25px;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	background-color: lightgrey;
+	text-align: center;
+}
+
+.media-list-label {
+	width: 100%;
+	font-family: georgia;
+	font-weight: bold;
+	font-size: 100%;
+}
+
+.media-collection {
+	height: calc(100vh - 260px);
+	vertical-align: middle;
+	background-color: lightgrey;
+}
+
+.media-items {
+	background-color: lightgrey;
+	height: 100%;
+	margin-left: 5px;
+	margin-right: 5px;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	padding-left: 0px;
+	list-style:none;
+	overflow-x: hidden;
+}
+
+ul.media-items li {
+	border-bottom-width: 2px;
+	border-bottom-style: solid;
+	border-radius: 5px;
+	cursor: pointer;
+	padding: 5px 0 5px 5px;
+	position: relative;
+	border-bottom-color: darkgrey;
+}
+
+.media-focused {
+	background-color: #3b73af;
+	font-weight: bold;
+	color: white;
+}
+
+.media-unfocused {
+	background-color: white;
+	font-weight: bold;
+	color: black;
+}
+
+.media-buttons {
+	vertical-align: bottom;
+	height: 35px;
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+	background-color: lightgrey;
+}
+
+.addMedia {
+	float: left;
+	margin: 5px;
+	width: 140px;
+	vertical-align: middle;
+}
+
+.addMediaButton {
+	width: 100%;
+	line-height: 1.5;
+}
+
+.removeMedia {
+	float: right;
+	margin: 5px;
+	width: 140px;
+	vertical-align: middle;
+}
+
+.removeMediaButton {
+	width: 100%;
+	line-height: 1.5;
+}
+
+.adaptation-media-info {
+	float: right;
+	height: calc(100vh - 195px);
+	width: 80%;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	padding: 10px;
+}
+
+.media-description-div {
+	width: 100%;
+	height: 150px;
+	padding: 5px;
+}
+
+.media-description-label {
+	width: 100%;
+	height: 30px;
+	vertical-align: top;
+}
+
+.media-description-field {
+	height: 120px;
+	width: 100%;
+	vertical-align: bottom;
+}
+
+.mediaDescription {
+	height: 95%;
+	width: 79%;
 }
