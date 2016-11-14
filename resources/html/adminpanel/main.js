@@ -67,7 +67,7 @@ function tabConfig(id) {
 $("#adaptation-items").ready(loadEventList);
 
 $("#tabs").ready(function(){
-    $("li.tab-content").click(function(){
+    $("li.nonactive").click(function(){
         tabConfig($(this).attr("id"));
     });
     tabConfig("firstLoad");
