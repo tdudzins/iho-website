@@ -63,9 +63,9 @@
 
 .searchbutton {
 	float: right;
-	width: 35px;
+	width: 30px;
 	vertical-align: middle;
-	height: 23px;
+	height: 25px;
 }
 
 .database-collection {
@@ -168,7 +168,39 @@ ul.tabs li {
 	border-top-left-radius: 10px;
 	border-top-right-radius: 10px;
 	float: left;
+}
+
+ul.tabs li:hover {
+	background-color: darkgrey;
+}
+
+ul.tabs li:focus, .active {
+	background-color: lightgrey;
+	font-size: 125%;
+	text-align: center;
+	font-family: georgia;
+	font-weight: bold;
+	background-color: lightgrey;
+	border-top-color: darkgrey;
+	border-top-style: solid;
+	border-top-width: medium;
+	border-left-color: darkgrey;
+	border-left-style: solid;
+	border-left-width: medium;
+	border-right-color: darkgrey;
+	border-right-style: solid;
+	border-right-width: medium;
+	border-bottom-color: lightgrey;
+	border-bottom-style: solid;
+	border-bottom-width: medium;
+}
+
+ul.tabs li:focus, .nonactive {
 	background-color: grey;
+	font-size: 125%;
+	text-align: center;
+	font-family: georgia;
+	font-weight: bold;
 	border-top-color: darkgrey;
 	border-top-style: solid;
 	border-top-width: medium;
@@ -181,21 +213,6 @@ ul.tabs li {
 	border-bottom-color: darkgrey;
 	border-bottom-style: solid;
 	border-bottom-width: medium;
-}
-
-ul.tabs li:hover {
-	background-color: darkgrey;
-}
-
-ul.tabs li:focus, .active {
-	background-color: lightgrey;
-}
-
-.tab-content {
-	font-size: 125%;
-	text-align: center;
-	font-family: georgia;
-	font-weight: bold;
 }
 
 .information-container {
@@ -222,6 +239,26 @@ ul.tabs li:focus, .active {
 	margin-right: 10px;
 }
 
+/* First Load Pane */
+.first-load-pane {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.select-an-adaptation-div {
+	width: 100%;
+	height: 55px;
+	padding: 10px;
+	text-align: center;
+}
+
+.select-an-adaptation-label {
+	font-family: georgia;
+	font-weight: bold;
+	font-size: 150%;
+}
+
+/* Description Pane */
 .description-pane {
 	margin-top: 10px;
 	margin-bottom: 10px;
@@ -335,4 +372,276 @@ ul.tabs li:focus, .active {
 .adaptation-category-combo {
 	width: 60%;
 	height: 20px;
+	line-height: 1.5;
+}
+
+.adaptation-description-div {
+	width: 100%;
+	height: 150px;
+	padding: 5px;
+}
+
+.adaptation-description-label {
+	width: 100%;
+	height: 30px;
+	vertical-align: top;
+}
+
+.adaptation-description-field {
+	height: 120px;
+	width: 100%;
+	vertical-align: bottom;
+}
+
+.adaptationDescription {
+	height: 95%;
+	width: 99%;
+}
+
+.adaptation-references-div {
+	width: 100%;
+	height: 95px;
+	padding: 5px;
+}
+
+.adaptation-references-label {
+	width: 100%;
+	vertical-align: top;
+}
+
+.adaptation-references-field {
+	height: 90%;
+	width: 100%;
+	vertical-align: bottom;
+}
+
+.adaptationReferences {
+	height: 80%;
+	width: 99%;
+}
+
+.adaptation-comments-div {
+	width: 100%;
+	height: 100px;
+	padding: 5px;
+}
+
+.adaptation-comments-label {
+	width: 100%;
+	height: 30px;
+	vertical-align: top;
+}
+
+.adaptation-comments-field {
+	height: 70px;
+	width: 100%;
+	vertical-align: bottom;
+}
+
+.adaptationComments {
+	height: 80%;
+	width: 99%;
+}
+
+/* Media Pane */
+.media-pane {
+	vertical-align: bottom;
+	height: calc(100vh - 185px);
+	width: 100%;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+.adaptation-media-list {
+	float: left;
+	height: calc(100vh - 195px);
+	width: 20%;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+.media-list-header {
+	vertical-align: top;
+	padding: 5px;
+	height: 25px;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	background-color: lightgrey;
+	text-align: center;
+}
+
+.media-list-label {
+	width: 100%;
+	font-family: georgia;
+	font-weight: bold;
+	font-size: 100%;
+}
+
+.media-collection {
+	height: calc(100vh - 260px);
+	vertical-align: middle;
+	background-color: lightgrey;
+}
+
+.media-items {
+	background-color: lightgrey;
+	height: 100%;
+	margin-left: 5px;
+	margin-right: 5px;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	padding-left: 0px;
+	list-style:none;
+	overflow-x: hidden;
+}
+
+ul.media-items li {
+	border-bottom-width: 2px;
+	border-bottom-style: solid;
+	border-radius: 5px;
+	cursor: pointer;
+	padding: 5px 0 5px 5px;
+	position: relative;
+	border-bottom-color: darkgrey;
+}
+
+.media-focused {
+	background-color: #3b73af;
+	font-weight: bold;
+	color: white;
+}
+
+.media-unfocused {
+	background-color: white;
+	font-weight: bold;
+	color: black;
+}
+
+.media-buttons {
+	vertical-align: bottom;
+	height: 35px;
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+	background-color: lightgrey;
+}
+
+.addMedia {
+	float: left;
+	margin: 5px;
+	width: 140px;
+	vertical-align: middle;
+}
+
+.addMediaButton {
+	width: 100%;
+	line-height: 1.5;
+}
+
+.removeMedia {
+	float: right;
+	margin: 5px;
+	width: 140px;
+	vertical-align: middle;
+}
+
+.removeMediaButton {
+	width: 100%;
+	line-height: 1.5;
+}
+
+.adaptation-media-info {
+	float: right;
+	height: calc(100vh - 195px);
+	width: 80%;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+.media-description-div {
+	width: 100%;
+	height: 150px;
+	padding: 5px;
+}
+
+.media-description-label {
+	width: 100%;
+	height: 30px;
+	vertical-align: top;
+}
+
+.media-description-field {
+	height: 120px;
+	width: 100%;
+	vertical-align: bottom;
+}
+
+.mediaDescription {
+	height: 95%;
+	width: 99%;
+}
+
+.media-type-div {
+	width: 100%;
+	height: 25px;
+	padding: 5px;
+}
+
+.media-type-label {
+	float: left;
+	width: 20%;
+}
+
+.media-type-field {
+	float: right;
+	width: 80%;
+}
+
+.media-type-combo {
+	width: 40%;
+	height: 20px;
+	line-height: 1.5;
+}
+
+.embedded-link-div {
+	width: 100%;
+	height: 25px;
+	padding: 5px;
+}
+
+.embedded-link-label {
+	float: left;
+	width: 20%;
+}
+
+.embedded-link-field {
+	float: right;
+	width: 80%;
+}
+
+.embedded-link {
+	width: 40%;
+	height: 20px;
+	line-height: 1.5;
+}
+
+.upload-file-div {
+	width: 100%;
+	height: 25px;
+	padding: 5px;
+}
+
+.upload-file-label {
+	float: left;
+	width: 20%;
+}
+
+.upload-file-field {
+	float: right;
+	width: 80%;
+}
+
+.upload-file {
+	width: 40%;
+	height: 20px;
+	line-height: 1.5;
 }
