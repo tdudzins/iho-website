@@ -44,23 +44,25 @@ function updateDiscription(eID) {
 }
 
 function tabConfig(id) {
-    $('#'+id).removeClass("tab-content").addClass("active");
-    $("ui.active").removeClass("active").addClass("tab-content");
-    switch (id) {
-        case 'firstLoad':
+    if (id === 'none') {
+        $("li.active").removeClass("active").addClass("tab-content");
+    }
+    else{
+        $('#'+id).removeClass("tab-content").addClass("active");
+        $("li.active").removeClass("active").addClass("tab-content");
+        switch (id) {
+            case 'tab-description':
 
-            break;
-        case 'tab-description':
+                break;
+            case 'tab-media':
 
-            break;
-        case 'tab-media':
+                break;
+            case 'tab-relations':
 
-            break;
-        case 'tab-relations':
+                break;
+            default:
 
-            break;
-        default:
-
+        }
     }
 }
 
@@ -70,5 +72,5 @@ $("#tabs").ready(function(){
     $("li.tab-content").click(function(){
         tabConfig($(this).attr("id"));
     });
-    tabConfig("firstLoad");
+    tabConfig("none");
 });
