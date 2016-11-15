@@ -8,10 +8,12 @@ function getEventList(listID, callback) {
                 $('#adaptation-items').append('<li id=\'' + item.eventID + '\' class=\'adpt-unfocused\' >'+ item.eventName + '</li>');
             });
             $('li.adpt-unfocused').click(function(){
-                $('li.adpt-focused').removeClass('adpt-focused').addClass('adpt-unfocused');
-                $(this).removeClass('adpt-unfocused').addClass('adpt-focused');
-                loadDiscription($(this).attr('id'));
-                tabConfig('tab-description');
+                if($('#editsaveButton').val() !== 'Save'){
+                    $('li.adpt-focused').removeClass('adpt-focused').addClass('adpt-unfocused');
+                    $(this).removeClass('adpt-unfocused').addClass('adpt-focused');
+                    loadDiscription($(this).attr('id'));
+                    tabConfig('tab-description');
+                }
             });
             callback();
         }
@@ -36,14 +38,15 @@ function getEventList(listID, callback) {
 function deleteEvent(eventID, eventName){
     if (confirm('Are you sure you want to delete: ' + eventName) == true){
         $.post('/datatoserver', {action:'d', table:'event', value: eventID}, function(data, status) {
-            getEventList('adaptation-items', function(){
 
-            });
         })
         .fail(function(response) {
             console.log('Failed to load data');
             window.location = '/error';
         });
+        getEventList('adaptation-items', function(){
+
+            });
     }
 }
 
@@ -59,7 +62,7 @@ function loadDiscription(eID) {
         $('#ageBoundaryStart-units').val((obj[0].boundaryStart > 1000000)? 'Ma': 'Ka' );
         $('#ageBoundaryEnd').val((obj[0].boundaryEnd > 1000000)? obj[0].boundaryEnd / 1000000: obj[0].boundaryEnd / 1000);
         $('#ageBoundaryEnd-units').val((obj[0].boundaryEnd > 1000000)? 'Ma': 'Ka' );
-        $('#adaptationCategory').val(obj[0].category);
+        $('#adaptation-category-combo').val(obj[0].category);
         $('#adaptationDescription').val(obj[0].description);
         $('#adaptationComments').val(obj[0].comments);
         $('#adaptationReferences').val(obj[0].reference);
@@ -88,14 +91,17 @@ function tabConfig(id) {
             $('#information-container').append(firstLoadPane);
             break;
         case 'create-description':
+            $('#tab-description').removeClass('nonactive').addClass('active');
+            $('li.adpt-focused').removeClass('adpt-focused').addClass('adpt-unfocused');
             $('#information-container').empty();
             $('#information-container').append(descriptionPane);
-            $('li.relations-focused').removeClass('relations-focused').addClass('relations-unfocused');
+            $('#editsaveButton').val('Save');
             break;
         case 'tab-description':
             $('#information-container').empty();
             $('#information-container').append(descriptionPane);
             loadDiscription($('li.adpt-focused').attr('id'));
+            disableEditing(id);
             break;
         case 'tab-media':
             $('#information-container').empty();
@@ -112,12 +118,62 @@ function tabConfig(id) {
     }
 }
 
-function enableEditing() {
+function enableEditing(id) {
+    switch (id) {
+        case 'tab-description':
+            $('#adaptationName').prop('disabled', false);
+            $('#earliestDirectEvidence').prop('disabled', false);
+            $('#earliestDirectEvidence-units').prop('disabled', false);
+            $('#earliestIndirectEvidence').prop('disabled', false);
+            $('#earliestIndirectEvidence-units').prop('disabled', false);
+            $('#ageBoundaryStart').prop('disabled', false);
+            $('#ageBoundaryStart-units').prop('disabled', false);
+            $('#ageBoundaryEnd').prop('disabled', false);
+            $('#ageBoundaryEnd-units').prop('disabled', false);
+            $('#adaptation-category-combo').prop('disabled', false);
+            $('#adaptationDescription').prop('disabled', false);
+            $('#adaptationComments').prop('disabled', false);
+            $('#adaptationReferences').prop('disabled', false);
+            break;
+        case 'tab-media':
 
+
+            break;
+        case 'tab-relations':
+
+            break;
+        default:
+
+    }
 }
 
-function disableEditing() {
+function disableEditing(id) {
+    switch (id) {
+        case 'tab-description':
+            $('#adaptationName').prop('disabled', true);
+            $('#earliestDirectEvidence').prop('disabled', true);
+            $('#earliestDirectEvidence-units').prop('disabled', true);
+            $('#earliestIndirectEvidence').prop('disabled', true);
+            $('#earliestIndirectEvidence-units').prop('disabled', true);
+            $('#ageBoundaryStart').prop('disabled', true);
+            $('#ageBoundaryStart-units').prop('disabled', true);
+            $('#ageBoundaryEnd').prop('disabled', true);
+            $('#ageBoundaryEnd-units').prop('disabled', true);
+            $('#adaptation-category-combo').prop('disabled', true);
+            $('#adaptationDescription').prop('disabled', true);
+            $('#adaptationComments').prop('disabled', true);
+            $('#adaptationReferences').prop('disabled', true);
+            break;
+        case 'tab-media':
 
+
+            break;
+        case 'tab-relations':
+
+            break;
+        default:
+
+    }
 }
 
 
@@ -136,11 +192,13 @@ $('#tabs').ready(function(){
 });
 $('#mainsearchbutton').ready(function() {
     $('#mainsearchbutton').click(function(){
-        tabConfig('firstLoad');
-        getEventList('adaptation-items', function(){
-        if ($('#mainsearchbar-text').val() != '')
-            searchUI('adaptation-items', $('#mainsearchbar-text').val());
-        });
+        if($('#editsaveButton').val() !== 'Save'){
+            tabConfig('firstLoad');
+            getEventList('adaptation-items', function(){
+            if ($('#mainsearchbar-text').val() != '')
+                searchUI('adaptation-items', $('#mainsearchbar-text').val());
+            });
+        }
     });
 });
 $('#deleteAdaptationButton').ready(function(){
@@ -152,7 +210,24 @@ $('#deleteAdaptationButton').ready(function(){
 });
 $('#createAdaptationButton').ready(function(){
     $('#createAdaptationButton').click(function(){
-        tabConfig('create-description');
-        enableEditing('tab-description');
+        if($('#editsaveButton').val() !== 'Save'){
+            tabConfig('create-description');
+            enableEditing('tab-description');
+            $('#save-edit-container').append('<input id="cancleButton" class="editsaveButton" value="Cancle" type="submit">');
+            $('#cancleButton').click(function(){
+                if (confirm('Are you sure you want to discard changes?') == true) {
+                    tabConfig('firstLoad');
+                    disableEditing('tab-description');
+                    $('#editsaveButton').val('Edit');
+                    $('#cancleButton').remove();
+                }
+            });
+        }
     });
 });
+
+
+//for (var i = 0; i < 500; i++) {
+//    $.post('/datatoserver', {action:'c', table:'event', data:['event'+i, 'description', 10000000, 15000000, 5000000,
+//        20000000, 'reference', 'comments', 1]}, function(data, status) {});
+//}
