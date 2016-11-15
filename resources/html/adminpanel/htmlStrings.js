@@ -175,7 +175,10 @@ var mediaPane =
     </div>`;
 
 var relationsPane =
-    `<div id="relations-pane" class="relations-pane">
+    `<div id="save-edit-container" class="save-edit-container">
+		  <input id="editsaveButton" class="editsaveButton" value="Edit" type="submit">
+  	</div>
+    <div id="relations-pane" class="relations-pane">
       <div id="all-adapts-pane" class="all-adapts-pane">
         <div id="relations-header" class="relations-header">
           <label class="description-labels"> All Adaptations </label>
