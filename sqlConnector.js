@@ -1,4 +1,4 @@
-var mysql = require("mysql");
+var mysql = require('mysql');
 var pool  = mysql.createPool({
     connectionLimit : 100,
     host            : '127.0.0.1',
@@ -86,7 +86,7 @@ exports.addRow = function addRow(table, data, callback) {
                     break;
                 default:
                     connection.release();
-                    callback("Table Not Found", null);
+                    callback('Table Not Found', null);
             }
         }
     });
@@ -127,10 +127,35 @@ exports.removeCategory = function removeCategory(table, key, value, callback) {
             var result = connection.query('UPDATE event SET category=1 WHERE category = ?', value ,function (err, res) {
                 connection.release();
                 if(err)
-                    callback(err, null)
+                    callback(err, null);
                 else
                     removeRow(table, key, value, callback);
             });
+    });
+};
+
+/**
+* Removes a event and all related content from the database
+* @param {string} key the primary key name in the event table
+* @param {function} callback is the callback function to be run when complete
+*/
+exports.removeEvent = function removeEvent(value, callback) {
+    pool.getConnection(function(err,connection){
+        if (err) callback(err, null);
+        else
+            connection.query('DELETE FROM media WHERE eventID = ?', value ,function (err, res) {
+                if(err)
+                    callback(err, null);
+            });
+            connection.query('DELETE FROM relationships WHERE primaryEventID = ?', value ,function (err, res) {
+                if(err)
+                    callback(err, null);
+            });
+            connection.query('DELETE FROM event WHERE eventID = ?', value ,function (err, res) {
+                if(err)
+                    callback(err, null);
+            });
+            connection.release();
     });
 };
 
@@ -139,7 +164,7 @@ exports.removeCategory = function removeCategory(table, key, value, callback) {
 * @param {string} table is the name of the table that the row is in
 * @param {string} key the primary key name in the table
 * @param {string} value the value of the primary key
-* @param {string} data is an array of values to be changed formated like 'id="vlaue",id="vlaue"'
+* @param {string} data is an array of values to be changed formated like 'id='vlaue',id='vlaue''
 * @param {function} callback is the callback function to be run when complete
 */
 exports.editRow = function editRow(table, key, value, data, callback) {
@@ -332,7 +357,7 @@ exports.getAllRelationData = function getAllRelationData(eventID, callback){
 /**
 * Queries the database for all the eventID and the eventName
 * @param {function} callback is the callback function to be run when complete
-* returns all the data in an array of objects {eventID:1, eventName:"Name"},{}...
+* returns all the data in an array of objects {eventID:1, eventName:'Name'},{}...
 */
 exports.getNamesandIDs = function getNamesandIDs(callback){
     pool.getConnection(function(err,connection){

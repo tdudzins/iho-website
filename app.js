@@ -140,8 +140,16 @@ app.post('/datatoserver', requireLogin, function(req, res){
                 });
                 break;
             case 'd':
-                if(req.body.table === category){
+                if(req.body.table === 'category'){
                     dataBase.removeCategory(req.body.table, req.body.key, req.body.value, function(err, data){
+                        if(err)
+                            res.status(500).end();
+                        else
+                            res.end(JSON.stringify(data));
+                    });
+                }
+                else if (req.body.table === 'event') {
+                    dataBase.removeEvent(req.body.value, function(err, data){
                         if(err)
                             res.status(500).end();
                         else
@@ -159,12 +167,12 @@ app.post('/datatoserver', requireLogin, function(req, res){
                 break;
             default:
                 res.status(404);
-                res.end("unknown action");
+                res.end('unknown action');
         }
     }
     else{
         res.status(403);
-        res.end("cannot edit user table");
+        res.end('cannot edit user table');
     }
 });
 app.post('/datafromserver', function(req, res){
@@ -180,7 +188,7 @@ app.post('/datafromserver', function(req, res){
                 break;
             case 'q':
                 switch (req.body.table) {
-                    case "event":
+                    case 'event':
                         dataBase.getEvent(req.body.eventid, function(err, data){
                             if(err)
                                 res.status(500).end();
@@ -188,7 +196,7 @@ app.post('/datafromserver', function(req, res){
                                 res.end(JSON.stringify(data));
                         });
                         break;
-                    case "media":
+                    case 'media':
                         dataBase.getMedia(req.body.eventid, function(err, data){
                             if(err)
                                 res.status(500).end();
@@ -196,7 +204,7 @@ app.post('/datafromserver', function(req, res){
                                 res.end(JSON.stringify(data));
                         });
                         break;
-                    case "relationships":
+                    case 'relationships':
                         dataBase.getRelations(req.body.eventid, function(err, data){
                             if(err)
                                 res.status(500).end();
@@ -204,7 +212,7 @@ app.post('/datafromserver', function(req, res){
                                 res.end(JSON.stringify(data));
                         });
                         break;
-                    case "category":
+                    case 'category':
                         dataBase.getCategory(req.body.eventid, function(err, data){
                             if(err)
                                 res.status(500).end();
@@ -215,7 +223,7 @@ app.post('/datafromserver', function(req, res){
 
                     default:
                         res.status(404);
-                        res.end("unknown action");
+                        res.end('unknown action');
                 }
                 break;
             case 't':
@@ -245,12 +253,12 @@ app.post('/datafromserver', function(req, res){
                 break;
             default:
                 res.status(404);
-                res.end("unknown action");
+                res.end('unknown action');
         }
     }
     else{
         res.status(403);
-        res.end("cannot view user table");
+        res.end('cannot view user table');
     }
 });
 
