@@ -9,7 +9,8 @@ function loadEventList() {
         $("li.adpt-unfocused").click(function(){
             $("li.adpt-focused").removeClass("adpt-focused").addClass("adpt-unfocused");
             $(this).removeClass("adpt-unfocused").addClass("adpt-focused");
-            updateDiscription($(this).attr("id"));
+            loadDiscription($(this).attr("id"));
+            tabConfig("tab-description");
         });
     })
     .fail(function(response) {
@@ -18,7 +19,7 @@ function loadEventList() {
     });
 }
 
-function updateDiscription(eID) {
+function loadDiscription(eID) {
     $.post("/datafromserver", {action:"q", table:"event", eventid: eID}, function(data, status) {
         var obj = JSON.parse(data);
         console.log(data);
@@ -44,19 +45,26 @@ function updateDiscription(eID) {
 }
 
 function tabConfig(id) {
+    $("li.active").removeClass("active").addClass("nonactive");
     $('#'+id).removeClass("nonactive").addClass("active");
-    $("ui.active").removeClass("active").addClass("nonactive");
     switch (id) {
         case 'firstLoad':
-
+            $("#information-container").empty();
+            $("#information-container").append(firstLoadPane);
             break;
         case 'tab-description':
+            $("#information-container").empty();
+            $("#information-container").append(descriptionPane);
 
             break;
         case 'tab-media':
+            $("#information-container").empty();
+            $("#information-container").append(mediaPane);
 
             break;
         case 'tab-relations':
+            $("#information-container").empty();
+            $("#information-container").append(relationsPane);
 
             break;
         default:
@@ -64,11 +72,15 @@ function tabConfig(id) {
     }
 }
 
-$("#adaptation-items").ready(loadEventList);
+function searchUI(listID, adapName) {
 
+}
+// Inital page loading
+$("#information-container").ready(function(){tabConfig('firstLoad');});
+$("#adaptation-items").ready(loadEventList);
 $("#tabs").ready(function(){
     $("li.nonactive").click(function(){
         tabConfig($(this).attr("id"));
     });
-    tabConfig("firstLoad");
 });
+$(#)

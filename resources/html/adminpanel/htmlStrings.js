@@ -1,0 +1,198 @@
+var descriptionPane =
+    `<div id="save-edit-container" class="save-edit-container">
+		<input id="editsaveButton" class="editsaveButton" value="Edit" type="submit">
+	</div>
+
+    <div id="description-pane" class="description-pane">
+
+        <div id="adaptation-name-div" class="adaptation-name-div">
+            <div id="adaptation-name-label" class="adaptation-name-label">
+                <label class="description-labels"> Adaptation Name: </label>
+            </div>
+            <div id="adaptation-name-field" class="adaptation-name-field">
+                <input id="adaptationName" class="description-text" type="text">
+            </div>
+        </div>
+
+        <div id="adaptation-de-div" class="adaptation-de-div">
+            <div id="adaptation-de-label" class="adaptation-de-label">
+                <label class="description-labels"> Earliest Direct Evidence: </label>
+            </div>
+            <div id="adaptation-de-field" class="adaptation-de-field">
+                <input id="earliestDirectEvidence" class="description-text" type="text">
+                <select id="earliestDirectEvidence-units" class="units-combobox">
+                    <option value="Ma">Ma</option>
+                    <option value="Ka">Ka</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="adaptation-ie-div" class="adaptation-ie-div">
+            <div id="adaptation-ie-label" class="adaptation-ie-label">
+                <label class="description-labels"> Earliest Indirect Evidence: </label>
+            </div>
+            <div id="adaptation-ie-field" class="adaptation-ie-field">
+                <input id="earliestIndirectEvidence" class="description-text" type="text">
+                <select id="earliestIndirectEvidence-units" class="units-combobox">
+                    <option value="Ma">Ma</option>
+                    <option value="Ka">Ka</option>
+                </select>
+            </div>
+        </div>
+
+
+        <div id="boundary-start-div" class="boundary-start-div">
+            <div id="boundary-start-label" class="boundary-start-label">
+                <label class="description-labels"> Age Boundary Start: </label>
+            </div>
+            <div id="boundary-start-field" class="boundary-start-field">
+                <input id="ageBoundaryStart" class="description-text" type="text">
+                <select id="ageBoundaryStart-units" class="units-combobox">
+                    <option value="Ma">Ma</option>
+                    <option value="Ka">Ka</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="boundary-end-div" class="boundary-end-div">
+            <div id="boundary-end-label" class="boundary-end-label">
+                <label class="description-labels"> Age Boundary End: </label>
+            </div>
+            <div id="boundary-end-field" class="boundary-end-field">
+                <input id="ageBoundaryEnd" class="description-text" type="text">
+                <select id="ageBoundaryEnd-units" class="units-combobox">
+                    <option value="Ma">Ma</option>
+                    <option value="Ka">Ka</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="adaptation-category-div" class="adaptation-category-div">
+            <div id="adaptation-category-label" class="adaptation-category-label">
+                <label class="description-labels"> Category: </label>
+            </div>
+            <div id="adaptation-category-field" class="adaptation-category-field">
+                <select id="adaptation-category-combo" class="adaptation-category-combo">
+                </select>
+            </div>
+        </div>
+
+        <div id="adaptation-description-div" class="adaptation-description-div">
+            <div id="adaptation-description-label" class="adaptation-description-label">
+                <label class="description-labels"> Adaptation Description: </label>
+            </div>
+            <div id="adaptation-description-field" class="adaptation-description-field">
+                <textarea id="adaptationDescription" class="adaptationDescription"></textarea>
+            </div>
+        </div>
+
+        <div id="adaptation-references-div" class="adaptation-references-div">
+            <div id="adaptation-references-label" class="adaptation-references-label">
+                <label class="description-labels"> References: </label>
+            </div>
+            <div id="adaptation-references-field" class="adaptation-references-field">
+                <textarea id="adaptationReferences" class="adaptationReferences"></textarea>
+            </div>
+        </div>
+
+        <div id="adaptation-comments-div" class="adaptation-comments-div">
+            <div id="adaptation-comments-label" class="adaptation-comments-label">
+                <label class="description-labels"> Comments: </label>
+            </div>
+            <div id="adaptation-comments-field" class="adaptation-comments-field">
+                <textarea id="adaptationComments" class="adaptationComments"></textarea>
+            </div>
+        </div>
+
+    </div>`;
+
+var mediaPane =
+    `<div id="save-edit-container" class="save-edit-container">
+		<input id="editsaveButton" class="editsaveButton" value="Edit" type="submit">
+	</div>
+
+    <div id="media-pane" class="media-pane">
+        <div id="adaptation-media-list" class="adaptation-media-list">
+            <div id="media-list-header" class="media-list-header">
+                <label id="media-list-label" class="media-list-label">Adaptation's Associated Media</label>
+            </div>
+            <div id="media-collection" class="media-collection">
+                <ul id="media-items" class="media-items">
+                </ul>
+            </div>
+            <div id="media-buttons" class="media-buttons">
+                <div id="addMedia" class="addMedia">
+                    <input id="addMediaButton" class="addMediaButton" type="submit" value="Add Media">
+                </div>
+                <div id="removeMedia" class="removeMedia">
+                    <input id="removeMediaButton" class="removeMediaButton" type="submit" value="Remove Media">
+                </div>
+            </div>
+        </div>
+        <div id="adaptation-media-info>" class="adaptation-media-info">
+            <div id="media-description-div" class="media-description-div">
+                <div id="media-description-label" class="media-description-label">
+                    <label class="description-labels"> Media Description: </label>
+                </div>
+                <div id="media-description-field" class="media-description-field">
+                    <textarea id="mediaDescription" class="mediaDescription"></textarea>
+                </div>
+            </div>
+            <div id="media-type-div" class="media-type-div">
+                <div id="media-type-label" class="media-type-label">
+                    <label class="description-labels"> Media Type </label>
+                </div>
+                <div id="media-type-field" class="media-type-field">
+                    <select id="media-type-combo" class="media-type-combo">
+                        <option id="upload-default" class="upload-default">Select one of the following media types...</option>
+                        <option id="upload-picture" class="upload-picture">Upload Picture</option>
+                        <option id="upload-video" class="upload-video">Upload Video</option>
+                        <option id="embedded-picture" class="embedded-picture">Embedded Picture</option>
+                        <option id="embedded-video" class="embedded-video">Embedded Video</option>
+                        <option id="other-option" class="other-option">Other</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="embedded-link-div" class="embedded-link-div">
+                <div id="embedded-link-label" class="embedded-link-label">
+                    <label class="description-labels"> Embedded Link: </label>
+                </div>
+                <div id="embedded-link-field" class="embedded-link-field">
+                    <input id="embedded-link" class="embedded-link" type="text">
+                </div>
+            </div>
+
+            <div id="upload-file-div" class="upload-file-div">
+                <div id="upload-file-label" class="upload-file-label">
+                    <label class="description-labels"> Upload File: </label>
+                </div>
+                <div id="upload-file-field" class="upload-file-field">
+                    <input id="upload-file" class="upload-file" type="file">
+                </div>
+            </div>
+        </div>
+    </div>`;
+
+var relationsPane =
+    `<div id="save-edit-container" class="save-edit-container">
+		<input id="editsaveButton" class="editsaveButton" value="Edit" type="submit">
+	</div>
+
+    <div id="relations-pane" class="relations-pane">
+        <div id="precondition-div" class="precondition-div">
+        </div>
+    </div>`;
+
+var firstLoadPane =
+	`<div id="save-edit-container" class="save-edit-container">
+		<input id="editsaveButton" class="editsaveButton" value="Edit" type="submit">
+	</div>
+
+
+	<div id="first-load-pane" class="first-load-pane">
+
+		<div id="select-an-adaptation-div" class="select-an-adaptation-div">
+			<label id="select-an-adaptation-label" class="select-an-adaptation-label"> Please create an adaptation or select an adaptation <br> from the list on the left side of the browser. </label>
+		</div>
+	</div>`;
