@@ -84,7 +84,6 @@ app.get ('/login', function(req, res) {
 });
 
 app.post ('/login', function(req, res) {
-    console.log('Recieved Login Post');
     var data = [ req.body.email ];
     dataBase.getUser(data, function(err, dbUser) {
         if(!dbUser) {
@@ -169,7 +168,6 @@ app.post('/datatoserver', requireLogin, function(req, res){
     }
 });
 app.post('/datafromserver', function(req, res){
-    console.log(req.body);
     if(req.body.table !== 'user'){
         switch (req.body.action) {
             case 'r':
