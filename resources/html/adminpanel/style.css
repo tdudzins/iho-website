@@ -466,7 +466,7 @@ ul.tabs li:focus, .nonactive {
 	height: 25px;
 	border-top-left-radius: 10px;
 	border-top-right-radius: 10px;
-	background-color: lightgrey;
+	background-color: darkgrey;
 	text-align: center;
 }
 
@@ -480,11 +480,11 @@ ul.tabs li:focus, .nonactive {
 .media-collection {
 	height: calc(100vh - 260px);
 	vertical-align: middle;
-	background-color: lightgrey;
+	background-color: darkgrey;
 }
 
 .media-items {
-	background-color: lightgrey;
+	background-color: white;
 	height: 100%;
 	margin-left: 5px;
 	margin-right: 5px;
@@ -522,7 +522,7 @@ ul.media-items li {
 	height: 35px;
 	border-bottom-left-radius: 10px;
 	border-bottom-right-radius: 10px;
-	background-color: lightgrey;
+	background-color: darkgrey;
 }
 
 .addMedia {
@@ -644,4 +644,240 @@ ul.media-items li {
 	width: 40%;
 	height: 20px;
 	line-height: 1.5;
+}
+
+/* Relations Pane */
+.relations-pane {
+	vertical-align: bottom;
+	height: calc(100vh - 178px);
+	width: 100%;
+	margin-top: 5px;
+}
+
+.all-adapts-pane {
+	float: left;
+	height: 100%;
+	width: 30%;
+}
+
+.stacked-pane {
+	float: right;
+	height: 100%;
+	width: 70%;
+}
+
+.relations-buttons-pane {
+	float: left;
+	height: 100%;
+	width: 33%;
+}
+
+.relations-header {
+	vertical-align: top;
+	text-align: center;
+	height: 30px;
+	width: 100%;
+}
+
+.relations-sorting {
+	padding: 5px;
+	height: 25px;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	background-color: darkgrey;
+}
+
+.relations-searchbar-text {
+	float: left;
+	width: 87%;
+	vertical-align: middle;
+	margin-top: 1px;
+}
+
+.relations-searchbutton {
+	float: right;
+	width: 10%;
+	vertical-align: middle;
+	height: 25px;
+}
+
+.relations-database-collection {
+	height: calc(100vh - 245px);
+	vertical-align: middle;
+	background-color: darkgrey;
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+}
+
+.relations-items {
+	background-color: white;
+	height: 98%;
+	margin-left: 5px;
+	margin-right: 5px;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	padding-left: 0px;
+	list-style:none;
+	overflow-x: hidden;
+}
+
+ul.relations-items li {
+	border-bottom-width: 2px;
+	border-bottom-style: solid;
+	border-radius: 5px;
+	cursor: pointer;
+	padding: 5px 0 5px 5px;
+	position: relative;
+	border-bottom-color: #ccc;
+}
+
+.relations-focused {
+	background-color: #3b73af;
+	font-weight: bold;
+	color: white;
+}
+
+.relations-unfocused {
+	background-color: white;
+	font-weight: bold;
+	color: black;
+}
+
+.add-to-preconditions {
+	height: 30px;
+	width: 70%;
+	vertical-align: top;
+	margin-top: calc(100vh * .3);
+	margin-bottom: 10%;
+	margin-left: 15%;
+}
+
+.add-to-relationships {
+	height: 30px;
+	width: 70%;
+	margin-bottom: 10%;
+	margin-left: 15%;
+}
+
+.remove-from-list {
+	height: 30px;
+	width: 70%;
+	margin-left: 15%;
+	vertical-align: bottom;
+}
+
+.relations-div-pane {
+	float: right;
+	height: 100%;
+	width: 64%;
+}
+
+.preconditions-div {
+	height: 50%;
+	width: 100%;
+	vertical-align: top;
+}
+
+.preconditions-header {
+	vertical-align: top;
+	text-align: center;
+	height: 30px;
+	width: 100%;
+}
+
+.preconditions-database-collection {
+	height: calc(100vh * .366);
+	vertical-align: middle;
+	background-color: darkgrey;
+	border-radius: 10px;
+	padding-top: 5px;
+}
+
+.preconditions-items {
+	background-color: white;
+	height: 98%;
+	margin-left: 5px;
+	margin-right: 5px;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	padding-left: 0px;
+	list-style:none;
+	overflow-x: hidden;
+}
+
+ul.preconditions-items li {
+	border-bottom-width: 2px;
+	border-bottom-style: solid;
+	border-radius: 5px;
+	cursor: pointer;
+	padding: 5px 0 5px 5px;
+	position: relative;
+	border-bottom-color: #ccc;
+}
+
+.preconditions-focused {
+	background-color: #3b73af;
+	font-weight: bold;
+	color: white;
+}
+
+.preconditions-unfocused {
+	background-color: white;
+	font-weight: bold;
+	color: black;
+}
+
+.relationships-div {
+	height: 50%;
+	width: 100%;
+	vertical-align: bottom;
+}
+
+.relationships-header {
+	vertical-align: top;
+	text-align: center;
+	height: 30px;
+	width: 100%;
+}
+
+.relationships-database-collection {
+	height: calc(100vh * .366);
+	vertical-align: middle;
+	background-color: darkgrey;
+	border-radius: 10px;
+	padding-top: 5px;
+}
+
+.relationships-items {
+	background-color: white;
+	height: 98%;
+	margin-left: 5px;
+	margin-right: 5px;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	padding-left: 0px;
+	list-style:none;
+	overflow-x: hidden;
+}
+
+ul.relationships-items li {
+	border-bottom-width: 2px;
+	border-bottom-style: solid;
+	border-radius: 5px;
+	cursor: pointer;
+	padding: 5px 0 5px 5px;
+	position: relative;
+	border-bottom-color: #ccc;
+}
+
+.relationships-focused {
+	background-color: #3b73af;
+	font-weight: bold;
+	color: white;
+}
+
+.relationships-unfocused {
+	background-color: white;
+	font-weight: bold;
+	color: black;
 }

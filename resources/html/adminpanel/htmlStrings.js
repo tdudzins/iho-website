@@ -175,14 +175,48 @@ var mediaPane =
     </div>`;
 
 var relationsPane =
-    `<div id="save-edit-container" class="save-edit-container">
-		<input id="editsaveButton" class="editsaveButton" value="Edit" type="submit">
-	</div>
-
-    <div id="relations-pane" class="relations-pane">
-        <div id="precondition-div" class="precondition-div">
+    `<div id="relations-pane" class="relations-pane">
+      <div id="all-adapts-pane" class="all-adapts-pane">
+        <div id="relations-header" class="relations-header">
+          <label class="description-labels"> All Adaptations </label>
         </div>
-    </div>`;
+        <div id="relations-sorting" class="relations-sorting">
+          <input id="relations-searchbar-text" class="relations-searchbar-text" type="text" placeholder="Search for an adaptation..." >
+          <input id="relations-searchbutton" class="relations-searchbutton" type="submit" value="Go">
+        </div>
+        <div id="relations-database-collection" class="relations-database-collection">
+          <ul id="relations-items" class="relations-items">
+          </ul>
+        </div>
+      </div>
+      <div id="stacked-pane" class="stacked-pane">
+        <div id="relations-buttons-pane" class="relations-buttons-pane">
+          <input id="add-to-preconditions" class="add-to-preconditions" type="button" value="Add To Preconditions">
+          <input id="add-to-relationships" class="add-to-relationships" type="button" value="Add To Relationships">
+          <input id="remove-from-list" class="remove-from-list" type="button" value="Remove">
+        </div>
+        <div id="relations-div-pane" class="relations-div-pane">
+          <div id="preconditions-div" class="preconditions-div">
+              <div id="preconditions-header" class="preconditions-header">
+                <label class="description-labels"> Preconditions </label>
+              </div>
+              <div id="preconditions-database-collection" class="preconditions-database-collection">
+                <ul id="preconditions-items" class="preconditions-items">
+                </ul>
+              </div>
+            </div>
+            <div id="relationships-div" class="relationships-div">
+              <div id="relationships-header" class="relationships-header">
+                <label class="description-labels"> Relationships </label>
+              </div>
+              <div id="relationships-database-collection" class="relationships-database-collection">
+                <ul id="relationships-items" class="relationships-items">
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>`;
 
 var firstLoadPane =
 	`<div id="save-edit-container" class="save-edit-container">
