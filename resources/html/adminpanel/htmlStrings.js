@@ -114,7 +114,7 @@ var mediaPane =
     <div id="media-pane" class="media-pane">
         <div id="adaptation-media-list" class="adaptation-media-list">
             <div id="media-list-header" class="media-list-header">
-                <label id="media-list-label" class="media-list-label">Adaptation's Associated Media</label>
+                <label id="media-list-label" class="media-list-label">Media List</label>
             </div>
             <div id="media-collection" class="media-collection">
                 <ul id="media-items" class="media-items">
