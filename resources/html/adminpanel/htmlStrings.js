@@ -229,4 +229,4 @@ var firstLoadPane =
 		</div>
 	</div>`;
 
-var cancelButton = '<input id="cancelButton" class="editsaveButton" value="Cancel" type="submit">';
+var cancleButton = '<input id="cancleButton" class="editsaveButton" value="Cancle" type="submit">';

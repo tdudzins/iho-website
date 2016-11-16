@@ -306,13 +306,13 @@ $('#createAdaptationButton').ready(function(){
         if($('#editsaveButton').val() !== 'Save'){
             tabConfig('create-description');
             enableEditing('tab-description');
-            $('#save-edit-container').append(cancelButton);
-            $('#cancelButton').click(function(){
+            $('#save-edit-container').append(cancleButton);
+            $('#cancleButton').click(function(){
                 if (confirm('Are you sure you want to discard changes?') == true) {
                     tabConfig('firstLoad');
                     disableEditing('tab-description');
                     $('#editsaveButton').val('Edit');
-                    $('#cancelButton').remove();
+                    $('#cancleButton').remove();
                 }
             });
             $('#editsaveButton').click(function(){
@@ -320,7 +320,7 @@ $('#createAdaptationButton').ready(function(){
                     var tempId = saveValues('tab-description');
                     disableEditing('tab-description');
                     $('#editsaveButton').val('Edit');
-                    $('#cancelButton').remove();
+                    $('#cancleButton').remove();
                     //TODO Remove click edit button and add click for edit
                     searchUI('adaptation-items', tempId);
 
