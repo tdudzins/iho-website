@@ -11,7 +11,6 @@ function getEventList(listID, callback) {
                 if($('#editsaveButton').val() !== 'Save'){
                     $('li.adpt-focused').removeClass('adpt-focused').addClass('adpt-unfocused');
                     $(this).removeClass('adpt-unfocused').addClass('adpt-focused');
-                    loadDiscription($(this).attr('id'));
                     tabConfig('tab-description');
                 }
             });
@@ -108,19 +107,63 @@ function tabConfig(id) {
             $('#information-container').append(descriptionPane);
             loadDiscription($('li.adpt-focused').attr('id'));
             disableEditing(id);
+            setupEditButton(id);
             break;
         case 'tab-media':
             $('#information-container').empty();
             $('#information-container').append(mediaPane);
-
+            loadMedia($('li.adpt-focused').attr('id'));
+            disableEditing(id);
+            setupEditButton(id);
             break;
         case 'tab-relations':
             $('#information-container').empty();
             $('#information-container').append(relationsPane);
-
+            loadRelations($('li.adpt-focused').attr('id'));
+            disableEditing(id);
+            setupEditButton(id);
             break;
         default:
             console.log('Error: tabConfig');
+            window.location = '/error';
+    }
+}
+
+function setupEditButton(id) {
+    switch (id) {
+            case 'create-description':
+            $('#save-edit-container').append(cancleButton);
+            $('#cancleButton').click(function(){
+                if (confirm('Are you sure you want to discard changes?') == true) {
+                    tabConfig('firstLoad');
+                    disableEditing('tab-description');
+                    $('#editsaveButton').val('Edit');
+                    $('#cancleButton').remove();
+                }
+            });
+            $('#editsaveButton').click(function(){
+                if(dataCheck('tab-description')){
+                    var tempId = saveValues('tab-description');
+                    disableEditing('tab-description');
+                    $('#editsaveButton').val('Edit');
+                    $('#cancleButton').remove();
+                    //TODO Remove click edit button and add click for edit
+                    searchUI('adaptation-items', tempId);
+                }
+            });
+            break;
+        case 'tab-description':
+
+            break;
+        case 'tab-media':
+
+
+            break;
+        case 'tab-relations':
+
+            break;
+        default:
+            console.log('Error: enableEditing');
             window.location = '/error';
     }
 }
@@ -143,11 +186,17 @@ function enableEditing(id) {
             $('#adaptationReferences').prop('disabled', false);
             break;
         case 'tab-media':
-
-
+            $('#mediaDescription').prop('disabled', false);
+            $('#media-type-combo').prop('disabled', false);
+            $('#embedded-link').prop('disabled', false);
+            $('#upload-file').prop('disabled', false);
+            $('#addMediaButton').prop('disabled', false);
+            $('#removeMediaButton').prop('disabled', false);
             break;
         case 'tab-relations':
-
+            $('#add-to-preconditions').prop('disabled', false);
+            $('#add-to-relationships').prop('disabled', false);
+            $('#remove-from-list').prop('disabled', false);
             break;
         default:
             console.log('Error: enableEditing');
@@ -173,10 +222,17 @@ function disableEditing(id) {
             $('#adaptationReferences').prop('disabled', true);
             break;
         case 'tab-media':
-
-
+            $('#mediaDescription').prop('disabled', true);
+            $('#media-type-combo').prop('disabled', true);
+            $('#embedded-link').prop('disabled', true);
+            $('#upload-file').prop('disabled', true);
+            $('#addMediaButton').prop('disabled', true);
+            $('#removeMediaButton').prop('disabled', true);
             break;
         case 'tab-relations':
+            $('#add-to-preconditions').prop('disabled', true);
+            $('#add-to-relationships').prop('disabled', true);
+            $('#remove-from-list').prop('disabled', true);
 
             break;
         default:
@@ -306,13 +362,16 @@ $('#createAdaptationButton').ready(function(){
         if($('#editsaveButton').val() !== 'Save'){
             tabConfig('create-description');
             enableEditing('tab-description');
-            $('#save-edit-container').append(cancleButton);
-            $('#cancleButton').click(function(){
+<<<<<<< HEAD
+            setupEditButton('create-description');
+=======
+            $('#save-edit-container').append(cancelButton);
+            $('#cancelButton').click(function(){
                 if (confirm('Are you sure you want to discard changes?') == true) {
                     tabConfig('firstLoad');
                     disableEditing('tab-description');
                     $('#editsaveButton').val('Edit');
-                    $('#cancleButton').remove();
+                    $('#cancelButton').remove();
                 }
             });
             $('#editsaveButton').click(function(){
@@ -320,13 +379,14 @@ $('#createAdaptationButton').ready(function(){
                     var tempId = saveValues('tab-description');
                     disableEditing('tab-description');
                     $('#editsaveButton').val('Edit');
-                    $('#cancleButton').remove();
+                    $('#cancelButton').remove();
                     //TODO Remove click edit button and add click for edit
                     searchUI('adaptation-items', tempId);
 
 
                 }
             });
+>>>>>>> 637d723cc2b03848b0306ea9adc0487803c04279
         }
     });
 });
