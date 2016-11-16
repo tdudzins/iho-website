@@ -61,7 +61,7 @@ app.get ('/register', requireLogin, function(req, res) {
     });
 });
 
-app.post ('/register', function(req, res) {
+app.post ('/register', requireLogin, function(req, res) {
     var encryptedPassword = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10));
 
     var data = [ req.body.firstName,
@@ -289,7 +289,7 @@ app.get('/resources/html/login/:name', function(req, res){
         }
     });
 });
-app.get('/resources/html/register/:name', function(req, res){
+app.get('/resources/html/register/:name', requireLogin, function(req, res){
     var options = {
         root:  __dirname + '/resources/html/register/',
         dotfiles: 'deny',
@@ -302,7 +302,7 @@ app.get('/resources/html/register/:name', function(req, res){
         }
     });
 });
-app.get('/resources/html/adminpanel/:name', function(req, res){
+app.get('/resources/html/adminpanel/:name', requireLogin, function(req, res){
     var options = {
         root:  __dirname + '/resources/html/adminpanel/',
         dotfiles: 'deny',

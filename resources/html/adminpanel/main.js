@@ -30,7 +30,7 @@ function getEventList(listID, callback) {
         }
     })
     .fail(function(response) {
-        console.log('Failed to load data');
+        console.log('Error: getEventList');
         window.location = '/error';
     });
 }
@@ -41,12 +41,10 @@ function deleteEvent(eventID, eventName){
 
         })
         .fail(function(response) {
-            console.log('Failed to load data');
+            console.log('Error: deleteEvent');
             window.location = '/error';
         });
-        getEventList('adaptation-items', function(){
-
-            });
+        getEventList('adaptation-items', function(){});
     }
 }
 
@@ -68,10 +66,18 @@ function loadDiscription(eID) {
         $('#adaptationReferences').val(obj[0].reference);
     })
     .fail(function(response) {
-        console.log('Failed to load data');
+        console.log('Error: loadDiscription');
         window.location = '/error';
     });
 
+}
+
+function loadMedia(eID) {
+    //TODO
+}
+
+function loadRelations(eID){
+    //TODO
 }
 
 function searchUI(listID, searchString) {
@@ -114,7 +120,8 @@ function tabConfig(id) {
 
             break;
         default:
-
+            console.log('Error: tabConfig');
+            window.location = '/error';
     }
 }
 
@@ -143,7 +150,8 @@ function enableEditing(id) {
 
             break;
         default:
-
+            console.log('Error: enableEditing');
+            window.location = '/error';
     }
 }
 
@@ -172,16 +180,101 @@ function disableEditing(id) {
 
             break;
         default:
-
+            console.log('Error: disableEditing');
+            window.location = '/error';
     }
 }
 
+function dataCheck(id) {
+    switch (id) {
+        case 'tab-description':
+            if(!$('#adaptationName').val()){
+                alert('You need to add an Adaptation Name.');
+                return false;
+            }
+            else if(!$('#earliestDirectEvidence').val()){
+                alert('You need to add Earliest Direct Evidence.');
+                return false;
+            }
+            else if(isNaN(Number( $('#earliestDirectEvidence').val()))){
+                alert('Earliest Direct Evidence must be a number.');
+                return false;
+            }
+            else if(!$('#earliestIndirectEvidence').val()){
+                alert('You need to add Earliest Indirect Evidence.');
+                return false;
+            }
+            else if(isNaN(Number($('#earliestIndirectEvidence').val()))){
+                alert('Earliest Indirect Evidence must be a number.');
+                return false;
+            }
+            else if(!$('#ageBoundaryStart').val()){
+                alert('You need to add Age Boundary Start.');
+                return false;
+            }
+            else if(isNaN(Number($('#ageBoundaryStart').val()))){
+                alert('Age Boundary Start must be a number.');
+                return false;
+            }
+            else if(!$('#ageBoundaryEnd').val()){
+                alert('You need to add Age Boundary End.');
+                return false;
+            }
+            else if(isNaN(Number($('#ageBoundaryEnd').val()))){
+                alert('Age Boundary End must be a number.');
+                return false;
+            }
+            else if(!$('#adaptationDescription').val()){
+                alert('You need to add an Adaptation Description.');
+                return false;
+            }
+            else
+                return true;
+            break;
+        case 'tab-media':
+            return true;
+            break;
+        case 'tab-relations':
+            return true;
+            break;
+        default:
+            console.log('Error: dataCheck');
+            return false;
+    }
+}
+
+function saveValues(id) {
+    var data = new Array();
+    switch (id) {
+        case 'tab-description':
+            data.push($('#adaptationName').val());
+            data.push($('#adaptationDescription').val());
+            data.push(Number($('#earliestDirectEvidence').val())*(($('#earliestDirectEvidence-units').val() == 'Ma')? 1000: 1000000));
+            data.push(Number($('#earliestIndirectEvidence').val())*(($('#earliestIndirectEvidence-units').val() == 'Ma')? 1000: 1000000));
+            data.push(Number($('#ageBoundaryStart').val())*(($('#ageBoundaryStart-units').val() == 'Ma')? 1000: 1000000));
+            data.push(Number($('#ageBoundaryEnd').val())*(($('#ageBoundaryEnd-units').val() == 'Ma')? 1000: 1000000));
+            data.push($('#adaptationReferences').val());
+            data.push($('#adaptationComments').val());
+            data.push($('#adaptation-category-combo').val());
+            // TODO add data to server
+            console.log(data);
+            break;
+        case 'tab-media':
+
+
+            break;
+        case 'tab-relations':
+
+            break;
+        default:
+            console.log('Error: saveValues');
+            window.location = '/error';
+    }
+}
 
 // Inital page loading
 $('#adaptation-items').ready(function(){
-    getEventList('adaptation-items', function(){
-
-    });
+    getEventList('adaptation-items', function(){});
 });
 $('#information-container').ready(function(){tabConfig('firstLoad');});
 $('#tabs').ready(function(){
@@ -213,13 +306,25 @@ $('#createAdaptationButton').ready(function(){
         if($('#editsaveButton').val() !== 'Save'){
             tabConfig('create-description');
             enableEditing('tab-description');
-            $('#save-edit-container').append('<input id="cancleButton" class="editsaveButton" value="Cancle" type="submit">');
+            $('#save-edit-container').append(cancleButton);
             $('#cancleButton').click(function(){
                 if (confirm('Are you sure you want to discard changes?') == true) {
                     tabConfig('firstLoad');
                     disableEditing('tab-description');
                     $('#editsaveButton').val('Edit');
                     $('#cancleButton').remove();
+                }
+            });
+            $('#editsaveButton').click(function(){
+                if(dataCheck('tab-description')){
+                    var tempId = saveValues('tab-description');
+                    disableEditing('tab-description');
+                    $('#editsaveButton').val('Edit');
+                    $('#cancleButton').remove();
+                    //TODO Remove click edit button and add click for edit
+                    searchUI('adaptation-items', tempId);
+
+
                 }
             });
         }

@@ -228,3 +228,5 @@ var firstLoadPane =
 			<label id="select-an-adaptation-label" class="select-an-adaptation-label"> Please create an adaptation or select an adaptation <br> from the list on the left. </label>
 		</div>
 	</div>`;
+
+var cancleButton = '<input id="cancleButton" class="editsaveButton" value="Cancle" type="submit">';

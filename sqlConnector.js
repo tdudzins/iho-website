@@ -48,7 +48,7 @@ exports.addRow = function addRow(table, data, callback) {
                     });
                     break;
                 case 'media':
-                    var temp = connection.query('INSERT INTO media (mediaPath, MediaDescription, eventID) VALUES (?, ?, ?)', data, function(err,result){
+                    var temp = connection.query('INSERT INTO media (mediaPath, MediaDescription, type, eventID) VALUES (?, ?, ?, ?)', data, function(err,result){
                         connection.release();
                         if(result) {
                             var dbRes = new Array();

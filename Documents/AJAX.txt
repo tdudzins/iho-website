@@ -16,7 +16,7 @@ EDIT
 DATA ARRAY ORDER
     event: eventName, description, earliestDirectEveidence, earliestIndirectEveidence, boundaryStart, boundaryEnd, reference, comments, category
     relationship: primaryEventID, secondaryEventID, precondition
-    media: mediaPath, MediaDescription, eventID
+    media: mediaPath, MediaDescription, type, eventID
     category: categoryName
 
 Data is retrieve from the server by sending a JSON string to the /datafromserver URL
