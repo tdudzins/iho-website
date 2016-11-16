@@ -131,14 +131,14 @@ function tabConfig(id) {
 
 function setupEditButton(id) {
     switch (id) {
-            case 'create-description':
-            $('#save-edit-container').append(cancleButton);
-            $('#cancleButton').click(function(){
+        case 'create-description':
+            $('#save-edit-container').append(cancelButton);
+            $('#cancelButton').click(function(){
                 if (confirm('Are you sure you want to discard changes?') == true) {
                     tabConfig('firstLoad');
                     disableEditing('tab-description');
                     $('#editsaveButton').val('Edit');
-                    $('#cancleButton').remove();
+                    $('#cancelButton').remove();
                 }
             });
             $('#editsaveButton').click(function(){
@@ -146,7 +146,7 @@ function setupEditButton(id) {
                     var tempId = saveValues('tab-description');
                     disableEditing('tab-description');
                     $('#editsaveButton').val('Edit');
-                    $('#cancleButton').remove();
+                    $('#cancelButton').remove();
                     //TODO Remove click edit button and add click for edit
                     searchUI('adaptation-items', tempId);
                 }
@@ -362,31 +362,7 @@ $('#createAdaptationButton').ready(function(){
         if($('#editsaveButton').val() !== 'Save'){
             tabConfig('create-description');
             enableEditing('tab-description');
-<<<<<<< HEAD
             setupEditButton('create-description');
-=======
-            $('#save-edit-container').append(cancelButton);
-            $('#cancelButton').click(function(){
-                if (confirm('Are you sure you want to discard changes?') == true) {
-                    tabConfig('firstLoad');
-                    disableEditing('tab-description');
-                    $('#editsaveButton').val('Edit');
-                    $('#cancelButton').remove();
-                }
-            });
-            $('#editsaveButton').click(function(){
-                if(dataCheck('tab-description')){
-                    var tempId = saveValues('tab-description');
-                    disableEditing('tab-description');
-                    $('#editsaveButton').val('Edit');
-                    $('#cancelButton').remove();
-                    //TODO Remove click edit button and add click for edit
-                    searchUI('adaptation-items', tempId);
-
-
-                }
-            });
->>>>>>> 637d723cc2b03848b0306ea9adc0487803c04279
         }
     });
 });
