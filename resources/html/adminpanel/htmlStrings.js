@@ -229,7 +229,7 @@ var categoryPane =
   <div id="category-pane" class="category-pane">
       <div id="category-list" class="category-list">
           <div id="category-list-header" class="category-list-header">
-              <label id="category-list-label" class="category-list-label">Media List</label>
+              <label id="category-list-label" class="category-list-label">Category List</label>
           </div>
           <div id="category-collection" class="category-collection">
               <ul id="category-items" class="category-items">
@@ -237,10 +237,10 @@ var categoryPane =
           </div>
           <div id="category-buttons" class="category-buttons">
               <div id="addCategory" class="addCategory">
-                  <input id="addCategoryButton" class="addCategoryButton" type="submit" value="Add Media">
+                  <input id="addCategoryButton" class="addCategoryButton" type="submit" value="Add Category">
               </div>
               <div id="removeCategory" class="removeCategory">
-                  <input id="removeCategoryButton" class="removeCategoryButton" type="submit" value="Remove Media">
+                  <input id="removeCategoryButton" class="removeCategoryButton" type="submit" value="Remove Category">
               </div>
           </div>
       </div>
