@@ -100,7 +100,6 @@ function tabConfig(id) {
             $('li.adpt-focused').removeClass('adpt-focused').addClass('adpt-unfocused');
             $('#information-container').empty();
             $('#information-container').append(descriptionPane);
-            $('#editsaveButton').val('Save');
             break;
         case 'tab-description':
             $('#information-container').empty();
@@ -133,6 +132,7 @@ function setupEditButton(id) {
     switch (id) {
         case 'create-description':
             $('#save-edit-container').append(cancelButton);
+            $('#editsaveButton').val('Save');
             $('#cancelButton').click(function(){
                 if (confirm('Are you sure you want to discard changes?') == true) {
                     tabConfig('firstLoad');
@@ -153,10 +153,44 @@ function setupEditButton(id) {
             });
             break;
         case 'tab-description':
-
+            $('#save-edit-container').append(cancelButton);
+            $('#editsaveButton').val('Save');
+            $('#cancelButton').click(function(){
+                if (confirm('Are you sure you want to discard changes?') == true) {
+                    tabConfig('tab-description');
+                }
+            });
+            $('#editsaveButton').click(function(){
+                if(dataCheck('tab-description')){
+                    var tempId = saveValues('tab-description');
+                    disableEditing('tab-description');
+                    $('#editsaveButton').val('Edit');
+                    $('#cancelButton').remove();
+                    //TODO Remove click edit button and add click for edit
+                }
+            });
             break;
         case 'tab-media':
-
+            $('#save-edit-container').append(cancelButton);
+            $('#editsaveButton').val('Save');
+            $('#cancelButton').click(function(){
+                if (confirm('Are you sure you want to discard changes?') == true) {
+                    tabConfig('firstLoad');
+                    disableEditing('tab-description');
+                    $('#editsaveButton').val('Edit');
+                    $('#cancelButton').remove();
+                }
+            });
+            $('#editsaveButton').click(function(){
+                if(dataCheck('tab-description')){
+                    var tempId = saveValues('tab-description');
+                    disableEditing('tab-description');
+                    $('#editsaveButton').val('Edit');
+                    $('#cancelButton').remove();
+                    //TODO Remove click edit button and add click for edit
+                    searchUI('adaptation-items', tempId);
+                }
+            });
 
             break;
         case 'tab-relations':
