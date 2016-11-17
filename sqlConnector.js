@@ -25,50 +25,39 @@ exports.addRow = function addRow(table, data, callback) {
                     var temp = connection.query('INSERT INTO event \
                     (eventName, description, earliestDirectEvidence, earliestIndirectEvidence, boundaryStart, boundaryEnd, reference, comments, category)\
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', data, function(err,result){
+                        var temp = result.insertId;
                         connection.release();
-                        if(result) {
-                            var dbRes = new Array();
-                            dbRes['eventID'] = result.insertId;
-                            callback(err, dbRes);
-                        }
+                        if(result)
+                            callback(err, temp);
                         else
-                        callback(err, null)
+                            callback(err, null);
                     });
                     break;
                 case 'relationship':
                     var temp = connection.query('INSERT INTO relationships (primaryEventID, secondaryEventID, precondition) VALUES (?, ?, ?)', data, function(err,result){
                         connection.release();
-                        if(result) {
-                            var dbRes = new Array();
-                            dbRes['relationshipID'] = result.insertId;
-                            callback(err, dbRes);
-                        }
+                        if(result)
+                            callback(err, result.insertId);
                         else
-                        callback(err, null)
+                            callback(err, null);
                     });
                     break;
                 case 'media':
                     var temp = connection.query('INSERT INTO media (mediaPath, MediaDescription, type, eventID) VALUES (?, ?, ?, ?)', data, function(err,result){
                         connection.release();
-                        if(result) {
-                            var dbRes = new Array();
-                            dbRes['mediaID'] = result.insertId;
-                            callback(err, dbRes);
-                        }
+                        if(result)
+                            callback(err, result.insertId);
                         else
-                        callback(err, null)
+                            callback(err, null);
                     });
                     break;
                 case 'category':
                     var temp = connection.query('INSERT INTO category (categoryName) VALUES (?)', data, function(err,result){
                         connection.release();
-                        if(result) {
-                            var dbRes = new Array();
-                            dbRes['categoryID'] = result.insertId;
-                            callback(err, dbRes);
-                        }
+                        if(result)
+                            callback(err, result.insertId);
                         else
-                        callback(err, null)
+                            callback(err, null);
                     });
                     break;
                 case 'user':
@@ -81,7 +70,7 @@ exports.addRow = function addRow(table, data, callback) {
                             callback(err, dbRes);
                         }
                         else
-                        callback(err, null)
+                            callback(err, null);
                     });
                     break;
                 default:

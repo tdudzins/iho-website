@@ -83,12 +83,31 @@ function loadMediaContent(mID) {
 
 }
 
+function loadCategories() {
+
+}
+
+function loadCategoriesDrop() {
+    postFromServer({action:'v'}, function(data, status){
+        var obj = JSON.parse(data);
+        obj.forEach(function(item){
+            $('#adaptation-category-combo').append('<option value=\'' + item.categoryID + '\' >'+ item.categoryName + '</option>');
+        });
+    });
+}
+
 function searchUI(listID, searchString) {
     $('#'+listID).children().each(function(){
         if(!$(this).text().toLowerCase().includes(searchString.trim().toLowerCase()))
             $(this).remove();
     });
+}
 
+function searchUIID(listID, searchID) {
+    $('#'+listID).children().each(function(){
+        if($(this).attr('id') != searchID)
+            $(this).remove();
+    });
 }
 
 function tabConfig(id) {
@@ -104,6 +123,7 @@ function tabConfig(id) {
             $('li.adpt-focused').removeClass('adpt-focused').addClass('adpt-unfocused');
             $('#information-container').empty();
             $('#information-container').append(descriptionPane);
+            loadCategoriesDrop();
             break;
         case 'tab-description':
             $('#information-container').empty();
@@ -111,6 +131,7 @@ function tabConfig(id) {
             loadDiscription($('li.adpt-focused').attr('id'));
             disableEditing(id);
             setupEditButton(id);
+            loadCategoriesDrop();
             break;
         case 'tab-media':
             $('#information-container').empty();
@@ -147,12 +168,17 @@ function setupEditButton(id) {
             });
             $('#editsaveButton').click(function(){
                 if(dataCheck('tab-description')){
-                    var tempId = saveValues('tab-description');
+                    saveValues('tab-description', function(data, status){
+                        getEventList('adaptation-items', function(){
+                            searchUIID('adaptation-items', data);
+                            $('#' + data).removeClass('adpt-unfocused').addClass('adpt-focused');
+                            tabConfig('tab-description');
+                        });
+
+                    });
                     disableEditing('tab-description');
                     $('#editsaveButton').val('Edit');
                     $('#cancelButton').remove();
-                    //TODO Remove click edit button and add click for edit
-                    searchUI('adaptation-items', tempId);
                 }
             });
             break;
@@ -170,7 +196,7 @@ function setupEditButton(id) {
                 else{
                     if(dataCheck('tab-description')){
                         var tempId = $('li.adpt-focused').attr('id');
-                        updateValues('tab-description');
+                        updateValues('tab-description', function(data, status){});
                         tabConfig('tab-description');
                         getEventList('adaptation-items', function(){
                             $('#' + tempId).removeClass('adpt-unfocused').addClass('adpt-focused');
@@ -195,7 +221,7 @@ function setupEditButton(id) {
                         $('#cancelButton').remove();
                         $('#editsaveButton').val('Edit');
                         disableEditing('tab-media');
-                        updateValues('tab-media');
+                        updateValues('tab-media', function(data, status){});
                         //loadMediaContent(The selected media);
                     }
                 }
@@ -353,21 +379,20 @@ function dataCheck(id) {
     }
 }
 
-function saveValues(id) {
-    var data = new Array();
+function saveValues(id, callback) {
+    var obj = new Array();
     switch (id) {
         case 'tab-description':
-            data.push($('#adaptationName').val());
-            data.push($('#adaptationDescription').val());
-            data.push(Number($('#earliestDirectEvidence').val())*(($('#earliestDirectEvidence-units').val() == 'Ma')? 1000: 1000000));
-            data.push(Number($('#earliestIndirectEvidence').val())*(($('#earliestIndirectEvidence-units').val() == 'Ma')? 1000: 1000000));
-            data.push(Number($('#ageBoundaryStart').val())*(($('#ageBoundaryStart-units').val() == 'Ma')? 1000: 1000000));
-            data.push(Number($('#ageBoundaryEnd').val())*(($('#ageBoundaryEnd-units').val() == 'Ma')? 1000: 1000000));
-            data.push($('#adaptationReferences').val());
-            data.push($('#adaptationComments').val());
-            data.push($('#adaptation-category-combo').val());
-            // TODO add data to server
-            console.log(data);
+            obj.push($('#adaptationName').val());
+            obj.push($('#adaptationDescription').val());
+            obj.push(Number($('#earliestDirectEvidence').val())*(($('#earliestDirectEvidence-units').val() == 'Ma')? 1000: 1000000));
+            obj.push(Number($('#earliestIndirectEvidence').val())*(($('#earliestIndirectEvidence-units').val() == 'Ma')? 1000: 1000000));
+            obj.push(Number($('#ageBoundaryStart').val())*(($('#ageBoundaryStart-units').val() == 'Ma')? 1000: 1000000));
+            obj.push(Number($('#ageBoundaryEnd').val())*(($('#ageBoundaryEnd-units').val() == 'Ma')? 1000: 1000000));
+            obj.push($('#adaptationReferences').val());
+            obj.push($('#adaptationComments').val());
+            obj.push(1);
+            postToServer({action:'c', table:'event', data:obj}, callback);
             break;
         case 'tab-media':
 
@@ -382,7 +407,7 @@ function saveValues(id) {
     }
 }
 
-function updateValues(id) {
+function updateValues(id, callback) {
     var obj = new Array();
     switch (id) {
         case 'tab-description':
@@ -395,7 +420,7 @@ function updateValues(id) {
             obj.push($('#adaptationReferences').val());
             obj.push($('#adaptationComments').val());
             //obj.push($('#adaptation-category-combo').val());
-            postToServer({action:'u', table:'event', key:$('li.adpt-focused').attr('id'), data:obj});
+            return postToServer({action:'u', table:'event', key:$('li.adpt-focused').attr('id'), data:obj}, callback);
             break;
         case 'tab-media':
 
@@ -405,15 +430,22 @@ function updateValues(id) {
 
             break;
         default:
-            console.log('Error: saveValues');
+            console.log('Error: updateValues');
             window.location = '/error';
     }
 }
 
-function postToServer(object) {
-    $.post('/datatoserver', object, function(data, status){})
+function postToServer(object, callback) {
+    $.post('/datatoserver', object, function(data, status){callback(data, status);})
     .fail(function(response) {
         console.log('Error: postToServer');
+        window.location = '/error';
+    });
+}
+function postFromServer(object, callback) {
+    $.post('/datafromserver', object, function(data, status){callback(data, status);})
+    .fail(function(response) {
+        console.log('Error: postFromServer');
         window.location = '/error';
     });
 }
@@ -444,6 +476,8 @@ $('#deleteAdaptationButton').ready(function(){
     $('#deleteAdaptationButton').click(function(){
         if ($('li.adpt-focused').attr('id')){
             deleteEvent($('li.adpt-focused').attr('id'), $('li.adpt-focused').text());
+            getEventList('adaptation-items', function(){});
+            tabConfig('firstLoad');
         }
     });
 });
@@ -456,9 +490,3 @@ $('#createAdaptationButton').ready(function(){
         }
     });
 });
-
-
-//for (var i = 0; i < 500; i++) {
-//    $.post('/datatoserver', {action:'c', table:'event', data:['event'+i, 'description', 10000000, 15000000, 5000000,
-//        20000000, 'reference', 'comments', 1]}, function(data, status) {});
-//}
