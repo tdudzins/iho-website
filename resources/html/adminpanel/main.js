@@ -152,11 +152,11 @@ function loadRelations(eID){
         $('#relationships-items').empty();
         $('#r'+$('li.adpt-focused').attr('id')).remove();
         obj.forEach(function(item){
-            $('#r'+item.primaryEventID).remove();
             if(item.precondition == 1)
                 $('#preconditions-items').append('<li id=\'' + item.relationshipID + '\' class=\'preconditions-unfocused\' >'+ $('#r'+item.secondaryEventID).text() + '</li>');
             else if(item.precondition == 0)
                 $('#relationships-items').append('<li id=\'' + item.relationshipID + '\' class=\'relationships-unfocused\' >'+  $('#r'+item.secondaryEventID).text() + '</li>');
+            $('#r'+item.secondaryEventID).remove();
         });
         $('li.relationships-unfocused').click(function(){
             if($('#editsaveButton').val() !== 'Edit'){
