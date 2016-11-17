@@ -221,6 +221,42 @@ var relationsPane =
         </div>
       </div>`;
 
+var categoryPane =
+  `<div id="save-edit-container" class="save-edit-container">
+    <input id="editsaveButton" class="editsaveButton" value="Edit" type="submit">
+  </div>
+
+  <div id="category-pane" class="category-pane">
+      <div id="category-list" class="category-list">
+          <div id="category-list-header" class="category-list-header">
+              <label id="category-list-label" class="category-list-label">Media List</label>
+          </div>
+          <div id="category-collection" class="category-collection">
+              <ul id="category-items" class="category-items">
+              </ul>
+          </div>
+          <div id="category-buttons" class="category-buttons">
+              <div id="addCategory" class="addCategory">
+                  <input id="addCategoryButton" class="addCategoryButton" type="submit" value="Add Media">
+              </div>
+              <div id="removeCategory" class="removeCategory">
+                  <input id="removeCategoryButton" class="removeCategoryButton" type="submit" value="Remove Media">
+              </div>
+          </div>
+      </div>
+      <div id="category-info>" class="category-info">
+
+          <div id="category-div" class="category-div">
+              <div id="category-label" class="category-label">
+                  <label class="category-labels"> Category Name: </label>
+              </div>
+              <div id="category-field" class="category-field">
+                  <input id="category" class="category" type="text">
+              </div>
+          </div>
+      </div>
+  </div>`;
+
 var firstLoadPane =
 	`<div id="first-load-pane" class="first-load-pane">
 
