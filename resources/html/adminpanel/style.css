@@ -543,6 +543,7 @@ ul.media-items li {
 .addMedia {
 	float: left;
 	margin-left: 5px;
+    margin-top: 5px;
 	width: 45%;
 	vertical-align: middle;
 }
@@ -556,6 +557,7 @@ ul.media-items li {
 .removeMedia {
 	float: right;
 	margin-right: 5px;
+    margin-top: 5px;
 	width: 45%;
 	vertical-align: middle;
 }
@@ -984,6 +986,7 @@ ul.category-items li {
 .addCategory {
 	float: left;
 	margin-left: 5px;
+    margin-top: 5px;
 	width: 45%;
 	vertical-align: middle;
 }
@@ -997,6 +1000,7 @@ ul.category-items li {
 .removeCategory {
 	float: right;
 	margin-right: 5px;
+    margin-top: 5px;
 	width: 45%;
 	vertical-align: middle;
 }

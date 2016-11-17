@@ -93,14 +93,14 @@ function loadDiscription(eID) {
     $.post('/datafromserver', {action:'q', table:'event', eventid: eID}, function(data, status) {
         var obj = JSON.parse(data);
         $('#adaptationName').val(obj[0].eventName);
-        $('#earliestDirectEvidence').val((obj[0].earliestDirectEvidence > 1000000)? obj[0].earliestDirectEvidence / 1000000: obj[0].earliestDirectEvidence / 1000);
-        $('#earliestDirectEvidence-units').val((obj[0].earliestDirectEvidence > 1000000)? 'Ma': 'Ka' );
-        $('#earliestIndirectEvidence').val((obj[0].earliestIndirectEvidence > 1000000)? obj[0].earliestIndirectEvidence / 1000000: obj[0].earliestIndirectEvidence / 1000);
-        $('#earliestIndirectEvidence-units').val((obj[0].earliestIndirectEvidence > 1000000)? 'Ma': 'Ka' );
-        $('#ageBoundaryStart').val((obj[0].boundaryStart > 1000000)? obj[0].boundaryStart / 1000000: obj[0].boundaryStart / 1000);
-        $('#ageBoundaryStart-units').val((obj[0].boundaryStart > 1000000)? 'Ma': 'Ka' );
-        $('#ageBoundaryEnd').val((obj[0].boundaryEnd > 1000000)? obj[0].boundaryEnd / 1000000: obj[0].boundaryEnd / 1000);
-        $('#ageBoundaryEnd-units').val((obj[0].boundaryEnd > 1000000)? 'Ma': 'Ka' );
+        $('#earliestDirectEvidence').val((obj[0].earliestDirectEvidence >= 1000000)? (obj[0].earliestDirectEvidence / 1000000): (obj[0].earliestDirectEvidence / 1000));
+        $('#earliestDirectEvidence-units').val((obj[0].earliestDirectEvidence >= 1000000)? 'Ma': 'Ka' );
+        $('#earliestIndirectEvidence').val((obj[0].earliestIndirectEvidence >= 1000000)? (obj[0].earliestIndirectEvidence / 1000000): (obj[0].earliestIndirectEvidence / 1000));
+        $('#earliestIndirectEvidence-units').val((obj[0].earliestIndirectEvidence >= 1000000)? 'Ma': 'Ka' );
+        $('#ageBoundaryStart').val((obj[0].boundaryStart >= 1000000)? (obj[0].boundaryStart / 1000000): (obj[0].boundaryStart / 1000));
+        $('#ageBoundaryStart-units').val((obj[0].boundaryStart >= 1000000)? 'Ma': 'Ka' );
+        $('#ageBoundaryEnd').val((obj[0].boundaryEnd >= 1000000)? (obj[0].boundaryEnd / 1000000): (obj[0].boundaryEnd / 1000));
+        $('#ageBoundaryEnd-units').val((obj[0].boundaryEnd >= 1000000)? 'Ma': 'Ka' );
         $('#adaptation-category-combo').val(obj[0].category);
         $('#adaptationDescription').val(obj[0].description);
         $('#adaptationComments').val(obj[0].comments);
@@ -347,6 +347,7 @@ function setupEditButton(id) {
                         tabConfig('tab-description');
                         getEventList('adaptation-items', function(){
                             $('#' + tempId).removeClass('adpt-unfocused').addClass('adpt-focused');
+                            loadDiscription(tempId);
                         });
                     }
                 }
@@ -620,10 +621,10 @@ function updateValues(id, callback) {
         case 'tab-description':
             obj.push($('#adaptationName').val());
             obj.push($('#adaptationDescription').val());
-            obj.push(Number($('#earliestDirectEvidence').val())*(($('#earliestDirectEvidence-units').val() == 'Ma')? 1000: 1000000));
-            obj.push(Number($('#earliestIndirectEvidence').val())*(($('#earliestIndirectEvidence-units').val() == 'Ma')? 1000: 1000000));
-            obj.push(Number($('#ageBoundaryStart').val())*(($('#ageBoundaryStart-units').val() == 'Ma')? 1000: 1000000));
-            obj.push(Number($('#ageBoundaryEnd').val())*(($('#ageBoundaryEnd-units').val() == 'Ma')? 1000: 1000000));
+            obj.push(Number($('#earliestDirectEvidence').val())*(($('#earliestDirectEvidence-units').val() == 'Ka')? 1000: 1000000));
+            obj.push(Number($('#earliestIndirectEvidence').val())*(($('#earliestIndirectEvidence-units').val() == 'Ka')? 1000: 1000000));
+            obj.push(Number($('#ageBoundaryStart').val())*(($('#ageBoundaryStart-units').val() == 'Ka')? 1000: 1000000));
+            obj.push(Number($('#ageBoundaryEnd').val())*(($('#ageBoundaryEnd-units').val() == 'Ka')? 1000: 1000000));
             obj.push($('#adaptationReferences').val());
             obj.push($('#adaptationComments').val());
             obj.push($('#adaptation-category-combo').val());

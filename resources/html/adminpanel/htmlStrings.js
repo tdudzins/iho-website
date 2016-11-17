@@ -161,14 +161,14 @@ var mediaPane =
                     <input id="embedded-link" class="embedded-link" type="text">
                 </div>
             </div>
-
+            <!--
             <div id="upload-file-div" class="upload-file-div">
                 <div id="upload-file-label" class="upload-file-label">
                     <label class="description-labels"> Upload File: </label>
                 </div>
                 <div id="upload-file-field" class="upload-file-field">
                     <input id="upload-file" class="upload-file" type="file">
-                </div>
+                </div> -->
             </div>
         </div>
     </div>`;

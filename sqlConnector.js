@@ -204,9 +204,10 @@ exports.editRow = function editRow(table, key, data, callback) {
                     connection.query('UPDATE event SET earliestDirectEvidence = ? WHERE eventID = ?', [data[2], key], function (err, res) {if(err)callback(err, null);});
                     connection.query('UPDATE event SET earliestIndirectEvidence = ? WHERE eventID = ?', [data[3], key], function (err, res) {if(err)callback(err, null);});
                     connection.query('UPDATE event SET boundaryStart = ? WHERE eventID = ?', [data[4], key], function (err, res) {if(err)callback(err, null);});
-                    connection.query('UPDATE event SET reference = ? WHERE eventID = ?', [data[5], key], function (err, res) {if(err)callback(err, null);});
-                    connection.query('UPDATE event SET comments = ? WHERE eventID = ?', [data[6], key], function (err, res) {if(err)callback(err, null);});
-                    connection.query('UPDATE event SET category = ? WHERE eventID = ?', [data[7], key], function (err, res) {if(err)callback(err, null);});
+                    connection.query('UPDATE event SET boundaryEnd = ? WHERE eventID = ?', [data[5], key], function (err, res) {if(err)callback(err, null);});
+                    connection.query('UPDATE event SET reference = ? WHERE eventID = ?', [data[6], key], function (err, res) {if(err)callback(err, null);});
+                    connection.query('UPDATE event SET comments = ? WHERE eventID = ?', [data[7], key], function (err, res) {if(err)callback(err, null);});
+                    connection.query('UPDATE event SET category = ? WHERE eventID = ?', [data[8], key], function (err, res) {if(err)callback(err, null);});
                     connection.release();
                     break;
                 case 'media':
