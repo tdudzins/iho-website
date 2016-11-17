@@ -35,27 +35,30 @@ exports.addRow = function addRow(table, data, callback) {
                     break;
                 case 'relationship':
                     var temp = connection.query('INSERT INTO relationships (primaryEventID, secondaryEventID, precondition) VALUES (?, ?, ?)', data, function(err,result){
+                        var temp = result.insertId;
                         connection.release();
                         if(result)
-                            callback(err, result.insertId);
+                            callback(err, temp);
                         else
                             callback(err, null);
                     });
                     break;
                 case 'media':
                     var temp = connection.query('INSERT INTO media (mediaPath, MediaDescription, type, eventID) VALUES (?, ?, ?, ?)', data, function(err,result){
+                        var temp = result.insertId;
                         connection.release();
                         if(result)
-                            callback(err, result.insertId);
+                            callback(err, temp);
                         else
                             callback(err, null);
                     });
                     break;
                 case 'category':
                     var temp = connection.query('INSERT INTO category (categoryName) VALUES (?)', data, function(err,result){
+                        var temp = result.insertId;
                         connection.release();
                         if(result)
-                            callback(err, result.insertId);
+                            callback(err, temp);
                         else
                             callback(err, null);
                     });
@@ -93,6 +96,25 @@ exports.removeRow = function removeRow(table, key, value, callback) {
         if (err) callback(err, null);
         else
             var result = connection.query('DELETE FROM ? WHERE ? = ?',[table, key, value] ,function (err, res) {
+                connection.release();
+                if(err)
+                    callback(err, null)
+                else
+                    callback(err, res[0]);
+            });
+    });
+};
+
+/**
+* Removes a row from the table
+* @param {string} value the value of the primary key
+* @param {function} callback is the callback function to be run when complete
+*/
+exports.removeMedia = function removeMedia(value, callback) {
+    pool.getConnection(function(err,connection){
+        if (err) callback(err, null);
+        else
+            var result = connection.query('DELETE FROM media WHERE mediaID = ?',value ,function (err, res) {
                 connection.release();
                 if(err)
                     callback(err, null)
@@ -169,13 +191,19 @@ exports.editRow = function editRow(table, key, data, callback) {
                     connection.query('UPDATE event SET boundaryStart = ? WHERE eventID = ?', [data[4], key], function (err, res) {if(err)callback(err, null);});
                     connection.query('UPDATE event SET reference = ? WHERE eventID = ?', [data[5], key], function (err, res) {if(err)callback(err, null);});
                     connection.query('UPDATE event SET comments = ? WHERE eventID = ?', [data[6], key], function (err, res) {if(err)callback(err, null);});
-                    //connection.query('UPDATE event SET category = ? WHERE eventID = ?', [data[7], key], function (err, res) {if(err)callback(err, null);});
+                    connection.query('UPDATE event SET category = ? WHERE eventID = ?', [data[7], key], function (err, res) {if(err)callback(err, null);});
+                    connection.release();
+                    break;
+                case 'media':
+                    connection.query('UPDATE media SET mediaPath = ? WHERE mediaID = ?', [data[0], key], function (err, res) {if(err)callback(err, null);});
+                    connection.query('UPDATE media SET mediaDescription = ? WHERE mediaID = ?', [data[1], key], function (err, res) {if(err)callback(err, null);});
+                    connection.query('UPDATE media SET type = ? WHERE mediaID = ?', [data[2], key], function (err, res) {if(err)callback(err, null);});
                     connection.release();
                     break;
                 default:
-
-                callback(null, 1);
+                    callback(1, null);
             }
+            callback(null, 1);
         }
     });
 };

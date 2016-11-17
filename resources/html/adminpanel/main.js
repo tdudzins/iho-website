@@ -40,10 +40,23 @@ function deleteEvent(eventID, eventName){
 
         })
         .fail(function(response) {
-            console.log('Error: deleteEvent');
+            console.log('Error: deleteMedia');
             window.location = '/error';
         });
         getEventList('adaptation-items', function(){});
+    }
+}
+
+function deleteMedia(mediaID, mediaDis){
+    if (confirm('Are you sure you want to delete: ' + mediaDis) == true){
+        $.post('/datatoserver', {action:'d', table:'media', key:'mediaID', value: mediaID}, function(data, status) {
+
+        })
+        .fail(function(response) {
+            console.log('Error: deleteEvent');
+            window.location = '/error';
+        });
+        tabConfig('tab-media');
     }
 }
 
@@ -71,15 +84,39 @@ function loadDiscription(eID) {
 
 }
 
-function loadMedia(eID) {
-    //TODO
-}
-
-function loadRelations(eID){
-    //TODO
+function loadMedia(eID, callback) {
+    postFromServer({action:'q', table:'media', eventid:eID} ,function(data, status){
+        var obj = JSON.parse(data);
+        $('#media-items').empty();
+        obj.forEach(function(item){
+            $('#media-items').append('<li id=\'' + item.mediaID + '\' class=\'media-unfocused\' >'+ item.mediaDescription + '</li>');
+        });
+        $('li.media-unfocused').click(function(){
+            if($('#editsaveButton').val() !== 'Save'){
+                $('li.media-focused').removeClass('media-focused').addClass('media-unfocused');
+                $(this).removeClass('media-unfocused').addClass('media-focused');
+                loadMediaContent($(this).attr('id'));
+            }
+        });
+        callback();
+    });
 }
 
 function loadMediaContent(mID) {
+    postFromServer({action:'q', table:'media', eventid:$('li.adpt-focused').attr('id')} ,function(data, status){
+        var obj = JSON.parse(data);
+        obj.forEach(function(item){
+            if(item.mediaID == mID){
+                $('#mediaDescription').val(item.mediaDescription);
+                $('#media-type-combo').val(item.type);
+                $('#embedded-link').val(item.mediaPath);
+                $(mID).removeClass('media-unfocused').addClass('media-focused');
+            }
+        });
+    });
+}
+
+function loadRelations(eID){
 
 }
 
@@ -87,12 +124,13 @@ function loadCategories() {
 
 }
 
-function loadCategoriesDrop() {
+function loadCategoriesDrop(callback) {
     postFromServer({action:'v'}, function(data, status){
         var obj = JSON.parse(data);
         obj.forEach(function(item){
             $('#adaptation-category-combo').append('<option value=\'' + item.categoryID + '\' >'+ item.categoryName + '</option>');
         });
+        callback();
     });
 }
 
@@ -123,29 +161,43 @@ function tabConfig(id) {
             $('li.adpt-focused').removeClass('adpt-focused').addClass('adpt-unfocused');
             $('#information-container').empty();
             $('#information-container').append(descriptionPane);
-            loadCategoriesDrop();
+            loadCategoriesDrop(function(){
+                    $('#adaptation-category-combo').val(1);
+            });
             break;
         case 'tab-description':
             $('#information-container').empty();
             $('#information-container').append(descriptionPane);
-            loadDiscription($('li.adpt-focused').attr('id'));
-            disableEditing(id);
-            setupEditButton(id);
-            loadCategoriesDrop();
+            loadCategoriesDrop(function(){
+                loadDiscription($('li.adpt-focused').attr('id'));
+                disableEditing(id);
+                setupEditButton(id);
+            });
             break;
         case 'tab-media':
             $('#information-container').empty();
             $('#information-container').append(mediaPane);
-            loadMedia($('li.adpt-focused').attr('id'));
+            loadMedia($('li.adpt-focused').attr('id'), function(){});
             disableEditing(id);
             setupEditButton(id);
+            $('#addMediaButton').click(function(){
+                if($('#editsaveButton').val() !== 'Save')
+                    setupEditButton('create-media');
+            });
+            $('#removeMediaButton').click(function(){
+                if ($('li.media-focused').attr('id') && $('#editsaveButton').val() !== 'Save')
+                    deleteMedia($('li.media-focused').attr('id'), $('li.media-focused').text());
+            });
             break;
         case 'tab-relations':
             $('#information-container').empty();
             $('#information-container').append(relationsPane);
-            loadRelations($('li.adpt-focused').attr('id'));
+            getEventList('relations-items', function(){
+                loadRelations($('li.adpt-focused').attr('id'));
+            });
             disableEditing(id);
             setupEditButton(id);
+
             break;
         default:
             console.log('Error: tabConfig');
@@ -205,24 +257,61 @@ function setupEditButton(id) {
                 }
             });
             break;
+        case 'create-media':
+            $('#save-edit-container').append(cancelButton);
+            $('#cancelButton').click(function(){
+                if (confirm('Are you sure you want to discard changes?') == true)
+                    tabConfig('tab-media');
+            });
+            $('#editsaveButton').click(function(){
+                if(dataCheck('tab-media')){
+                    $('#cancelButton').remove();
+                    $('#editsaveButton').val('Edit');
+                    disableEditing('tab-media');
+                    $('#editsaveButton').off('click');
+                    saveValues('tab-media', function(data, status){
+                        setupEditButton('tab-media');
+                        loadMedia($('li.adpt-focused').attr('id'), function(){
+                            $('#' + data).removeClass('media-unfocused').addClass('media-focused');
+                        });
+                        loadMediaContent(data);
+                    });
+                }
+            });
+            $('#editsaveButton').val('Save');
+            $('#mediaDescription').val('');
+            $('#media-type-combo').val(0);
+            $('#embedded-link').val('');
+            $('li.media-focused').removeClass('media-focused').addClass('media-unfocused');
+            enableEditing('tab-media');
+            break;
         case 'tab-media':
             $('#editsaveButton').click(function(){
-                if($('#editsaveButton').val() !== 'Save'){
+                if($('#editsaveButton').val() !== 'Save' && $('li.media-focused').attr('id')){
                     $('#save-edit-container').append(cancelButton);
                     $('#editsaveButton').val('Save');
                     enableEditing('tab-media');
                     $('#cancelButton').click(function(){
-                        if (confirm('Are you sure you want to discard changes?') == true)
-                            tabConfig('tab-media');
+                        if (confirm('Are you sure you want to discard changes?') == true){
+                            $('#cancelButton').remove();
+                            $('#editsaveButton').val('Edit');
+                            disableEditing('tab-media');
+                            loadMediaContent($('li.media-focused').attr('id'));
+                        }
                     });
                 }
-                else{
+                else if ($('#editsaveButton').val() !== 'Edit' && $('li.media-focused').attr('id')){
                     if(dataCheck('tab-media')){
                         $('#cancelButton').remove();
                         $('#editsaveButton').val('Edit');
                         disableEditing('tab-media');
-                        updateValues('tab-media', function(data, status){});
-                        //loadMediaContent(The selected media);
+                        var tempId = $('li.media-focused').attr('id');
+                        updateValues('tab-media', function(data, status){
+                            loadMediaContent(tempId);
+                            loadMedia($('li.adpt-focused').attr('id'), function(){
+                                $('#'+tempId).removeClass('media-unfocused').addClass('media-focused');
+                            });
+                        });
                     }
                 }
             });
@@ -270,8 +359,8 @@ function enableEditing(id) {
             $('#media-type-combo').prop('disabled', false);
             $('#embedded-link').prop('disabled', false);
             $('#upload-file').prop('disabled', false);
-            $('#addMediaButton').prop('disabled', false);
-            $('#removeMediaButton').prop('disabled', false);
+            //$('#addMediaButton').prop('disabled', false);
+            //$('#removeMediaButton').prop('disabled', false);
             break;
         case 'tab-relations':
             $('#add-to-preconditions').prop('disabled', false);
@@ -306,8 +395,8 @@ function disableEditing(id) {
             $('#media-type-combo').prop('disabled', true);
             $('#embedded-link').prop('disabled', true);
             $('#upload-file').prop('disabled', true);
-            $('#addMediaButton').prop('disabled', true);
-            $('#removeMediaButton').prop('disabled', true);
+            //$('#addMediaButton').prop('disabled', true);
+            //$('#removeMediaButton').prop('disabled', true);
             break;
         case 'tab-relations':
             $('#add-to-preconditions').prop('disabled', true);
@@ -368,7 +457,25 @@ function dataCheck(id) {
                 return true;
             break;
         case 'tab-media':
-            return true;
+            if(!$('#mediaDescription').val()){
+                alert('You need to add a Media Description.');
+                return false;
+            }
+            else if($('#media-type-combo').val() == 0){
+                alert('You need to select a Media Type.');
+                return false;
+            }
+            else if(!$('#embedded-link').val() && $('#media-type-combo').val() > 1){
+                alert('You need to add an Embedded Link');
+                return false;
+            }
+            else if(!$('#upload-file').val() && $('#media-type-combo').val() < 1){
+                alert('You need to Upload a File');
+                return false;
+            }
+            else{
+                return true;
+            }
             break;
         case 'tab-relations':
             return true;
@@ -391,12 +498,15 @@ function saveValues(id, callback) {
             obj.push(Number($('#ageBoundaryEnd').val())*(($('#ageBoundaryEnd-units').val() == 'Ma')? 1000: 1000000));
             obj.push($('#adaptationReferences').val());
             obj.push($('#adaptationComments').val());
-            obj.push(1);
+            obj.push($('#adaptation-category-combo').val());
             postToServer({action:'c', table:'event', data:obj}, callback);
             break;
         case 'tab-media':
-
-
+            obj.push($('#embedded-link').val());
+            obj.push($('#mediaDescription').val());
+            obj.push($('#media-type-combo').val());
+            obj.push($('li.adpt-focused').attr('id'));
+            postToServer({action:'c', table:'media', data:obj}, callback);
             break;
         case 'tab-relations':
 
@@ -419,11 +529,14 @@ function updateValues(id, callback) {
             obj.push(Number($('#ageBoundaryEnd').val())*(($('#ageBoundaryEnd-units').val() == 'Ma')? 1000: 1000000));
             obj.push($('#adaptationReferences').val());
             obj.push($('#adaptationComments').val());
-            //obj.push($('#adaptation-category-combo').val());
-            return postToServer({action:'u', table:'event', key:$('li.adpt-focused').attr('id'), data:obj}, callback);
+            obj.push($('#adaptation-category-combo').val());
+            postToServer({action:'u', table:'event', key:$('li.adpt-focused').attr('id'), data:obj}, callback);
             break;
         case 'tab-media':
-
+            obj.push($('#embedded-link').val());
+            obj.push($('#mediaDescription').val());
+            obj.push($('#media-type-combo').val());
+            postToServer({action:'u', table:'media', key:$('li.media-focused').attr('id'), data:obj}, callback);
 
             break;
         case 'tab-relations':
@@ -457,7 +570,7 @@ $('#adaptation-items').ready(function(){
 $('#information-container').ready(function(){tabConfig('firstLoad');});
 $('#tabs').ready(function(){
     $('li.nonactive').click(function(){
-        if($('li.adpt-focused').attr('id'))
+        if($('li.adpt-focused').attr('id') && $('#editsaveButton').val() !== 'Save')
             tabConfig($(this).attr('id'));
     });
 });
@@ -474,7 +587,7 @@ $('#mainsearchbutton').ready(function() {
 });
 $('#deleteAdaptationButton').ready(function(){
     $('#deleteAdaptationButton').click(function(){
-        if ($('li.adpt-focused').attr('id')){
+        if ($('li.adpt-focused').attr('id') && $('#editsaveButton').val() !== 'Save'){
             deleteEvent($('li.adpt-focused').attr('id'), $('li.adpt-focused').text());
             getEventList('adaptation-items', function(){});
             tabConfig('firstLoad');

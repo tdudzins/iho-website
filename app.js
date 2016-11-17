@@ -133,6 +133,7 @@ app.post('/datatoserver', requireLogin, function(req, res){
                 break;
             case 'u':
                 dataBase.editRow(req.body.table, req.body.key, req.body.data, function(err, data){
+                    if(err) console.log(err);
                     if(err)
                         res.status(500).end();
                     else
@@ -150,6 +151,14 @@ app.post('/datatoserver', requireLogin, function(req, res){
                 }
                 else if (req.body.table === 'event') {
                     dataBase.removeEvent(req.body.value, function(err, data){
+                        if(err)
+                            res.status(500).end();
+                        else
+                            res.end(JSON.stringify(data));
+                    });
+                }
+                else if (req.body.table === 'media') {
+                    dataBase.removeMedia(req.body.value, function(err, data){
                         if(err)
                             res.status(500).end();
                         else
@@ -245,7 +254,6 @@ app.post('/datafromserver', function(req, res){
                 break;
             case 'v':
                 dataBase.getCategories(function(err, data){
-                    console.log(err);
                     if(err)
                         res.status(500).end();
                     else

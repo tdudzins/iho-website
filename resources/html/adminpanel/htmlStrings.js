@@ -144,12 +144,11 @@ var mediaPane =
                 </div>
                 <div id="media-type-field" class="media-type-field">
                     <select id="media-type-combo" class="media-type-combo">
-                        <option id="upload-default" class="upload-default">Select one of the following media types...</option>
-                        <option id="upload-picture" class="upload-picture">Upload Picture</option>
-                        <option id="upload-video" class="upload-video">Upload Video</option>
-                        <option id="embedded-picture" class="embedded-picture">Embedded Picture</option>
-                        <option id="embedded-video" class="embedded-video">Embedded Video</option>
-                        <option id="other-option" class="other-option">Other</option>
+                        <option value="0" id="upload-default" class="upload-default">Select one of the following media types...</option>
+                        <option value="1" id="upload-picture" class="upload-picture">Upload Picture</option>
+                        <option value="2" id="embedded-picture" class="embedded-picture">Embedded Picture</option>
+                        <option value="3" id="embedded-video" class="embedded-video">Embedded Video</option>
+                        <option value="4" id="other-option" class="other-option">Other</option>
                     </select>
                 </div>
             </div>
