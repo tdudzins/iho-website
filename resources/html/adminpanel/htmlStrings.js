@@ -251,6 +251,7 @@ var categoryPane =
               </div>
               <div id="category-field" class="category-field">
                   <input id="category" class="category" type="text">
+                  <input id="updateCategoryButton" value="Update" type="button">
               </div>
           </div>
       </div>

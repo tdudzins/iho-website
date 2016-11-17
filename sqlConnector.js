@@ -151,11 +151,12 @@ exports.removeCategory = function removeCategory(table, key, value, callback) {
         if (err) callback(err, null);
         else
             var result = connection.query('UPDATE event SET category=1 WHERE category = ?', value ,function (err, res) {
-                connection.release();
+
                 if(err)
                     callback(err, null);
                 else
-                    removeRow(table, key, value, callback);
+                    connection.query('DELETE FROM category WHERE categoryID = ?', value ,function (err, res) {});
+                connection.release();
             });
     });
 };
@@ -214,6 +215,10 @@ exports.editRow = function editRow(table, key, data, callback) {
                     connection.query('UPDATE media SET mediaPath = ? WHERE mediaID = ?', [data[0], key], function (err, res) {if(err)callback(err, null);});
                     connection.query('UPDATE media SET mediaDescription = ? WHERE mediaID = ?', [data[1], key], function (err, res) {if(err)callback(err, null);});
                     connection.query('UPDATE media SET type = ? WHERE mediaID = ?', [data[2], key], function (err, res) {if(err)callback(err, null);});
+                    connection.release();
+                    break;
+                case 'category':
+                    connection.query('UPDATE category SET categoryName = ? WHERE categoryID = ?', [data[0], key], function (err, res) {if(err)callback(err, null);});
                     connection.release();
                     break;
                 default:

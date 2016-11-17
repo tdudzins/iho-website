@@ -64,6 +64,20 @@ function deleteMedia(mediaID, mediaDis){
     }
 }
 
+function deleteCategory(){
+    if (confirm('Are you sure you want to category: ' + $('li.category-focused').text()) == true){
+        $.post('/datatoserver', {action:'d', table:'category', value: $('li.category-focused').attr('id')}, function(data, status) {
+
+        })
+        .fail(function(response) {
+            console.log('Error: deleteCategory');
+            window.location = '/error';
+        });
+        $('#category').val('');
+        loadCategories(function(){});
+    }
+}
+
 function deleteRelation(){
     if($('li.preconditions-focused').attr('id')){
         $.post('/datatoserver', {action:'d', table:'relationships', value: $('li.preconditions-focused').attr('id')}, function(data, status) {
@@ -177,8 +191,22 @@ function loadRelations(eID){
     });
 }
 
-function loadCategories() {
-
+function loadCategories(callback) {
+    postFromServer({action:'v'} ,function(data, status){
+        var obj = JSON.parse(data);
+        $('#category-items').empty();
+        obj.forEach(function(item){
+            $('#category-items').append('<li id=\'' + item.categoryID + '\' class=\'category-unfocused\' >'+ item.categoryName + '</li>');
+        });
+        $('li.category-unfocused').click(function(){
+            if($('#editsaveButton').val() == 'Done'){
+                $('li.category-focused').removeClass('category-focused').addClass('category-unfocused');
+                $(this).removeClass('category-unfocused').addClass('category-focused');
+                $('#category').val($(this).text());
+            }
+        });
+        callback();
+    });
 }
 
 function addRelationship() {
@@ -292,6 +320,40 @@ function tabConfig(id) {
             });
             disableEditing(id);
             setupEditButton(id);
+
+            break;
+        case 'category':
+            $('#information-container').empty();
+            $('#information-container').append(categoryPane);
+            loadCategories(function(){});
+            $('li.adpt-focused').removeClass('adpt-focused').addClass('adpt-unfocused');
+            $('#editsaveButton').val('Done');
+            $('#editsaveButton').click(function(){
+                tabConfig('firstLoad');
+            });
+            $('#addCategoryButton').click(function(){
+                $('#category').val('');
+                $('#updateCategoryButton').val('Save');
+            });
+            $('#removeCategoryButton').click(function(){
+                deleteCategory();
+            });
+            $('#updateCategoryButton').click(function(){
+                if($('#updateCategoryButton').val() == 'Save'){
+                    $('#updateCategoryButton').val('Update');
+                    saveValues('category');
+                    loadCategories(function(){
+                        $($('li.category-unfocused').contains($('#category').val())).removeClass('category-unfocused').addClass('category-focused');
+
+                    });
+                }
+                if($('#updateCategoryButton').val() == 'Update')
+                    updateValues('category');
+                    loadCategories(function(){
+                        $($('li.category-unfocused').contains($('#category').val())).removeClass('category-unfocused').addClass('category-focused');
+                    });
+            });
+
 
             break;
         default:
@@ -606,8 +668,8 @@ function saveValues(id, callback) {
             obj.push($('li.adpt-focused').attr('id'));
             postToServer({action:'c', table:'media', data:obj}, callback);
             break;
-        case 'tab-relations':
-
+        case 'category':
+            postToServer({action:'c', table:'category', data:$('#category').val()}, callback);
             break;
         default:
             console.log('Error: saveValues');
@@ -637,8 +699,8 @@ function updateValues(id, callback) {
             postToServer({action:'u', table:'media', key:$('li.media-focused').attr('id'), data:obj}, callback);
 
             break;
-        case 'tab-relations':
-
+        case 'category':
+            postToServer({action:'u', table:'category', key:$('li.category-focused').attr('id'), data:$('#category').val()}, callback);
             break;
         default:
             console.log('Error: updateValues');
@@ -698,6 +760,13 @@ $('#createAdaptationButton').ready(function(){
             tabConfig('create-description');
             enableEditing('tab-description');
             setupEditButton('create-description');
+        }
+    });
+});
+$('#category-button').ready(function(){
+    $('#category-button').click(function(){
+        if($('#editsaveButton').val() == 'Edit'){
+            tabConfig('category');
         }
     });
 });
