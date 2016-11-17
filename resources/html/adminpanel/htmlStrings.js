@@ -257,7 +257,11 @@ var categoryPane =
   </div>`;
 
 var firstLoadPane =
-	`<div id="first-load-pane" class="first-load-pane">
+	`<div id="save-edit-container" class="save-edit-container">
+		<input id="editsaveButton" class="editsaveButton" value="Edit" type="submit" hidden>
+	</div>
+
+    <div id="first-load-pane" class="first-load-pane">
 
 		<div id="select-an-adaptation-div" class="select-an-adaptation-div">
 			<label id="select-an-adaptation-label" class="select-an-adaptation-label"> Please create an adaptation or select an adaptation <br> from the list on the left. </label>

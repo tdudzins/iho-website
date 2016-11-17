@@ -165,6 +165,14 @@ app.post('/datatoserver', requireLogin, function(req, res){
                             res.end(JSON.stringify(data));
                     });
                 }
+                else if (req.body.table === 'relationships') {
+                    dataBase.removeRelation(req.body.value, function(err, data){
+                        if(err)
+                            res.status(500).end();
+                        else
+                            res.end(JSON.stringify(data));
+                    });
+                }
                 else{
                     dataBase.removeRow(req.body.table, req.body.key, req.body.value, function(err, data){
                         if(err)

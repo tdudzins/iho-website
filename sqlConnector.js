@@ -25,30 +25,27 @@ exports.addRow = function addRow(table, data, callback) {
                     var temp = connection.query('INSERT INTO event \
                     (eventName, description, earliestDirectEvidence, earliestIndirectEvidence, boundaryStart, boundaryEnd, reference, comments, category)\
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', data, function(err,result){
-                        var temp = result.insertId;
                         connection.release();
                         if(result)
-                            callback(err, temp);
+                            callback(err, results);
                         else
                             callback(err, null);
                     });
                     break;
                 case 'relationship':
                     var temp = connection.query('INSERT INTO relationships (primaryEventID, secondaryEventID, precondition) VALUES (?, ?, ?)', data, function(err,result){
-                        var temp = result.insertId;
                         connection.release();
                         if(result)
-                            callback(err, temp);
+                            callback(err, results);
                         else
                             callback(err, null);
                     });
                     break;
                 case 'media':
                     var temp = connection.query('INSERT INTO media (mediaPath, MediaDescription, type, eventID) VALUES (?, ?, ?, ?)', data, function(err,result){
-                        var temp = result.insertId;
                         connection.release();
                         if(result)
-                            callback(err, temp);
+                            callback(err, results);
                         else
                             callback(err, null);
                     });
@@ -115,6 +112,25 @@ exports.removeMedia = function removeMedia(value, callback) {
         if (err) callback(err, null);
         else
             var result = connection.query('DELETE FROM media WHERE mediaID = ?',value ,function (err, res) {
+                connection.release();
+                if(err)
+                    callback(err, null)
+                else
+                    callback(err, res[0]);
+            });
+    });
+};
+
+/**
+* Removes a row from the table
+* @param {string} value the value of the primary key
+* @param {function} callback is the callback function to be run when complete
+*/
+exports.removeRelation = function removeRelation(value, callback) {
+    pool.getConnection(function(err,connection){
+        if (err) callback(err, null);
+        else
+            var result = connection.query('DELETE FROM relationships WHERE relationshipID = ?',value ,function (err, res) {
                 connection.release();
                 if(err)
                     callback(err, null)
