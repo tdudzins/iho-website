@@ -57,32 +57,36 @@ function deleteMedia(mediaID, mediaDis){
 
         })
         .fail(function(response) {
-            console.log('Error: deleteEvent');
+            console.log('Error: deleteMedia');
             window.location = '/error';
         });
         tabConfig('tab-media');
     }
 }
 
-function deleteRelation(relationID){
-    if(false){
-
-    }
-    else if (true) {
-
-    }
-    else{
-
-    }
-    $.post('/datatoserver', {action:'d', table:'relation', key:'mediaID', value: mediaID}, function(data, status) {
-        getEventList('relations-items', function(){
-            loadRelations($('li.adpt-focused').attr('id'));
+function deleteRelation(){
+    if($('li.preconditions-focused').attr('id')){
+        $.post('/datatoserver', {action:'d', table:'relationships', value: $('li.preconditions-focused').attr('id')}, function(data, status) {
+            getEventList('relations-items', function(){
+                loadRelations($('li.adpt-focused').attr('id'));
+            });
+        })
+        .fail(function(response) {
+            console.log('Error: deleteRelation');
+            window.location = '/error';
         });
-    })
-    .fail(function(response) {
-        console.log('Error: deleteEvent');
-        window.location = '/error';
-    });
+    }
+    else if ($('li.relationships-focused').attr('id')) {
+        $.post('/datatoserver', {action:'d', table:'relationships', value: $('li.relationships-focused').attr('id')}, function(data, status) {
+            getEventList('relations-items', function(){
+                loadRelations($('li.adpt-focused').attr('id'));
+            });
+        })
+        .fail(function(response) {
+            console.log('Error: deleteRelation');
+            window.location = '/error';
+        });
+    }
 }
 
 function loadDiscription(eID) {
@@ -144,14 +148,14 @@ function loadMediaContent(mID) {
 function loadRelations(eID){
     postFromServer({action:'q', table:'relationships', eventid: eID}, function(data, status){
         var obj = JSON.parse(data);
-        $('#precondition-items').empty();
+        $('#preconditions-items').empty();
         $('#relationships-items').empty();
+        $('#r'+$('li.adpt-focused').attr('id')).remove();
         obj.forEach(function(item){
-            $('#r'+$('li.adpt-focused').attr('id')).remove();
             $('#r'+item.primaryEventID).remove();
-            if(item.precondition)
+            if(item.precondition == 1)
                 $('#preconditions-items').append('<li id=\'' + item.relationshipID + '\' class=\'preconditions-unfocused\' >'+ $('#r'+item.secondaryEventID).text() + '</li>');
-            else
+            else if(item.precondition == 0)
                 $('#relationships-items').append('<li id=\'' + item.relationshipID + '\' class=\'relationships-unfocused\' >'+  $('#r'+item.secondaryEventID).text() + '</li>');
         });
         $('li.relationships-unfocused').click(function(){

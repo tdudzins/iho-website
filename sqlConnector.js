@@ -27,7 +27,7 @@ exports.addRow = function addRow(table, data, callback) {
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', data, function(err,result){
                         connection.release();
                         if(result)
-                            callback(err, results);
+                            callback(err, 1);
                         else
                             callback(err, null);
                     });
@@ -36,7 +36,7 @@ exports.addRow = function addRow(table, data, callback) {
                     var temp = connection.query('INSERT INTO relationships (primaryEventID, secondaryEventID, precondition) VALUES (?, ?, ?)', data, function(err,result){
                         connection.release();
                         if(result)
-                            callback(err, results);
+                            callback(err, 1);
                         else
                             callback(err, null);
                     });
@@ -45,17 +45,16 @@ exports.addRow = function addRow(table, data, callback) {
                     var temp = connection.query('INSERT INTO media (mediaPath, MediaDescription, type, eventID) VALUES (?, ?, ?, ?)', data, function(err,result){
                         connection.release();
                         if(result)
-                            callback(err, results);
+                            callback(err, 1);
                         else
                             callback(err, null);
                     });
                     break;
                 case 'category':
                     var temp = connection.query('INSERT INTO category (categoryName) VALUES (?)', data, function(err,result){
-                        var temp = result.insertId;
                         connection.release();
                         if(result)
-                            callback(err, temp);
+                            callback(err, 1);
                         else
                             callback(err, null);
                     });
