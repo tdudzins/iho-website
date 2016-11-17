@@ -167,17 +167,27 @@ exports.removeEvent = function removeEvent(value, callback) {
 * @param {string} data is an array of values to be changed formated like 'id='vlaue',id='vlaue''
 * @param {function} callback is the callback function to be run when complete
 */
-exports.editRow = function editRow(table, key, value, data, callback) {
+exports.editRow = function editRow(table, key, data, callback) {
     pool.getConnection(function(err,connection){
         if (err) callback(err, null);
-        else
-            var result = connection.query('UPDATE ? SET ? WHERE ? = ?', [table, data, key, value], function (err, res) {
-                connection.release();
-                if(err)
-                    callback(err, null)
-                else
-                    callback(err, res[0]);
-            });
+        else{
+            switch (table) {
+                case 'event':
+                    connection.query('UPDATE event SET eventName = ? WHERE eventID = ?', [data[0], key], function (err, res) {if(err)callback(err, null);});
+                    connection.query('UPDATE event SET description = ? WHERE eventID = ?', [data[1], key], function (err, res) {if(err)callback(err, null);});
+                    connection.query('UPDATE event SET earliestDirectEvidence = ? WHERE eventID = ?', [data[2], key], function (err, res) {if(err)callback(err, null);});
+                    connection.query('UPDATE event SET earliestIndirectEvidence = ? WHERE eventID = ?', [data[3], key], function (err, res) {if(err)callback(err, null);});
+                    connection.query('UPDATE event SET boundaryStart = ? WHERE eventID = ?', [data[4], key], function (err, res) {if(err)callback(err, null);});
+                    connection.query('UPDATE event SET reference = ? WHERE eventID = ?', [data[5], key], function (err, res) {if(err)callback(err, null);});
+                    connection.query('UPDATE event SET comments = ? WHERE eventID = ?', [data[6], key], function (err, res) {if(err)callback(err, null);});
+                    //connection.query('UPDATE event SET category = ? WHERE eventID = ?', [data[7], key], function (err, res) {if(err)callback(err, null);});
+                    connection.release();
+                    break;
+                default:
+
+                callback(null, 1);
+            }
+        }
     });
 };
 

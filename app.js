@@ -132,7 +132,9 @@ app.post('/datatoserver', requireLogin, function(req, res){
 
                 break;
             case 'u':
-                dataBase.editRow(req.body.table, req.body.key, req.body.value, req.body.data, function(err, data){
+                console.log(req.body.data);
+                dataBase.editRow(req.body.table, req.body.key, req.body.data, function(err, data){
+                    console.log(err);
                     if(err)
                         res.status(500).end();
                     else

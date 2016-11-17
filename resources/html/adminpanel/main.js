@@ -79,6 +79,10 @@ function loadRelations(eID){
     //TODO
 }
 
+function loadMediaContent(mID) {
+
+}
+
 function searchUI(listID, searchString) {
     $('#'+listID).children().each(function(){
         if(!$(this).text().toLowerCase().includes(searchString.trim().toLowerCase()))
@@ -153,51 +157,67 @@ function setupEditButton(id) {
             });
             break;
         case 'tab-description':
-            $('#save-edit-container').append(cancelButton);
-            $('#editsaveButton').val('Save');
-            $('#cancelButton').click(function(){
-                if (confirm('Are you sure you want to discard changes?') == true) {
-                    tabConfig('tab-description');
-                }
-            });
             $('#editsaveButton').click(function(){
-                if(dataCheck('tab-description')){
-                    var tempId = saveValues('tab-description');
-                    disableEditing('tab-description');
-                    $('#editsaveButton').val('Edit');
-                    $('#cancelButton').remove();
-                    //TODO Remove click edit button and add click for edit
+                if($('#editsaveButton').val() !== 'Save'){
+                    $('#save-edit-container').append(cancelButton);
+                    $('#editsaveButton').val('Save');
+                    enableEditing('tab-description');
+                    $('#cancelButton').click(function(){
+                        if (confirm('Are you sure you want to discard changes?') == true)
+                            tabConfig('tab-description');
+                    });
+                }
+                else{
+                    if(dataCheck('tab-description')){
+                        var tempId = $('li.adpt-focused').attr('id');
+                        updateValues('tab-description');
+                        tabConfig('tab-description');
+                        getEventList('adaptation-items', function(){
+                            $('#' + tempId).removeClass('adpt-unfocused').addClass('adpt-focused');
+                        });
+                    }
                 }
             });
             break;
         case 'tab-media':
-            $('#save-edit-container').append(cancelButton);
-            $('#editsaveButton').val('Save');
-            $('#cancelButton').click(function(){
-                if (confirm('Are you sure you want to discard changes?') == true) {
-                    tabConfig('firstLoad');
-                    disableEditing('tab-description');
-                    $('#editsaveButton').val('Edit');
-                    $('#cancelButton').remove();
-                }
-            });
             $('#editsaveButton').click(function(){
-                if(dataCheck('tab-description')){
-                    var tempId = saveValues('tab-description');
-                    disableEditing('tab-description');
-                    $('#editsaveButton').val('Edit');
-                    $('#cancelButton').remove();
-                    //TODO Remove click edit button and add click for edit
-                    searchUI('adaptation-items', tempId);
+                if($('#editsaveButton').val() !== 'Save'){
+                    $('#save-edit-container').append(cancelButton);
+                    $('#editsaveButton').val('Save');
+                    enableEditing('tab-media');
+                    $('#cancelButton').click(function(){
+                        if (confirm('Are you sure you want to discard changes?') == true)
+                            tabConfig('tab-media');
+                    });
+                }
+                else{
+                    if(dataCheck('tab-media')){
+                        $('#cancelButton').remove();
+                        $('#editsaveButton').val('Edit');
+                        disableEditing('tab-media');
+                        updateValues('tab-media');
+                        //loadMediaContent(The selected media);
+                    }
                 }
             });
-
             break;
         case 'tab-relations':
-
+            $('#editsaveButton').click(function(){
+                if($('#editsaveButton').val() !== 'Done'){
+                    $('#editsaveButton').val('Done');
+                    enableEditing('tab-relations');
+                    //TODO add event listeners to relation buttons
+                }
+                else{
+                    if(dataCheck('tab-relations')){
+                        $('#editsaveButton').val('Edit');
+                        disableEditing('tab-relations');
+                    }
+                }
+            });
             break;
         default:
-            console.log('Error: enableEditing');
+            console.log('Error: setupEditButton');
             window.location = '/error';
     }
 }
@@ -360,6 +380,42 @@ function saveValues(id) {
             console.log('Error: saveValues');
             window.location = '/error';
     }
+}
+
+function updateValues(id) {
+    var obj = new Array();
+    switch (id) {
+        case 'tab-description':
+            obj.push($('#adaptationName').val());
+            obj.push($('#adaptationDescription').val());
+            obj.push(Number($('#earliestDirectEvidence').val())*(($('#earliestDirectEvidence-units').val() == 'Ma')? 1000: 1000000));
+            obj.push(Number($('#earliestIndirectEvidence').val())*(($('#earliestIndirectEvidence-units').val() == 'Ma')? 1000: 1000000));
+            obj.push(Number($('#ageBoundaryStart').val())*(($('#ageBoundaryStart-units').val() == 'Ma')? 1000: 1000000));
+            obj.push(Number($('#ageBoundaryEnd').val())*(($('#ageBoundaryEnd-units').val() == 'Ma')? 1000: 1000000));
+            obj.push($('#adaptationReferences').val());
+            obj.push($('#adaptationComments').val());
+            //obj.push($('#adaptation-category-combo').val());
+            postToServer({action:'u', table:'event', key:$('li.adpt-focused').attr('id'), data:obj});
+            break;
+        case 'tab-media':
+
+
+            break;
+        case 'tab-relations':
+
+            break;
+        default:
+            console.log('Error: saveValues');
+            window.location = '/error';
+    }
+}
+
+function postToServer(object) {
+    $.post('/datatoserver', object, function(data, status){})
+    .fail(function(response) {
+        console.log('Error: postToServer');
+        window.location = '/error';
+    });
 }
 
 // Inital page loading
