@@ -310,6 +310,12 @@ function tabConfig(id) {
             getEventList('relations-items', function(){
                 loadRelations($('li.adpt-focused').attr('id'));
             });
+            $('#relations-searchbutton').click(function(){
+                getEventList('relations-items', function(){
+                    if ($('#relations-searchbar-text').val() != '')
+                        searchUI('relations-items', $('#relations-searchbar-text').val());
+                });
+            });
             $('#add-to-preconditions').click(function(){
                 addPrecondition();
             });
@@ -740,8 +746,8 @@ $('#mainsearchbutton').ready(function() {
         if($('#editsaveButton').val() == 'Edit'){
             tabConfig('firstLoad');
             getEventList('adaptation-items', function(){
-            if ($('#mainsearchbar-text').val() != '')
-                searchUI('adaptation-items', $('#mainsearchbar-text').val());
+                if ($('#mainsearchbar-text').val() != '')
+                    searchUI('adaptation-items', $('#mainsearchbar-text').val());
             });
         }
     });
