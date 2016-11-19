@@ -27,7 +27,7 @@ exports.addRow = function addRow(table, data, callback) {
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', data, function(err,result){
                         connection.release();
                         if(result)
-                            callback(err, 1);
+                            callback(err, result.insertId);
                         else
                             callback(err, null);
                     });
@@ -36,7 +36,7 @@ exports.addRow = function addRow(table, data, callback) {
                     var temp = connection.query('INSERT INTO relationships (primaryEventID, secondaryEventID, precondition) VALUES (?, ?, ?)', data, function(err,result){
                         connection.release();
                         if(result)
-                            callback(err, 1);
+                            callback(err, result.insertId);
                         else
                             callback(err, null);
                     });
@@ -45,7 +45,7 @@ exports.addRow = function addRow(table, data, callback) {
                     var temp = connection.query('INSERT INTO media (mediaPath, MediaDescription, type, eventID) VALUES (?, ?, ?, ?)', data, function(err,result){
                         connection.release();
                         if(result)
-                            callback(err, 1);
+                            callback(err, result.insertId);
                         else
                             callback(err, null);
                     });
@@ -54,7 +54,7 @@ exports.addRow = function addRow(table, data, callback) {
                     var temp = connection.query('INSERT INTO category (categoryName) VALUES (?)', data, function(err,result){
                         connection.release();
                         if(result)
-                            callback(err, 1);
+                            callback(err, result.insertId);
                         else
                             callback(err, null);
                     });
@@ -94,7 +94,7 @@ exports.removeRow = function removeRow(table, key, value, callback) {
             var result = connection.query('DELETE FROM ? WHERE ? = ?',[table, key, value] ,function (err, res) {
                 connection.release();
                 if(err)
-                    callback(err, null)
+                    callback(err, null);
                 else
                     callback(err, res[0]);
             });
@@ -113,7 +113,7 @@ exports.removeMedia = function removeMedia(value, callback) {
             var result = connection.query('DELETE FROM media WHERE mediaID = ?',value ,function (err, res) {
                 connection.release();
                 if(err)
-                    callback(err, null)
+                    callback(err, null);
                 else
                     callback(err, res[0]);
             });
@@ -132,7 +132,7 @@ exports.removeRelation = function removeRelation(value, callback) {
             var result = connection.query('DELETE FROM relationships WHERE relationshipID = ?',value ,function (err, res) {
                 connection.release();
                 if(err)
-                    callback(err, null)
+                    callback(err, null);
                 else
                     callback(err, res[0]);
             });
@@ -155,8 +155,14 @@ exports.removeCategory = function removeCategory(table, key, value, callback) {
                 if(err)
                     callback(err, null);
                 else
-                    connection.query('DELETE FROM category WHERE categoryID = ?', value ,function (err, res) {});
-                connection.release();
+                    connection.query('DELETE FROM category WHERE categoryID = ?', value ,function (err, res) {
+                            connection.release();
+                        if(err)
+                            callback(err, null);
+                        else
+
+                            callback(err, 1);
+                    });
             });
     });
 };
@@ -218,7 +224,7 @@ exports.editRow = function editRow(table, key, data, callback) {
                     connection.release();
                     break;
                 case 'category':
-                    connection.query('UPDATE category SET categoryName = ? WHERE categoryID = ?', [data[0], key], function (err, res) {if(err)callback(err, null);});
+                    connection.query('UPDATE category SET categoryName = ? WHERE categoryID = ?', [data, key], function (err, res) {if(err)callback(err, null);});
                     connection.release();
                     break;
                 default:
@@ -244,7 +250,7 @@ exports.getUser = function getUser(data, callback) {
             }
             else {
                 console.log('Code ' + err.code + ': Error adding data to user table.');
-                callback(err, null)
+                callback(err, null);
             }
         });
         // close connection with database
@@ -264,12 +270,12 @@ exports.getEvent = function getEvent(eventID, callback){
     pool.getConnection(function(err,connection){
         if (err) callback(err, null);
         else
-            var result = connection.query('SELECT * FROM event WHERE eventID=?', eventID, function (err, res) {
+            var result = connection.query('SELECT * FROM event WHERE eventID= ? ', eventID, function (err, res) {
                 connection.release();
                 if(err)
-                    callback(err, null)
+                    callback(err, null);
                 else
-                    callback(err, res);
+                    callback(null, res);
             });
     });
 }
@@ -286,7 +292,7 @@ exports.getMedia = function getMedia(eventID, callback){
             var result = connection.query('SELECT * FROM media WHERE eventID=?', eventID, function (err, res) {
                 connection.release();
                 if(err)
-                    callback(err, null)
+                    callback(err, null);
                 else
                     callback(err, res);
             });
@@ -305,7 +311,7 @@ exports.getRelations = function getRelations(eventID, callback){
             var result = connection.query('SELECT * FROM relationships WHERE primaryEventID=?', eventID, function (err, res) {
                 connection.release();
                 if(err)
-                    callback(err, null)
+                    callback(err, null);
                 else
                     callback(err, res);
             });
@@ -324,7 +330,7 @@ exports.getCategory = function getCategory(categoryID, callback){
             var result = connection.query('SELECT * FROM category WHERE categoryID=?', categoryID, function (err, res) {
                 connection.release();
                 if(err)
-                    callback(err, null)
+                    callback(err, null);
                 else
                     callback(err, res);
             });
@@ -351,7 +357,7 @@ exports.getData = function getData(table, col, term, callback) {
             }
             else {
                 console.log('Code ' + err.code + ': Error adding data to user table.');
-                callback(err, null)
+                callback(err, null);
             }
         });
         // close connection with database
@@ -374,7 +380,7 @@ exports.getCategories = function getCategories(callback){
             var result = connection.query('SELECT * FROM category ORDER BY categoryName', function (err, res) {
                 connection.release();
                 if(err)
-                    callback(err, null)
+                    callback(err, null);
                 else
                     callback(err, res);
             });
@@ -395,7 +401,7 @@ exports.getAllRelationData = function getAllRelationData(eventID, callback){
             var result = connection.query('SELECT r.secondaryEventID, r.precondition, e.* FROM relationships r INER JOIN event e ON r.secondaryEventID = e.eventID WHERE primaryEventID = ?', eventID, function(err,res){
                 connection.release();
                 if(err)
-                    callback(err, null)
+                    callback(err, null);
                 else
                     callback(err, res);
             });
@@ -414,7 +420,7 @@ exports.getNamesandIDs = function getNamesandIDs(callback){
             var result = connection.query( 'SELECT eventID,eventName,category FROM event ORDER BY eventName', function (err, res) {
                 connection.release();
                 if(err)
-                    callback(err, null)
+                    callback(err, null);
                 else
                     callback(err, res);
             });

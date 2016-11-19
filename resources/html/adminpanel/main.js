@@ -67,6 +67,7 @@ function deleteMedia(mediaID, mediaDis){
 function deleteCategory(){
     if (confirm('Are you sure you want to category: ' + $('li.category-focused').text()) == true){
         $.post('/datatoserver', {action:'d', table:'category', value: $('li.category-focused').attr('id')}, function(data, status) {
+            loadCategories(function(){});
 
         })
         .fail(function(response) {
@@ -74,7 +75,6 @@ function deleteCategory(){
             window.location = '/error';
         });
         $('#category').val('');
-        loadCategories(function(){});
     }
 }
 
@@ -104,7 +104,7 @@ function deleteRelation(){
 }
 
 function loadDiscription(eID) {
-    $.post('/datafromserver', {action:'q', table:'event', eventid: eID}, function(data, status) {
+    $.post('/datafromserver', {action:'q', table:'event', eventid:eID}, function(data, status) {
         var obj = JSON.parse(data);
         $('#adaptationName').val(obj[0].eventName);
         $('#earliestDirectEvidence').val((obj[0].earliestDirectEvidence >= 1000000)? (obj[0].earliestDirectEvidence / 1000000): (obj[0].earliestDirectEvidence / 1000));
@@ -196,7 +196,8 @@ function loadCategories(callback) {
         var obj = JSON.parse(data);
         $('#category-items').empty();
         obj.forEach(function(item){
-            $('#category-items').append('<li id=\'' + item.categoryID + '\' class=\'category-unfocused\' >'+ item.categoryName + '</li>');
+            if(item.categoryID != 1)
+                $('#category-items').append('<li id=\'' + item.categoryID + '\' class=\'category-unfocused\' >'+ item.categoryName + '</li>');
         });
         $('li.category-unfocused').click(function(){
             if($('#editsaveButton').val() == 'Done'){
@@ -215,7 +216,6 @@ function addRelationship() {
         obj.push(Number($('li.adpt-focused').attr('id')));
         obj.push(Number($('li.relations-focused').attr('id').substr(1)));
         obj.push(0);
-        console.log(JSON.stringify(obj));
         postToServer({action:'c', table:'relationship', data:obj}, function(data, status){
             getEventList('relations-items', function(){
                 loadRelations($('li.adpt-focused').attr('id'));
@@ -283,7 +283,8 @@ function tabConfig(id) {
             $('#information-container').empty();
             $('#information-container').append(descriptionPane);
             loadCategoriesDrop(function(){
-                loadDiscription($('li.adpt-focused').attr('id'));
+                if($('li.adpt-focused').attr('id'))
+                    loadDiscription($('li.adpt-focused').attr('id'));
                 disableEditing(id);
                 setupEditButton(id);
             });
@@ -332,6 +333,7 @@ function tabConfig(id) {
                 tabConfig('firstLoad');
             });
             $('#addCategoryButton').click(function(){
+                $('li.category-focused').removeClass('category-focused').addClass('category-unfocused');
                 $('#category').val('');
                 $('#updateCategoryButton').val('Save');
             });
@@ -340,8 +342,8 @@ function tabConfig(id) {
             });
             $('#updateCategoryButton').click(function(){
                 if($('#updateCategoryButton').val() == 'Save'){
-                    $('#updateCategoryButton').val('Update');
                     saveValues('category');
+                    $('#updateCategoryButton').val('Update');
                     loadCategories(function(){
                         $($('li.category-unfocused').contains($('#category').val())).removeClass('category-unfocused').addClass('category-focused');
 
@@ -555,8 +557,6 @@ function disableEditing(id) {
             $('#media-type-combo').prop('disabled', true);
             $('#embedded-link').prop('disabled', true);
             $('#upload-file').prop('disabled', true);
-            //$('#addMediaButton').prop('disabled', true);
-            //$('#removeMediaButton').prop('disabled', true);
             break;
         case 'tab-relations':
             $('#add-to-preconditions').prop('disabled', true);
@@ -670,6 +670,7 @@ function saveValues(id, callback) {
             break;
         case 'category':
             postToServer({action:'c', table:'category', data:$('#category').val()}, callback);
+            $('#category').val('');
             break;
         default:
             console.log('Error: saveValues');
