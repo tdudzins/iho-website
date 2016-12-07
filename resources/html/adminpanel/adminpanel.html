@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+
+<html style="background-color: white">
+<head>
+    <script src="/resources/html/adminpanel/jquery-3.1.1.min.js"></script>
+    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script> -->
+    <script src="/resources/html/adminpanel/htmlStrings.js"></script>
+    <script src="/resources/html/adminpanel/main.js"></script>
+	<title>IHO DB | Admin Panel</title>
+	<link rel="stylesheet" type="text/css" href="/resources/html/adminpanel/style.css">
+</head>
+
+	<body>
+		<div id="main" class="main">
+
+			<div id="header" class="header">
+				<div id="header-text" class="header-text">
+					<h1 class=apHeader1>Database Management Portal</h1>
+					<h2 class="apHeader2">Welcome <%=firstName%> <%=lastName%></h2>
+				</div>
+				<div id=logout-container class=logout-container>
+					<form method="get" action="/logout">
+						<input id="logout-button" class="logout-button" type="submit" value="Log Out">
+					</form>
+          <input id="category-button" class="category-button" type="submit" value="Settings">
+				</div>
+			</div>
+
+			<div id="list-panel" class="list-panel">
+					<div id="sorting-panel" class="sorting-panel">
+						<input id="mainsearchbar-text" class="searchbar-text" type="text" placeholder="Search for an adaptation..." >
+						<input id="mainsearchbutton" class="searchbutton" type="submit" value="Go">
+					</div>
+					<div id="database-collection" class="database-collection" >
+						<ul id="adaptation-items" class="adaptation-items">
+						</ul>
+					</div>
+					<div id="database-buttons" class="database-buttons">
+						<div id="createAdaptation" class="createAdaptation">
+							<input id="createAdaptationButton" class="createAdaptationButton" type="submit" value="Create Adaptation">
+						</div>
+						<div id="deleteAdaptation" class="deleteAdaptation">
+							<input id="deleteAdaptationButton" class="deleteAdaptationButton" type="submit" value="Delete Adaptation">
+						</div>
+				</div>
+			</div>
+
+			<div id="content-panel" class="content-panel">
+
+				<div id="navigation-bar" class="navigation-bar">
+					<ul id="tabs" class="tabs">
+						<li id="tab-description" class="nonactive">Description</li>
+						<li id="tab-media" class="nonactive">Media</li>
+						<li id="tab-relations" class="nonactive">Relations</li>
+					</ul>
+				</div>
+
+				<div id="information-container" class="information-container">
+
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
