@@ -292,6 +292,58 @@ app.get('/resources/html/mainpage/:name', function(req, res){
         }
     });
 });
+app.get('/resources/html/mainpage/css/:name', function(req, res){
+    var options = {
+        root:  __dirname + '/resources/html/mainpage/css/',
+        dotfiles: 'deny',
+        headers: {'x-timestamp': Date.now(),'x-sent': true}
+    };
+    res.sendFile(req.params.name, options, function (err) {
+        if (err) {
+          console.log(err);
+          res.status(err.status).end();
+        }
+    });
+});
+app.get('/resources/html/mainpage/font/:name', function(req, res){
+    var options = {
+        root:  __dirname + '/resources/html/mainpage/font/',
+        dotfiles: 'deny',
+        headers: {'x-timestamp': Date.now(),'x-sent': true}
+    };
+    res.sendFile(req.params.name, options, function (err) {
+        if (err) {
+          console.log(err);
+          res.status(err.status).end();
+        }
+    });
+});
+app.get('/resources/html/mainpage/img/:name', function(req, res){
+    var options = {
+        root:  __dirname + '/resources/html/mainpage/img/',
+        dotfiles: 'deny',
+        headers: {'x-timestamp': Date.now(),'x-sent': true}
+    };
+    res.sendFile(req.params.name, options, function (err) {
+        if (err) {
+          console.log(err);
+          res.status(err.status).end();
+        }
+    });
+});
+app.get('/resources/html/mainpage/js/:name', function(req, res){
+    var options = {
+        root:  __dirname + '/resources/html/mainpage/js/',
+        dotfiles: 'deny',
+        headers: {'x-timestamp': Date.now(),'x-sent': true}
+    };
+    res.sendFile(req.params.name, options, function (err) {
+        if (err) {
+          console.log(err);
+          res.status(err.status).end();
+        }
+    });
+});
 app.get('/resources/html/login/:name', function(req, res){
     var options = {
         root:  __dirname + '/resources/html/login/',
