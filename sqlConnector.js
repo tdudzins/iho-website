@@ -5,7 +5,7 @@ var pool  = mysql.createPool({
     user            : 'tdudzins',
     password        : 'Password',
     database        : 'ihotestdatabase',
-    port            : '3300'
+    port            : '3306'
 });
 
 // Admin functions
@@ -175,21 +175,23 @@ exports.removeCategory = function removeCategory(table, key, value, callback) {
 exports.removeEvent = function removeEvent(value, callback) {
     pool.getConnection(function(err,connection){
         if (err) callback(err, null);
-        else
-            connection.query('DELETE FROM media WHERE eventID = ?', value ,function (err, res) {
-                if(err)
-                    callback(err, null);
-            });
-            connection.query('DELETE FROM relationships WHERE primaryEventID = ?', value ,function (err, res) {
-                if(err)
-                    callback(err, null);
-            });
-            connection.query('DELETE FROM event WHERE eventID = ?', value ,function (err, res) {
-                if(err)
-                    callback(err, null);
-            });
-            connection.release();
-    });
+        else{
+
+                connection.query('DELETE FROM media WHERE eventID = ?', value ,function (err, res) {
+                    if(err)
+                        callback(err, null);
+                });
+                connection.query('DELETE FROM relationships WHERE primaryEventID = ?', value ,function (err, res) {
+                    if(err)
+                        callback(err, null);
+                });
+                connection.query('DELETE FROM event WHERE eventID = ?', value ,function (err, res) {
+                    if(err)
+                        callback(err, null);
+                });
+                connection.release();
+        });
+    }
 };
 
 /**
@@ -243,18 +245,19 @@ exports.editRow = function editRow(table, key, data, callback) {
 exports.getUser = function getUser(data, callback) {
     pool.getConnection(function(err,connection){
         if (err) callback(err, null);
-
-        var result = connection.query('SELECT * FROM user WHERE email = ?', data, function(err,user){
-            if(user) {
-                callback(err, user[0]);
-            }
-            else {
-                console.log('Code ' + err.code + ': Error adding data to user table.');
-                callback(err, null);
-            }
-        });
-        // close connection with database
-        connection.release();
+        else{
+            var result = connection.query('SELECT * FROM user WHERE email = ?', data, function(err,user){
+                if(user) {
+                    callback(err, user[0]);
+                }
+                else {
+                    console.log('Code ' + err.code + ': Error adding data to user table.');
+                    callback(err, null);
+                }
+            });
+            // close connection with database
+            connection.release();
+        }
     });
 };
 
