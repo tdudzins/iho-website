@@ -123,21 +123,53 @@ app.post('/datatoserver', requireLogin, function(req, res){
     if(req.body.table !== 'user'){
         switch (req.body.action) {
             case 'c':
+                if(req.body.table === 'text'){
+                    var i = 0;
+                    var str = req.body.data;
+                    while(str){ //(eventID, type, position, text)
+                        ataBase.addRow(req.body.table, [eventID, type, i, str.substr(0,999)], function(err, data){
+                            if(err)
+                                res.status(500).end();
+                            else
+                                res.end(JSON.stringify(data));
+                        });
+                        i++;
+                        str = str.substr(1000);
+                    }
+                    // split the data into 1000 char string and assign a position and type
+                }
+                else{
                     dataBase.addRow(req.body.table, req.body.data, function(err, data){
                         if(err)
                             res.status(500).end();
                         else
                             res.end(JSON.stringify(data));
                     });
-
+                }
                 break;
             case 'u':
-                dataBase.editRow(req.body.table, req.body.key, req.body.data, function(err, data){
-                    if(err)
-                        res.status(500).end();
-                    else
-                        res.end(JSON.stringify(data));
-                });
+                if(req.body.table === 'text'){
+                    var i = 0;
+                    var str = req.body.data;
+                    while(str){ //(eventID, type, position, text)
+                        ataBase.addRow(req.body.table, [eventID, type, i, str.substr(0,999)], function(err, data){
+                            if(err)
+                                res.status(500).end();
+                            else
+                                res.end(JSON.stringify(data));
+                        });
+                        i++;
+                        str = str.substr(1000);
+                    }
+                }
+                else{
+                    dataBase.editRow(req.body.table, req.body.key, req.body.data, function(err, data){
+                        if(err)
+                            res.status(500).end();
+                        else
+                            res.end(JSON.stringify(data));
+                    });
+                }
                 break;
             case 'd':
                 if(req.body.table === 'category'){
@@ -150,6 +182,14 @@ app.post('/datatoserver', requireLogin, function(req, res){
                 }
                 else if (req.body.table === 'event') {
                     dataBase.removeEvent(req.body.value, function(err, data){
+                        if(err)
+                            res.status(500).end();
+                        else
+                            res.end(JSON.stringify(data));
+                    });
+                }
+                else if (req.body.table === 'text') {
+                    dataBase.removeText(req.body.value, req.body.type, function(err, data){
                         if(err)
                             res.status(500).end();
                         else
@@ -194,14 +234,6 @@ app.post('/datatoserver', requireLogin, function(req, res){
 app.post('/datafromserver', function(req, res){
     if(req.body.table !== 'user'){
         switch (req.body.action) {
-            case 'r':
-                dataBase.getData(req.body.table, req.body.field, req.body.term, function(err, data){
-                    if(err)
-                        res.status(500).end();
-                    else
-                        res.end(JSON.stringify(data));
-                });
-                break;
             case 'q':
                 switch (req.body.table) {
                     case 'event':
@@ -210,6 +242,19 @@ app.post('/datafromserver', function(req, res){
                                 res.status(500).end();
                             else
                                 res.end(JSON.stringify(data));
+                        });
+                        break;
+                    case 'text':
+                        dataBase.getText(req.body.eventid, req.body.type, function(err, data){
+                            if(err)
+                                res.status(500).end();
+                            else{
+                                var str = '';
+                                data.forEach(function(item){
+                                    str += item;
+                                });
+                                res.end(JSON.stringify(str));
+                            }
                         });
                         break;
                     case 'media':
@@ -250,7 +295,6 @@ app.post('/datafromserver', function(req, res){
                         res.end(JSON.stringify(data));
                 });
                 break;
-
             case 's':
                 dataBase.getAllRelationData(req.body.eventid, function(err, data){
                     if(err)

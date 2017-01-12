@@ -21,9 +21,6 @@ DATA ARRAY ORDER
 
 Data is retrieve from the server by sending a JSON string to the /datafromserver URL
 
-READ
-    '{'action':'r', 'table':'event', 'field':'eventName', 'term':'someterm'}'
-
 SPECIAL FUNCTIONS
     Get a data for an event by eventID
         '{'action':'q', 'table':'event', 'eventid': 1234}'

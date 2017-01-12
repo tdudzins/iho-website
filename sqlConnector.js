@@ -23,8 +23,17 @@ exports.addRow = function addRow(table, data, callback) {
             switch (table) {
                 case 'event':
                     var temp = connection.query('INSERT INTO event \
-                    (eventName, description, earliestDirectEvidence, earliestIndirectEvidence, boundaryStart, boundaryEnd, reference, comments, category)\
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', data, function(err,result){
+                    (eventName, earliestDirectEvidence, earliestIndirectEvidence, boundaryStart, boundaryEnd)\
+                    VALUES (?, ?, ?, ?, ?)', data, function(err,result){
+                        connection.release();
+                        if(result)
+                            callback(err, result.insertId);
+                        else
+                            callback(err, null);
+                    });
+                    break;
+                case 'text':
+                    var temp = connection.query('INSERT INTO text (eventID, type, position, text) VALUES (?, ?, ?, ?)', data, function(err,result){
                         connection.release();
                         if(result)
                             callback(err, result.insertId);
@@ -189,6 +198,27 @@ exports.removeEvent = function removeEvent(value, callback) {
                     if(err)
                         callback(err, null);
                 });
+                connection.query('DELETE FROM text WHERE eventID = ?', value ,function (err, res) {
+                    if(err)
+                        callback(err, null);
+                });
+                connection.release();
+        });
+    }
+};
+
+/**
+* Removes a event and all related content from the database
+* @param {string} key the primary key name in the event table
+* @param {function} callback is the callback function to be run when complete
+*/
+exports.removeText = function removeText(data, callback) {
+    pool.getConnection(function(err,connection){
+        if (err) callback(err, null);
+        else{
+
+                connection.query('DELETE FROM text WHERE eventID = ? AND type = ?', data ,function (err, res) {
+                    if(err)
                 connection.release();
         });
     }
@@ -209,14 +239,10 @@ exports.editRow = function editRow(table, key, data, callback) {
             switch (table) {
                 case 'event':
                     connection.query('UPDATE event SET eventName = ? WHERE eventID = ?', [data[0], key], function (err, res) {if(err)callback(err, null);});
-                    connection.query('UPDATE event SET description = ? WHERE eventID = ?', [data[1], key], function (err, res) {if(err)callback(err, null);});
                     connection.query('UPDATE event SET earliestDirectEvidence = ? WHERE eventID = ?', [data[2], key], function (err, res) {if(err)callback(err, null);});
                     connection.query('UPDATE event SET earliestIndirectEvidence = ? WHERE eventID = ?', [data[3], key], function (err, res) {if(err)callback(err, null);});
                     connection.query('UPDATE event SET boundaryStart = ? WHERE eventID = ?', [data[4], key], function (err, res) {if(err)callback(err, null);});
                     connection.query('UPDATE event SET boundaryEnd = ? WHERE eventID = ?', [data[5], key], function (err, res) {if(err)callback(err, null);});
-                    connection.query('UPDATE event SET reference = ? WHERE eventID = ?', [data[6], key], function (err, res) {if(err)callback(err, null);});
-                    connection.query('UPDATE event SET comments = ? WHERE eventID = ?', [data[7], key], function (err, res) {if(err)callback(err, null);});
-                    connection.query('UPDATE event SET category = ? WHERE eventID = ?', [data[8], key], function (err, res) {if(err)callback(err, null);});
                     connection.release();
                     break;
                 case 'media':
@@ -261,7 +287,6 @@ exports.getUser = function getUser(data, callback) {
     });
 };
 
-
 // Get data by eventID
 
 /**
@@ -274,6 +299,25 @@ exports.getEvent = function getEvent(eventID, callback){
         if (err) callback(err, null);
         else
             var result = connection.query('SELECT * FROM event WHERE eventID= ? ', eventID, function (err, res) {
+                connection.release();
+                if(err)
+                    callback(err, null);
+                else
+                    callback(null, res);
+            });
+    });
+}
+
+/**
+* Queries the database by the eventID and gets all the data associated with the event
+* @param {int} eventID the eventID for the required data
+* @param {function} callback is the callback function to be run when complete
+*/
+exports.getText = function getText(eventID, type, callback){
+    pool.getConnection(function(err,connection){
+        if (err) callback(err, null);
+        else
+            var result = connection.query('SELECT text FROM text WHERE eventID= ? AND type = ? ORDER BY position ASC', [eventID, type], function (err, res) {
                 connection.release();
                 if(err)
                     callback(err, null);
@@ -339,35 +383,6 @@ exports.getCategory = function getCategory(categoryID, callback){
             });
     });
 }
-
-
-// General Searches
-
-/**
-* Inserts a row to the user table in the dataBase
-* @param {string} table the table name
-* @param {string} col the column
-* @param {string} term a single word to search for
-* @return error and array containing any attributes that should be sent back to the callback function.
-*/
-exports.getData = function getData(table, col, term, callback) {
-    pool.getConnection(function(err,connection){
-        if (err) callback(err, null);
-
-        var result = connection.query('SELECT * FROM ? WHERE ? LIKE ?', [table, col, term], function(err,user){
-            if(user) {
-                callback(err, user[0]);
-            }
-            else {
-                console.log('Code ' + err.code + ': Error adding data to user table.');
-                callback(err, null);
-            }
-        });
-        // close connection with database
-        connection.release();
-    });
-};
-
 
 // Premade searches
 
