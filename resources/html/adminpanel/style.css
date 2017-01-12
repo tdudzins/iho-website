@@ -392,7 +392,7 @@ ul.tabs li:focus, .nonactive {
 
 .adaptation-description-div {
 	width: 100%;
-	height: 150px;
+	height: 700px;
 	padding: 5px;
 }
 
@@ -403,7 +403,7 @@ ul.tabs li:focus, .nonactive {
 }
 
 .adaptation-description-field {
-	height: 120px;
+	height: 550px;
 	width: 100%;
 	vertical-align: bottom;
 }
@@ -415,7 +415,7 @@ ul.tabs li:focus, .nonactive {
 
 .adaptation-references-div {
 	width: 100%;
-	height: 95px;
+	height: 600px;
 	padding: 5px;
 }
 
@@ -437,7 +437,7 @@ ul.tabs li:focus, .nonactive {
 
 .adaptation-comments-div {
 	width: 100%;
-	height: 100px;
+	height: 450px;
 	padding: 5px;
 }
 
@@ -448,7 +448,7 @@ ul.tabs li:focus, .nonactive {
 }
 
 .adaptation-comments-field {
-	height: 70px;
+	height: 90%;
 	width: 100%;
 	vertical-align: bottom;
 }
