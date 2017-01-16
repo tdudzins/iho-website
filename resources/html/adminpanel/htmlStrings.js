@@ -109,6 +109,7 @@ var descriptionPane =
       tinymce.init({
         selector: 'textarea',
         browser_spellcheck : true,
+        contenteditable : false,
         plugins: [
           "advlist autolink autosave link lists print preview hr anchor pagebreak",
           "searchreplace wordcount visualblocks fullscreen insertdatetime nonbreaking",

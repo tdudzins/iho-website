@@ -128,21 +128,23 @@ app.post('/datatoserver', requireLogin, function(req, res){
                     var tData = [req.body.data[1], req.body.data[6], req.body.data[7]];
 
                     dataBase.addRow(req.body.table, eData, function(err, eventID){
+                        console.log('1'+err);
                         if(err)
                             res.status(500).end();
                         else{
-                            var type = ['descript', 'referenc', 'comments']
-                            eData.forEach(item, index){
+                            var type = ['descript', 'referenc', 'comments'];
+                            eData.forEach(function(item, index){
                                 var i = 0;
                                 var str = item;
                                 while(str){ //(eventID, type, position, text)
                                     dataBase.addRow('text', [eventID, type[index], i, str.substr(0,999)], function(err, data){
+                                        console.log(err);
                                         if(err) res.status(500).end();
                                     });
                                     str = str.substr(1000);
                                     i++;
                                 }
-                            }
+                            });
                             res.end(JSON.stringify(eventID));
                         }
                     });
@@ -166,8 +168,8 @@ app.post('/datatoserver', requireLogin, function(req, res){
                             res.status(500).end();
                         else{
                             dataBase.removeText(req.body.key, function(err, dat){
-                                var type = ['descript', 'referenc', 'comments']
-                                eData.forEach(item, index){
+                                var type = ['descript', 'referenc', 'comments'];
+                                eData.forEach(function(item, index){
                                     var i = 0;
                                     var str = item;
                                     while(str){ //(eventID, type, position, text)
@@ -177,7 +179,7 @@ app.post('/datatoserver', requireLogin, function(req, res){
                                         str = str.substr(1000);
                                         i++;
                                     }
-                                }
+                                });
                                 res.end(JSON.stringify(data));
                             });
                         }
@@ -311,6 +313,7 @@ app.post('/datafromserver', function(req, res){
                 break;
             case 't':
                 dataBase.getNamesandIDs(function(err, data){
+                    console.log(err);
                     if(err)
                         res.status(500).end();
                     else

@@ -116,15 +116,31 @@ function loadDiscription(eID) {
         $('#ageBoundaryEnd').val((obj[0].boundaryEnd >= 1000000)? (obj[0].boundaryEnd / 1000000): (obj[0].boundaryEnd / 1000));
         $('#ageBoundaryEnd-units').val((obj[0].boundaryEnd >= 1000000)? 'Ma': 'Ka' );
         $('#adaptation-category-combo').val(obj[0].category);
-        $('#adaptationDescription').val(obj[0].description);
-        $('#adaptationComments').val(obj[0].comments);
-        $('#adaptationReferences').val(obj[0].reference);
-    })
-    .fail(function(response) {
+    }).fail(function(response) {
         console.log('Error: loadDiscription');
         window.location = '/error';
     });
-
+    $.post('/datafromserver', {action:'q', table:'text', eventid:eID, type:'comments'}, function(data, status) {
+        var obj = JSON.parse(data);
+        $('#adaptationComments').val(obj[0].comments);
+    }).fail(function(response) {
+        console.log('Error: loadDiscription');
+        window.location = '/error';
+    });
+    $.post('/datafromserver', {action:'q', table:'text', eventid:eID, type:'descript'}, function(data, status) {
+        var obj = JSON.parse(data);
+        $('#adaptationDescription').val(obj[0].description);
+    }).fail(function(response) {
+        console.log('Error: loadDiscription');
+        window.location = '/error';
+    });
+    $.post('/datafromserver', {action:'q', table:'text', eventid:eID, type:'referenc'}, function(data, status) {
+        var obj = JSON.parse(data);
+        $('#adaptationReferences').val(obj[0].reference);
+    }).fail(function(response) {
+        console.log('Error: loadDiscription');
+        window.location = '/error';
+    });
 }
 
 function loadMedia(eID, callback) {
@@ -518,9 +534,9 @@ function enableEditing(id) {
             $('#ageBoundaryEnd').prop('disabled', false);
             $('#ageBoundaryEnd-units').prop('disabled', false);
             $('#adaptation-category-combo').prop('disabled', false);
-            $('#adaptationDescription').prop('disabled', false);
-            $('#adaptationComments').prop('disabled', false);
-            $('#adaptationReferences').prop('disabled', false);
+            tinyMCE.get('adaptationComments').getBody().setAttribute('contenteditable', true);
+            tinyMCE.get('adaptationDescription').getBody().setAttribute('contenteditable', true);
+            tinyMCE.get('adaptationReferences').getBody().setAttribute('contenteditable', true);
             break;
         case 'tab-media':
             $('#mediaDescription').prop('disabled', false);
@@ -554,9 +570,10 @@ function disableEditing(id) {
             $('#ageBoundaryEnd').prop('disabled', true);
             $('#ageBoundaryEnd-units').prop('disabled', true);
             $('#adaptation-category-combo').prop('disabled', true);
-            $('#adaptationDescription').prop('disabled', true);
-            $('#adaptationComments').prop('disabled', true);
-            $('#adaptationReferences').prop('disabled', true);
+            $('textarea_id').getBody().setAttribute('contenteditable', false);
+            tinyMCE.get('adaptationComments').getBody().setAttribute('contenteditable', false);
+            tinyMCE.get('adaptationDescription').getBody().setAttribute('contenteditable', false);
+            tinyMCE.get('adaptationReferences').getBody().setAttribute('contenteditable', false);
             break;
         case 'tab-media':
             $('#mediaDescription').prop('disabled', true);

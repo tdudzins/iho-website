@@ -23,8 +23,8 @@ exports.addRow = function addRow(table, data, callback) {
             switch (table) {
                 case 'event':
                     var temp = connection.query('INSERT INTO event \
-                    (eventName, earliestDirectEvidence, earliestIndirectEvidence, boundaryStart, boundaryEnd)\
-                    VALUES (?, ?, ?, ?, ?)', data, function(err,result){
+                    (eventName, earliestDirectEvidence, earliestIndirectEvidence, boundaryStart, boundaryEnd, category)\
+                    VALUES (?, ?, ?, ?, ?, ?)', data, function(err,result){
                         connection.release();
                         if(result)
                             callback(err, result.insertId);
@@ -203,8 +203,8 @@ exports.removeEvent = function removeEvent(value, callback) {
                         callback(err, null);
                 });
                 connection.release();
-        });
-    }
+        }
+    });
 };
 
 /**
@@ -217,13 +217,14 @@ exports.removeText = function removeText(data, callback) {
         if (err) callback(err, null);
         else{
 
-                connection.query('DELETE FROM text WHERE eventID = ?', data ,function (err, res) {
-                    if(err)
-                connection.release();
-        });
-    }
-};
-
+            connection.query('DELETE FROM text WHERE eventID = ?', data ,function (err, res) {
+                if(err)
+                    callback(err, null);
+            });
+            connection.release();
+        }
+    });
+}
 /**
 * Edits a row in the table
 * @param {string} table is the name of the table that the row is in
