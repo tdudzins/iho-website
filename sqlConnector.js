@@ -217,7 +217,7 @@ exports.removeText = function removeText(data, callback) {
         if (err) callback(err, null);
         else{
 
-                connection.query('DELETE FROM text WHERE eventID = ? AND type = ?', data ,function (err, res) {
+                connection.query('DELETE FROM text WHERE eventID = ?', data ,function (err, res) {
                     if(err)
                 connection.release();
         });
@@ -243,6 +243,7 @@ exports.editRow = function editRow(table, key, data, callback) {
                     connection.query('UPDATE event SET earliestIndirectEvidence = ? WHERE eventID = ?', [data[3], key], function (err, res) {if(err)callback(err, null);});
                     connection.query('UPDATE event SET boundaryStart = ? WHERE eventID = ?', [data[4], key], function (err, res) {if(err)callback(err, null);});
                     connection.query('UPDATE event SET boundaryEnd = ? WHERE eventID = ?', [data[5], key], function (err, res) {if(err)callback(err, null);});
+                    connection.query('UPDATE event SET category = ? WHERE eventID = ?', [data[8], key], function (err, res) {if(err)callback(err, null);});
                     connection.release();
                     break;
                 case 'media':

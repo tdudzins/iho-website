@@ -123,20 +123,29 @@ app.post('/datatoserver', requireLogin, function(req, res){
     if(req.body.table !== 'user'){
         switch (req.body.action) {
             case 'c':
-                if(req.body.table === 'text'){
-                    var i = 0;
-                    var str = req.body.data;
-                    while(str){ //(eventID, type, position, text)
-                        ataBase.addRow(req.body.table, [eventID, type, i, str.substr(0,999)], function(err, data){
-                            if(err)
-                                res.status(500).end();
-                            else
-                                res.end(JSON.stringify(data));
-                        });
-                        i++;
-                        str = str.substr(1000);
-                    }
-                    // split the data into 1000 char string and assign a position and type
+                if(req.body.table === 'event'){
+                    var eData = [req.body.data[0], req.body.data[2], req.body.data[3], req.body.data[4], req.body.data[5], req.body.data[8]];
+                    var tData = [req.body.data[1], req.body.data[6], req.body.data[7]];
+
+                    dataBase.addRow(req.body.table, eData, function(err, eventID){
+                        if(err)
+                            res.status(500).end();
+                        else{
+                            var type = ['descript', 'referenc', 'comments']
+                            eData.forEach(item, index){
+                                var i = 0;
+                                var str = item;
+                                while(str){ //(eventID, type, position, text)
+                                    dataBase.addRow('text', [eventID, type[index], i, str.substr(0,999)], function(err, data){
+                                        if(err) res.status(500).end();
+                                    });
+                                    str = str.substr(1000);
+                                    i++;
+                                }
+                            }
+                            res.end(JSON.stringify(eventID));
+                        }
+                    });
                 }
                 else{
                     dataBase.addRow(req.body.table, req.body.data, function(err, data){
@@ -148,19 +157,32 @@ app.post('/datatoserver', requireLogin, function(req, res){
                 }
                 break;
             case 'u':
-                if(req.body.table === 'text'){
-                    var i = 0;
-                    var str = req.body.data;
-                    while(str){ //(eventID, type, position, text)
-                        ataBase.addRow(req.body.table, [eventID, type, i, str.substr(0,999)], function(err, data){
-                            if(err)
-                                res.status(500).end();
-                            else
+                if(req.body.table === 'event'){
+                    var eData = [req.body.data[0], req.body.data[2], req.body.data[3], req.body.data[4], req.body.data[5], req.body.data[8]];
+                    var tData = [req.body.data[1], req.body.data[6], req.body.data[7]];
+
+                    dataBase.editRow(req.body.table, req.body.key, eData, function(err, data){
+                        if(err)
+                            res.status(500).end();
+                        else{
+                            dataBase.removeText(req.body.key, function(err, dat){
+                                var type = ['descript', 'referenc', 'comments']
+                                eData.forEach(item, index){
+                                    var i = 0;
+                                    var str = item;
+                                    while(str){ //(eventID, type, position, text)
+                                        dataBase.addRow('text', [req.body.key, type[index], i, str.substr(0,999)], function(err, da){
+                                            if(err) res.status(500).end();
+                                        });
+                                        str = str.substr(1000);
+                                        i++;
+                                    }
+                                }
                                 res.end(JSON.stringify(data));
-                        });
-                        i++;
-                        str = str.substr(1000);
-                    }
+                            });
+                        }
+                    });
+
                 }
                 else{
                     dataBase.editRow(req.body.table, req.body.key, req.body.data, function(err, data){
