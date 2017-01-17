@@ -104,23 +104,7 @@ var descriptionPane =
             </div>
         </div>
 
-    </div>
-    <script>
-      tinymce.init({
-        selector: 'textarea',
-        browser_spellcheck : true,
-        contenteditable : false,
-        plugins: [
-          "advlist autolink autosave link lists print preview hr anchor pagebreak",
-          "searchreplace wordcount visualblocks fullscreen insertdatetime nonbreaking",
-          "contextmenu directionality textcolor paste fullpage textcolor colorpicker textpattern"
-        ],
-        menubar: false,
-        toolbar1: "bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | styleselect formatselect fontselect fontsizeselect",
-        toolbar2: "cut copy paste | searchreplace | bullist numlist | outdent indent blockquote | undo redo | link unlink  | insertdatetime preview | forecolor backcolor",
-        toolbar3: "hr removeformat | subscript superscript | print fullscreen | ltr rtl | spellchecker"
-      });
-    </script>`;
+    </div>`;
 
 var mediaPane =
     `<div id="save-edit-container" class="save-edit-container">

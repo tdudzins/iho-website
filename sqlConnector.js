@@ -36,7 +36,7 @@ exports.addRow = function addRow(table, data, callback) {
                     var temp = connection.query('INSERT INTO text (eventID, type, position, text) VALUES (?, ?, ?, ?)', data, function(err,result){
                         connection.release();
                         if(result)
-                            callback(err, result.insertId);
+                            callback(err, null);
                         else
                             callback(err, null);
                     });
@@ -70,7 +70,7 @@ exports.addRow = function addRow(table, data, callback) {
                     break;
                 case 'user':
                     var temp = connection.query('INSERT INTO user (firstName, lastName, email, password) VALUES (?, ?, ?, ?)', data, function(err,user){
-                    connection.release();
+                        connection.release();
                         if(user) {
                             console.log('Inserted into table user successfully. Inserted ID: ' + user.insertId);
                             var dbRes = new Array();
@@ -218,13 +218,16 @@ exports.removeText = function removeText(data, callback) {
         else{
 
             connection.query('DELETE FROM text WHERE eventID = ?', data ,function (err, res) {
+                connection.release();
                 if(err)
                     callback(err, null);
+                else
+                    callback(err, res);
             });
-            connection.release();
         }
     });
 }
+
 /**
 * Edits a row in the table
 * @param {string} table is the name of the table that the row is in
@@ -240,11 +243,11 @@ exports.editRow = function editRow(table, key, data, callback) {
             switch (table) {
                 case 'event':
                     connection.query('UPDATE event SET eventName = ? WHERE eventID = ?', [data[0], key], function (err, res) {if(err)callback(err, null);});
-                    connection.query('UPDATE event SET earliestDirectEvidence = ? WHERE eventID = ?', [data[2], key], function (err, res) {if(err)callback(err, null);});
-                    connection.query('UPDATE event SET earliestIndirectEvidence = ? WHERE eventID = ?', [data[3], key], function (err, res) {if(err)callback(err, null);});
-                    connection.query('UPDATE event SET boundaryStart = ? WHERE eventID = ?', [data[4], key], function (err, res) {if(err)callback(err, null);});
-                    connection.query('UPDATE event SET boundaryEnd = ? WHERE eventID = ?', [data[5], key], function (err, res) {if(err)callback(err, null);});
-                    connection.query('UPDATE event SET category = ? WHERE eventID = ?', [data[8], key], function (err, res) {if(err)callback(err, null);});
+                    connection.query('UPDATE event SET earliestDirectEvidence = ? WHERE eventID = ?', [data[1], key], function (err, res) {if(err)callback(err, null);});
+                    connection.query('UPDATE event SET earliestIndirectEvidence = ? WHERE eventID = ?', [data[2], key], function (err, res) {if(err)callback(err, null);});
+                    connection.query('UPDATE event SET boundaryStart = ? WHERE eventID = ?', [data[3], key], function (err, res) {if(err)callback(err, null);});
+                    connection.query('UPDATE event SET boundaryEnd = ? WHERE eventID = ?', [data[4], key], function (err, res) {if(err)callback(err, null);});
+                    connection.query('UPDATE event SET category = ? WHERE eventID = ?', [data[5], key], function (err, res) {if(err)callback(err, null);});
                     connection.release();
                     break;
                 case 'media':

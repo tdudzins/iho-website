@@ -122,21 +122,24 @@ function loadDiscription(eID) {
     });
     $.post('/datafromserver', {action:'q', table:'text', eventid:eID, type:'comments'}, function(data, status) {
         var obj = JSON.parse(data);
-        $('#adaptationComments').val(obj[0].comments);
+        if(data !== '""')
+            tinyMCE.get('adaptationComments').setContent(obj);
     }).fail(function(response) {
         console.log('Error: loadDiscription');
         window.location = '/error';
     });
     $.post('/datafromserver', {action:'q', table:'text', eventid:eID, type:'descript'}, function(data, status) {
         var obj = JSON.parse(data);
-        $('#adaptationDescription').val(obj[0].description);
+        if(data !== '""')
+            tinyMCE.get('adaptationDescription').setContent(obj);
     }).fail(function(response) {
         console.log('Error: loadDiscription');
         window.location = '/error';
     });
     $.post('/datafromserver', {action:'q', table:'text', eventid:eID, type:'referenc'}, function(data, status) {
         var obj = JSON.parse(data);
-        $('#adaptationReferences').val(obj[0].reference);
+        if(data !== '""')
+            tinyMCE.get('adaptationReferences').setContent(obj);
     }).fail(function(response) {
         console.log('Error: loadDiscription');
         window.location = '/error';
@@ -291,6 +294,21 @@ function tabConfig(id) {
             $('li.adpt-focused').removeClass('adpt-focused').addClass('adpt-unfocused');
             $('#information-container').empty();
             $('#information-container').append(descriptionPane);
+            tinymce.remove();
+            tinymce.init({
+                selector: 'textarea',
+                browser_spellcheck : true,
+                //contenteditable : false,
+                plugins: [
+                    "advlist autolink link lists print preview hr anchor pagebreak",
+                    "searchreplace wordcount visualblocks fullscreen insertdatetime nonbreaking",
+                    "contextmenu directionality textcolor paste fullpage textcolor colorpicker textpattern"
+                ],
+                menubar: false,
+                toolbar1: "bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | styleselect formatselect fontselect fontsizeselect",
+                toolbar2: "cut copy paste | searchreplace | bullist numlist | outdent indent blockquote | undo redo | link unlink  | insertdatetime preview | forecolor backcolor",
+                toolbar3: "hr removeformat | subscript superscript | print fullscreen | ltr rtl | spellchecker"
+            });
             loadCategoriesDrop(function(){
                     $('#adaptation-category-combo').val(1);
             });
@@ -298,6 +316,21 @@ function tabConfig(id) {
         case 'tab-description':
             $('#information-container').empty();
             $('#information-container').append(descriptionPane);
+            tinymce.remove();
+            tinymce.init({
+                selector: 'textarea',
+                browser_spellcheck : true,
+                //contenteditable : false,
+                plugins: [
+                    "advlist autolink link lists print preview hr anchor pagebreak",
+                    "searchreplace wordcount visualblocks fullscreen insertdatetime nonbreaking",
+                    "contextmenu directionality textcolor paste fullpage textcolor colorpicker textpattern"
+                ],
+                menubar: false,
+                toolbar1: "bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | styleselect formatselect fontselect fontsizeselect",
+                toolbar2: "cut copy paste | searchreplace | bullist numlist | outdent indent blockquote | undo redo | link unlink  | insertdatetime preview | forecolor backcolor",
+                toolbar3: "hr removeformat | subscript superscript | print fullscreen | ltr rtl | spellchecker"
+            });
             loadCategoriesDrop(function(){
                 if($('li.adpt-focused').attr('id'))
                     loadDiscription($('li.adpt-focused').attr('id'));
@@ -570,7 +603,6 @@ function disableEditing(id) {
             $('#ageBoundaryEnd').prop('disabled', true);
             $('#ageBoundaryEnd-units').prop('disabled', true);
             $('#adaptation-category-combo').prop('disabled', true);
-            $('textarea_id').getBody().setAttribute('contenteditable', false);
             tinyMCE.get('adaptationComments').getBody().setAttribute('contenteditable', false);
             tinyMCE.get('adaptationDescription').getBody().setAttribute('contenteditable', false);
             tinyMCE.get('adaptationReferences').getBody().setAttribute('contenteditable', false);
@@ -632,10 +664,6 @@ function dataCheck(id) {
                 alert('Age Boundary End must be a number.');
                 return false;
             }
-            else if(!$('#adaptationDescription').val()){
-                alert('You need to add an Adaptation Description.');
-                return false;
-            }
             else
                 return true;
             break;
@@ -674,14 +702,14 @@ function saveValues(id, callback) {
     switch (id) {
         case 'tab-description':
             obj.push($('#adaptationName').val());
-            obj.push($('#adaptationDescription').val());
             obj.push(Number($('#earliestDirectEvidence').val())*(($('#earliestDirectEvidence-units').val() == 'Ma')? 1000: 1000000));
             obj.push(Number($('#earliestIndirectEvidence').val())*(($('#earliestIndirectEvidence-units').val() == 'Ma')? 1000: 1000000));
             obj.push(Number($('#ageBoundaryStart').val())*(($('#ageBoundaryStart-units').val() == 'Ma')? 1000: 1000000));
             obj.push(Number($('#ageBoundaryEnd').val())*(($('#ageBoundaryEnd-units').val() == 'Ma')? 1000: 1000000));
-            obj.push($('#adaptationReferences').val());
-            obj.push($('#adaptationComments').val());
             obj.push($('#adaptation-category-combo').val());
+            obj.push(tinyMCE.get('adaptationDescription').getContent());
+            obj.push(tinyMCE.get('adaptationReferences').getContent());
+            obj.push(tinyMCE.get('adaptationComments').getContent());
             postToServer({action:'c', table:'event', data:obj}, callback);
             break;
         case 'tab-media':
@@ -706,14 +734,14 @@ function updateValues(id, callback) {
     switch (id) {
         case 'tab-description':
             obj.push($('#adaptationName').val());
-            obj.push($('#adaptationDescription').val());
             obj.push(Number($('#earliestDirectEvidence').val())*(($('#earliestDirectEvidence-units').val() == 'Ka')? 1000: 1000000));
             obj.push(Number($('#earliestIndirectEvidence').val())*(($('#earliestIndirectEvidence-units').val() == 'Ka')? 1000: 1000000));
             obj.push(Number($('#ageBoundaryStart').val())*(($('#ageBoundaryStart-units').val() == 'Ka')? 1000: 1000000));
             obj.push(Number($('#ageBoundaryEnd').val())*(($('#ageBoundaryEnd-units').val() == 'Ka')? 1000: 1000000));
-            obj.push($('#adaptationReferences').val());
-            obj.push($('#adaptationComments').val());
             obj.push($('#adaptation-category-combo').val());
+            obj.push(tinyMCE.get('adaptationDescription').getContent());
+            obj.push(tinyMCE.get('adaptationReferences').getContent());
+            obj.push(tinyMCE.get('adaptationComments').getContent());
             postToServer({action:'u', table:'event', key:$('li.adpt-focused').attr('id'), data:obj}, callback);
             break;
         case 'tab-media':

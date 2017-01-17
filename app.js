@@ -124,22 +124,22 @@ app.post('/datatoserver', requireLogin, function(req, res){
         switch (req.body.action) {
             case 'c':
                 if(req.body.table === 'event'){
-                    var eData = [req.body.data[0], req.body.data[2], req.body.data[3], req.body.data[4], req.body.data[5], req.body.data[8]];
-                    var tData = [req.body.data[1], req.body.data[6], req.body.data[7]];
+                    var eData = [req.body.data[0], req.body.data[1], req.body.data[2], req.body.data[3], req.body.data[4], req.body.data[5]];
+                    var tData = [req.body.data[6], req.body.data[7], req.body.data[8]];
 
                     dataBase.addRow(req.body.table, eData, function(err, eventID){
-                        console.log('1'+err);
-                        if(err)
+                        if(err){
+                            console.log('1'+err);
                             res.status(500).end();
+                        }
                         else{
-                            var type = ['descript', 'referenc', 'comments'];
-                            eData.forEach(function(item, index){
+                            var colType = ['descript', 'referenc', 'comments'];
+                            tData.forEach(function(item, index){
                                 var i = 0;
                                 var str = item;
                                 while(str){ //(eventID, type, position, text)
-                                    dataBase.addRow('text', [eventID, type[index], i, str.substr(0,999)], function(err, data){
-                                        console.log(err);
-                                        if(err) res.status(500).end();
+                                    dataBase.addRow('text', [eventID, colType[index], i, str.substr(0,999)], function(err, data){
+                                        if(err){console.log('2'+err); res.status(500).end();}
                                     });
                                     str = str.substr(1000);
                                     i++;
@@ -160,31 +160,37 @@ app.post('/datatoserver', requireLogin, function(req, res){
                 break;
             case 'u':
                 if(req.body.table === 'event'){
-                    var eData = [req.body.data[0], req.body.data[2], req.body.data[3], req.body.data[4], req.body.data[5], req.body.data[8]];
-                    var tData = [req.body.data[1], req.body.data[6], req.body.data[7]];
-
+                    var eData = [req.body.data[0], req.body.data[1], req.body.data[2], req.body.data[3], req.body.data[4], req.body.data[5]];
+                    var tData = [req.body.data[6], req.body.data[7], req.body.data[8]];
                     dataBase.editRow(req.body.table, req.body.key, eData, function(err, data){
-                        if(err)
+                        if(err){
+                            console.log('3'+err);
                             res.status(500).end();
+                        }
                         else{
                             dataBase.removeText(req.body.key, function(err, dat){
-                                var type = ['descript', 'referenc', 'comments'];
-                                eData.forEach(function(item, index){
-                                    var i = 0;
-                                    var str = item;
-                                    while(str){ //(eventID, type, position, text)
-                                        dataBase.addRow('text', [req.body.key, type[index], i, str.substr(0,999)], function(err, da){
-                                            if(err) res.status(500).end();
-                                        });
-                                        str = str.substr(1000);
-                                        i++;
-                                    }
-                                });
-                                res.end(JSON.stringify(data));
+                                if(err){
+                                    console.log('45'+err);
+                                    res.status(500).end();
+                                }
+                                else{
+                                    var colType = ['descript', 'referenc', 'comments'];
+                                    tData.forEach(function(item, index){
+                                        var i = 0;
+                                        var str = item;
+                                        while(str){ //(eventID, type, position, text)
+                                            dataBase.addRow('text', [req.body.key, colType[index], i, str.substr(0,999)], function(err, da){
+                                                if(err){console.log('4'+err); res.status(500).end();}
+                                            });
+                                            str = str.substr(1000);
+                                            i++;
+                                        }
+                                        res.end(JSON.stringify(data));
+                                    });
+                                }
                             });
                         }
                     });
-
                 }
                 else{
                     dataBase.editRow(req.body.table, req.body.key, req.body.data, function(err, data){
@@ -275,7 +281,7 @@ app.post('/datafromserver', function(req, res){
                             else{
                                 var str = '';
                                 data.forEach(function(item){
-                                    str += item;
+                                    str += item.text;
                                 });
                                 res.end(JSON.stringify(str));
                             }
@@ -313,9 +319,11 @@ app.post('/datafromserver', function(req, res){
                 break;
             case 't':
                 dataBase.getNamesandIDs(function(err, data){
-                    console.log(err);
-                    if(err)
+
+                    if(err){
+                        console.log(err);
                         res.status(500).end();
+                    }
                     else
                         res.end(JSON.stringify(data));
                 });
