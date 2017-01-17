@@ -401,12 +401,15 @@ function tabConfig(id) {
                     saveValues('category');
                     $('#updateCategoryButton').val('Update');
                     loadCategories(function(){
-                        $($('li.category-unfocused').contains($('#category').val())).removeClass('category-unfocused').addClass('category-focused');
+                        loadCategories(function(){
+                            $($('li.category-unfocused').contains($('#category').val())).removeClass('category-unfocused').addClass('category-focused');
 
+                        });
                     });
                 }
                 if($('#updateCategoryButton').val() == 'Update')
                     updateValues('category');
+                    $('#category').val('');
                     loadCategories(function(){
                         $($('li.category-unfocused').contains($('#category').val())).removeClass('category-unfocused').addClass('category-focused');
                     });
