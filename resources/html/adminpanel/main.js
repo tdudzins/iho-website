@@ -294,7 +294,8 @@ function tabConfig(id) {
             $('li.adpt-focused').removeClass('adpt-focused').addClass('adpt-unfocused');
             $('#information-container').empty();
             $('#information-container').append(descriptionPane);
-            tinymce.remove();
+            if(tinymce.editors.length > 0)
+                tinymce.remove('textarea');
             tinymce.init({
                 selector: 'textarea',
                 browser_spellcheck : true,
@@ -314,13 +315,13 @@ function tabConfig(id) {
             });
             break;
         case 'tab-description':
+            if(tinymce.editors.length > 0)
+                tinymce.remove('textarea');
             $('#information-container').empty();
             $('#information-container').append(descriptionPane);
-            tinymce.remove();
             tinymce.init({
                 selector: 'textarea',
                 browser_spellcheck : true,
-                //contenteditable : false,
                 plugins: [
                     "advlist autolink link lists print preview hr anchor pagebreak",
                     "searchreplace wordcount visualblocks fullscreen insertdatetime nonbreaking",
