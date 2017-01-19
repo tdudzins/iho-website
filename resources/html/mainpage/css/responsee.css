@@ -1,3 +1,5 @@
+/*Main CSS for main page*/
+
 * {
 -webkit-box-sizing: border-box;
 -moz-box-sizing: border-box;
@@ -118,3 +120,40 @@ float: none;
 margin: 0 auto;
 display: block;
 }
+
+
+/*Brought over from template-style.css*/
+
+#first-block {
+text-align:center;
+padding:3.5em 0;
+}
+footer {
+background:#fff;
+padding:1em 0;
+}
+
+/* sticky footer css */
+html {
+height: 100%;
+overflow: hidden;
+}
+ 
+body {
+height: 100%;
+overflow: scroll;
+}
+ 
+.with-sticky-footer {
+display: table;
+height: 100%;
+table-layout: fixed;
+width: 100%; 
+}
+ 
+.sticky-footer {
+display: table-row;
+height: 1px;
+} 
+
+/*End of template-style.css*/

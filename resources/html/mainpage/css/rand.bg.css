@@ -3,6 +3,8 @@
     Author     : Masud Afsar <masud.afsar@live.com>
 */
 
+/*Generates a random background image*/
+
 
 .randbg {
 background: url('../img/1.jpg') no-repeat center center fixed;
