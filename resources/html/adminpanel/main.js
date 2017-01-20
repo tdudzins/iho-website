@@ -8,10 +8,12 @@ function getEventList(listID, callback) {
                 $('#adaptation-items').append('<li id=\'' + item.eventID + '\' class=\'adpt-unfocused\' >'+ item.eventName + '</li>');
             });
             $('li.adpt-unfocused').click(function(){
-                if($('#editsaveButton').val() == 'Edit'){
-                    $('li.adpt-focused').removeClass('adpt-focused').addClass('adpt-unfocused');
-                    $(this).removeClass('adpt-unfocused').addClass('adpt-focused');
-                    tabConfig('tab-description');
+                if(!$(this).hasClass('adpt-focused')){
+                    if($('#editsaveButton').val() == 'Edit'){
+                        $('li.adpt-focused').removeClass('adpt-focused').addClass('adpt-unfocused');
+                        $(this).removeClass('adpt-unfocused').addClass('adpt-focused');
+                        tabConfig('tab-description');
+                    }
                 }
             });
             callback();
@@ -104,6 +106,20 @@ function deleteRelation(){
 }
 
 function loadDiscription(eID) {
+
+    tinymce.init({
+        selector: 'textarea',
+        browser_spellcheck : true,
+        plugins: [
+            "advlist autolink link lists print preview hr anchor pagebreak",
+            "searchreplace wordcount visualblocks fullscreen insertdatetime nonbreaking",
+            "contextmenu directionality textcolor paste fullpage textcolor colorpicker textpattern"
+        ],
+        menubar: false,
+        toolbar1: "bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | styleselect formatselect fontselect fontsizeselect",
+        toolbar2: "cut copy paste | searchreplace | bullist numlist | outdent indent blockquote | undo redo | link unlink  | insertdatetime preview | forecolor backcolor",
+        toolbar3: "hr removeformat | subscript superscript | print fullscreen | ltr rtl | spellchecker"
+    });
     $.post('/datafromserver', {action:'q', table:'event', eventid:eID}, function(data, status) {
         var obj = JSON.parse(data);
         $('#adaptationName').val(obj[0].eventName);
@@ -282,6 +298,8 @@ function searchUIID(listID, searchID) {
 }
 
 function tabConfig(id) {
+    if(tinymce.editors.length > 0)
+        tinymce.remove('textarea');
     $('li.active').removeClass('active').addClass('nonactive');
     $('#'+id).removeClass('nonactive').addClass('active');
     switch (id) {
@@ -315,23 +333,11 @@ function tabConfig(id) {
             });
             break;
         case 'tab-description':
-            if(tinymce.editors.length > 0)
-                tinymce.remove('textarea');
+            //if(tinymce.editors.length > 0)
+            //    tinymce.remove('textarea');
             $('#information-container').empty();
             $('#information-container').append(descriptionPane);
-            tinymce.init({
-                selector: 'textarea',
-                browser_spellcheck : true,
-                plugins: [
-                    "advlist autolink link lists print preview hr anchor pagebreak",
-                    "searchreplace wordcount visualblocks fullscreen insertdatetime nonbreaking",
-                    "contextmenu directionality textcolor paste fullpage textcolor colorpicker textpattern"
-                ],
-                menubar: false,
-                toolbar1: "bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | styleselect formatselect fontselect fontsizeselect",
-                toolbar2: "cut copy paste | searchreplace | bullist numlist | outdent indent blockquote | undo redo | link unlink  | insertdatetime preview | forecolor backcolor",
-                toolbar3: "hr removeformat | subscript superscript | print fullscreen | ltr rtl | spellchecker"
-            });
+
             loadCategoriesDrop(function(){
                 if($('li.adpt-focused').attr('id'))
                     loadDiscription($('li.adpt-focused').attr('id'));
@@ -786,8 +792,11 @@ $('#adaptation-items').ready(function(){
 $('#information-container').ready(function(){tabConfig('firstLoad');});
 $('#tabs').ready(function(){
     $('li.nonactive').click(function(){
-        if($('li.adpt-focused').attr('id') && $('#editsaveButton').val() == 'Edit')
-            tabConfig($(this).attr('id'));
+        if(!$(this).hasClass('active')){
+            if($('li.adpt-focused').attr('id') && $('#editsaveButton').val() == 'Edit'){
+                tabConfig($(this).attr('id'));
+            }
+        }
     });
 });
 $('#mainsearchbutton').ready(function() {
