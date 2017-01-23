@@ -1,4 +1,4 @@
-$("#adaptation-list-img").ready(function() {
+$("#adaptation-list-tab").ready(function() {
   // define the class that vertial aligns stuff
   var objects = '.tab-img';
   // initial setup
@@ -13,7 +13,6 @@ var adaptation_list_tab = document.getElementById('adaptation-list-tab');
 var adaptation_information_tab = document.getElementById('adaptation-information-tab');
 var adaptation_list_OPEN = false;
 var adaptation_information_OPEN = false;
-
 adaptation_list_tab.style.cursor = 'pointer';
 adaptation_information_tab.style.cursor = 'pointer';
 

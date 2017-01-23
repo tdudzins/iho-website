@@ -96,7 +96,7 @@ overflow: hidden;
 }
 
 .top-timeline {
-  height: calc(60% - 20px);
+  height: calc(70% - 10px);
   width: 100%;
   position: relative;
   overflow: hidden;
@@ -111,7 +111,7 @@ overflow: hidden;
 }
 
 .bottom-timeline {
-  height: calc(40% - 20px);
+  height: calc(30% - 10px);
   width: 100%;
   position: relative;
   overflow: hidden;
