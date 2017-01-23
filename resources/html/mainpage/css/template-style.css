@@ -1,0 +1,134 @@
+footer {
+background:#fff;
+height: 100%;
+}
+
+/* sticky footer css */
+html {
+height: 100%;
+overflow: hidden;
+margin: 0;
+}
+
+body {
+height: 100%;
+overflow: hidden;
+margin: 0;
+}
+
+footer,
+.push {
+  height: 100px;
+}
+
+.title {
+  height: 55px;
+  width: 100%;
+  overflow: hidden;
+  margin: 0;
+  padding: 10px;
+  color: white;
+  font-family: "Roboto","Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-weight: bold;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: -0.5px;
+}
+
+.wrapper {
+height: calc(100vh - 155px);
+width: 100%;
+overflow: hidden;
+}
+
+.timeline-div {
+    height: 96%;
+    width: calc(100vw - 40px);
+    float: right;
+    padding-left: 20px;
+    padding-right: 20px;
+    overflow: hidden;
+    transition: all 0.5s ease-out;
+}
+
+/* The side navigation menu */
+.side-nav {
+    width: 40px; /* 0 width - change this with JavaScript */
+    height: 96%;
+    position: relative; /* Stay in place */
+    z-index: 1; /* Stay on top */
+    top: 0;
+    left: 0;
+    background-color: #111; /* Black*/
+    overflow-x: hidden; /* Disable horizontal scroll */
+    /*padding-top: 60px; /* Place content 60px from the top */
+    transition: all 0.5s ease-out;
+    background: rgba(0,0,0,0.65);
+    float: left;
+}
+
+.info-tab {
+  width: 40px;
+  height: 100%;
+  padding: 5px;
+  float: right;
+  position: relative;
+  text-align: center;
+  overflow: hidden;
+}
+
+.tab-container {
+  width: 100%;
+  height: 50%;
+  position: relative;
+  overflow: hidden;
+}
+
+.tab-container:hover {
+  background: rgba(105, 105, 105, 0.65);;
+}
+
+.info-div {
+  width: 0px;
+  height: 100%;
+  position: relative;
+  float: left;
+}
+
+.top-timeline {
+  height: calc(60% - 20px);
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.scrollbar-container {
+  height: 20px;
+  width: 100%;
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+}
+
+.bottom-timeline {
+  height: calc(40% - 20px);
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.hypothesis-canvas {
+  height: 100%;
+  width: 10000px;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.emperical-canvas {
+  height: 100%;
+  width: 10000px;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
