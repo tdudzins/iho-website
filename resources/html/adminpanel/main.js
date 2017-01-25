@@ -312,12 +312,11 @@ function tabConfig(id) {
             $('li.adpt-focused').removeClass('adpt-focused').addClass('adpt-unfocused');
             $('#information-container').empty();
             $('#information-container').append(descriptionPane);
-            if(tinymce.editors.length > 0)
-                tinymce.remove('textarea');
+            //if(tinymce.editors.length > 0)
+            //    tinymce.remove('textarea');
             tinymce.init({
                 selector: 'textarea',
                 browser_spellcheck : true,
-                //contenteditable : false,
                 plugins: [
                     "advlist autolink link lists print preview hr anchor pagebreak",
                     "searchreplace wordcount visualblocks fullscreen insertdatetime nonbreaking",
@@ -333,8 +332,6 @@ function tabConfig(id) {
             });
             break;
         case 'tab-description':
-            //if(tinymce.editors.length > 0)
-            //    tinymce.remove('textarea');
             $('#information-container').empty();
             $('#information-container').append(descriptionPane);
 
@@ -359,6 +356,9 @@ function tabConfig(id) {
                 if ($('li.media-focused').attr('id') && $('#editsaveButton').val() == 'Edit')
                     deleteMedia($('li.media-focused').attr('id'), $('li.media-focused').text());
             });
+            $("#media-type-combo").change(function(){
+                
+            });
             break;
         case 'tab-relations':
             $('#information-container').empty();
@@ -368,6 +368,7 @@ function tabConfig(id) {
             });
             $('#relations-searchbutton').click(function(){
                 getEventList('relations-items', function(){
+                    $('#r'+$('li.adpt-focused').attr('id')).remove();
                     if ($('#relations-searchbar-text').val() != '')
                         searchUI('relations-items', $('#relations-searchbar-text').val());
                 });
@@ -584,10 +585,8 @@ function enableEditing(id) {
         case 'tab-media':
             $('#mediaDescription').prop('disabled', false);
             $('#media-type-combo').prop('disabled', false);
-            $('#embedded-link').prop('disabled', false);
-            $('#upload-file').prop('disabled', false);
-            //$('#addMediaButton').prop('disabled', false);
-            //$('#removeMediaButton').prop('disabled', false);
+            //$('#embedded-link').prop('disabled', false);
+            //$('#upload-file').prop('disabled', false);
             break;
         case 'tab-relations':
             $('#add-to-preconditions').prop('disabled', false);

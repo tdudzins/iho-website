@@ -1,4 +1,4 @@
-$("#adaptation-list-tab").ready(function() {
+$(document).ready(function() {
   // define the class that vertial aligns stuff
   var objects = '.tab-img';
   // initial setup
