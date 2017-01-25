@@ -132,3 +132,18 @@ overflow: hidden;
   left: 0;
   top: 0;
 }
+
+.scrollbar-container {
+  height: 20px;
+  width: 10000px;
+}
+
+.scrollbar-container {
+  height: 20px;
+  width: 1000px;
+}
+
+#scrollBar {
+  height: 20px;
+  width: 850px;
+}
