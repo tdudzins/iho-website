@@ -3,6 +3,7 @@ var bodyParser = require('body-parser');
 var bcrypt = require('bcryptjs');
 var dataBase = require('./sqlConnector.js');
 var sessions = require('client-sessions');
+var fileUpload = require('express-fileupload');
 var ejs = require('ejs');
 
 // Middleware
@@ -13,6 +14,7 @@ app.set('view engine', 'ejs');
 app.engine('html', ejs.renderFile);
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(fileUpload());
 app.use(sessions({
     cookieName: 'session',
     secret: 'fkajsdlkajds;aljdc89237r9hf9w83f02jf02fj30ee',
@@ -119,6 +121,27 @@ app.get ('/logout', function(req, res) {
 });
 
 // Routing AJAX/JQUERY
+app.post('/upload', requireLogin, function(req, res) {
+  var incomingFile;
+
+  if (!req.files) {
+    res.send('No files were uploaded.');
+    return;
+  }
+
+  // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
+  incomingFile = req.files.sampleFile;
+
+  // Use the mv() method to place the file somewhere on your server
+  incomingFile.mv('/resources/uploads/', function(err) {
+    if (err) {
+      res.status(500).send(err);
+    }
+    else {
+      res.send('File uploaded!');
+    }
+  });
+});
 app.post('/datatoserver', requireLogin, function(req, res){
     if(req.body.table !== 'user'){
         switch (req.body.action) {
