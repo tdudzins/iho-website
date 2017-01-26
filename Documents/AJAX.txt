@@ -1,0 +1,35 @@
+Admin panel calls go to /datatoserver as a post. The operations supported are edit delete and add.
+
+To add, remove and edit data in the database send a JSON object in the given formats, the data in the arrays have to be in the correct order.
+The user table cannot be modified through these calls.
+
+ADD
+    '{'action':'c', 'table':'event', 'data':['eventName', 'description', 'earliestDirectEveidence', 'earliestIndirectEveidence', 'boundaryStart', 'boundaryEnd', 'reference', 'comments', 'category']}'
+
+
+REMOVE
+    '{'action':'d', 'table':'event', 'key':'eventID', 'value': 1234}'
+
+EDIT
+    '{'action':'u', 'table':'event', 'key':'eventID', 'value': 1234, 'data':['primaryEventID', 'secondaryEventID', 'precondition']}'
+
+DATA ARRAY ORDER
+    event: eventName, description, earliestDirectEveidence, earliestIndirectEveidence, boundaryStart, boundaryEnd, reference, comments, category
+    relationship: primaryEventID, secondaryEventID, precondition
+    media: mediaPath, MediaDescription, type, eventID
+    category: categoryName
+
+Data is retrieve from the server by sending a JSON string to the /datafromserver URL
+
+SPECIAL FUNCTIONS
+    Get a data for an event by eventID
+        '{'action':'q', 'table':'event', 'eventid': 1234}'
+
+    Get all event names and ids
+        '{'action':'t'}'
+
+    Get all preconditions and their data
+        '{'action':'s', 'eventid': 1234}'
+
+    Get all Categories
+        '{'action':'v'}'
