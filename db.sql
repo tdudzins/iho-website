@@ -1,10 +1,10 @@
-CREATE DATABASE  IF NOT EXISTS `ihotestdatabase` /*!40100 DEFAULT CHARACTER SET utf8 */;
+CREATE DATABASE  IF NOT EXISTS `ihotestdatabase` /*!40100 DEFAULT CHARACTER SET latin1 */;
 USE `ihotestdatabase`;
 -- MySQL dump 10.13  Distrib 5.7.12, for Win64 (x86_64)
 --
--- Host: 127.0.0.1    Database: ihotestdatabase
+-- Host: localhost    Database: ihotestdatabase
 -- ------------------------------------------------------
--- Server version	5.7.16-log
+-- Server version	5.7.16-0ubuntu0.16.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -32,7 +32,7 @@ CREATE TABLE `category` (
   KEY `categoryID_2` (`categoryID`),
   KEY `categoryID_3` (`categoryID`),
   KEY `categoryID_4` (`categoryID`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -41,7 +41,7 @@ CREATE TABLE `category` (
 
 LOCK TABLES `category` WRITE;
 /*!40000 ALTER TABLE `category` DISABLE KEYS */;
-INSERT INTO `category` VALUES (1,'Uncategorized'),(2,'Uncategorized');
+INSERT INTO `category` VALUES (1,'Uncategorized');
 /*!40000 ALTER TABLE `category` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -55,18 +55,13 @@ DROP TABLE IF EXISTS `event`;
 CREATE TABLE `event` (
   `eventID` int(11) NOT NULL AUTO_INCREMENT,
   `eventName` varchar(150) NOT NULL,
-  `description` varchar(1500) NOT NULL,
   `earliestDirectEvidence` int(11) NOT NULL,
   `earliestIndirectEvidence` int(11) NOT NULL,
   `boundaryStart` int(11) NOT NULL,
   `boundaryEnd` int(11) NOT NULL,
-  `reference` varchar(500) DEFAULT NULL,
-  `comments` varchar(1000) DEFAULT NULL,
   `category` int(11) NOT NULL,
-  PRIMARY KEY (`eventID`),
-  KEY `category` (`category`),
-  CONSTRAINT `category` FOREIGN KEY (`category`) REFERENCES `category` (`categoryID`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`eventID`)
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -75,7 +70,7 @@ CREATE TABLE `event` (
 
 LOCK TABLES `event` WRITE;
 /*!40000 ALTER TABLE `event` DISABLE KEYS */;
-INSERT INTO `event` VALUES (2,'e1','text',1000000,100000000,123,1234,'reference','comments',1),(3,'e2','text',1000000,100000000,123,1234,'reference','comments',1),(4,'e3','text',1000000,100000000,123,1234,'reference','comments',1);
+INSERT INTO `event` VALUES (13,'Travis Evidence',7200,8200,7200,8200,1),(15,'Travis Evidence 2',384938000,23000,23000,2323000,1);
 /*!40000 ALTER TABLE `event` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -124,7 +119,7 @@ CREATE TABLE `relationships` (
   KEY `secondaryEventID_idx` (`secondaryEventID`),
   CONSTRAINT `primaryEventID` FOREIGN KEY (`primaryEventID`) REFERENCES `event` (`eventID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `secondaryEventID` FOREIGN KEY (`secondaryEventID`) REFERENCES `event` (`eventID`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -134,6 +129,31 @@ CREATE TABLE `relationships` (
 LOCK TABLES `relationships` WRITE;
 /*!40000 ALTER TABLE `relationships` DISABLE KEYS */;
 /*!40000 ALTER TABLE `relationships` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `text`
+--
+
+DROP TABLE IF EXISTS `text`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `text` (
+  `eventID` int(11) NOT NULL,
+  `type` varchar(8) NOT NULL,
+  `position` int(11) NOT NULL,
+  `text` varchar(1000) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `text`
+--
+
+LOCK TABLES `text` WRITE;
+/*!40000 ALTER TABLE `text` DISABLE KEYS */;
+INSERT INTO `text` VALUES (13,'descript',0,'<!DOCTYPE html>\n<html>\n<head>\n</head>\n<body>\n<p>Head Is Here</p>\n</body>\n</html>'),(13,'referenc',0,'<!DOCTYPE html>\n<html>\n<head>\n</head>\n<body>\n<p>text</p>\n</body>\n</html>'),(13,'comments',0,'<!DOCTYPE html>\n<html>\n<head>\n</head>\n<body>\n<p>Comment here</p>\n</body>\n</html>'),(15,'descript',0,'<!DOCTYPE html>\n<html>\n<head>\n</head>\n<body>\n<p>dsf</p>\n</body>\n</html>'),(15,'referenc',0,'<!DOCTYPE html>\n<html>\n<head>\n</head>\n<body>\n\n</body>\n</html>'),(15,'comments',0,'<!DOCTYPE html>\n<html>\n<head>\n</head>\n<body>\n\n</body>\n</html>');
+/*!40000 ALTER TABLE `text` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -150,7 +170,7 @@ CREATE TABLE `user` (
   `email` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
   `password` varchar(150) COLLATE utf8_unicode_ci NOT NULL,
   UNIQUE KEY `userID` (`userID`)
-) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -159,7 +179,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (27,'Erich','Fisher','iho@asu.edu','$2a$10$xUdg1H3iV4wTC.2R4Vrv4.4kKBLcrfmX4l2Vk428nw3KPx6OlzN.u'),(28,'Travis','Dudzinski','tdudzins@asu.edu','$2a$10$CuQkIgb6kbbr4oe7ZV6q0uUjliOx/3OKG.JEnHiFiru5szd3.Gacq');
+INSERT INTO `user` VALUES (27,'Test','User','iho@asu.edu','$2a$10$xUdg1H3iV4wTC.2R4Vrv4.4kKBLcrfmX4l2Vk428nw3KPx6OlzN.u'),(29,'Erich','Fisher','erich.fisher@asu.edu','$2a$10$LKCbsDpOg.sdNm4Ly2e0DuK6hrFKsbvmQXMtKuBh73NmE3gbbG96C'),(30,'Travis','Dudzinski','tdudzins@asu.edu','$2a$10$uVU.LbfLZh/XWloSCkcGveAGE79/wX2VIraCE3FMm1/GdgUkTv4MC');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -172,4 +192,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-11-14 15:46:33
+-- Dump completed on 2017-01-25 22:55:50
