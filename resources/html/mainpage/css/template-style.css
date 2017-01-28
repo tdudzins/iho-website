@@ -43,7 +43,7 @@ overflow: hidden;
 
 .timeline-div {
     height: 96%;
-    width: calc(100vw - 40px);
+    width: calc(100vw - 60px);
     float: right;
     padding-left: 20px;
     padding-right: 20px;
@@ -53,7 +53,7 @@ overflow: hidden;
 
 /* The side navigation menu */
 .side-nav {
-    width: 40px; /* 0 width - change this with JavaScript */
+    width: 60px; /* 0 width - change this with JavaScript */
     height: 96%;
     position: relative; /* Stay in place */
     z-index: 1; /* Stay on top */
@@ -65,6 +65,7 @@ overflow: hidden;
     transition: all 0.5s ease-out;
     background: rgba(0,0,0,0.65);
     float: left;
+    overflow-y: hidden;
 }
 
 .info-tab {
@@ -131,4 +132,46 @@ overflow: hidden;
   position: absolute;
   left: 0;
   top: 0;
+}
+
+.adaptation-items-div {
+	height: 100%;
+    width: 0px;
+	vertical-align: middle;
+	background-color: lightgrey;
+    float: left;
+}
+
+.adaptation-items {
+	background-color: white;
+	height: 100%;
+	margin-left: 0px;
+	margin-right: 0px;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	padding-left: 0px;
+	list-style:none;
+	overflow-x: hidden;
+}
+
+ul.adaptation-items li {
+	border-bottom-width: 2px;
+	border-bottom-style: solid;
+	border-radius: 5px;
+	cursor: pointer;
+	padding: 5px 0 5px 5px;
+	position: relative;
+	border-bottom-color: #ccc;
+}
+
+.adaptation-item-selected {
+	background-color: #3b73af;
+	font-weight: bold;
+	color: white;
+}
+
+.adaptation-item-unselected {
+	background-color: white;
+	font-weight: bold;
+	color: black;
 }
