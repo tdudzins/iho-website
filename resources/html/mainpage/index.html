@@ -32,18 +32,19 @@
             </div>
         </div>
         <div id="timeline-div" class="timeline-div">
-            <div class="top-timeline">
-                <canvas id="hypothesis-canvas-timeline" class="hypothesis-canvas-timeline" style="z-index: 1">Your browser doesn't support canvas</canvas>
-                <canvas id="hypothesis-canvas-greyarea" class="hypothesis-canvas" style="z-index: 2">Your browser doesn't support canvas</canvas>
-                <canvas id="hypothesis-canvas-connection" class="hypothesis-canvas" style="z-index: 3">Your browser doesn't support canvas</canvas>
-                <canvas id="hypothesis-canvas-adaptation" class="hypothesis-canvas" style="z-index: 4">Your browser doesn't support canvas</canvas>
+            <div id="hypothesis-canvas-div" class="top-timeline">
+              <canvas id="hypothesis-canvas-timeline" class="hypothesis-canvas-timeline" style="z-index: 1">Your browser doesn't support canvas</canvas>
+              <canvas id="hypothesis-canvas-greyarea" class="hypothesis-canvas" style="z-index: 2">Your browser doesn't support canvas</canvas>
+              <canvas id="hypothesis-canvas-connection" class="hypothesis-canvas" style="z-index: 3">Your browser doesn't support canvas</canvas>
+              <canvas id="hypothesis-canvas-adaptation" class="hypothesis-canvas" style="z-index: 4">Your browser doesn't support canvas</canvas>
             </div>
-            <div class="scrollbar-container">
-
+            <div id="scrollbar-canvas-div" class="scrollbar-container">
+              <canvas id="scrollbar-canvas-container" class="scrollbar-canvas" style="z-index: 1">Your browser doesn't support canvas</canvas>
+              <canvas id="scrollbar-canvas-block" class="scrollbar-canvas" style="z-index: 2">Your browser doesn't support canvas</canvas>
             </div>
-            <div class="bottom-timeline">
-                <canvas id="emperical-canvas-timeline" class="emperical-canvas" style="z-index: 1">Your browser doesn't support canvas</canvas>
-                <canvas id="emperical-canvas-adaptation" class="emperical-canvas" style="z-index: 2">Your browser doesn't support canvas</canvas>
+            <div id="emperical-canvas-div" class="bottom-timeline">
+              <canvas id="emperical-canvas-timeline" class="emperical-canvas" style="z-index: 1">Your browser doesn't support canvas</canvas>
+              <canvas id="emperical-canvas-adaptation" class="emperical-canvas" style="z-index: 2">Your browser doesn't support canvas</canvas>
             </div>
         </div>
         <div class="push"></div>
@@ -66,6 +67,8 @@
     <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
     <script src="/resources/html/mainpage/js/rand.bg.js"></script>
     <script src="/resources/html/mainpage/js/timeline.main.js"></script>
+    <script src="/resources/html/mainpage/js/canvas.functions.js"></script>
+    <script src="/resources/html/mainpage/js/canvas.main.js"></script>
     <script>
     $(".randbg").RandBG();
     </script>
