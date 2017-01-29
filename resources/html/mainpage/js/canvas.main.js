@@ -54,6 +54,133 @@ var largest_timespan = 8000000; // When user is all the way scaled out, what is 
 var smallest_timespan = 1000000; // When user is all the way scaled in, what is the smallest amount of time to be viewed
 var box_size = 0; // Represents font-size of adaptation box from CSS, if value is 0 then represent adapation as a point
 
+function drawHypothesisTimeline () {
+    //canvas_timeline_w
+    //smallest_timespan
+    //largest_timespan
+}
+
+window.onload=function(){
+    scrollRegions = [];
+
+    // Resize Canvases
+    resizeCanvas();
+
+    var BB=canvas2_2.getBoundingClientRect();
+    var offsetX=BB.left;
+    var offsetY=BB.top;
+    // drag related variables
+    var dragok = false;
+    var startX;
+    var startY;
+
+    // listen for mouse events
+    canvas2_2.onmousedown = scrollbarDown;
+    window.onmouseup = scrollbarUp;
+    window.onmousemove = scrollbarMove;
+
+    // Initialize Scrollbar
+    drawScrollbarContainer();
+    drawScrollbarBlock();
+
+    // handle mousedown events
+    function scrollbarDown(e){
+
+        // tell the browser we're handling this mouse event
+        e.preventDefault();
+        e.stopPropagation();
+
+        // get the current mouse position
+        var mx=parseInt(e.clientX-offsetX);
+        var my=parseInt(e.clientY-offsetY);
+        // test each rect to see if mouse is inside
+        dragok=false;
+        for(var i=0;i<scrollRegions.length;i++){
+            var r=scrollRegions[i];
+            if(mx>r.x && mx<r.x+r.width && my>r.y && my<r.y+r.height){
+                // if yes, set that rects isDragging=true
+                dragok=true;
+                r.isDragging=true;
+            }
+        }
+        // save the current mouse position
+        startX=mx;
+        startY=my;
+    }
+
+
+    // handle mouseup events
+    function scrollbarUp(e){
+        // tell the browser we're handling this mouse event
+        e.preventDefault();
+        e.stopPropagation();
+
+        // clear all the dragging flags
+        dragok = false;
+        for(var i=0;i<scrollRegions.length;i++){
+            scrollRegions[i].isDragging=false;
+        }
+    }
+
+
+    // handle mouse moves
+    function scrollbarMove(e){
+        // if we're dragging anything...
+        if (dragok){
+            // tell the browser we're handling this mouse event
+            e.preventDefault();
+            e.stopPropagation();
+
+            // get the current mouse position
+            var mx=parseInt(e.clientX-offsetX);
+            var my=parseInt(e.clientY-offsetY);
+
+            // calculate the distance the mouse has moved
+            // since the last mousemove
+            var dx=mx-startX;
+            var dy=my-startY;
+
+            // move each rect that isDragging
+            // by the distance the mouse has moved
+            // since the last mousemove
+            for(var i=0;i<scrollRegions.length;i++){
+                r=scrollRegions[i];
+                r1 = scrollRegions[0];
+                r2 = scrollRegions[1];
+                r3 = scrollRegions[2];
+                if(r.isDragging){
+                    if (r.id == 'left') {
+                        r1.x += dx;
+                        scroll_left_handle_x_position += dx;
+                        r2.x += dx;
+                        r2.width -= dx;
+                    }
+                    else if (r.id == 'right') {
+                        r3.x += dx;
+                        scroll_right_handle_x_position += dx;
+                        r2.width += dx;
+                    }
+                    else if (r.id == 'middle') {
+                        r1.x += dx;
+                        scroll_left_handle_x_position += dx;
+                        r2.x += dx;
+                        scroll_right_handle_x_position += dx;
+                        r3.x += dx;
+                    }
+                }
+            }
+
+            // redraw
+            ctx2_2.clearRect(0, 0, ctx2_2.canvas.width, ctx2_2.canvas.height);
+            drawScrollbarBlock();
+
+            // reset the starting mouse position for the next mousemove
+            startX=mx;
+            startY=my;
+
+        }
+    }
+}; // end $(function(){});
 
 /* Function: resizeCanvas()
 Purpose: Called to initialize all canvases based on the respective
@@ -129,12 +256,6 @@ function resizeCanvas () {
     ctx3_2.canvas.width = canvas_timeline_w;
     ctx3_2.canvas.height = canvas3_2_h;
 }
-
-/* Function: drawScrollbar()
-Purpose: Responsible for drawing the container and block of
-the Scrollbar canvases and change the proper global variables
-upon respective mouse manipulations.
-*/
 function drawScrollbarContainer () {
     container_height = 0.2;
     container_radius = canvas2_h * container_height;
@@ -148,16 +269,13 @@ function drawScrollbarContainer () {
 
     // Scrollbar Container
     ctx2_1.fillStyle = 'rgba(220,220,220,0.3)';
-    ctx2_1.lineWidth = 0;
     ctx2_1.beginPath();
     ctx2_1.arc(center_left_x,center_left_y,container_radius,arc_top,arc_bot,true);
     ctx2_1.arc(center_right_x,center_right_y,container_radius,arc_bot,arc_top,true);
     ctx2_1.lineTo(center_left_x,center_left_y - container_radius);
     ctx2_1.closePath();
-    ctx2_1.stroke();
     ctx2_1.fill();
 }
-
 function drawScrollbarBlock() {
     // Defining Handles
     block_height = 0.2;
@@ -195,6 +313,11 @@ function drawScrollbarBlock() {
     }
 
     // draw block between handles
+    regx = scroll_left_handle_x_position + (4 * block_radius);
+    regy = hndl_cnt_left_y - block_radius;
+    regwidth = canvas2_w - (8 * block_radius);
+    regheight = 2 * block_radius;
+
     ctx2_2.beginPath();
     ctx2_2.lineTo(hndl_cnt_left_x + (3 * block_radius),center_left_y - block_radius);
     ctx2_2.lineTo(hndl_cnt_left_x + (3 * block_radius),hndl_cnt_left_y + block_radius);
@@ -202,6 +325,9 @@ function drawScrollbarBlock() {
     ctx2_2.lineTo(hndl_cnt_right_x - (3 * block_radius),hndl_cnt_right_y - block_radius);
     ctx2_2.closePath();
     ctx2_2.fill();
+    if (scrollRegions.length < 2) {
+        scrollRegions.push({id:'middle',x:regx,y:regy,width:regwidth,height:regheight,isDragging:false});
+    }
 
     // draw right handle
     regx = canvas2_w - (4 * block_radius) - 1;
@@ -218,126 +344,10 @@ function drawScrollbarBlock() {
     ctx2_2.lineTo(hndl_cnt_right_x - (3 * block_radius),hndl_cnt_right_y - block_radius);
     ctx2_2.closePath();
     ctx2_2.fill();
-    if (scrollRegions.length < 2) {
+    if (scrollRegions.length < 3) {
         scrollRegions.push({id:'right',x:regx,y:regy,width:regwidth,height:regheight,isDragging:false});
     }
+    scroll_ratio = ((scrollRegions[2].x + (4 * block_radius) - scrollRegions[0].x)/(canvas_div_w));
+    scroll_position = scrollRegions[0].x/canvas_div_w;
+    console.log(scroll_position);
 }
-
-/* Function: drawCanvas()
-Purpose: Responsible for doing a complete redraw of all layers
-of the Hypothetical and Emperical canvases.
-*/
-function drawTimeline () {
-
-}
-
-
-window.onload=function(){
-    scrollRegions = [];
-
-    // Resize Canvases
-    resizeCanvas();
-
-    var BB=canvas2_2.getBoundingClientRect();
-    var offsetX=BB.left;
-    var offsetY=BB.top;
-    // drag related variables
-    var dragok = false;
-    var startX;
-    var startY;
-
-    // listen for mouse events
-    canvas2_2.onmousedown = scrollbarDown;
-    window.onmouseup = scrollbarUp;
-    window.onmousemove = scrollbarMove;
-
-    // Initialize Scrollbar
-    drawScrollbarContainer();
-    drawScrollbarBlock();
-
-    // handle mousedown events
-    function scrollbarDown(e){
-
-        // tell the browser we're handling this mouse event
-        e.preventDefault();
-        e.stopPropagation();
-
-        // get the current mouse position
-        var mx=parseInt(e.clientX-offsetX);
-        var my=parseInt(e.clientY-offsetY);
-        // test each rect to see if mouse is inside
-        dragok=false;
-        for(var i=0;i<scrollRegions.length;i++){
-            var r=scrollRegions[i];
-            if(mx>r.x && mx<r.x+r.width && my>r.y && my<r.y+r.height){
-                // if yes, set that rects isDragging=true
-                dragok=true;
-                r.isDragging=true;
-            }
-        }
-        // save the current mouse position
-        startX=mx;
-        startY=my;
-    }
-
-
-    // handle mouseup events
-    function scrollbarUp(e){
-        // tell the browser we're handling this mouse event
-        e.preventDefault();
-        e.stopPropagation();
-
-        // clear all the dragging flags
-        dragok = false;
-        for(var i=0;i<scrollRegions.length;i++){
-            scrollRegions[i].isDragging=false;
-        }
-    }
-
-
-    // handle mouse moves
-    function scrollbarMove(e){
-        // if we're dragging anything...
-        if (dragok){
-            console.log("move");
-            // tell the browser we're handling this mouse event
-            e.preventDefault();
-            e.stopPropagation();
-
-            // get the current mouse position
-            var mx=parseInt(e.clientX-offsetX);
-            var my=parseInt(e.clientY-offsetY);
-
-            // calculate the distance the mouse has moved
-            // since the last mousemove
-            var dx=mx-startX;
-            var dy=my-startY;
-
-            // move each rect that isDragging
-            // by the distance the mouse has moved
-            // since the last mousemove
-            for(var i=0;i<scrollRegions.length;i++){
-                var r=scrollRegions[i];
-                if(r.isDragging){
-                    if (r.id == "left") {
-                        r.x += dx;
-                        scroll_left_handle_x_position += dx;
-                    }
-                    else if (r.id == "right") {
-                        r.x += dx;
-                        scroll_right_handle_x_position += dx;
-                    }
-                }
-            }
-
-            // redraw
-            ctx2_2.clearRect(0, 0, ctx2_2.canvas.width, ctx2_2.canvas.height);
-            drawScrollbarBlock();
-
-            // reset the starting mouse position for the next mousemove
-            startX=mx;
-            startY=my;
-
-        }
-    }
-}; // end $(function(){});
