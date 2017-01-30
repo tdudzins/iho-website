@@ -191,16 +191,18 @@ window.onload=function(){
                 r2 = scrollRegions[1];
                 r3 = scrollRegions[2];
                 if(r.isDragging){
-                    if (r.id == 'left') {
+                    if (r.id == 'left' && r.x + dx > 0) {
+                        if(r2.width - dx > 10){
                         r1.x += dx;
                         scroll_left_handle_x_position += dx;
                         r2.x += dx;
-                        r2.width -= dx;
+                        r2.width -= dx;}
                     }
-                    else if (r.id == 'right') {
+                    else if (r.id == 'right' && r.x + r3.width + dx  < canvas_div_w ) {
+                        if(r2.width + dx > 10){
                         r3.x += dx;
                         scroll_right_handle_x_position += dx;
-                        r2.width += dx;
+                        r2.width += dx;}
                     }
                     else if (r.id == 'middle') {
                         r1.x += dx;
