@@ -220,14 +220,22 @@ window.onload=function(){
 
             // redraw
             drawScrollbarBlock();
+            canvasWrapper();
 
             // reset the starting mouse position for the next mousemove
             startX=mx;
             startY=my;
 
         }
+
+        var timespan = date_start - date_end;
+        var width_of_usable_canvas = (timespan/1000000) * canvas_div_w;
+        var offset = -1*width_of_usable_canvas * scroll_position;
+        $('#canvas-wrapper-div').css("margin-left", offset + "px");
+        canvasWrapper();
     }
 };
+
 function resizeCanvas () {
     $('#canvas-wrapper-div').append(hypothesis_canvas);
     $('#emperical-canvas-div').append(emperical_canvas);
@@ -536,7 +544,6 @@ function drawTimelineIncrements() {
         ctx1_1.fillText(text, xpos, 20);
         xpos += change;
     }
-    canvasWrapper();
 }
 function canvasWrapper() {
     var viewable_time = 0;
@@ -553,11 +560,9 @@ function canvasWrapper() {
     var max_canvas_width = canvas_timeline_w - (canvas_timeline_w * viewable_div_ratio) + canvas_div_w;
 
     for (i = 0; i < 8; i++) {
-        hypoCanvas[i].rect(50,50,200,200);
-        hypoCanvas[i].stroke();
-        hypoCanvas[i].fillStyle = 'rgba:220,220,220,1';
-        hypoCanvas[i].rect(0,0,hypoCanvas[i].width,hypoCanvas[i].height);
-        hypoCanvas[i].fill();
+        //hypoCanvas[i].clearRect(0,0,hypoCanvas[i].canvas.width,hypoCanvas[i].canvas.height);
+        hypoCanvas[i].fillStyle="#FF0000";
+        hypoCanvas[i].fillRect((hypoCanvas[i].canvas.width /2)-200,(hypoCanvas[i].canvas.height/2)-150,400,300);
 
     }
 
