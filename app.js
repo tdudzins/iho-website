@@ -359,8 +359,10 @@ app.post('/datafromserver', function(req, res){
                 break;
             case 's':
                 dataBase.getAllRelationData(req.body.eventid, function(err, data){
-                    if(err)
+                    if(err){
+                        console.log(err);
                         res.status(500).end();
+                    }
                     else
                         res.end(JSON.stringify(data));
                 });
