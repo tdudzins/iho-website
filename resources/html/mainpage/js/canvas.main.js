@@ -101,50 +101,6 @@ var largest_timespan = 8000000; // When user is all the way scaled out, what is 
 var smallest_timespan = 1000000; // When user is all the way scaled in, what is the smallest amount of time to be viewed
 var box_size = 0; // Represents font-size of adaptation box from CSS, if value is 0 then represent adapation as a point
 
-function drawTimelineIncrements() {
-    ctx1_1.clearRect(0,0,ctx1_1.canvas.width,ctx1_1.canvas.height);
-    ctx1_1.font = "25px Times New Roman";
-    ctx1_1.fillStyle = "white";
-    ctx1_1.textAlign = "center";
-
-    var large_time = 0;
-    var small_time = 0;
-    var viewable_time = 0;
-    var timespan = 0;
-    var left_edge_date = 0;
-    var right_edge_date = 0;
-
-    var timespan = date_start - date_end;
-    var viewable_time = timespan * scroll_ratio;
-    var left_edge_date = timespan - (timespan * scroll_position) + date_end;
-    var right_edge_date = timespan - (timespan * scroll_position) + date_end - (timespan * scroll_ratio);
-
-    if (date_start >= smallest_timespan) {
-        var large_time = date_start - smallest_timespan;
-    }
-
-    if (date_end <= smallest_timespan) {
-        var small_time = smallest_timespan - date_end;
-    }
-
-    var total_increments = (timespan/1000000);
-    var increment_per_pixel = (viewable_time/ctx1_1.canvas.width);
-    var total_scale_size = timespan/increment_per_pixel;
-    var change = total_scale_size/(total_increments);
-    var xpos = 0 - (total_scale_size * scroll_position);
-    var small_count = 1;
-    var text = '';
-    for (i = 0; i < total_increments + 1; i++) {
-        text = '';
-        if(total_increments > 0) {
-            text += ((date_start/1000000)) - i;
-            text += 'M';
-        }
-        ctx1_1.fillText(text, xpos, 20);
-        xpos += change;
-    }
-}
-
 window.onload=function(){
     scrollRegions = [];
 
@@ -266,7 +222,7 @@ window.onload=function(){
     }
 };
 function resizeCanvas () {
-    $('#hypothesis-canvas-div').append(hypothesis_canvas);
+    $('#canvas-wrapper-div').append(hypothesis_canvas);
     $('#emperical-canvas-div').append(emperical_canvas);
 
     // Set Canvas Div Size from Browser Realtime Values
@@ -491,6 +447,49 @@ function drawScrollbarBlock() {
     ctx2_2.fillText(right_text, x, y);
 
     drawTimelineIncrements();
+}
+function drawTimelineIncrements() {
+    ctx1_1.clearRect(0,0,ctx1_1.canvas.width,ctx1_1.canvas.height);
+    ctx1_1.font = "25px Times New Roman";
+    ctx1_1.fillStyle = "white";
+    ctx1_1.textAlign = "center";
+
+    var large_time = 0;
+    var small_time = 0;
+    var viewable_time = 0;
+    var timespan = 0;
+    var left_edge_date = 0;
+    var right_edge_date = 0;
+
+    var timespan = date_start - date_end;
+    var viewable_time = timespan * scroll_ratio;
+    var left_edge_date = timespan - (timespan * scroll_position) + date_end;
+    var right_edge_date = timespan - (timespan * scroll_position) + date_end - (timespan * scroll_ratio);
+
+    if (date_start >= smallest_timespan) {
+        var large_time = date_start - smallest_timespan;
+    }
+
+    if (date_end <= smallest_timespan) {
+        var small_time = smallest_timespan - date_end;
+    }
+
+    var total_increments = (timespan/1000000);
+    var increment_per_pixel = (viewable_time/ctx1_1.canvas.width);
+    var total_scale_size = timespan/increment_per_pixel;
+    var change = total_scale_size/(total_increments);
+    var xpos = 0 - (total_scale_size * scroll_position);
+    var small_count = 1;
+    var text = '';
+    for (i = 0; i < total_increments + 1; i++) {
+        text = '';
+        if(total_increments > 0) {
+            text += ((date_start/1000000)) - i;
+            text += 'M';
+        }
+        ctx1_1.fillText(text, xpos, 20);
+        xpos += change;
+    }
 }
 
 var hypothesis_canvas = `
