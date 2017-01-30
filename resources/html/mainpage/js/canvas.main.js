@@ -93,6 +93,7 @@ var scroll_position = 0.0; // Block/Container ratio in percent
 var scroll_left_handle_x_position = 0;
 var scroll_right_handle_x_position = 0;
 var scrollRegions = [];
+var hypoCanvas = [];
 var draw_start = 0; // Redrawable Area start in pixels
 var draw_end = 0; // Redrawable Area start in pixels
 var date_start = 8000000; // Earliest date from selected adapations
@@ -207,6 +208,12 @@ window.onload=function(){
                         r2.x += dx;
                         scroll_right_handle_x_position += dx;
                         r3.x += dx;
+
+
+                        var timespan = date_start - date_end;
+                        var width_of_usable_canvas = (timespan/1000000) * canvas_div_w;
+                        var offset = -1*width_of_usable_canvas * scroll_position;
+                        $('#canvas-wrapper-div').css("margin-left", offset + "px");
                     }
                 }
             }
@@ -227,10 +234,10 @@ function resizeCanvas () {
 
     // Set Canvas Div Size from Browser Realtime Values
     canvas_div_w = $('#hypothesis-canvas-div').width();
-    canvas_div_h_hypo = $('#hypothesis-canvas-div').height();
+    canvas_div_h_hypo = $('#canvas-wrapper-div').height();
     canvas_div_h_scroll = $('#scrollbar-canvas-div').height();
     canvas_div_h_emper = $('#emperical-canvas-div').height();
-    canvas_timeline_w = (canvas_div_w * (largest_timespan/smallest_timespan)) + (4.0 * canvas_div_w);
+    canvas_timeline_w = canvas_div_w * (largest_timespan/smallest_timespan);
 
     // Calculate Hypothetical Canvas Dimensions
     canvas1_1_w = canvas_div_w;
@@ -240,8 +247,8 @@ function resizeCanvas () {
     canvas2_w = canvas_div_w;
     canvas2_h = $('#scrollbar-canvas-div').height();
 
-
     // Resize Hypothetical Canvas
+    $('#canvas-wrapper-div').width = canvas_timeline_w;
 
     // Resize Scrollbar Canvas
     $('#scrollbar-canvas-container').width = canvas_div_w;
@@ -284,18 +291,58 @@ function resizeCanvas () {
     canvas2_2 = document.getElementById('scrollbar-canvas-block');
 
     ctx_top_1 = topcanvas1.getContext("2d");
+    ctx_top_1.canvas.width = canvas_div_w;
+    ctx_top_1.canvas.height = canvas_div_h_hypo;
     ctx_top_2 = topcanvas2.getContext("2d");
+    ctx_top_2.canvas.width = canvas_div_w;
+    ctx_top_2.canvas.height = canvas_div_h_hypo;
     ctx_top_3 = topcanvas3.getContext("2d");
+    ctx_top_3.canvas.width = canvas_div_w;
+    ctx_top_3.canvas.height = canvas_div_h_hypo;
     ctx_top_4 = topcanvas4.getContext("2d");
+    ctx_top_4.canvas.width = canvas_div_w;
+    ctx_top_4.canvas.height = canvas_div_h_hypo;
     ctx_top_5 = topcanvas5.getContext("2d");
+    ctx_top_5.canvas.width = canvas_div_w;
+    ctx_top_5.canvas.height = canvas_div_h_hypo;
     ctx_top_6 = topcanvas6.getContext("2d");
+    ctx_top_6.canvas.width = canvas_div_w;
+    ctx_top_6.canvas.height = canvas_div_h_hypo;
     ctx_top_7 = topcanvas7.getContext("2d");
+    ctx_top_7.canvas.width = canvas_div_w;
+    ctx_top_7.canvas.height = canvas_div_h_hypo;
     ctx_top_8 = topcanvas8.getContext("2d");
+    ctx_top_8.canvas.width = canvas_div_w;
+    ctx_top_8.canvas.height = canvas_div_h_hypo;
+
+    hypoCanvas[0] = ctx_top_1;
+    hypoCanvas[1] = ctx_top_2;
+    hypoCanvas[2] = ctx_top_3;
+    hypoCanvas[3] = ctx_top_4;
+    hypoCanvas[4] = ctx_top_5;
+    hypoCanvas[5] = ctx_top_6;
+    hypoCanvas[6] = ctx_top_7;
+    hypoCanvas[7] = ctx_top_8;
+
+
+
+    /*
     ctx_top_9 = topcanvas9.getContext("2d");
+    ctx_top_9.canvas.width = canvas_div_w;
+    ctx_top_9.canvas.height = canvas_div_h_hypo;
     ctx_top_10 = topcanvas10.getContext("2d");
+    ctx_top_10.canvas.width = canvas_div_w;
+    ctx_top_10.canvas.height = canvas_div_h_hypo;
     ctx_top_11 = topcanvas11.getContext("2d");
+    ctx_top_11.canvas.width = canvas_div_w;
+    ctx_top_11.canvas.height = canvas_div_h_hypo;
     ctx_top_12 = topcanvas12.getContext("2d");
+    ctx_top_12.canvas.width = canvas_div_w;
+    ctx_top_12.canvas.height = canvas_div_h_hypo;
     ctx_top_13 = topcanvas13.getContext("2d");
+    ctx_top_13.canvas.width = canvas_div_w;
+    ctx_top_13.canvas.height = canvas_div_h_hypo;
+    */
 
     ctx_bot_1 = botcanvas1.getContext("2d");
     ctx_bot_2 = botcanvas2.getContext("2d");
@@ -324,15 +371,15 @@ function resizeCanvas () {
     ctx2_2.canvas.height = canvas2_h;
 }
 function drawScrollbarContainer () {
-    container_height = 0.2;
-    container_radius = canvas2_h * container_height;
-    x_padding = container_radius;
-    center_left_x = x_padding;
-    center_left_y = container_radius;
-    center_right_x = canvas2_w - x_padding;
-    center_right_y = container_radius;
-    arc_top = 1.5 * Math.PI;
-    arc_bot = 0.5*Math.PI;
+    var container_height = 0.2;
+    var container_radius = canvas2_h * container_height;
+    var x_padding = container_radius;
+    var center_left_x = x_padding;
+    var center_left_y = container_radius;
+    var center_right_x = canvas2_w - x_padding;
+    var center_right_y = container_radius;
+    var arc_top = 1.5 * Math.PI;
+    var arc_bot = 0.5*Math.PI;
 
     // Scrollbar Container
     ctx2_1.fillStyle = 'rgba(220,220,220,0.3)';
@@ -346,25 +393,25 @@ function drawScrollbarContainer () {
 function drawScrollbarBlock() {
     // Defining Handles
     ctx2_2.clearRect(0, 0, ctx2_2.canvas.width, ctx2_2.canvas.height);
-    block_height = 0.2;
-    block_radius = canvas2_h * block_height;
-    hndl_left_x_padding = scroll_left_handle_x_position + block_radius;
-    hndl_right_x_padding = (-1 * scroll_right_handle_x_position) + block_radius;
-    hndl_cnt_left_x = hndl_left_x_padding;
-    hndl_cnt_left_y = block_radius;
-    hndl_cnt_right_x = canvas2_w - hndl_right_x_padding;
-    hndl_cnt_right_y = block_radius;
-    arc_top = 1.5 * Math.PI;
-    arc_bot = 0.5*Math.PI;
+    var block_height = 0.2;
+    var block_radius = canvas2_h * block_height;
+    var hndl_left_x_padding = scroll_left_handle_x_position + block_radius;
+    var hndl_right_x_padding = (-1 * scroll_right_handle_x_position) + block_radius;
+    var hndl_cnt_left_x = hndl_left_x_padding;
+    var hndl_cnt_left_y = block_radius;
+    var hndl_cnt_right_x = canvas2_w - hndl_right_x_padding;
+    var hndl_cnt_right_y = block_radius;
+    var arc_top = 1.5 * Math.PI;
+    var arc_bot = 0.5*Math.PI;
 
     // Scrollbar
     ctx2_2.fillStyle = 'rgba(239,185,37,0.5)';
 
     // draw left handle
-    regx = scroll_left_handle_x_position;
-    regy = hndl_cnt_left_y - block_radius;
-    regwidth = 4 * block_radius;
-    regheight = 2 * block_radius;
+    var regx = scroll_left_handle_x_position;
+    var regy = hndl_cnt_left_y - block_radius;
+    var regwidth = 4 * block_radius;
+    var regheight = 2 * block_radius;
 
     ctx2_2.beginPath();
     ctx2_2.arc(hndl_cnt_left_x,hndl_cnt_left_y,block_radius,arc_top,arc_bot,true);
@@ -372,7 +419,7 @@ function drawScrollbarBlock() {
     ctx2_2.lineTo(hndl_cnt_left_x + block_radius,hndl_cnt_left_y + (2 * block_radius));
     ctx2_2.lineTo(hndl_cnt_left_x + (2 * block_radius),hndl_cnt_left_y + block_radius);
     ctx2_2.lineTo(hndl_cnt_left_x + (3 * block_radius),hndl_cnt_left_y + block_radius);
-    ctx2_2.lineTo(hndl_cnt_left_x + (3 * block_radius),center_left_y - block_radius);
+    ctx2_2.lineTo(hndl_cnt_left_x + (3 * block_radius),hndl_cnt_left_y - block_radius);
     ctx2_2.closePath();
     ctx2_2.fill();
     if (scrollRegions.length < 1) {
@@ -386,7 +433,7 @@ function drawScrollbarBlock() {
     regheight = 2 * block_radius;
 
     ctx2_2.beginPath();
-    ctx2_2.lineTo(hndl_cnt_left_x + (3 * block_radius),center_left_y - block_radius);
+    ctx2_2.lineTo(hndl_cnt_left_x + (3 * block_radius),hndl_cnt_left_y - block_radius);
     ctx2_2.lineTo(hndl_cnt_left_x + (3 * block_radius),hndl_cnt_left_y + block_radius);
     ctx2_2.lineTo(hndl_cnt_right_x - (3 * block_radius),hndl_cnt_right_y + block_radius);
     ctx2_2.lineTo(hndl_cnt_right_x - (3 * block_radius),hndl_cnt_right_y - block_radius);
@@ -418,17 +465,16 @@ function drawScrollbarBlock() {
     scroll_ratio = ((scrollRegions[2].x + (4 * block_radius) - scrollRegions[0].x)/(canvas_div_w));
     scroll_position = scrollRegions[0].x/canvas_div_w;
 
-    timespan = date_start - date_end;
-    viewable_time = timespan * scroll_ratio;
-    left_edge_date = timespan - (timespan * scroll_position) + date_end;
-    right_edge_date = timespan - (timespan * scroll_position) + date_end - (timespan * scroll_ratio);
+    var timespan = date_start - date_end;
+    var viewable_time = timespan * scroll_ratio;
+    var left_edge_date = timespan - (timespan * scroll_position) + date_end;
+    var right_edge_date = timespan - (timespan * scroll_position) + date_end - (timespan * scroll_ratio);
 
     // draw increment text under scrollbar handles
-    x = scroll_left_handle_x_position + (2 * block_radius);
-    y = hndl_cnt_left_y + (3.5 * block_radius);
-    left_text = (left_edge_date/1000000).toFixed(1);
+    var x = scroll_left_handle_x_position + (2 * block_radius);
+    var y = hndl_cnt_left_y + (3.5 * block_radius);
+    var left_text = (left_edge_date/1000000).toFixed(1);
     draw_start = left_text;
-    console.log(draw_start);
     left_text += 'M';
     ctx2_2.font = "13px Times New Roman";
     ctx2_2.fillStyle = "white";
@@ -437,9 +483,8 @@ function drawScrollbarBlock() {
 
     x = scrollRegions[2].x + (2 * block_radius);
     y = hndl_cnt_left_y + (3.5 * block_radius);
-    right_text = (right_edge_date/1000000).toFixed(1);
+    var right_text = (right_edge_date/1000000).toFixed(1);
     draw_end = right_text;
-    console.log(draw_end);
     right_text += 'M';
     ctx2_2.font = "13px Times New Roman";
     ctx2_2.fillStyle = "white";
@@ -461,25 +506,26 @@ function drawTimelineIncrements() {
     var left_edge_date = 0;
     var right_edge_date = 0;
 
-    var timespan = date_start - date_end;
-    var viewable_time = timespan * scroll_ratio;
-    var left_edge_date = timespan - (timespan * scroll_position) + date_end;
-    var right_edge_date = timespan - (timespan * scroll_position) + date_end - (timespan * scroll_ratio);
+    timespan = date_start - date_end;
+    viewable_time = timespan * scroll_ratio;
+    left_edge_date = timespan - (timespan * scroll_position) + date_end;
+    right_edge_date = timespan - (timespan * scroll_position) + date_end - (timespan * scroll_ratio);
 
-    if (date_start >= smallest_timespan) {
+    /*if (date_start >= smallest_timespan) {
         var large_time = date_start - smallest_timespan;
     }
 
     if (date_end <= smallest_timespan) {
         var small_time = smallest_timespan - date_end;
-    }
+    }*/
 
     var total_increments = (timespan/1000000);
     var increment_per_pixel = (viewable_time/ctx1_1.canvas.width);
+
     var total_scale_size = timespan/increment_per_pixel;
     var change = total_scale_size/(total_increments);
     var xpos = 0 - (total_scale_size * scroll_position);
-    var small_count = 1;
+    //var small_count = 1;
     var text = '';
     for (i = 0; i < total_increments + 1; i++) {
         text = '';
@@ -490,6 +536,34 @@ function drawTimelineIncrements() {
         ctx1_1.fillText(text, xpos, 20);
         xpos += change;
     }
+    canvasWrapper();
+}
+function canvasWrapper() {
+    var viewable_time = 0;
+    var timespan = 0;
+    var left_edge_date = 0;
+    var right_edge_date = 0;
+
+    timespan = date_start - date_end;
+    viewable_time = timespan * scroll_ratio;
+    left_edge_date = timespan - (timespan * scroll_position) + date_end;
+    right_edge_date = timespan - (timespan * scroll_position) + date_end - (timespan * scroll_ratio);
+
+    var viewable_div_ratio = viewable_time/largest_timespan;
+    var max_canvas_width = canvas_timeline_w - (canvas_timeline_w * viewable_div_ratio) + canvas_div_w;
+
+    for (i = 0; i < 8; i++) {
+        hypoCanvas[i].rect(50,50,200,200);
+        hypoCanvas[i].stroke();
+        hypoCanvas[i].fillStyle = 'rgba:220,220,220,1';
+        hypoCanvas[i].rect(0,0,hypoCanvas[i].width,hypoCanvas[i].height);
+        hypoCanvas[i].fill();
+
+    }
+
+}
+function adaptationBox(eventID, name, date, callback) {
+
 }
 
 var hypothesis_canvas = `
@@ -501,11 +575,11 @@ var hypothesis_canvas = `
 <canvas id="hypothesis-canvas-6" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
 <canvas id="hypothesis-canvas-7" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
 <canvas id="hypothesis-canvas-8" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas-9" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+/* <canvas id="hypothesis-canvas-9" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
 <canvas id="hypothesis-canvas-10" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
 <canvas id="hypothesis-canvas-11" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
 <canvas id="hypothesis-canvas-12" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas-13" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas-13" class="canvas-wrapper">Your browser doesn't support canvas</canvas> */
 `;
 
 var emperical_canvas = `

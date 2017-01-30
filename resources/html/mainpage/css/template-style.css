@@ -120,11 +120,14 @@ overflow: hidden;
 }
 
 .canvas-wrapper {
-  height: 100%;
-  width: 100px;
-  position: absolute;
-  left: 0;
-  top: 0;
+  float:left; display:inline;
+}
+
+.canvas-wrapper-div {
+    height: 100%;
+    width: calc(8*100%);
+    position: relative;
+    overflow: hidden;
 }
 
 .scrollbar-canvas {
