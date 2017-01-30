@@ -21,28 +21,14 @@ footer,
   height: 100px;
 }
 
-.title {
-  height: 55px;
-  width: 100%;
-  overflow: hidden;
-  margin: 0;
-  padding: 10px;
-  color: white;
-  font-family: "Roboto","Helvetica Neue",Helvetica,Arial,sans-serif;
-  font-weight: bold;
-  font-size: 24px;
-  line-height: 1;
-  letter-spacing: -0.5px;
-}
-
 .wrapper {
-height: calc(100vh - 155px);
+height: calc(100vh - 100px);
 width: 100%;
 overflow: hidden;
 }
 
 .timeline-div {
-    height: 96%;
+    height: 100%;
     width: calc(100vw - 60px);
     float: right;
     padding-left: 20px;
@@ -54,7 +40,7 @@ overflow: hidden;
 /* The side navigation menu */
 .side-nav {
     width: 60px; /* 0 width - change this with JavaScript */
-    height: 96%;
+    height: 100%;
     position: relative; /* Stay in place */
     z-index: 1; /* Stay on top */
     top: 0;

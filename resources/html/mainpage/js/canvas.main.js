@@ -1,7 +1,5 @@
 /************** Canvas Main **************/
 
-// Global Variables
-
 /* Canvas Div Dimensions */
 var canvas_div_w = 0; // Container of Canvas width in pixels
 var canvas_div_h_hypo = 0; // Container of Hypothetical Canvas height in pixels
@@ -100,10 +98,23 @@ var draw_end = 0; // Redrawable Area start in pixels
 var date_start = 8000000; // Earliest date from selected adapations
 var date_end = 0; // Latest date from selected adaptations
 var largest_timespan = 8000000; // When user is all the way scaled out, what is the largest amount of time to be viewed
-var smallest_timespan = 250000; // When user is all the way scaled in, what is the smallest amount of time to be viewed
+var smallest_timespan = 1000000; // When user is all the way scaled in, what is the smallest amount of time to be viewed
 var box_size = 0; // Represents font-size of adaptation box from CSS, if value is 0 then represent adapation as a point
 
+function drawTimelineIncrements() {
+    //how much 1-8 do I have to make
+    //how much 0-1 do I have to make
+    large_time = 0;
+    small_time = 0;
+    if (date_start >= smallest_timespan) {
+        large_time = date_start - smallest_timespan;
+    }
+    if (date_end <= smallest_timespan) {
+        small_time = smallest_timespan - date_end;
+    }
+    
 
+}
 window.onload=function(){
     scrollRegions = [];
 
@@ -331,12 +342,6 @@ function resizeCanvas () {
     ctx2_2 = canvas2_2.getContext("2d");
     ctx2_2.canvas.width = canvas2_w;
     ctx2_2.canvas.height = canvas2_h;
-}
-function drawTimelineIncrements() {
-    ctx1_1.fillStyle = 'rgba(239,185,37,0.5)';
-    ctx1_1.clearRect(0,0,canvas1_1.width,canvas1_1.height);
-    ctx1_1.rect(0,0,canvas1_1.width,canvas1_1.height);
-    ctx1_1.fill();
 }
 function drawScrollbarContainer () {
     container_height = 0.2;
