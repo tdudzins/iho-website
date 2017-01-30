@@ -49,10 +49,10 @@ var botcanvas11;
 var botcanvas12;
 var botcanvas13;
 
-var canvas1_1 = document.getElementById('timeline-increments');
+var canvas1_1;
 
-var canvas2_1 = document.getElementById('scrollbar-canvas-container');
-var canvas2_2 = document.getElementById('scrollbar-canvas-block');
+var canvas2_1;
+var canvas2_2;
 
 var ctx_top_1;
 var ctx_top_2;
@@ -102,19 +102,49 @@ var smallest_timespan = 1000000; // When user is all the way scaled in, what is 
 var box_size = 0; // Represents font-size of adaptation box from CSS, if value is 0 then represent adapation as a point
 
 function drawTimelineIncrements() {
-    //how much 1-8 do I have to make
-    //how much 0-1 do I have to make
-    large_time = 0;
-    small_time = 0;
-    if (date_start >= smallest_timespan) {
-        large_time = date_start - smallest_timespan;
-    }
-    if (date_end <= smallest_timespan) {
-        small_time = smallest_timespan - date_end;
-    }
-    
+    ctx1_1.clearRect(0,0,ctx1_1.canvas.width,ctx1_1.canvas.height);
+    ctx1_1.font = "25px Times New Roman";
+    ctx1_1.fillStyle = "white";
+    ctx1_1.textAlign = "center";
 
+    var large_time = 0;
+    var small_time = 0;
+    var viewable_time = 0;
+    var timespan = 0;
+    var left_edge_date = 0;
+    var right_edge_date = 0;
+
+    var timespan = date_start - date_end;
+    var viewable_time = timespan * scroll_ratio;
+    var left_edge_date = timespan - (timespan * scroll_position) + date_end;
+    var right_edge_date = timespan - (timespan * scroll_position) + date_end - (timespan * scroll_ratio);
+
+    if (date_start >= smallest_timespan) {
+        var large_time = date_start - smallest_timespan;
+    }
+
+    if (date_end <= smallest_timespan) {
+        var small_time = smallest_timespan - date_end;
+    }
+
+    var total_increments = (timespan/1000000);
+    var increment_per_pixel = (viewable_time/ctx1_1.canvas.width);
+    var total_scale_size = timespan/increment_per_pixel;
+    var change = total_scale_size/(total_increments);
+    var xpos = 0 - (total_scale_size * scroll_position);
+    var small_count = 1;
+    var text = '';
+    for (i = 0; i < total_increments + 1; i++) {
+        text = '';
+        if(total_increments > 0) {
+            text += ((date_start/1000000)) - i;
+            text += 'M';
+        }
+        ctx1_1.fillText(text, xpos, 20);
+        xpos += change;
+    }
 }
+
 window.onload=function(){
     scrollRegions = [];
 
@@ -235,12 +265,6 @@ window.onload=function(){
         }
     }
 };
-
-/* Function: resizeCanvas()
-Purpose: Called to initialize all canvases based on the respective
-canvas div's dimentions. This will resize all layers for the Hypothetical,
-Scrollbar and Emperical Canvas.
-*/
 function resizeCanvas () {
     $('#hypothesis-canvas-div').append(hypothesis_canvas);
     $('#emperical-canvas-div').append(emperical_canvas);
@@ -417,7 +441,7 @@ function drawScrollbarBlock() {
     }
 
     // draw right handle
-    regx = canvas2_w - (4 * block_radius) - 1;
+    regx = canvas2_w - (4 * block_radius);
     regy = hndl_cnt_left_y - block_radius;
     regwidth = 4 * block_radius;
     regheight = 2 * block_radius;
@@ -434,8 +458,37 @@ function drawScrollbarBlock() {
     if (scrollRegions.length < 3) {
         scrollRegions.push({id:'right',x:regx,y:regy,width:regwidth,height:regheight,isDragging:false});
     }
+
     scroll_ratio = ((scrollRegions[2].x + (4 * block_radius) - scrollRegions[0].x)/(canvas_div_w));
     scroll_position = scrollRegions[0].x/canvas_div_w;
+
+    timespan = date_start - date_end;
+    viewable_time = timespan * scroll_ratio;
+    left_edge_date = timespan - (timespan * scroll_position) + date_end;
+    right_edge_date = timespan - (timespan * scroll_position) + date_end - (timespan * scroll_ratio);
+
+    // draw increment text under scrollbar handles
+    x = scroll_left_handle_x_position + (2 * block_radius);
+    y = hndl_cnt_left_y + (3.5 * block_radius);
+    left_text = (left_edge_date/1000000).toFixed(1);
+    draw_start = left_text;
+    console.log(draw_start);
+    left_text += 'M';
+    ctx2_2.font = "13px Times New Roman";
+    ctx2_2.fillStyle = "white";
+    ctx2_2.textAlign = "center";
+    ctx2_2.fillText(left_text, x, y);
+
+    x = scrollRegions[2].x + (2 * block_radius);
+    y = hndl_cnt_left_y + (3.5 * block_radius);
+    right_text = (right_edge_date/1000000).toFixed(1);
+    draw_end = right_text;
+    console.log(draw_end);
+    right_text += 'M';
+    ctx2_2.font = "13px Times New Roman";
+    ctx2_2.fillStyle = "white";
+    ctx2_2.textAlign = "center";
+    ctx2_2.fillText(right_text, x, y);
 
     drawTimelineIncrements();
 }

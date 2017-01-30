@@ -83,14 +83,14 @@ overflow: hidden;
 }
 
 .top-timeline {
-  height: calc(70% - 40px);
+  height: calc(70% - 30px);
   width: 100%;
   position: relative;
   overflow: hidden;
 }
 
 .timeline-increments-div {
-    height: 40px;
+    height: 25px;
     width: 100%;
     position: relative;
     overflow: hidden;
