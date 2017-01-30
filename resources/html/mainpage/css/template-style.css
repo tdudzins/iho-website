@@ -97,10 +97,25 @@ overflow: hidden;
 }
 
 .top-timeline {
-  height: calc(70% - 20px);
+  height: calc(70% - 40px);
   width: 100%;
   position: relative;
   overflow: hidden;
+}
+
+.timeline-increments-div {
+    height: 40px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.timeline-increments {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
 }
 
 .scrollbar-container {
@@ -112,15 +127,15 @@ overflow: hidden;
 }
 
 .bottom-timeline {
-  height: calc(30% - 20px);
+  height: calc(30% - 40px);
   width: 100%;
   position: relative;
   overflow: hidden;
 }
 
-.hypothesis-canvas {
+.canvas-wrapper {
   height: 100%;
-  width: 10000px;
+  width: 100px;
   position: absolute;
   left: 0;
   top: 0;
@@ -133,15 +148,6 @@ overflow: hidden;
   left: 0;
   top: 0;
 }
-
-.emperical-canvas {
-  height: 100%;
-  width: 10000px;
-  position: absolute;
-  left: 0;
-  top: 0;
-}
-
 
 .adaptation-items-div {
 	height: 100%;
