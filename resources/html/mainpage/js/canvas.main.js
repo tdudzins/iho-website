@@ -204,7 +204,7 @@ window.onload=function(){
                         scroll_right_handle_x_position += dx;
                         r2.width += dx;}
                     }
-                    else if (r.id == 'middle') {
+                    else if (r.id == 'middle' && r1.x + dx > 0 && r3.x + r3.width + dx  < canvas_div_w) {
                         r1.x += dx;
                         scroll_left_handle_x_position += dx;
                         r2.x += dx;
