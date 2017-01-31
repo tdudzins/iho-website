@@ -431,6 +431,7 @@ exports.getAllRelationData = function getAllRelationData(eventID, callback){
                         if(err)
                             callback(err, null);
                         else{
+                            results.push(res[0]);
                             callback(err, results);
                         }
                     });
