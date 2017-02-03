@@ -96,7 +96,7 @@ var scrollRegions = [];
 var hypoCanvas = [];
 var draw_start = 0; // Redrawable Area start in pixels
 var draw_end = 0; // Redrawable Area start in pixels
-var date_start = 8000000; // Earliest date from selected adapations
+var date_start = 13000000; // Earliest date from selected adapations
 var date_end = 0; // Latest date from selected adaptations
 var largest_timespan = 8000000; // When user is all the way scaled out, what is the largest amount of time to be viewed
 var smallest_timespan = 1000000; // When user is all the way scaled in, what is the smallest amount of time to be viewed
@@ -213,7 +213,7 @@ window.onload=function(){
 
 
                         var timespan = date_start - date_end;
-                        var width_of_usable_canvas = (timespan/1000000) * canvas_div_w;
+                        var width_of_usable_canvas = ((timespan/1000000) + 5) * canvas_div_w;
                         var offset = -1*width_of_usable_canvas * scroll_position;
                         $('#canvas-wrapper-div').css("margin-left", offset + "px");
                     }
@@ -231,11 +231,12 @@ window.onload=function(){
         }
 
         var timespan = date_start - date_end;
-        var width_of_usable_canvas = (timespan/1000000) * canvas_div_w;
+        var width_of_usable_canvas = ((timespan/1000000) + 5) * canvas_div_w;
         var offset = -1*width_of_usable_canvas * scroll_position;
         $('#canvas-wrapper-div').css("margin-left", offset + "px");
         canvasWrapper();
     }
+    canvasWrapper();
 };
 
 function resizeCanvas () {
@@ -247,7 +248,7 @@ function resizeCanvas () {
     canvas_div_h_hypo = $('#canvas-wrapper-div').height();
     canvas_div_h_scroll = $('#scrollbar-canvas-div').height();
     canvas_div_h_emper = $('#emperical-canvas-div').height();
-    canvas_timeline_w = canvas_div_w * (largest_timespan/smallest_timespan);
+    canvas_timeline_w = canvas_div_w * ((largest_timespan/smallest_timespan) + 5);
 
     // Calculate Hypothetical Canvas Dimensions
     canvas1_1_w = canvas_div_w;
@@ -324,19 +325,6 @@ function resizeCanvas () {
     ctx_top_8 = topcanvas8.getContext("2d");
     ctx_top_8.canvas.width = canvas_div_w;
     ctx_top_8.canvas.height = canvas_div_h_hypo;
-
-    hypoCanvas[0] = ctx_top_1;
-    hypoCanvas[1] = ctx_top_2;
-    hypoCanvas[2] = ctx_top_3;
-    hypoCanvas[3] = ctx_top_4;
-    hypoCanvas[4] = ctx_top_5;
-    hypoCanvas[5] = ctx_top_6;
-    hypoCanvas[6] = ctx_top_7;
-    hypoCanvas[7] = ctx_top_8;
-
-
-
-    /*
     ctx_top_9 = topcanvas9.getContext("2d");
     ctx_top_9.canvas.width = canvas_div_w;
     ctx_top_9.canvas.height = canvas_div_h_hypo;
@@ -352,7 +340,21 @@ function resizeCanvas () {
     ctx_top_13 = topcanvas13.getContext("2d");
     ctx_top_13.canvas.width = canvas_div_w;
     ctx_top_13.canvas.height = canvas_div_h_hypo;
-    */
+
+    hypoCanvas[0] = ctx_top_1;
+    hypoCanvas[1] = ctx_top_2;
+    hypoCanvas[2] = ctx_top_3;
+    hypoCanvas[3] = ctx_top_4;
+    hypoCanvas[4] = ctx_top_5;
+    hypoCanvas[5] = ctx_top_6;
+    hypoCanvas[6] = ctx_top_7;
+    hypoCanvas[7] = ctx_top_8;
+    hypoCanvas[8] = ctx_top_9;
+    hypoCanvas[9] = ctx_top_10;
+    hypoCanvas[10] = ctx_top_11;
+    hypoCanvas[11] = ctx_top_12;
+    hypoCanvas[12] = ctx_top_13;
+
 
     ctx_bot_1 = botcanvas1.getContext("2d");
     ctx_bot_2 = botcanvas2.getContext("2d");
@@ -415,7 +417,7 @@ function drawScrollbarBlock() {
     var arc_bot = 0.5*Math.PI;
 
     // Scrollbar
-    ctx2_2.fillStyle = 'rgba(239,185,37,0.5)';
+    ctx2_2.fillStyle = 'rgba(239,185,37,1.0)';
 
     // draw left handle
     var regx = scroll_left_handle_x_position;
@@ -428,14 +430,14 @@ function drawScrollbarBlock() {
     ctx2_2.lineTo(hndl_cnt_left_x,hndl_cnt_left_y + block_radius);
     ctx2_2.lineTo(hndl_cnt_left_x + block_radius,hndl_cnt_left_y + (2 * block_radius));
     ctx2_2.lineTo(hndl_cnt_left_x + (2 * block_radius),hndl_cnt_left_y + block_radius);
-    ctx2_2.lineTo(hndl_cnt_left_x + (3 * block_radius),hndl_cnt_left_y + block_radius);
-    ctx2_2.lineTo(hndl_cnt_left_x + (3 * block_radius),hndl_cnt_left_y - block_radius);
+    ctx2_2.arc(hndl_cnt_left_x + (2 * block_radius),hndl_cnt_left_y,block_radius,arc_bot,arc_top,true);
     ctx2_2.closePath();
     ctx2_2.fill();
     if (scrollRegions.length < 1) {
         scrollRegions.push({id:'left',x:regx,y:regy,width:regwidth,height:regheight,isDragging:false});
     }
 
+    ctx2_2.fillStyle = 'rgba(239,185,37,0.5)';
     // draw block between handles
     regx = scroll_left_handle_x_position + (4 * block_radius);
     regy = hndl_cnt_left_y - block_radius;
@@ -443,16 +445,17 @@ function drawScrollbarBlock() {
     regheight = 2 * block_radius;
 
     ctx2_2.beginPath();
-    ctx2_2.lineTo(hndl_cnt_left_x + (3 * block_radius),hndl_cnt_left_y - block_radius);
-    ctx2_2.lineTo(hndl_cnt_left_x + (3 * block_radius),hndl_cnt_left_y + block_radius);
-    ctx2_2.lineTo(hndl_cnt_right_x - (3 * block_radius),hndl_cnt_right_y + block_radius);
-    ctx2_2.lineTo(hndl_cnt_right_x - (3 * block_radius),hndl_cnt_right_y - block_radius);
+    ctx2_2.lineTo(hndl_cnt_left_x + (2 * block_radius),hndl_cnt_left_y - block_radius);
+    ctx2_2.lineTo(hndl_cnt_left_x + (2 * block_radius),hndl_cnt_left_y + block_radius);
+    ctx2_2.lineTo(hndl_cnt_right_x - (2 * block_radius),hndl_cnt_right_y + block_radius);
+    ctx2_2.lineTo(hndl_cnt_right_x - (2 * block_radius),hndl_cnt_right_y - block_radius);
     ctx2_2.closePath();
     ctx2_2.fill();
     if (scrollRegions.length < 2) {
         scrollRegions.push({id:'middle',x:regx,y:regy,width:regwidth,height:regheight,isDragging:false});
     }
 
+    ctx2_2.fillStyle = 'rgba(239,185,37,1.0)';
     // draw right handle
     regx = canvas2_w - (4 * block_radius);
     regy = hndl_cnt_left_y - block_radius;
@@ -464,8 +467,7 @@ function drawScrollbarBlock() {
     ctx2_2.lineTo(hndl_cnt_right_x,hndl_cnt_right_y + block_radius);
     ctx2_2.lineTo(hndl_cnt_right_x - block_radius,hndl_cnt_right_y + (2 * block_radius));
     ctx2_2.lineTo(hndl_cnt_right_x - (2 * block_radius),hndl_cnt_right_y + block_radius);
-    ctx2_2.lineTo(hndl_cnt_right_x - (3 * block_radius),hndl_cnt_right_y + block_radius);
-    ctx2_2.lineTo(hndl_cnt_right_x - (3 * block_radius),hndl_cnt_right_y - block_radius);
+    ctx2_2.arc(hndl_cnt_right_x - (2 * block_radius),hndl_cnt_right_y,block_radius,arc_bot,arc_top,false)
     ctx2_2.closePath();
     ctx2_2.fill();
     if (scrollRegions.length < 3) {
@@ -475,7 +477,7 @@ function drawScrollbarBlock() {
     scroll_ratio = ((scrollRegions[2].x + (4 * block_radius) - scrollRegions[0].x)/(canvas_div_w));
     scroll_position = scrollRegions[0].x/canvas_div_w;
 
-    var timespan = date_start - date_end;
+    var timespan = (date_start - date_end);
     var viewable_time = timespan * scroll_ratio;
     var left_edge_date = timespan - (timespan * scroll_position) + date_end;
     var right_edge_date = timespan - (timespan * scroll_position) + date_end - (timespan * scroll_ratio);
@@ -483,17 +485,29 @@ function drawScrollbarBlock() {
     // draw increment text under scrollbar handles
     var x = scroll_left_handle_x_position + (2 * block_radius);
     var y = hndl_cnt_left_y + (3.5 * block_radius);
-    var left_text = (left_edge_date/1000000).toFixed(1);
+    var left_text = 0;
+    if (left_edge_date > 6000000) {
+      left_text = ((left_edge_date-5000000)/1000000).toFixed(1);
+    }
+    else {
+      left_text = (left_edge_date/6000000).toFixed(1);
+    }
+
     draw_start = left_text;
     left_text += 'M';
     ctx2_2.font = "13px Times New Roman";
     ctx2_2.fillStyle = "white";
     ctx2_2.textAlign = "center";
     ctx2_2.fillText(left_text, x, y);
-
     x = scrollRegions[2].x + (2 * block_radius);
     y = hndl_cnt_left_y + (3.5 * block_radius);
-    var right_text = (right_edge_date/1000000).toFixed(1);
+    var right_text = 0;
+    if (right_edge_date > 6000000) {
+      right_text = ((right_edge_date-5000000)/1000000).toFixed(1);
+    }
+    else {
+      right_text = (right_edge_date/6000000).toFixed(1);
+    }
     draw_end = right_text;
     right_text += 'M';
     ctx2_2.font = "13px Times New Roman";
@@ -509,44 +523,36 @@ function drawTimelineIncrements() {
     ctx1_1.fillStyle = "white";
     ctx1_1.textAlign = "center";
 
-    var large_time = 0;
-    var small_time = 0;
-    var viewable_time = 0;
-    var timespan = 0;
-    var left_edge_date = 0;
-    var right_edge_date = 0;
-
-    timespan = date_start - date_end;
-    viewable_time = timespan * scroll_ratio;
-    left_edge_date = timespan - (timespan * scroll_position) + date_end;
-    right_edge_date = timespan - (timespan * scroll_position) + date_end - (timespan * scroll_ratio);
-
-    /*if (date_start >= smallest_timespan) {
-        var large_time = date_start - smallest_timespan;
-    }
-
-    if (date_end <= smallest_timespan) {
-        var small_time = smallest_timespan - date_end;
-    }*/
-
+    var timespan = (date_start - date_end);
+    var viewable_time = timespan * scroll_ratio;
+    var left_edge_date = timespan - (timespan * scroll_position) + date_end;
+    var right_edge_date = timespan - (timespan * scroll_position) + date_end - (timespan * scroll_ratio);
+console.log("LEFT: " + left_edge_date);
+console.log("RIGHT: " + right_edge_date);
     var total_increments = (timespan/1000000);
     var increment_per_pixel = (viewable_time/ctx1_1.canvas.width);
 
     var total_scale_size = timespan/increment_per_pixel;
-    var change = total_scale_size/(total_increments);
+    var change = total_scale_size/(total_increments-1);
     var xpos = 0 - (total_scale_size * scroll_position);
-    //var small_count = 1;
+
     var text = '';
-    for (i = 0; i < total_increments + 1; i++) {
+    for (i = 0; i < total_increments; i++) {
         text = '';
-        if(total_increments > 0) {
-            text += ((date_start/1000000)) - i;
-            text += 'M';
+        if(((timespan - 5000000)/1000000) - i >= 1) {
+          text += ((date_start - 5000000)/1000000) - i;
+          text += 'M';
+        }
+        else {
+          text = ((timespan-5000000)/1000000) - i;
+          text = (.8 + (text * 0.2)).toFixed(1);
+          text += 'M';
         }
         ctx1_1.fillText(text, xpos, 20);
         xpos += change;
     }
 }
+
 function canvasWrapper() {
     var viewable_time = 0;
     var timespan = 0;
@@ -561,8 +567,8 @@ function canvasWrapper() {
     var viewable_div_ratio = viewable_time/largest_timespan;
     var max_canvas_width = canvas_timeline_w - (canvas_timeline_w * viewable_div_ratio) + canvas_div_w;
 
-    for (i = 0; i < 8; i++) {
-        //hypoCanvas[i].clearRect(0,0,hypoCanvas[i].canvas.width,hypoCanvas[i].canvas.height);
+    for (i = 0; i < 13; i++) {
+        hypoCanvas[i].clearRect(0,0,hypoCanvas[i].canvas.width,hypoCanvas[i].canvas.height);
         hypoCanvas[i].fillStyle="#FF0000";
         hypoCanvas[i].fillRect((hypoCanvas[i].canvas.width /2)-200,(hypoCanvas[i].canvas.height/2)-150,400,300);
 
@@ -582,11 +588,11 @@ var hypothesis_canvas = `
 <canvas id="hypothesis-canvas-6" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
 <canvas id="hypothesis-canvas-7" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
 <canvas id="hypothesis-canvas-8" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-/* <canvas id="hypothesis-canvas-9" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas-9" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
 <canvas id="hypothesis-canvas-10" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
 <canvas id="hypothesis-canvas-11" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
 <canvas id="hypothesis-canvas-12" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas-13" class="canvas-wrapper">Your browser doesn't support canvas</canvas> */
+<canvas id="hypothesis-canvas-13" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
 `;
 
 var emperical_canvas = `
