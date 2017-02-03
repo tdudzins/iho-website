@@ -125,7 +125,7 @@ overflow: hidden;
 
 .canvas-wrapper-div {
     height: 100%;
-    width: calc(13*100%);
+    width: calc(12*100%);
     position: relative;
     overflow: hidden;
 }

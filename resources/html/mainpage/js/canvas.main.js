@@ -33,7 +33,6 @@ var topcanvas9;
 var topcanvas10;
 var topcanvas11;
 var topcanvas12;
-var topcanvas13;
 
 var botcanvas1;
 var botcanvas2;
@@ -47,7 +46,6 @@ var botcanvas9;
 var botcanvas10;
 var botcanvas11;
 var botcanvas12;
-var botcanvas13;
 
 var canvas1_1;
 
@@ -66,7 +64,6 @@ var ctx_top_9;
 var ctx_top_10;
 var ctx_top_11;
 var ctx_top_12;
-var ctx_top_13;
 
 var ctx_bot_1;
 var ctx_bot_2;
@@ -80,7 +77,6 @@ var ctx_bot_9;
 var ctx_bot_10;
 var ctx_bot_11;
 var ctx_bot_12;
-var ctx_bot_13;
 
 var ctx1_1;
 
@@ -96,21 +92,25 @@ var scrollRegions = [];
 var hypoCanvas = [];
 var draw_start = 0; // Redrawable Area start in pixels
 var draw_end = 0; // Redrawable Area start in pixels
-var date_start = 13000000; // Earliest date from selected adapations
-var date_end = 0; // Latest date from selected adaptations
-var largest_timespan = 8000000; // When user is all the way scaled out, what is the largest amount of time to be viewed
+var date_start = 12000000; // Earliest date from selected adapations
+var date_end = 000000; // Latest date from selected adaptations
+var largest_timespan = 12000000; // When user is all the way scaled out, what is the largest amount of time to be viewed
 var smallest_timespan = 1000000; // When user is all the way scaled in, what is the smallest amount of time to be viewed
 var box_size = 0; // Represents font-size of adaptation box from CSS, if value is 0 then represent adapation as a point
 
+var timespan;
+var viewable_time;
+var left_edge_date;
+var right_edge_date;
 window.onload=function(){
-    scrollRegions = [];
 
+    scrollRegions = [];
     // Resize Canvases
     resizeCanvas();
 
-    var BB=canvas2_2.getBoundingClientRect();
-    var offsetX=BB.left;
-    var offsetY=BB.top;
+    var BB = canvas2_2.getBoundingClientRect();
+    var offsetX = BB.left;
+    var offsetY = BB.top;
     // drag related variables
     var dragok = false;
     var startX;
@@ -213,8 +213,8 @@ window.onload=function(){
 
 
                         var timespan = date_start - date_end;
-                        var width_of_usable_canvas = ((timespan/1000000) + 5) * canvas_div_w;
-                        var offset = -1*width_of_usable_canvas * scroll_position;
+                        var width_of_usable_canvas = ((timespan/1000000)) * canvas_div_w;
+                        var offset = -1 * width_of_usable_canvas * scroll_position;
                         $('#canvas-wrapper-div').css("margin-left", offset + "px");
                     }
                 }
@@ -229,9 +229,9 @@ window.onload=function(){
             startY=my;
 
         }
-
+        // Move main canvas on scrollbarMove
         var timespan = date_start - date_end;
-        var width_of_usable_canvas = ((timespan/1000000) + 5) * canvas_div_w;
+        var width_of_usable_canvas = ((timespan/1000000)) * canvas_div_w;
         var offset = -1*width_of_usable_canvas * scroll_position;
         $('#canvas-wrapper-div').css("margin-left", offset + "px");
         canvasWrapper();
@@ -248,7 +248,7 @@ function resizeCanvas () {
     canvas_div_h_hypo = $('#canvas-wrapper-div').height();
     canvas_div_h_scroll = $('#scrollbar-canvas-div').height();
     canvas_div_h_emper = $('#emperical-canvas-div').height();
-    canvas_timeline_w = canvas_div_w * ((largest_timespan/smallest_timespan) + 5);
+    canvas_timeline_w = canvas_div_w * ((largest_timespan/smallest_timespan));
 
     // Calculate Hypothetical Canvas Dimensions
     canvas1_1_w = canvas_div_w;
@@ -280,7 +280,6 @@ function resizeCanvas () {
     topcanvas10 = document.getElementById('hypothesis-canvas-10');
     topcanvas11 = document.getElementById('hypothesis-canvas-11');
     topcanvas12 = document.getElementById('hypothesis-canvas-12');
-    topcanvas13 = document.getElementById('hypothesis-canvas-13');
 
     botcanvas1 = document.getElementById('emperical-canvas-1');
     botcanvas2 = document.getElementById('emperical-canvas-2');
@@ -294,7 +293,6 @@ function resizeCanvas () {
     botcanvas10 = document.getElementById('emperical-canvas-10');
     botcanvas11 = document.getElementById('emperical-canvas-11');
     botcanvas12 = document.getElementById('emperical-canvas-12');
-    botcanvas13 = document.getElementById('emperical-canvas-13');
 
     canvas1_1 = document.getElementById('timeline-increments');
 
@@ -337,9 +335,6 @@ function resizeCanvas () {
     ctx_top_12 = topcanvas12.getContext("2d");
     ctx_top_12.canvas.width = canvas_div_w;
     ctx_top_12.canvas.height = canvas_div_h_hypo;
-    ctx_top_13 = topcanvas13.getContext("2d");
-    ctx_top_13.canvas.width = canvas_div_w;
-    ctx_top_13.canvas.height = canvas_div_h_hypo;
 
     hypoCanvas[0] = ctx_top_1;
     hypoCanvas[1] = ctx_top_2;
@@ -353,7 +348,6 @@ function resizeCanvas () {
     hypoCanvas[9] = ctx_top_10;
     hypoCanvas[10] = ctx_top_11;
     hypoCanvas[11] = ctx_top_12;
-    hypoCanvas[12] = ctx_top_13;
 
 
     ctx_bot_1 = botcanvas1.getContext("2d");
@@ -368,7 +362,6 @@ function resizeCanvas () {
     ctx_bot_10 = botcanvas10.getContext("2d");
     ctx_bot_11 = botcanvas11.getContext("2d");
     ctx_bot_12 = botcanvas12.getContext("2d");
-    ctx_bot_13 = botcanvas13.getContext("2d");
 
     ctx1_1 = canvas1_1.getContext("2d");
     ctx1_1.canvas.width = canvas1_1_w;
@@ -382,6 +375,7 @@ function resizeCanvas () {
     ctx2_2.canvas.width = canvas2_w;
     ctx2_2.canvas.height = canvas2_h;
 }
+
 function drawScrollbarContainer () {
     var container_height = 0.2;
     var container_radius = canvas2_h * container_height;
@@ -486,11 +480,11 @@ function drawScrollbarBlock() {
     var x = scroll_left_handle_x_position + (2 * block_radius);
     var y = hndl_cnt_left_y + (3.5 * block_radius);
     var left_text = 0;
-    if (left_edge_date > 6000000) {
-      left_text = ((left_edge_date-5000000)/1000000).toFixed(1);
+    if (left_edge_date > 5000000) {
+      left_text = ((left_edge_date - 4000000) / 1000000).toFixed(1);
     }
     else {
-      left_text = (left_edge_date/6000000).toFixed(1);
+      left_text = (left_edge_date / 5000000).toFixed(2);
     }
 
     draw_start = left_text;
@@ -502,11 +496,11 @@ function drawScrollbarBlock() {
     x = scrollRegions[2].x + (2 * block_radius);
     y = hndl_cnt_left_y + (3.5 * block_radius);
     var right_text = 0;
-    if (right_edge_date > 6000000) {
-      right_text = ((right_edge_date-5000000)/1000000).toFixed(1);
+    if (right_edge_date > 5000000) {
+      right_text = ((right_edge_date - 4000000) / 1000000).toFixed(1);
     }
     else {
-      right_text = (right_edge_date/6000000).toFixed(1);
+      right_text = Math.abs(right_edge_date / 5000000).toFixed(2);
     }
     draw_end = right_text;
     right_text += 'M';
@@ -523,28 +517,30 @@ function drawTimelineIncrements() {
     ctx1_1.fillStyle = "white";
     ctx1_1.textAlign = "center";
 
-    var timespan = (date_start - date_end);
-    var viewable_time = timespan * scroll_ratio;
-    var left_edge_date = timespan - (timespan * scroll_position) + date_end;
-    var right_edge_date = timespan - (timespan * scroll_position) + date_end - (timespan * scroll_ratio);
-console.log("LEFT: " + left_edge_date);
-console.log("RIGHT: " + right_edge_date);
-    var total_increments = (timespan/1000000);
+    timespan = (date_start - date_end);
+    viewable_time = timespan * scroll_ratio;
+    left_edge_date = timespan - (timespan * scroll_position) + date_end;
+    right_edge_date = timespan - (timespan * scroll_position) + date_end - (timespan * scroll_ratio);
+    console.log("LEFT: " + left_edge_date);
+    console.log("RIGHT: " + right_edge_date);
+
+    var total_increments = (timespan/1000000) + 1;
+
     var increment_per_pixel = (viewable_time/ctx1_1.canvas.width);
 
-    var total_scale_size = timespan/increment_per_pixel;
-    var change = total_scale_size/(total_increments-1);
+    var total_scale_size = timespan / increment_per_pixel;
+    var change = total_scale_size / (total_increments - 1);
     var xpos = 0 - (total_scale_size * scroll_position);
 
     var text = '';
     for (i = 0; i < total_increments; i++) {
         text = '';
-        if(((timespan - 5000000)/1000000) - i >= 1) {
-          text += ((date_start - 5000000)/1000000) - i;
+        if(((date_start - 4000000) / 1000000) - i >= 1) {
+          text += ((date_start - 4000000) / 1000000) - i;
           text += 'M';
         }
         else {
-          text = ((timespan-5000000)/1000000) - i;
+          text = ((date_start-4000000)/1000000) - i;
           text = (.8 + (text * 0.2)).toFixed(1);
           text += 'M';
         }
@@ -554,12 +550,7 @@ console.log("RIGHT: " + right_edge_date);
 }
 
 function canvasWrapper() {
-    var viewable_time = 0;
-    var timespan = 0;
-    var left_edge_date = 0;
-    var right_edge_date = 0;
-
-    timespan = date_start - date_end;
+    timespan = (date_start - date_end);
     viewable_time = timespan * scroll_ratio;
     left_edge_date = timespan - (timespan * scroll_position) + date_end;
     right_edge_date = timespan - (timespan * scroll_position) + date_end - (timespan * scroll_ratio);
@@ -567,7 +558,7 @@ function canvasWrapper() {
     var viewable_div_ratio = viewable_time/largest_timespan;
     var max_canvas_width = canvas_timeline_w - (canvas_timeline_w * viewable_div_ratio) + canvas_div_w;
 
-    for (i = 0; i < 13; i++) {
+    for (i = 0; i < 12; i++) {
         hypoCanvas[i].clearRect(0,0,hypoCanvas[i].canvas.width,hypoCanvas[i].canvas.height);
         hypoCanvas[i].fillStyle="#FF0000";
         hypoCanvas[i].fillRect((hypoCanvas[i].canvas.width /2)-200,(hypoCanvas[i].canvas.height/2)-150,400,300);
@@ -580,33 +571,31 @@ function adaptationBox(eventID, name, date, callback) {
 }
 
 var hypothesis_canvas = `
-<canvas id="hypothesis-canvas-1" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas-2" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas-3" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas-4" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas-5" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas-6" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas-7" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas-8" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas-9" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas-10" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas-11" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas-12" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas-13" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-`;
+    <canvas id="hypothesis-canvas-1" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas-2" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas-3" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas-4" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas-5" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas-6" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas-7" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas-8" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas-9" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas-10" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas-11" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas-12" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    `;
 
 var emperical_canvas = `
-<canvas id="emperical-canvas-1" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="emperical-canvas-2" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="emperical-canvas-3" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="emperical-canvas-4" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="emperical-canvas-5" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="emperical-canvas-6" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="emperical-canvas-7" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="emperical-canvas-8" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="emperical-canvas-9" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="emperical-canvas-10" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="emperical-canvas-11" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="emperical-canvas-12" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="emperical-canvas-13" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-`;
+    <canvas id="emperical-canvas-1" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="emperical-canvas-2" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="emperical-canvas-3" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="emperical-canvas-4" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="emperical-canvas-5" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="emperical-canvas-6" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="emperical-canvas-7" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="emperical-canvas-8" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="emperical-canvas-9" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="emperical-canvas-10" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="emperical-canvas-11" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="emperical-canvas-12" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    `;
