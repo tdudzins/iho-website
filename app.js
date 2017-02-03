@@ -121,27 +121,6 @@ app.get ('/logout', function(req, res) {
 });
 
 // Routing AJAX/JQUERY
-app.post('/upload', requireLogin, function(req, res) {
-  var incomingFile;
-
-  if (!req.files) {
-    res.send('No files were uploaded.');
-    return;
-  }
-
-  // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
-  incomingFile = req.files.sampleFile;
-
-  // Use the mv() method to place the file somewhere on your server
-  incomingFile.mv('/resources/uploads/', function(err) {
-    if (err) {
-      res.status(500).send(err);
-    }
-    else {
-      res.send('File uploaded!');
-    }
-  });
-});
 app.post('/datatoserver', requireLogin, function(req, res){
     if(req.body.table !== 'user'){
         switch (req.body.action) {
@@ -256,7 +235,7 @@ app.post('/datatoserver', requireLogin, function(req, res){
                             res.status(500).end();
                         else{
                             var fs = require('fs');
-                            var filePath = req.body.filepath;
+                            var filePath = "/home/cjyoung3" + req.body.filepath;
                             fs.unlink(filePath, function(){
                                 res.end(JSON.stringify(data));
                             });
@@ -386,6 +365,35 @@ app.post('/datafromserver', function(req, res){
     }
 });
 
+// File Uploading
+app.post('/upload', requireLogin, function(req, res) {
+    //console.log(req.files);
+    if (!req.files) {
+        res.status(400);
+        res.end('No file was uploaded.');
+        return;
+    }
+    else{
+        var incomingFile = req.files.picture;
+        var filename = incomingFile.name;
+        var extPlace = filename.lastIndexOf('.');
+        var filenameExt = filename.slice(extPlace);
+
+        var now = new Date;
+        var utc_timestamp = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds(), now.getUTCMilliseconds());
+        var newFilename = '/resources/uploads/' + utc_timestamp + filenameExt;
+
+        incomingFile.mv("/home/cjyoung3" + newFilename, function(err) {
+            if (err) {
+                res.status(400).send(err);
+            }
+            else {
+                res.end(JSON.stringify(newFilename));
+            }
+        });
+    }
+});
+
 // File Serving
 app.get('/resources/html/mainpage/:name', function(req, res){
     var options = {
@@ -491,9 +499,9 @@ app.get('/resources/html/adminpanel/:name', requireLogin, function(req, res){
         }
     });
 });
-app.get('/resources/pictures/:name', function(req, res){
+app.get('/resources/uploads/:name', function(req, res){
     var options = {
-        root:  __dirname + '/resources/pictures/',
+        root:  __dirname + '/resources/uploads/',
         dotfiles: 'deny',
         headers: {'x-timestamp': Date.now(), 'x-sent': true}
     };
@@ -501,32 +509,6 @@ app.get('/resources/pictures/:name', function(req, res){
         if (err) {
           console.log(err);
           res.status(err.status).end();
-        }
-    });
-});
-
-// File Uploading
-app.post('/upload', requireLogin, function(req, res) {
-    if (!req.files) {
-        res.send('No file was uploaded.');
-        return;
-    }
-
-    var incomingFile = req.files.mediaUpload;
-    var filename = incomingFile.name;
-    var extPlace = filename.lastIndexOf('.');
-    var filenameExt = filename.substr(extPlace,filename.length());
-
-    var now = new Date;
-    var utc_timestamp = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds(), now.getUTCMilliseconds());
-    var newFilename = '/resources/uploads/' + utc_timestamp + filenameExt;
-
-    incomingFile.mv(newFilename, function(err) {
-        if (err) {
-            res.status(500).send(err);
-        }
-        else {
-            res.end(JSON.stringify(newFilename));
         }
     });
 });

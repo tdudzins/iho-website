@@ -421,12 +421,12 @@ exports.getAllRelationData = function getAllRelationData(eventID, callback){
     pool.getConnection(function(err,connection){
         if (err) callback(err, null);
         else
-            var result = connection.query('SELECT r.precondition, e.eventID, e.eventName, e.earliestDirectEvidence, e.boundaryStart, e.boundaryEnd FROM relationships r INNER JOIN event e ON r.secondaryEventID = e.eventID WHERE primaryEventID=?', eventID, function(err,res){
+            var result = connection.query('SELECT r.precondition, e.eventID, e.eventName, e.earliestDirectEvidence, e.earliestIndirectEvidence, e.boundaryStart, e.boundaryEnd FROM relationships r INNER JOIN event e ON r.secondaryEventID = e.eventID WHERE primaryEventID=?', eventID, function(err,res){
                 if(err)
                     callback(err, null);
                 else{
                     results = res;
-                    var result = connection.query('SELECT eventID, eventName, earliestDirectEvidence, boundaryStart, boundaryEnd FROM event WHERE eventID=?', eventID, function(err,res){
+                    var result = connection.query('SELECT eventID, eventName, earliestDirectEvidence, earliestIndirectEvidence, boundaryStart, boundaryEnd FROM event WHERE eventID=?', eventID, function(err,res){
                         connection.release();
                         if(err)
                             callback(err, null);

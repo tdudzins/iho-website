@@ -56,7 +56,9 @@ function deleteEvent(eventID, eventName){
 function deleteMedia(mediaID, mediaDis){
     if (confirm('Are you sure you want to delete: ' + mediaDis) == true){
         $.post('/datatoserver', {action:'d', table:'media', value: mediaID, filepath: $('#embedded-link').val()}, function(data, status) {
-
+            loadMedia($('li.adpt-focused').attr('id'), function(){
+                loadMedia($('li.adpt-focused').attr('id'), function(){});
+            });
         })
         .fail(function(response) {
             console.log('Error: deleteMedia');
@@ -122,11 +124,16 @@ function loadDiscription(eID) {
     });
     $.post('/datafromserver', {action:'q', table:'event', eventid:eID}, function(data, status) {
         var obj = JSON.parse(data);
+
         $('#adaptationName').val(obj[0].eventName);
-        $('#earliestDirectEvidence').val((obj[0].earliestDirectEvidence >= 1000000)? (obj[0].earliestDirectEvidence / 1000000): (obj[0].earliestDirectEvidence / 1000));
-        $('#earliestDirectEvidence-units').val((obj[0].earliestDirectEvidence >= 1000000)? 'Ma': 'Ka' );
-        $('#earliestIndirectEvidence').val((obj[0].earliestIndirectEvidence >= 1000000)? (obj[0].earliestIndirectEvidence / 1000000): (obj[0].earliestIndirectEvidence / 1000));
-        $('#earliestIndirectEvidence-units').val((obj[0].earliestIndirectEvidence >= 1000000)? 'Ma': 'Ka' );
+        if (obj[0].earliestDirectEvidence !== -1){
+            $('#earliestDirectEvidence').val((obj[0].earliestDirectEvidence >= 1000000)? (obj[0].earliestDirectEvidence / 1000000): (obj[0].earliestDirectEvidence / 1000));
+            $('#earliestDirectEvidence-units').val((obj[0].earliestDirectEvidence >= 1000000)? 'Ma': 'Ka' );
+        }
+        if (obj[0].earliestIndirectEvidence !== -1){
+            $('#earliestIndirectEvidence').val((obj[0].earliestIndirectEvidence >= 1000000)? (obj[0].earliestIndirectEvidence / 1000000): (obj[0].earliestIndirectEvidence / 1000));
+            $('#earliestIndirectEvidence-units').val((obj[0].earliestIndirectEvidence >= 1000000)? 'Ma': 'Ka' );
+        }
         $('#ageBoundaryStart').val((obj[0].boundaryStart >= 1000000)? (obj[0].boundaryStart / 1000000): (obj[0].boundaryStart / 1000));
         $('#ageBoundaryStart-units').val((obj[0].boundaryStart >= 1000000)? 'Ma': 'Ka' );
         $('#ageBoundaryEnd').val((obj[0].boundaryEnd >= 1000000)? (obj[0].boundaryEnd / 1000000): (obj[0].boundaryEnd / 1000));
@@ -189,6 +196,14 @@ function loadMediaContent(mID) {
                 $('#media-type-combo').val(item.type);
                 $('#embedded-link').val(item.mediaPath);
                 $(mID).removeClass('media-unfocused').addClass('media-focused');
+                if(item.type == 1 || item.type == 2) {
+                    $("#image-preview").empty();
+                    $("#image-preview").append("<img src=" + item.mediaPath + " class='image-preview'>");
+                }
+                else if(item.type == 3) {
+                    $("#image-preview").empty();
+                    $("#image-preview").append(item.mediaPath);
+                }
             }
         });
     });
@@ -508,25 +523,28 @@ function setupEditButton(id) {
                     $('#editsaveButton').val('Edit');
                     disableEditing('tab-media');
                     $('#editsaveButton').off('click');
-                    //TODO send photo to server then update the embedded-link then call the save media function in the post callback
                     if($('#media-type-combo').val() == 1){
-                        var filename = $("#file").val();
+                        var fd = new FormData();
+                        fd.append("picture", $("#upload-file")[0].files[0]);
                         $.ajax({
+                            url: "upload",
                             type: "POST",
-                            url: "addFile.do",
-                            enctype: 'multipart/form-data',
-                            data: {
-                                file: filename
-                            },
-                            success: function () {
-                                $('#embedded-link').val('');
-                                saveValues('tab-media', function(data, status){
-                                    setupEditButton('tab-media');
-                                    loadMedia($('li.adpt-focused').attr('id'), function(){
-                                        $('#' + data).removeClass('media-unfocused').addClass('media-focused');
+                            data: fd,
+                            contentType: false,
+                            processData: false,
+                            success: function (data, status) {
+                                console.log(status);
+                                if(status === 'success'){
+                                    $('#embedded-link').val(data.replace(/"/g,''));
+                                    saveValues('tab-media', function(data, status){
+                                        setupEditButton('tab-media');
+                                        loadMedia($('li.adpt-focused').attr('id'), function(){$('#' + data).removeClass('media-unfocused').addClass('media-focused');});
+                                        loadMediaContent(data);
                                     });
-                                    loadMediaContent(data);
-                                });
+                                }
+                                else{
+                                    alert("Upload Failed");
+                                }
                             }
                         });
                     }
@@ -546,6 +564,7 @@ function setupEditButton(id) {
             $('#media-type-combo').val(0);
             $('#embedded-link').val('');
             $('li.media-focused').removeClass('media-focused').addClass('media-unfocused');
+            $("#image-preview").empty();
             enableEditing('tab-media');
             break;
         case 'tab-media':
@@ -553,7 +572,10 @@ function setupEditButton(id) {
                 if($('#editsaveButton').val() == 'Edit' && $('li.media-focused').attr('id')){
                     $('#save-edit-container').append(cancelButton);
                     $('#editsaveButton').val('Save');
-                    enableEditing('tab-media');
+                    if($('#media-type-combo').val() == 1)
+                        enableEditing('tab-media-upload');
+                    else
+                        enableEditing('tab-media');
                     $('#cancelButton').click(function(){
                         if (confirm('Are you sure you want to discard changes?') == true){
                             $('#cancelButton').remove();
@@ -569,12 +591,41 @@ function setupEditButton(id) {
                         $('#editsaveButton').val('Edit');
                         disableEditing('tab-media');
                         var tempId = $('li.media-focused').attr('id');
-                        updateValues('tab-media', function(data, status){
-                            loadMediaContent(tempId);
-                            loadMedia($('li.adpt-focused').attr('id'), function(){
-                                $('#'+tempId).removeClass('media-unfocused').addClass('media-focused');
+
+                        if($('#media-type-combo').val() == 1 && $("#upload-file")[0].files[0] != undefined){
+                            var fd = new FormData();
+                            fd.append("picture", $("#upload-file")[0].files[0]);
+                            $.ajax({
+                                url: "upload",
+                                type: "POST",
+                                data: fd,
+                                contentType: false,
+                                processData: false,
+                                success: function (data, status) {
+                                    console.log(status);
+                                    if(status === 'success'){
+                                        $('#embedded-link').val(data.replace(/"/g,''));
+                                        updateValues('tab-media', function(data, status){
+                                            loadMediaContent(tempId);
+                                            loadMedia($('li.adpt-focused').attr('id'), function(){
+                                                $('#'+tempId).removeClass('media-unfocused').addClass('media-focused');
+                                            });
+                                        });
+                                    }
+                                    else{
+                                        alert("Upload Failed");
+                                    }
+                                }
                             });
-                        });
+                        }
+                        else{
+                            updateValues('tab-media', function(data, status){
+                                loadMediaContent(tempId);
+                                loadMedia($('li.adpt-focused').attr('id'), function(){
+                                    $('#'+tempId).removeClass('media-unfocused').addClass('media-focused');
+                                });
+                            });
+                        }
                     }
                 }
             });
@@ -620,10 +671,14 @@ function enableEditing(id) {
             tinyMCE.get('adaptationReferences').getBody().setAttribute('contenteditable', true);
             break;
         case 'tab-media':
+
             $('#mediaDescription').prop('disabled', false);
+            $('#embedded-link').prop('disabled', false);
             $('#media-type-combo').prop('disabled', false);
-            //$('#embedded-link').prop('disabled', false);
-            //$('#upload-file').prop('disabled', false);
+
+            break;
+        case 'tab-media-upload':
+            $('#mediaDescription').prop('disabled', false);
             break;
         case 'tab-relations':
             $('#add-to-preconditions').prop('disabled', false);
@@ -678,20 +733,12 @@ function dataCheck(id) {
                 alert('You need to add an Adaptation Name.');
                 return false;
             }
-            else if(!$('#earliestDirectEvidence').val()){
-                alert('You need to add Earliest Direct Evidence.');
+            else if(!$('#earliestDirectEvidence').val() && !$('#earliestIndirectEvidence').val()){
+                alert('You need to add Earliest Direct Evidence or Earliest Indirect Evidence.');
                 return false;
             }
-            else if(isNaN(Number( $('#earliestDirectEvidence').val()))){
-                alert('Earliest Direct Evidence must be a number.');
-                return false;
-            }
-            else if(!$('#earliestIndirectEvidence').val()){
-                alert('You need to add Earliest Indirect Evidence.');
-                return false;
-            }
-            else if(isNaN(Number($('#earliestIndirectEvidence').val()))){
-                alert('Earliest Indirect Evidence must be a number.');
+            else if(isNaN(Number( $('#earliestDirectEvidence').val())) || isNaN(Number($('#earliestIndirectEvidence').val()))){
+                alert('Earliest Direct Evidence or Earliest Indirect Evidence must be a number.');
                 return false;
             }
             else if(!$('#ageBoundaryStart').val()){
@@ -748,10 +795,16 @@ function saveValues(id, callback) {
     switch (id) {
         case 'tab-description':
             obj.push($('#adaptationName').val());
-            obj.push(Number($('#earliestDirectEvidence').val())*(($('#earliestDirectEvidence-units').val() == 'Ma')? 1000: 1000000));
-            obj.push(Number($('#earliestIndirectEvidence').val())*(($('#earliestIndirectEvidence-units').val() == 'Ma')? 1000: 1000000));
-            obj.push(Number($('#ageBoundaryStart').val())*(($('#ageBoundaryStart-units').val() == 'Ma')? 1000: 1000000));
-            obj.push(Number($('#ageBoundaryEnd').val())*(($('#ageBoundaryEnd-units').val() == 'Ma')? 1000: 1000000));
+            if (!$('#earliestDirectEvidence').val())
+                obj.push(-1);
+            else
+                obj.push(Number($('#earliestDirectEvidence').val())*(($('#earliestDirectEvidence-units').val() == 'Ma')? 1000000: 1000));
+            if (!$('#earliestIndirectEvidence').val())
+                obj.push(-1);
+            else
+                obj.push(Number($('#earliestIndirectEvidence').val())*(($('#earliestIndirectEvidence-units').val() == 'Ma')? 1000000: 1000))
+            obj.push(Number($('#ageBoundaryStart').val())*(($('#ageBoundaryStart-units').val() == 'Ma')? 1000000: 1000));
+            obj.push(Number($('#ageBoundaryEnd').val())*(($('#ageBoundaryEnd-units').val() == 'Ma')? 1000000: 1000));
             obj.push($('#adaptation-category-combo').val());
             obj.push(tinyMCE.get('adaptationDescription').getContent());
             obj.push(tinyMCE.get('adaptationReferences').getContent());
@@ -780,10 +833,16 @@ function updateValues(id, callback) {
     switch (id) {
         case 'tab-description':
             obj.push($('#adaptationName').val());
-            obj.push(Number($('#earliestDirectEvidence').val())*(($('#earliestDirectEvidence-units').val() == 'Ka')? 1000: 1000000));
-            obj.push(Number($('#earliestIndirectEvidence').val())*(($('#earliestIndirectEvidence-units').val() == 'Ka')? 1000: 1000000));
-            obj.push(Number($('#ageBoundaryStart').val())*(($('#ageBoundaryStart-units').val() == 'Ka')? 1000: 1000000));
-            obj.push(Number($('#ageBoundaryEnd').val())*(($('#ageBoundaryEnd-units').val() == 'Ka')? 1000: 1000000));
+            if (!$('#earliestDirectEvidence').val())
+                obj.push(-1);
+            else
+                obj.push(Number($('#earliestDirectEvidence').val())*(($('#earliestDirectEvidence-units').val() == 'Ma')? 1000000: 1000));
+            if (!$('#earliestIndirectEvidence').val())
+                obj.push(-1);
+            else
+                obj.push(Number($('#earliestIndirectEvidence').val())*(($('#earliestIndirectEvidence-units').val() == 'Ma')? 1000000: 1000))
+            obj.push(Number($('#ageBoundaryStart').val())*(($('#ageBoundaryStart-units').val() == 'Ma')? 1000000: 1000));
+            obj.push(Number($('#ageBoundaryEnd').val())*(($('#ageBoundaryEnd-units').val() == 'Ma')? 1000000: 1000));
             obj.push($('#adaptation-category-combo').val());
             obj.push(tinyMCE.get('adaptationDescription').getContent());
             obj.push(tinyMCE.get('adaptationReferences').getContent());
@@ -850,7 +909,9 @@ $('#deleteAdaptationButton').ready(function(){
     $('#deleteAdaptationButton').click(function(){
         if ($('li.adpt-focused').attr('id') && $('#editsaveButton').val() == 'Edit'){
             deleteEvent($('li.adpt-focused').attr('id'), $('li.adpt-focused').text());
-            getEventList('adaptation-items', function(){});
+            getEventList('adaptation-items', function(){
+                getEventList('adaptation-items', function(){});
+            });
             tabConfig('firstLoad');
         }
     });

@@ -44,7 +44,7 @@ function addAdaption(eventID, callback){
         relationsObj[eventID] = [];
         obj.forEach(function(item){
             if(adaptObj[item.eventID] === undefined){
-                adaptObj[item.eventID] = [item.eventName, item.earliestDirectEvidence, item.boundaryStart, item.boundaryEnd, 0];
+                adaptObj[item.eventID] = [item.eventName, (item.earliestDirectEvidence > 0)?item.earliestDirectEvidence : item.earliestindirectEvidence, item.boundaryStart, item.boundaryEnd, 0];
                 adaptArray.push(item.eventID);
             }
             else{
@@ -55,7 +55,7 @@ function addAdaption(eventID, callback){
                 relationsObj[eventID].push([item.eventID, item.precondition]);
             }
             else{
-                empiricalTable.push([eventID, item.eventName, item.earliestDirectEvidence]);
+                empiricalTable.push([eventID, item.eventName, (item.earliestDirectEvidence > 0)?item.earliestDirectEvidence : item.earliestindirectEvidence]);
             }
         });
         adaptArray.sort();
