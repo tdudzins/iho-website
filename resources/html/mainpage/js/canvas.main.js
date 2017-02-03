@@ -223,7 +223,7 @@ window.onload=function(){
 
             // redraw
             drawScrollbarBlock();
-            boxCanvasWrapper();
+
 
             // reset the starting mouse position for the next mousemove
             startX=mx;
@@ -235,9 +235,11 @@ window.onload=function(){
         var width_of_usable_canvas = ((timespan/1000000)) * canvas_div_w;
         var offset = -1*width_of_usable_canvas * scroll_position;
         $('#canvas-wrapper-div').css("margin-left", offset + "px");
-        boxCanvasWrapper();
+        // redraw
+        
     }
-    boxCanvasWrapper();
+    // redraw
+
 };
 
 function resizeCanvas () {
