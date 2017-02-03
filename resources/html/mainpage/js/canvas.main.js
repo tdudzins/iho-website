@@ -102,6 +102,7 @@ var timespan;
 var viewable_time;
 var left_edge_date;
 var right_edge_date;
+
 window.onload=function(){
 
     scrollRegions = [];
@@ -549,22 +550,47 @@ function drawTimelineIncrements() {
     }
 }
 
-function canvasWrapper() {
-    timespan = (date_start - date_end);
-    viewable_time = timespan * scroll_ratio;
-    left_edge_date = timespan - (timespan * scroll_position) + date_end;
-    right_edge_date = timespan - (timespan * scroll_position) + date_end - (timespan * scroll_ratio);
+function boxCanvasWrapper(x,y,width,height) {
+    var canvas_total_width = 13 * canvas_div_w;
+    var c_value = x/canvas_div_w;
+    var selected_canvas = 0;
 
-    var viewable_div_ratio = viewable_time/largest_timespan;
-    var max_canvas_width = canvas_timeline_w - (canvas_timeline_w * viewable_div_ratio) + canvas_div_w;
+    if (c_value <= 1)
+        selected_canvas = 1;
+    else if (c_value <= 2)
+        selected_canvas = 2;
+    else if (c_value <= 3)
+        selected_canvas = 3;
+    else if (c_value <= 4)
+        selected_canvas = 4;
+    else if (c_value <= 5)
+        selected_canvas = 5;
+    else if (c_value <= 6)
+        selected_canvas = 6;
+    else if (c_value <= 7)
+        selected_canvas = 7;
+    else if (c_value <= 8)
+        selected_canvas = 8;
+    else if (c_value <= 9)
+        selected_canvas = 9;
+    else if (c_value <= 10)
+        selected_canvas = 10;
+    else if (c_value <= 11)
+        selected_canvas = 11;
+    else if (c_value <= 12)
+        selected_canvas = 12;
+    //?
+    x = x%canvas_div_w;
 
-    for (i = 0; i < 12; i++) {
-        hypoCanvas[i].clearRect(0,0,hypoCanvas[i].canvas.width,hypoCanvas[i].canvas.height);
+    for (i = 0; i < 3 ; i++) {
         hypoCanvas[i].fillStyle="#FF0000";
-        hypoCanvas[i].fillRect((hypoCanvas[i].canvas.width /2)-200,(hypoCanvas[i].canvas.height/2)-150,400,300);
-
+        hypoCanvas[selected_canvas - 1].clearRect(x,y,x + width,y+height);
+        hypoCanvas[selected_canvas - 1].fillRect(x,y,x + width,y+height);
+        hypoCanvas[selected_canvas].clearRect(x,y,x + width,y+height);
+        hypoCanvas[selected_canvas].fillRect(x,y,x + width,y+height);
+        hypoCanvas[selected_canvas + 1].clearRect(x,y,x + width,y+height);
+        hypoCanvas[selected_canvas + 1].fillRect(x,y,x + width,y+height);
     }
-
 }
 function adaptationBox(eventID, name, date, callback) {
 
