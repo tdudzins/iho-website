@@ -26,7 +26,7 @@ function getEventList(callback) {
             else if($(this).hasClass('adaptation-item-unselected') && relationsObj[$(this).attr('id')] === undefined){
                 $(this).removeClass('adaptation-item-unselected').addClass('adaptation-item-selected');
                 addAdaption($(this).attr('id'), function(){
-                    //TODO box creation and data redraw
+                    boxCanvasWrapper(0,0,1400,1200);
                 });
             }
         });

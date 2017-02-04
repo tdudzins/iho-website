@@ -97,6 +97,8 @@ var date_end = 000000; // Latest date from selected adaptations
 var largest_timespan = 12000000; // When user is all the way scaled out, what is the largest amount of time to be viewed
 var smallest_timespan = 1000000; // When user is all the way scaled in, what is the smallest amount of time to be viewed
 var box_size = 0; // Represents font-size of adaptation box from CSS, if value is 0 then represent adapation as a point
+var box_fill_style = "#FF0000";
+var box_font_color = "#000000";
 
 var timespan;
 var viewable_time;
@@ -104,8 +106,8 @@ var left_edge_date;
 var right_edge_date;
 
 window.onload=function(){
-
     scrollRegions = [];
+
     // Resize Canvases
     resizeCanvas();
 
@@ -224,7 +226,6 @@ window.onload=function(){
             // redraw
             drawScrollbarBlock();
 
-
             // reset the starting mouse position for the next mousemove
             startX=mx;
             startY=my;
@@ -235,11 +236,7 @@ window.onload=function(){
         var width_of_usable_canvas = ((timespan/1000000)) * canvas_div_w;
         var offset = -1*width_of_usable_canvas * scroll_position;
         $('#canvas-wrapper-div').css("margin-left", offset + "px");
-        // redraw
-        
     }
-    // redraw
-
 };
 
 function resizeCanvas () {
@@ -378,7 +375,6 @@ function resizeCanvas () {
     ctx2_2.canvas.width = canvas2_w;
     ctx2_2.canvas.height = canvas2_h;
 }
-
 function drawScrollbarContainer () {
     var container_height = 0.2;
     var container_radius = canvas2_h * container_height;
@@ -524,8 +520,6 @@ function drawTimelineIncrements() {
     viewable_time = timespan * scroll_ratio;
     left_edge_date = timespan - (timespan * scroll_position) + date_end;
     right_edge_date = timespan - (timespan * scroll_position) + date_end - (timespan * scroll_ratio);
-    console.log("LEFT: " + left_edge_date);
-    console.log("RIGHT: " + right_edge_date);
 
     var total_increments = (timespan/1000000) + 1;
 
@@ -551,51 +545,51 @@ function drawTimelineIncrements() {
         xpos += change;
     }
 }
-
 function boxCanvasWrapper(x,y,width,height) {
     var canvas_total_width = 13 * canvas_div_w;
-    var c_value = x/canvas_div_w;
+    var x_pos = x;
+    var y_pos = y;
+    var width_length = width;
+    var height_length = height;
+
+    var c_value = x_pos/canvas_div_w;
     var selected_canvas = 0;
 
     if (c_value <= 1)
-        selected_canvas = 1;
+        selected_canvas = 0;
     else if (c_value <= 2)
-        selected_canvas = 2;
+        selected_canvas = 1;
     else if (c_value <= 3)
-        selected_canvas = 3;
+        selected_canvas = 2;
     else if (c_value <= 4)
-        selected_canvas = 4;
+        selected_canvas = 3;
     else if (c_value <= 5)
-        selected_canvas = 5;
+        selected_canvas = 4;
     else if (c_value <= 6)
-        selected_canvas = 6;
+        selected_canvas = 5;
     else if (c_value <= 7)
-        selected_canvas = 7;
+        selected_canvas = 6;
     else if (c_value <= 8)
-        selected_canvas = 8;
+        selected_canvas = 7;
     else if (c_value <= 9)
-        selected_canvas = 9;
+        selected_canvas = 8;
     else if (c_value <= 10)
-        selected_canvas = 10;
+        selected_canvas = 9;
     else if (c_value <= 11)
-        selected_canvas = 11;
+        selected_canvas = 10;
     else if (c_value <= 12)
-        selected_canvas = 12;
-    //?
-    x = x%canvas_div_w;
+        selected_canvas = 11;
 
-    for (i = 0; i < 3 ; i++) {
-        hypoCanvas[i].fillStyle="#FF0000";
-        hypoCanvas[selected_canvas - 1].clearRect(x,y,x + width,y+height);
-        hypoCanvas[selected_canvas - 1].fillRect(x,y,x + width,y+height);
-        hypoCanvas[selected_canvas].clearRect(x,y,x + width,y+height);
-        hypoCanvas[selected_canvas].fillRect(x,y,x + width,y+height);
-        hypoCanvas[selected_canvas + 1].clearRect(x,y,x + width,y+height);
-        hypoCanvas[selected_canvas + 1].fillRect(x,y,x + width,y+height);
+    x_pos = x_pos%canvas_div_w;
+    var temp_x = 0;
+
+    for (i = -1; i < 2; i++) {
+        if(selected_canvas + i >= 0 && selected_canvas + i <= 11) {
+            temp_x = x_pos - (i * canvas_div_w);
+            hypoCanvas[selected_canvas + i].fillStyle = box_fill_style;
+            hypoCanvas[selected_canvas + i].fillRect(temp_x, y_pos, temp_x + width_length, y_pos + height_length);
+        }
     }
-}
-function adaptationBox(eventID, name, date, callback) {
-
 }
 
 var hypothesis_canvas = `
