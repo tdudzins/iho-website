@@ -8,7 +8,6 @@ $('#adaptation-items').ready(function(){
 });
 
 // Functions
-
 function getEventList(callback) {
     serverPost({action:'t'}, function(data, status){
         var obj = JSON.parse(data);
@@ -21,18 +20,17 @@ function getEventList(callback) {
             // Unselect
             if($(this).hasClass('adaptation-item-selected') && relationsObj[$(this).attr('id')] !== undefined){
                 $(this).removeClass('adaptation-item-selected').addClass('adaptation-item-unselected');
-                removeHypoAdapt($(this).attr('id'));
-                removeAdaption($(this).attr('id'), function(){
-                    //TODO call remove from timeline and discard data redraw
+                //TODO remove empirical boxes
+                removeHypoAdaptation($(this).attr('id'), function(eid){
+                    removeAdaption(eid, function(){});
                 });
             }
             // Select
             else if($(this).hasClass('adaptation-item-unselected') && relationsObj[$(this).attr('id')] === undefined){
                 $(this).removeClass('adaptation-item-unselected').addClass('adaptation-item-selected');
-                //var eid =$(this).attr('id');
                 getAdaption($(this).attr('id'), function(eid){
                     addHypoAdaptation(eid);
-                    //TODO call add to timeline and add data redraw
+                    //TODO Add empirical boxes
                 });
             }
         });

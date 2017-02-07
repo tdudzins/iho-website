@@ -110,7 +110,7 @@ var right_edge_date;
 
 var canvasAdaptation = [];
 
-function initCanvas(){
+function initCanvas() {
     scrollRegions = [];
 
     // Resize Canvases
@@ -134,7 +134,7 @@ function initCanvas(){
     drawScrollbarBlock();
 
     // handle mousedown events
-    function scrollbarDown(e){
+    function scrollbarDown(e) {
 
         // tell the browser we're handling this mouse event
         e.preventDefault();
@@ -145,9 +145,9 @@ function initCanvas(){
         var my=parseInt(e.clientY-offsetY);
         // test each rect to see if mouse is inside
         dragok=false;
-        for(var i=0;i<scrollRegions.length;i++){
+        for (var i=0;i<scrollRegions.length;i++) {
             var r=scrollRegions[i];
-            if(mx>r.x && mx<r.x+r.width && my>r.y && my<r.y+r.height){
+            if(mx>r.x && mx<r.x+r.width && my>r.y && my<r.y+r.height) {
                 // if yes, set that rects isDragging=true
                 dragok=true;
                 r.isDragging=true;
@@ -160,23 +160,23 @@ function initCanvas(){
 
 
     // handle mouseup events
-    function scrollbarUp(e){
+    function scrollbarUp(e) {
         // tell the browser we're handling this mouse event
         e.preventDefault();
         e.stopPropagation();
 
         // clear all the dragging flags
         dragok = false;
-        for(var i=0;i<scrollRegions.length;i++){
+        for (var i=0;i<scrollRegions.length;i++) {
             scrollRegions[i].isDragging=false;
         }
     }
 
 
     // handle mouse moves
-    function scrollbarMove(e){
+    function scrollbarMove(e) {
         // if we're dragging anything...
-        if (dragok){
+        if(dragok) {
             // tell the browser we're handling this mouse event
             e.preventDefault();
             e.stopPropagation();
@@ -193,26 +193,26 @@ function initCanvas(){
             // move each rect that isDragging
             // by the distance the mouse has moved
             // since the last mousemove
-            for(var i=0;i<scrollRegions.length;i++){
+            for (var i=0;i<scrollRegions.length;i++) {
                 r=scrollRegions[i];
                 r1 = scrollRegions[0];
                 r2 = scrollRegions[1];
                 r3 = scrollRegions[2];
-                if(r.isDragging){
-                    if (r.id == 'left' && r.x + dx > 0) {
-                        if(r2.width - dx > 10){
+                if(r.isDragging) {
+                    if(r.id == 'left' && r.x + dx > 0) {
+                        if(r2.width - dx > 10) {
                         r1.x += dx;
                         scroll_left_handle_x_position += dx;
                         r2.x += dx;
                         r2.width -= dx;}
                     }
-                    else if (r.id == 'right' && r.x + r3.width + dx  < canvas_div_w ) {
-                        if(r2.width + dx > 10){
+                    else if(r.id == 'right' && r.x + r3.width + dx  < canvas_div_w ) {
+                        if(r2.width + dx > 10) {
                         r3.x += dx;
                         scroll_right_handle_x_position += dx;
                         r2.width += dx;}
                     }
-                    else if (r.id == 'middle' && r1.x + dx > 0 && r3.x + r3.width + dx  < canvas_div_w) {
+                    else if(r.id == 'middle' && r1.x + dx > 0 && r3.x + r3.width + dx  < canvas_div_w) {
                         r1.x += dx;
                         scroll_left_handle_x_position += dx;
                         r2.x += dx;
@@ -243,8 +243,7 @@ function initCanvas(){
         $('#canvas-wrapper-div').css("margin-left", offset + "px");
     }
 };
-
-function resizeCanvas () {
+function resizeCanvas() {
     $('#canvas-wrapper-div').append(hypothesis_canvas);
     $('#emperical-canvas-div').append(emperical_canvas);
 
@@ -384,6 +383,250 @@ function setdate (start, end) {
     date_start = start;
     date_end = end;
 }
+
+// Hypo Timeline function
+function boxCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text,emperical) {
+    var canvas_total_width = 13 * canvas_div_w;
+
+    var c_value = x_pos/canvas_div_w;
+    var selected_canvas = 0;
+
+    if(c_value <= 1)
+        selected_canvas = 0;
+    else if(c_value <= 2)
+        selected_canvas = 1;
+    else if(c_value <= 3)
+        selected_canvas = 2;
+    else if(c_value <= 4)
+        selected_canvas = 3;
+    else if(c_value <= 5)
+        selected_canvas = 4;
+    else if(c_value <= 6)
+        selected_canvas = 5;
+    else if(c_value <= 7)
+        selected_canvas = 6;
+    else if(c_value <= 8)
+        selected_canvas = 7;
+    else if(c_value <= 9)
+        selected_canvas = 8;
+    else if(c_value <= 10)
+        selected_canvas = 9;
+    else if(c_value <= 11)
+        selected_canvas = 10;
+    else if(c_value <= 12)
+        selected_canvas = 11;
+
+    x_pos = x_pos%canvas_div_w;
+    var temp_x = 0;
+
+    for(var i = -1; i < 2; i++) {
+        if(selected_canvas + i >= 0 && selected_canvas + i <= 11) {
+            temp_x = x_pos - (i * canvas_div_w);
+            hypoCanvas[selected_canvas + i].fillStyle = box_fill_style_relation;
+            hypoCanvas[selected_canvas + i].fillRect(temp_x, y_pos, width_length, height_length);
+            hypoCanvas[selected_canvas + i].font = box_font_size + "px " + box_font_family;
+            hypoCanvas[selected_canvas + i].fillStyle = box_font_color;
+            hypoCanvas[selected_canvas + i].textAlign = "center";
+            for (j = 0; j < text.length; j++) {
+                hypoCanvas[selected_canvas + i].fillText(text[j], temp_x + (0.5 * width_length), y_pos + (box_font_size * (j + 1)));
+            }
+        }
+    }
+}
+function boxCanvasWrapperClear(x_pos,y_pos,width_length,height_length) {
+    var canvas_total_width = 13 * canvas_div_w;
+    var c_value = x_pos/canvas_div_w;
+    var selected_canvas = 0;
+    if(c_value <= 1)
+        selected_canvas = 0;
+    else if(c_value <= 2)
+        selected_canvas = 1;
+    else if(c_value <= 3)
+        selected_canvas = 2;
+    else if(c_value <= 4)
+        selected_canvas = 3;
+    else if(c_value <= 5)
+        selected_canvas = 4;
+    else if(c_value <= 6)
+        selected_canvas = 5;
+    else if(c_value <= 7)
+        selected_canvas = 6;
+    else if(c_value <= 8)
+        selected_canvas = 7;
+    else if(c_value <= 9)
+        selected_canvas = 8;
+    else if(c_value <= 10)
+        selected_canvas = 9;
+    else if(c_value <= 11)
+        selected_canvas = 10;
+    else if(c_value <= 12)
+        selected_canvas = 11;
+    x_pos = x_pos%canvas_div_w;
+    var temp_x = 0;
+    for(var i = -1; i < 2; i++) {
+        if(selected_canvas + i >= 0 && selected_canvas + i <= 11) {
+            temp_x = x_pos - (i * canvas_div_w);
+            hypoCanvas[selected_canvas].clearRect((temp_x - 1), (y_pos - 1), (width_length + 2), (height_length + 1));
+       }
+    }
+}
+function createAdaptBox(eventID, eventName, date, callback) {
+    var textArray = [];
+    ctx_top_1.font = box_font_size + "px " + box_font_family;
+    var line = "";
+    var temp_str = eventName.split(" ");
+    temp_str.forEach(function(item) {
+        if(line.length + item.length <= max_char_per_line) {
+            line += item + " ";
+        }
+        else {
+            textArray.push(line.trim());
+            line = item + " ";
+        }
+    });
+    textArray.push(line.trim());
+
+    var longest_line = 0;
+    var width = 0;
+    textArray.forEach(function(item) {
+        if(longest_line < item.length) {
+            longest_line = item.length;
+            width = parseInt((ctx_top_1.measureText(item).width + 5).toFixed(0));
+        }
+    });
+    var height = (box_font_size * textArray.length) + (5 * textArray.length);
+    callback(eventID, textArray, width, height, date);
+}
+function positionAdaptBox(eventID, text, width, height, date, callback) {
+    var x_pos = 0;
+    var y_pos = 0;
+    var emperical;
+    var relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
+    if(relationsObj[eventID] != undefined) {
+        emperical = true;
+    }
+    else {
+        emperical = false;
+    }
+
+    if(date >= 1000000) {
+        date = date + 4000000;
+    }
+    else {
+        date = date * 5;
+    }
+
+    var timespan2 = (date_start - date_end);
+    var viewable_time2 = timespan * scroll_ratio;
+    var increment_per_pixel2 = (viewable_time2/canvas_div_w);
+
+    var canvas_usage = timespan2/12000000;
+    var usable_canvas = canvas_timeline_w * canvas_usage;
+    var viewable_canvas = canvas_div_w / viewable_time2;
+
+    x_pos = date/increment_per_pixel2;
+    x_pos = ((canvas_div_w/scroll_ratio) - x_pos) - width/2;
+
+    y_pos = canvas_div_h_hypo/2 - height/2;
+
+    var boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
+    boxLocation.push([x_pos,y_pos,width,height,text,eventID]);
+    boxLocation.sort(function(a,b) {
+        if(a[0] === b[0]) {
+            return 0;
+        }
+        else {
+            return (a[0] < b[0]) ? -1 : 1;
+        }
+    });
+    sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
+
+
+    callback(x_pos, y_pos, width, height, text, emperical);
+}
+function addHypoAdaptation(eventID) {
+    var adaptArray = JSON.parse(sessionStorage.getItem("adaptArray"));
+    var adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
+    var relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
+
+    var eventName = adaptObj[eventID][0];
+    var eventDate = adaptObj[eventID][1];
+    var eventBoundaryStart = adaptObj[eventID][2];
+    var eventBoundaryEnd = adaptObj[eventID][3];
+    var count = adaptObj[eventID][4];
+
+    if(adaptObj[eventID][4] > 0) {
+        var boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
+        for (var i = 0; i < boxLocation.length; i++) {
+            if(boxLocation[i][6] == eventID) {
+                boxCanvasWrapperDraw(boxLocation[i][0],boxLocation[i][1],boxLocation[i][2],boxLocation[i][2],boxLocation[i][2],true);
+                i = boxLocation.length;
+            }
+        }
+    }
+    else {
+        createAdaptBox(eventID, eventName, eventDate, function(eventID, text, width, height, date) {
+            positionAdaptBox(eventID, text, width, height, date, function(x,y,width,height,text,emperical) {
+                boxCanvasWrapperDraw(x,y,width,height,text,emperical)
+            });
+        });
+    }
+    relationsObj[eventID].forEach(function(item) {
+        if(adaptObj[item[0]][4] == 0) {
+            var eventName = adaptObj[item[0]][0];
+            var eventDate = adaptObj[item[0]][1];
+            var eventBoundaryStart = adaptObj[item[0]][2];
+            var eventBoundaryEnd = adaptObj[item[0]][3];
+            var count = adaptObj[item[0]][4];
+            createAdaptBox(item[0], eventName, eventDate, function(eventID, text, width, height, date) {
+                positionAdaptBox(eventID, text, width, height, date, function(x,y,width,height,text,emperical) {
+                    boxCanvasWrapperDraw(x,y,width,height,text,emperical)
+                });
+            });
+        }
+    });
+}
+function removeHypoAdaptation(eventID, callback) {
+    var adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
+    var relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
+    var boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
+
+    // Emperical undraw
+    if(adaptObj[eventID][4] == 0) {
+        for (var i = 0; i < boxLocation.length; i++) {
+            if(boxLocation[i][5] == eventID) {
+                boxCanvasWrapperClear(boxLocation[i][0], boxLocation[i][1], boxLocation[i][2], boxLocation[i][3]);
+                boxLocation.splice(i, 1);
+                i = boxLocation.length;
+            }
+        }
+    }
+    else {
+        for(var i = 0; i < boxLocation.length; i++) {
+            if(boxLocation[i][5] == eventID) {
+                boxCanvasWrapperClear(boxLocation[i][0], boxLocation[i][1], boxLocation[i][2], boxLocation[i][3]);
+                boxCanvasWrapperDraw(boxLocation[i][0], boxLocation[i][1], boxLocation[i][2], boxLocation[i][3], boxLocation[i][4], false);
+            }
+        }
+    }
+
+    // Relations undraw
+    relationsObj[eventID].forEach(function(item) {
+        if(adaptObj[item[0]][4] < 1) {
+            for(var i = 0; i < boxLocation.length; i++) {
+                if(boxLocation[i][5] == item[0]) {
+                    boxCanvasWrapperClear(boxLocation[i][0], boxLocation[i][1], boxLocation[i][2], boxLocation[i][3]);
+                    boxLocation.splice(i, 1);
+                    i = boxLocation.length;
+                }
+            }
+        }
+    });
+    sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
+    callback(eventID);
+}
+
+// Scroolbar functions
 function drawScrollbarContainer () {
     var container_height = 0.2;
     var container_radius = canvas2_h * container_height;
@@ -435,7 +678,7 @@ function drawScrollbarBlock() {
     ctx2_2.arc(hndl_cnt_left_x + (2 * block_radius),hndl_cnt_left_y,block_radius,arc_bot,arc_top,true);
     ctx2_2.closePath();
     ctx2_2.fill();
-    if (scrollRegions.length < 1) {
+    if(scrollRegions.length < 1) {
         scrollRegions.push({id:'left',x:regx,y:regy,width:regwidth,height:regheight,isDragging:false});
     }
 
@@ -453,7 +696,7 @@ function drawScrollbarBlock() {
     ctx2_2.lineTo(hndl_cnt_right_x - (2 * block_radius),hndl_cnt_right_y - block_radius);
     ctx2_2.closePath();
     ctx2_2.fill();
-    if (scrollRegions.length < 2) {
+    if(scrollRegions.length < 2) {
         scrollRegions.push({id:'middle',x:regx,y:regy,width:regwidth,height:regheight,isDragging:false});
     }
 
@@ -472,7 +715,7 @@ function drawScrollbarBlock() {
     ctx2_2.arc(hndl_cnt_right_x - (2 * block_radius),hndl_cnt_right_y,block_radius,arc_bot,arc_top,false)
     ctx2_2.closePath();
     ctx2_2.fill();
-    if (scrollRegions.length < 3) {
+    if(scrollRegions.length < 3) {
         scrollRegions.push({id:'right',x:regx,y:regy,width:regwidth,height:regheight,isDragging:false});
     }
 
@@ -488,7 +731,7 @@ function drawScrollbarBlock() {
     var x = scroll_left_handle_x_position + (2 * block_radius);
     var y = hndl_cnt_left_y + (3.5 * block_radius);
     var left_text = 0;
-    if (left_edge_date > 5000000) {
+    if(left_edge_date > 5000000) {
       left_text = ((left_edge_date - 4000000) / 1000000).toFixed(1);
     }
     else {
@@ -504,7 +747,7 @@ function drawScrollbarBlock() {
     x = scrollRegions[2].x + (2 * block_radius);
     y = hndl_cnt_left_y + (3.5 * block_radius);
     var right_text = 0;
-    if (right_edge_date > 5000000) {
+    if(right_edge_date > 5000000) {
       right_text = ((right_edge_date - 4000000) / 1000000).toFixed(1);
     }
     else {
@@ -538,7 +781,7 @@ function drawTimelineIncrements() {
     var xpos = 0 - (total_scale_size * scroll_position);
 
     var text = '';
-    for (i = 0; i < total_increments; i++) {
+    for(var i = 0; i < total_increments; i++) {
         text = '';
         if(((date_start - 4000000) / 1000000) - i >= 1) {
           text += ((date_start - 4000000) / 1000000) - i;
@@ -553,177 +796,9 @@ function drawTimelineIncrements() {
         xpos += change;
     }
 }
-function boxCanvasWrapper(x_pos,y_pos,width_length,height_length,text,emperical) {
-    var canvas_total_width = 13 * canvas_div_w;
 
-    var c_value = x_pos/canvas_div_w;
-    var selected_canvas = 0;
+//
 
-    if (c_value <= 1)
-        selected_canvas = 0;
-    else if (c_value <= 2)
-        selected_canvas = 1;
-    else if (c_value <= 3)
-        selected_canvas = 2;
-    else if (c_value <= 4)
-        selected_canvas = 3;
-    else if (c_value <= 5)
-        selected_canvas = 4;
-    else if (c_value <= 6)
-        selected_canvas = 5;
-    else if (c_value <= 7)
-        selected_canvas = 6;
-    else if (c_value <= 8)
-        selected_canvas = 7;
-    else if (c_value <= 9)
-        selected_canvas = 8;
-    else if (c_value <= 10)
-        selected_canvas = 9;
-    else if (c_value <= 11)
-        selected_canvas = 10;
-    else if (c_value <= 12)
-        selected_canvas = 11;
-
-    x_pos = x_pos%canvas_div_w;
-    var temp_x = 0;
-
-    for (i = -1; i < 2; i++) {
-        if(selected_canvas + i >= 0 && selected_canvas + i <= 11) {
-            temp_x = x_pos - (i * canvas_div_w);
-            hypoCanvas[selected_canvas + i].fillStyle = box_fill_style_relation;
-            hypoCanvas[selected_canvas + i].fillRect(temp_x, y_pos, width_length, height_length);
-            hypoCanvas[selected_canvas + i].font = box_font_size + "px " + box_font_family;
-            hypoCanvas[selected_canvas + i].fillStyle = box_font_color;
-            hypoCanvas[selected_canvas + i].textAlign = "center";
-            for (j = 0; j < text.length; j++) {
-                hypoCanvas[selected_canvas + i].fillText(text[j], temp_x + (0.5 * width_length), y_pos + (box_font_size * (j + 1)));
-            }
-        }
-    }
-}
-
-function addHypoAdaptation(eventID) {
-    var adaptArray = JSON.parse(sessionStorage.getItem("adaptArray"));
-    var adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
-    var relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
-
-    var eventName = adaptObj[eventID][0];
-    var eventDate = adaptObj[eventID][1];
-    var eventBoundaryStart = adaptObj[eventID][2];
-    var eventBoundaryEnd = adaptObj[eventID][3];
-    var count = adaptObj[eventID][4];
-
-    if(adaptObj[eventID][4] > 0) {
-        var boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
-        for (var i = 0; i < boxLocation.length; i++) {
-            if(boxLocation[i][6] == eventID){
-                boxCanvasWrapper(boxLocation[i][0],boxLocation[i][1],boxLocation[i][2],boxLocation[i][2],boxLocation[i][2],true);
-                i = boxLocation.length;
-            }
-        }
-    }
-    else{
-        createAdaptBox(eventID, eventName, eventDate, function(eventID, text, width, height, date){
-            positionAdaptBox(eventID, text, width, height, date, function(x,y,width,height,text,emperical){
-                boxCanvasWrapper(x,y,width,height,text,emperical)
-            });
-        });
-    }
-    relationsObj[eventID].forEach(function(item) {
-        if(adaptObj[item[0]][4] == 0){
-            var eventName = adaptObj[item[0]][0];
-            var eventDate = adaptObj[item[0]][1];
-            var eventBoundaryStart = adaptObj[item[0]][2];
-            var eventBoundaryEnd = adaptObj[item[0]][3];
-            var count = adaptObj[item[0]][4];
-            createAdaptBox(item[0], eventName, eventDate, function(eventID, text, width, height, date){
-                positionAdaptBox(eventID, text, width, height, date, function(x,y,width,height,text,emperical){
-                    boxCanvasWrapper(x,y,width,height,text,emperical)
-                });
-            });
-        }
-    });
-}
-function createAdaptBox(eventID, eventName, date, callback) {
-    var textArray = [];
-    ctx_top_1.font = box_font_size + "px " + box_font_family;
-    var line = "";
-    var temp_str = eventName.split(" ");
-    temp_str.forEach(function(item){
-        if(line.length + item.length <= max_char_per_line) {
-            line += item + " ";
-        }
-        else {
-            textArray.push(line.trim());
-            line = item + " ";
-        }
-    });
-    textArray.push(line.trim());
-
-    var longest_line = 0;
-    var width = 0;
-    textArray.forEach(function(item){
-        if(longest_line < item.length) {
-            longest_line = item.length;
-            width = (ctx_top_1.measureText(item).width + 5).toFixed(0);
-        }
-    });
-    var height = (box_font_size * textArray.length) + (5 * textArray.length);
-    callback(eventID, textArray, width, height, date);
-}
-function positionAdaptBox(eventID, text, width, height, date, callback) {
-    var x_pos = 0;
-    var y_pos = 0;
-    var emperical;
-    var relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
-    if (relationsObj[eventID] != undefined) {
-        emperical = true;
-    }
-    else {
-        emperical = false;
-    }
-
-    if(date >= 1000000) {
-        date = date + 4000000;
-    }
-    else {
-        date = date * 5;
-    }
-
-    var timespan2 = (date_start - date_end);
-    var viewable_time2 = timespan * scroll_ratio;
-    var increment_per_pixel2 = (viewable_time2/canvas_div_w);
-
-    var canvas_usage = timespan2/12000000;
-    var usable_canvas = canvas_timeline_w * canvas_usage;
-    var viewable_canvas = canvas_div_w / viewable_time2;
-
-    x_pos = date/increment_per_pixel2;
-    x_pos = ((canvas_div_w/scroll_ratio) - x_pos) - width/2;
-
-    y_pos = canvas_div_h_hypo/2 - height/2;
-
-    var boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
-    boxLocation.push([x_pos,y_pos,width,height,text,eventID]);
-    boxLocation.sort(function(a,b){
-        if(a[0] === b[0]) {
-            return 0;
-        }
-        else {
-            return (a[0] < b[0]) ? -1 : 1;
-        }
-    });
-    sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
-
-
-    callback(x_pos, y_pos, width, height, text, emperical);
-}
-function removeHypoAdaptation(eventID) {
-
-}
-
-
-//scrollRegions.push({id:'left',x:regx,y:regy,width:regwidth,height:regheight,isDragging:false})
 var hypothesis_canvas = `
     <canvas id="hypothesis-canvas-1" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
     <canvas id="hypothesis-canvas-2" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
