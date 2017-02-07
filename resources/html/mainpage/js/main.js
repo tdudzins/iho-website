@@ -1,5 +1,8 @@
 // Event Listeners
 createArrays();
+$(document).ready(function() {
+    initCanvas();
+});
 $('#adaptation-items').ready(function(){
     getEventList(function(){});
 });
@@ -18,6 +21,7 @@ function getEventList(callback) {
             // Unselect
             if($(this).hasClass('adaptation-item-selected') && relationsObj[$(this).attr('id')] !== undefined){
                 $(this).removeClass('adaptation-item-selected').addClass('adaptation-item-unselected');
+                removeHypoAdapt($(this).attr('id'));
                 removeAdaption($(this).attr('id'), function(){
                     //TODO call remove from timeline and discard data redraw
                 });
@@ -25,8 +29,10 @@ function getEventList(callback) {
             // Select
             else if($(this).hasClass('adaptation-item-unselected') && relationsObj[$(this).attr('id')] === undefined){
                 $(this).removeClass('adaptation-item-unselected').addClass('adaptation-item-selected');
-                addAdaption($(this).attr('id'), function(){
-                    boxCanvasWrapper(0,0,1400,1200);
+                //var eid =$(this).attr('id');
+                getAdaption($(this).attr('id'), function(eid){
+                    addHypoAdaptation(eid);
+                    //TODO call add to timeline and add data redraw
                 });
             }
         });
@@ -34,7 +40,7 @@ function getEventList(callback) {
         callback();
     });
 }
-function addAdaption(eventID, callback){
+function getAdaption(eventID, callback){
     serverPost({action:"s", eventid:eventID}, function(data, status){
         var obj = JSON.parse(data);
         var adaptArray = JSON.parse(sessionStorage.getItem("adaptArray"));
@@ -64,7 +70,7 @@ function addAdaption(eventID, callback){
         sessionStorage.setItem("adaptObj", JSON.stringify(adaptObj));
         sessionStorage.setItem("relationsObj", JSON.stringify(relationsObj));
         sessionStorage.setItem("empiricalTable", JSON.stringify(empiricalTable));
-        callback();
+        callback(eventID);
     });
 }
 function removeAdaption(eventID, callback){
@@ -131,12 +137,12 @@ function serverPost(object, callback) {
 // Local storage creation
 function createArrays() {
     if (typeof(Storage) !== "undefined"){
-        sessionStorage.setItem("adaptArray", "[]"); // [[eventID, eventID],[],[]....] sortedArray
+        sessionStorage.setItem("adaptArray", "[]"); // [eventID, eventID, ...] sortedArray
         sessionStorage.setItem("adaptObj", "{}"); // {eventID:[eventName, earliestDirectEvidence, start, end, count],[],[]....} obj
         sessionStorage.setItem("relationsObj", "{}"); // {eventID:[{id:relationID,precondition:precondition}],....} obj
         sessionStorage.setItem("empiricalTable", "[]"); // [[eventID, eventName, earliestDirectEvidence],[],[]....] array
-        sessionStorage.setItem("empiricalBox", "[]"); // [[x,y,length,height,textsize,text[],eventID], .....] array sorted
-        sessionStorage.setItem("boxLocation", "[]"); // [[x,y,length,height,textsize,text[],eventID], .....] array sorted
+        sessionStorage.setItem("empiricalBox", "[]"); // [[x,y,length,height,text[],eventID], .....] array sorted
+        sessionStorage.setItem("boxLocation", "[]"); // [[x,y,length,height,text[],eventID], .....] array sorted
     }
     else{
         console.log("Sorry! No Web Storage support..");
