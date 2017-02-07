@@ -158,7 +158,6 @@ function initCanvas() {
         startY=my;
     }
 
-
     // handle mouseup events
     function scrollbarUp(e) {
         // tell the browser we're handling this mouse event
@@ -171,7 +170,6 @@ function initCanvas() {
             scrollRegions[i].isDragging=false;
         }
     }
-
 
     // handle mouse moves
     function scrollbarMove(e) {
@@ -194,23 +192,22 @@ function initCanvas() {
             // by the distance the mouse has moved
             // since the last mousemove
             for (var i=0;i<scrollRegions.length;i++) {
+
                 r=scrollRegions[i];
                 r1 = scrollRegions[0];
                 r2 = scrollRegions[1];
                 r3 = scrollRegions[2];
                 if(r.isDragging) {
-                    if(r.id == 'left' && r.x + dx > 0) {
-                        if(r2.width - dx > 10) {
-                        r1.x += dx;
-                        scroll_left_handle_x_position += dx;
-                        r2.x += dx;
-                        r2.width -= dx;}
+                    if(r.id == 'left' && r.x + dx > 0 && ((left_edge_date-right_edge_date) > 1000000 || (r2.width - dx) > r2.width)) {
+                            r1.x += dx;
+                            scroll_left_handle_x_position += dx;
+                            r2.x += dx;
+                            r2.width -= dx;
                     }
-                    else if(r.id == 'right' && r.x + r3.width + dx  < canvas_div_w ) {
-                        if(r2.width + dx > 10) {
-                        r3.x += dx;
-                        scroll_right_handle_x_position += dx;
-                        r2.width += dx;}
+                    else if(r.id == 'right' && r.x + r3.width + dx  < canvas_div_w && ((left_edge_date-right_edge_date) > 1000000 || (r2.width + dx) > r2.width)) {
+                            r3.x += dx;
+                            scroll_right_handle_x_position += dx;
+                            r2.width += dx;
                     }
                     else if(r.id == 'middle' && r1.x + dx > 0 && r3.x + r3.width + dx  < canvas_div_w) {
                         r1.x += dx;
@@ -218,12 +215,6 @@ function initCanvas() {
                         r2.x += dx;
                         scroll_right_handle_x_position += dx;
                         r3.x += dx;
-
-
-                        var timespan = date_start - date_end;
-                        var width_of_usable_canvas = canvas_timeline_w * (timespan/12000000);
-                        var offset = -1 * width_of_usable_canvas * scroll_position;
-                        $('#canvas-wrapper-div').css("margin-left", offset + "px");
                     }
                 }
             }
