@@ -97,18 +97,22 @@ var date_end = 000000; // Latest date from selected adaptations
 var largest_timespan = 12000000; // When user is all the way scaled out, what is the largest amount of time to be viewed
 var smallest_timespan = 1000000; // When user is all the way scaled in, what is the smallest amount of time to be viewed
 var max_char_per_line = 15;
-var box_fill_style_relation = "rgba(203,203,203,0.5)";
-var box_fill_style_emperical = "rgba(203,203,203,0.5)";
-var box_font_color = "rgba(0,0,0,0.5)";
-var box_font_size = 20;
-var box_font_family = "Roboto";
+var hypo_box_fill_style_relation = "rgba(111,130,145,0.9)";
+var hypo_box_fill_style_emperical = "rgba(6,74,121,0.9)";
+var hypo_box_font_color = "rgba(255,255,255,1)";
+var hypo_box_font_size = 20;
+var hypo_box_font_family = "Roboto";
 var scrollbar_container_fill_style = "rgba(220,220,220,0.3)";
 var scrollbar_block_fill_style = "rgba(239,185,37,0.5)";
 var scrollbar_handle_fill_style = "rgba(239,185,37,1.0)";
-var scrollbar_font_color = "white";
+var scrollbar_font_color = "rgba(255,255,255,1)";
 var scrollbar_font_size = 13;
 var scrollbar_font_family = "Roboto";
-var timeline_font_color = "white";
+var increments_font_color = "rgba(255,255,255,1)";
+var increments_font_size = 25;
+var increments_font_family = "Roboto";
+var hypo_timeline_font_color = "rgba(255,255,255,1)";
+
 
 var timespan;
 var viewable_time;
@@ -242,7 +246,6 @@ function initCanvas() {
         usable_canvas = canvas_timeline_w * canvas_usage;
         left_edge_date = timespan - (timespan * scroll_position) + date_end;
         var offset = -1 * ((12000000 - left_edge_date)/increment_per_pixel);
-        console.log("scroll_ratio " + scroll_ratio);
         $('#canvas-wrapper-div').css("margin-left", offset + "px");
     }
 };
@@ -273,6 +276,7 @@ function resizeCanvas() {
     $('#scrollbar-canvas-block').width = canvas_div_w;
 
     // Resize Emperical Canvas
+    // TODO set emperical canvas wrapper width to canvas_timeline_w
 
     // Redefine Canvas Context(s)
     topcanvas1 = document.getElementById('hypothesis-canvas-1');
@@ -421,17 +425,25 @@ function boxCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text,emperi
 
     x_pos = x_pos%canvas_div_w;
     var temp_x = 0;
+    var relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
 
     for(var i = -1; i < 2; i++) {
         if(selected_canvas + i >= 0 && selected_canvas + i <= 11) {
             temp_x = x_pos - (i * canvas_div_w);
-            hypoCanvas[selected_canvas + i].fillStyle = box_fill_style_relation;
+
+            if (emperical) {
+                    hypoCanvas[selected_canvas + i].fillStyle = hypo_box_fill_style_emperical;
+            }
+            else {
+                hypoCanvas[selected_canvas + i].fillStyle = hypo_box_fill_style_relation;
+            }
+
             hypoCanvas[selected_canvas + i].fillRect(temp_x, y_pos, width_length, height_length);
-            hypoCanvas[selected_canvas + i].font = box_font_size + "px " + box_font_family;
-            hypoCanvas[selected_canvas + i].fillStyle = box_font_color;
+            hypoCanvas[selected_canvas + i].font = hypo_box_font_size + "px " + hypo_box_font_family;
+            hypoCanvas[selected_canvas + i].fillStyle = hypo_box_font_color;
             hypoCanvas[selected_canvas + i].textAlign = "center";
             for (j = 0; j < text.length; j++) {
-                hypoCanvas[selected_canvas + i].fillText(text[j], temp_x + (0.5 * width_length), y_pos + (box_font_size * (j + 1)));
+                hypoCanvas[selected_canvas + i].fillText(text[j], temp_x + (0.5 * width_length), y_pos + (hypo_box_font_size * (j + 1)));
             }
         }
     }
@@ -475,7 +487,7 @@ function boxCanvasWrapperClear(x_pos,y_pos,width_length,height_length) {
 }
 function createAdaptBox(eventID, eventName, date, callback) {
     var textArray = [];
-    ctx_top_1.font = box_font_size + "px " + box_font_family;
+    ctx_top_1.font = hypo_box_font_size + "px " + hypo_box_font_family;
     var line = "";
     var temp_str = eventName.split(" ");
     temp_str.forEach(function(item) {
@@ -497,7 +509,7 @@ function createAdaptBox(eventID, eventName, date, callback) {
             width = parseInt((ctx_top_1.measureText(item).width + 5).toFixed(0));
         }
     });
-    var height = (box_font_size * textArray.length) + (5 * textArray.length);
+    var height = (hypo_box_font_size * textArray.length) + (5 * textArray.length);
     callback(eventID, textArray, width, height, date);
 }
 function positionAdaptBox(eventID, text, width, height, date, callback) {
@@ -723,7 +735,6 @@ function drawScrollbarBlock() {
     }
 
     scroll_ratio = ((scrollRegions[2].x + (4 * block_radius) - scrollRegions[0].x)/(canvas_div_w));
-    console.log(scroll_ratio);
     scroll_position = scrollRegions[0].x/canvas_div_w;
 
     timespan = (date_start - date_end);
@@ -765,8 +776,8 @@ function drawScrollbarBlock() {
 }
 function drawTimelineIncrements() {
     ctx1_1.clearRect(0,0,ctx1_1.canvas.width,ctx1_1.canvas.height);
-    ctx1_1.font = "25px Roboto";
-    ctx1_1.fillStyle = "white";
+    ctx1_1.font = increments_font_size + "px " + increments_font_family;
+    ctx1_1.fillStyle = increments_font_color;
     ctx1_1.textAlign = "center";
 
     timespan = (date_start - date_end);
@@ -798,8 +809,7 @@ function drawTimelineIncrements() {
     }
 }
 
-//
-
+// HTML injection strings
 var hypothesis_canvas = `
     <canvas id="hypothesis-canvas-1" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
     <canvas id="hypothesis-canvas-2" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
@@ -814,7 +824,6 @@ var hypothesis_canvas = `
     <canvas id="hypothesis-canvas-11" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
     <canvas id="hypothesis-canvas-12" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
     `;
-
 var emperical_canvas = `
     <canvas id="emperical-canvas-1" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
     <canvas id="emperical-canvas-2" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
