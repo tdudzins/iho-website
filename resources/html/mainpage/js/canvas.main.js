@@ -210,13 +210,13 @@ function initCanvas() {
                 var r2 = scrollRegions[1];
                 var r3 = scrollRegions[2];
                 if(r.isDragging) {
-                    if(r.id == 'left' && r.x + dx > 0 && ((r1.width+r2.width+r3.width-dx)>minScrollbar||(r2.width - dx)>r2.width)) {
+                    if(r.id == 'left' && r.x + dx > 0 && ((r1.width+r2.width+r3.width-dx)>minScrollbar||(r2.width - dx)>minScrollbar)) {
                             r1.x += dx;
                             scroll_left_handle_x_position += dx;
                             r2.x += dx;
                             r2.width -= dx;
                     }
-                    else if(r.id == 'right' && r.x+r3.width+dx<canvas_div_w&&((r1.width+r2.width+r3.width+dx)>minScrollbar||(r2.width + dx)>r2.width)) {
+                    else if(r.id == 'right' && r.x+r3.width+dx<canvas_div_w&&((r1.width+r2.width+r3.width+dx)>minScrollbar||(r2.width + dx)>minScrollbar)) {
                             r3.x += dx;
                             scroll_right_handle_x_position += dx;
                             r2.width += dx;
@@ -573,9 +573,8 @@ function addHypoAdaptation(eventID) {
 
     if(adaptObj[eventID][4] > 0) {
         var boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
-        for (var i = 0; i < boxLocation.length; i++) {
-            if(boxLocation[i][5] == eventID) {
-                console.log(boxLocation[i][5]);
+        if(boxLocation[i][5] === eventID) {
+            for (var i = 0; i < boxLocation.length; i++) {
                 boxCanvasWrapperClear(boxLocation[i][0], boxLocation[i][1], boxLocation[i][2], boxLocation[i][3]);
                 boxCanvasWrapperDraw(boxLocation[i][0],boxLocation[i][1],boxLocation[i][2],boxLocation[i][3],boxLocation[i][4],true);
                 i = boxLocation.length;
