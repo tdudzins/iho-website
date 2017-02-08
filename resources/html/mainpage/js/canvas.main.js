@@ -100,8 +100,15 @@ var max_char_per_line = 15;
 var box_fill_style_relation = "rgba(203,203,203,0.5)";
 var box_fill_style_emperical = "rgba(203,203,203,0.5)";
 var box_font_color = "rgba(0,0,0,0.5)";
-var box_font_size = 25;
+var box_font_size = 20;
 var box_font_family = "Roboto";
+var scrollbar_container_fill_style = "rgba(220,220,220,0.3)";
+var scrollbar_block_fill_style = "rgba(239,185,37,0.5)";
+var scrollbar_handle_fill_style = "rgba(239,185,37,1.0)";
+var scrollbar_font_color = "white";
+var scrollbar_font_size = 13;
+var scrollbar_font_family = "Roboto";
+var timeline_font_color = "white";
 
 var timespan;
 var viewable_time;
@@ -635,7 +642,7 @@ function drawScrollbarContainer () {
     var arc_bot = 0.5*Math.PI;
 
     // Scrollbar Container
-    ctx2_1.fillStyle = 'rgba(220,220,220,0.3)';
+    ctx2_1.fillStyle = scrollbar_container_fill_style;
     ctx2_1.beginPath();
     ctx2_1.arc(center_left_x,center_left_y,container_radius,arc_top,arc_bot,true);
     ctx2_1.arc(center_right_x,center_right_y,container_radius,arc_bot,arc_top,true);
@@ -658,7 +665,7 @@ function drawScrollbarBlock() {
     var arc_bot = 0.5*Math.PI;
 
     // Scrollbar
-    ctx2_2.fillStyle = 'rgba(239,185,37,1.0)';
+    ctx2_2.fillStyle = scrollbar_handle_fill_style;
 
     // draw left handle
     var regx = scroll_left_handle_x_position;
@@ -678,7 +685,7 @@ function drawScrollbarBlock() {
         scrollRegions.push({id:'left',x:regx,y:regy,width:regwidth,height:regheight,isDragging:false});
     }
 
-    ctx2_2.fillStyle = 'rgba(239,185,37,0.5)';
+    ctx2_2.fillStyle = scrollbar_block_fill_style;
     // draw block between handles
     regx = scroll_left_handle_x_position + (4 * block_radius);
     regy = hndl_cnt_left_y - block_radius;
@@ -696,7 +703,7 @@ function drawScrollbarBlock() {
         scrollRegions.push({id:'middle',x:regx,y:regy,width:regwidth,height:regheight,isDragging:false});
     }
 
-    ctx2_2.fillStyle = 'rgba(239,185,37,1.0)';
+    ctx2_2.fillStyle = scrollbar_handle_fill_style;
     // draw right handle
     regx = canvas2_w - (4 * block_radius);
     regy = hndl_cnt_left_y - block_radius;
@@ -737,8 +744,8 @@ function drawScrollbarBlock() {
 
     draw_start = left_text;
     left_text += 'M';
-    ctx2_2.font = "13px Roboto";
-    ctx2_2.fillStyle = "white";
+    ctx2_2.font = scrollbar_font_size + "px " + scrollbar_font_family;
+    ctx2_2.fillStyle = scrollbar_font_color;
     ctx2_2.textAlign = "center";
     ctx2_2.fillText(left_text, x, y);
     x = scrollRegions[2].x + (2 * block_radius);
@@ -752,9 +759,6 @@ function drawScrollbarBlock() {
     }
     draw_end = right_text;
     right_text += 'M';
-    ctx2_2.font = "13px Roboto";
-    ctx2_2.fillStyle = "white";
-    ctx2_2.textAlign = "center";
     ctx2_2.fillText(right_text, x, y);
 
     drawTimelineIncrements();
