@@ -404,7 +404,7 @@ app.get('/resources/html/mainpage/:name', function(req, res){
     res.sendFile(req.params.name, options, function (err) {
         if (err) {
           console.log(err);
-          res.status(err.status).end();
+          //res.status(err.status).end();
         }
     });
 });

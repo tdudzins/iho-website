@@ -573,8 +573,8 @@ function addHypoAdaptation(eventID) {
 
     if(adaptObj[eventID][4] > 0) {
         var boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
-        if(boxLocation[i][5] === eventID) {
-            for (var i = 0; i < boxLocation.length; i++) {
+        for (var i = 0; i < boxLocation.length; i++) {
+            if(boxLocation[i][5] == eventID) {
                 boxCanvasWrapperClear(boxLocation[i][0], boxLocation[i][1], boxLocation[i][2], boxLocation[i][3]);
                 boxCanvasWrapperDraw(boxLocation[i][0],boxLocation[i][1],boxLocation[i][2],boxLocation[i][3],boxLocation[i][4],true);
                 i = boxLocation.length;
