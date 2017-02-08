@@ -225,12 +225,17 @@ function initCanvas() {
             // reset the starting mouse position for the next mousemove
             startX=mx;
             startY=my;
-
         }
+
         // Move main canvas on scrollbarMove
-        var timespan = date_start - date_end;
-        var width_of_usable_canvas = canvas_timeline_w * (timespan/12000000);
-        var offset = -1*width_of_usable_canvas * scroll_position;
+        timespan = (date_start - date_end);
+        viewable_time = timespan * scroll_ratio;
+        increment_per_pixel = (viewable_time/canvas_div_w);
+        canvas_usage = timespan/12000000;
+        usable_canvas = canvas_timeline_w * canvas_usage;
+        left_edge_date = timespan - (timespan * scroll_position) + date_end;
+        var offset = -1 * ((12000000 - left_edge_date)/increment_per_pixel);
+        console.log("scroll_ratio " + scroll_ratio);
         $('#canvas-wrapper-div').css("margin-left", offset + "px");
     }
 };
@@ -243,7 +248,7 @@ function resizeCanvas() {
     canvas_div_h_hypo = $('#canvas-wrapper-div').height();
     canvas_div_h_scroll = $('#scrollbar-canvas-div').height();
     canvas_div_h_emper = $('#emperical-canvas-div').height();
-    canvas_timeline_w = canvas_div_w * ((largest_timespan/smallest_timespan));
+    canvas_timeline_w = canvas_div_w * 12;
 
     // Calculate Hypothetical Canvas Dimensions
     canvas1_1_w = canvas_div_w;
@@ -507,15 +512,15 @@ function positionAdaptBox(eventID, text, width, height, date, callback) {
         date = date * 5;
     }
 
-    var timespan2 = (date_start - date_end);
-    var viewable_time2 = timespan * scroll_ratio;
-    var increment_per_pixel2 = (viewable_time2/canvas_div_w);
+    timespan = (date_start - date_end);
+    viewable_time = timespan * scroll_ratio;
+    increment_per_pixel = (viewable_time/canvas_div_w);
 
-    var canvas_usage = timespan2/12000000;
+    var canvas_usage = timespan/12000000;
     var usable_canvas = canvas_timeline_w * canvas_usage;
-    var viewable_canvas = canvas_div_w / viewable_time2;
+    var viewable_canvas = canvas_div_w / viewable_time;
 
-    x_pos = date/increment_per_pixel2;
+    x_pos = date/increment_per_pixel;
     x_pos = ((canvas_div_w/scroll_ratio) - x_pos) - width/2;
 
     y_pos = canvas_div_h_hypo/2 - height/2;
@@ -711,12 +716,13 @@ function drawScrollbarBlock() {
     }
 
     scroll_ratio = ((scrollRegions[2].x + (4 * block_radius) - scrollRegions[0].x)/(canvas_div_w));
+    console.log(scroll_ratio);
     scroll_position = scrollRegions[0].x/canvas_div_w;
 
-    var timespan = (date_start - date_end);
-    var viewable_time = timespan * scroll_ratio;
-    var left_edge_date = timespan - (timespan * scroll_position) + date_end;
-    var right_edge_date = timespan - (timespan * scroll_position) + date_end - (timespan * scroll_ratio);
+    timespan = (date_start - date_end);
+    viewable_time = timespan * scroll_ratio;
+    left_edge_date = timespan - (timespan * scroll_position) + date_end;
+    right_edge_date = timespan - (timespan * scroll_position) + date_end - (timespan * scroll_ratio);
 
     // draw increment text under scrollbar handles
     var x = scroll_left_handle_x_position + (2 * block_radius);
