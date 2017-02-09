@@ -167,9 +167,11 @@ var mediaPane =
                     <label class="description-labels"> Upload File: </label>
                 </div>
                 <div id="upload-file-field" class="upload-file-field">
-                    <input id="upload-file" class="upload-file" type="file" accept="image/*">
+                    <input type="file"  id="upload-file" class="upload-file" name="picture" accept="image/*"/>
                 </div>
-
+            </div>
+            <div id='image-preview-div' class='image-preview-div'>
+                <div id='image-preview'></div>
             </div>
         </div>
     </div>`;
