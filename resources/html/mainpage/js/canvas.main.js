@@ -482,7 +482,7 @@ function boxCanvasWrapperClear(x_pos,y_pos,width_length,height_length) {
     for(var i = -1; i < 2; i++) {
         if(selected_canvas + i >= 0 && selected_canvas + i <= 11) {
             temp_x = x_pos - (i * canvas_div_w);
-            hypoCanvas[selected_canvas].clearRect((temp_x - 1), (y_pos - 1), (width_length + 2), (height_length + 1));
+            hypoCanvas[selected_canvas].clearRect((temp_x - 1), (y_pos - 1), (width_length + 2), (height_length + 2));
        }
     }
 }
