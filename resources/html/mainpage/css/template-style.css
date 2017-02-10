@@ -45,7 +45,7 @@ overflow: hidden;
     z-index: 1; /* Stay on top */
     top: 0;
     left: 0;
-    background-color: #111; /* Black*/
+    background-color: #3D3D3D; /* Black*/
     overflow-x: hidden; /* Disable horizontal scroll */
     /*padding-top: 60px; /* Place content 60px from the top */
     transition: all 0.5s ease-out;
@@ -72,7 +72,8 @@ overflow: hidden;
 }
 
 .tab-container:hover {
-  background: rgba(105, 105, 105, 0.65);;
+    background-color: #3D3D3D; /* Black*/
+      background: rgba(0,0,0,0.65);
 }
 
 .info-div {
@@ -139,15 +140,15 @@ overflow: hidden;
 }
 
 .adaptation-items-div {
-	height: 100%;
+    height: 100%;
     width: 0px;
 	vertical-align: middle;
-	background-color: lightgrey;
+	background-color: #2e4a5e;
     float: left;
 }
 
 .adaptation-items {
-	background-color: white;
+    background-color: #2e4a5e;
 	height: 100%;
 	margin-left: 0px;
 	margin-right: 0px;
@@ -159,23 +160,20 @@ overflow: hidden;
 }
 
 ul.adaptation-items li {
-	border-bottom-width: 2px;
+    border-bottom-width: 1px;
 	border-bottom-style: solid;
-	border-radius: 5px;
 	cursor: pointer;
 	padding: 5px 0 5px 5px;
 	position: relative;
-	border-bottom-color: #ccc;
+	border-bottom-color: #8c8c8c;
 }
 
 .adaptation-item-selected {
-	background-color: #3b73af;
-	font-weight: bold;
+    background-color: #589ebb;
 	color: white;
 }
 
 .adaptation-item-unselected {
-	background-color: white;
-	font-weight: bold;
-	color: black;
+    background-color: #2e4a5e;
+	color: white;
 }
