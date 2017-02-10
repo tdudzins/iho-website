@@ -2,6 +2,9 @@
 createArrays();
 $(document).ready(function() {
     initCanvas();
+    $("#about-page-toggle").click(function(){
+        $("#about-page-panel").slideToggle("slow");
+    });
 });
 $('#adaptation-items').ready(function(){
     getEventList(function(){});

@@ -69,22 +69,15 @@ table {
 }
 
 html, body, footer{
-	font-size: 16px;
-	font-family: "Open Sans", Arial, sans-serif;
+	text-decoration: none;
+	font-family: Roboto;
 }
 html {
 	position: relative;
 	min-height: 100%;
+	min-width: 50%;
 }
 
-body {
-	color: #444;
-	margin: 0px 0px 90px; /* bottom = footer height - required to make footer stay at bottom of page */
-}
-
-main{
-	padding-bottom: 90px;
-}
 
 h1, h2, h3, h4, h5, h6 {
 	color: #fff;
@@ -110,14 +103,6 @@ h6 {
 	font-size: 13px;
 }
 
-a, a:link, a:visited, a:hover, a:active {
-	text-decoration: none;
-	color: #990033;
-}
-a:hover {
-	color: #B6C900;
-}
-
 p, li, dl, blockquote, table, kbd {
 	font-size: 16px;
 	line-height: 1.6;
@@ -137,9 +122,6 @@ ol, ul, li {
 
 li {
 	padding: 0;
-}
-ul, ol {
-	padding-left: 10px;
 }
 
 nav {
@@ -161,12 +143,10 @@ footer {
 .line {
 	width: 100%;
 	margin: 0 auto;
-	padding: 0 10px;
 	clear: left;
 	padding: 10px;
 	margin-left: 0;
-	font-size: 16px;
-	line-height: 1.6;
+	font-size: 20px;
 	list-style: none;
 }
 
