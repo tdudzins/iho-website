@@ -102,8 +102,8 @@ var max_char_per_line = 15;
 var hypo_box_fill_style_relation = "rgba(111,130,145,0.9)";
 var hypo_box_fill_style_emperical = "rgba(6,74,121,0.9)";
 var hypo_box_font_color = "rgba(255,255,255,1)";
-var hypo_box_font_size = 20;
-var last_hypo_font_size = 20;
+var hypo_box_font_size = 25;
+var last_hypo_font_size = 25;
 var hypo_box_font_family = "Roboto";
 var scrollbar_container_fill_style = "rgba(220,220,220,0.3)";
 var scrollbar_block_fill_style = "rgba(239,185,37,0.5)";
@@ -523,13 +523,13 @@ function positionAdaptBox(eventID, text, width, height, date, callback) {
     var y_pos = 0;
     var emperical;
     var relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
+    var boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
     if(relationsObj[eventID] != undefined) {
         emperical = true;
     }
     else {
         emperical = false;
     }
-
     if(date >= 1000000) {
         date = date + 4000000;
     }
@@ -550,7 +550,60 @@ function positionAdaptBox(eventID, text, width, height, date, callback) {
 
     y_pos = canvas_div_h_hypo/2 - height/2;
 
-    var boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
+    var i = 0;
+    var up = 0;
+    var down = 0;
+    var dir = 0;
+    console.log(eventID);
+    while (i < boxLocation.length) {
+        if((x_pos > boxLocation[i][0] && x_pos < boxLocation[i][0] + boxLocation[i][2]) ||
+         (x_pos < boxLocation[i][0] && x_pos + width > boxLocation[i][0] + boxLocation[i][2]) ||
+          (x_pos + width > boxLocation[i][0] && x_pos + width < boxLocation[i][0] + boxLocation[i][2])) {
+             console.log('1 ' + (y_pos >= boxLocation[i][1] && y_pos <= boxLocation[i][1] + boxLocation[i][3]) + ' 2 '+
+              (y_pos <= boxLocation[i][1] && y_pos + height >= boxLocation[i][1] + boxLocation[i][3]) + ' 3 '+
+               (y_pos + height >= boxLocation[i][1] && y_pos + height <= boxLocation[i][1] + boxLocation[i][3]));
+               console.log(x_pos +  " " + y_pos);
+
+            if((y_pos >= boxLocation[i][1] && y_pos <= boxLocation[i][1] + boxLocation[i][3]) ||
+             (y_pos <= boxLocation[i][1] && y_pos + height >= boxLocation[i][1] + boxLocation[i][3]) ||
+              (y_pos + height >= boxLocation[i][1] && y_pos + height <= boxLocation[i][1] + boxLocation[i][3])) {
+                  console.log("y-hit");
+
+                  if(!down) {
+                      if (boxLocation[i][1] + boxLocation[i][3] + 5 < canvas_div_h_hypo) {
+                          y_pos = boxLocation[i][1] + boxLocation[i][3] + 5;
+                          console.log(y_pos);
+                          i = 0;
+                         // dir = 0;
+                      } else {
+                          down = 1;
+                      }
+                      i = 0;
+                  }
+                  else if(!up) {
+                      if (boxLocation[i][1] - 5 - height > 0) {
+                          y_pos = boxLocation[i][1] - 5 - height;
+                          i = 0;
+                         // dir = 1;
+                      } else {
+                          up = 1;
+                      }
+                      i = 0;
+                  }
+                  else {
+                      console.log('brk');
+                      // TODO resizing text
+                  }
+            }
+            else{
+                i++;
+            }
+        }
+        else{
+            i++;
+        }
+    }
+
     boxLocation.push([x_pos,y_pos,width,height,text,eventID]);
     boxLocation.sort(function(a,b) {
         if(a[0] === b[0]) {
@@ -561,8 +614,6 @@ function positionAdaptBox(eventID, text, width, height, date, callback) {
         }
     });
     sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
-
-
     callback(x_pos, y_pos, width, height, text, emperical);
 }
 function addHypoAdaptation(eventID) {
