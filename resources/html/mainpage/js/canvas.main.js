@@ -182,7 +182,19 @@ function initCanvas() {
         // tell the browser we're handling this mouse event
         e.preventDefault();
         e.stopPropagation();
-        redrawHypo(0);
+
+        var mx=parseInt(e.clientX-offsetX);
+        var my=parseInt(e.clientY-offsetY);
+        var r=scrollRegions[0];
+        if(mx>r.x && mx<r.x+r.width && my>r.y && my<r.y+r.height) {
+            console.log('Ran1');
+            redrawHypo(0);
+        }
+        r=scrollRegions[2];
+        if(mx>r.x && mx<r.x+r.width && my>r.y && my<r.y+r.height) {
+            console.log('Ran2');
+            redrawHypo(0);
+        }
 
         // clear all the dragging flags
         dragok = false;
@@ -240,8 +252,8 @@ function initCanvas() {
             }
 
             // redraw
-            redrawHypo(.0001);
             drawScrollbarBlock();
+            redrawHypo(.0001);
 
             // reset the starting mouse position for the next mousemove
             startX=mx;
@@ -561,9 +573,9 @@ function positionAdaptBox(eventID, text, width, height, date, callback) {
     var l_i = 0;
     while (i < boxLocation.length) {
         // Hit x or y
-        if(((x_pos >= boxLocation[i][0] && x_pos <= boxLocation[i][0] + boxLocation[i][2]) ||
-            (x_pos <= boxLocation[i][0] && x_pos + width >= boxLocation[i][0] + boxLocation[i][2]) ||
-            (x_pos + width >= boxLocation[i][0] && x_pos + width <= boxLocation[i][0] + boxLocation[i][2])) &&
+        if(((x_pos >= boxLocation[i][0] - box_to_box_padding_size && x_pos <= boxLocation[i][0] + boxLocation[i][2] + box_to_box_padding_size) ||
+            (x_pos  <= boxLocation[i][0] + box_to_box_padding_size && x_pos + width >= boxLocation[i][0] + boxLocation[i][2] + box_to_box_padding_size) ||
+            (x_pos + width >= boxLocation[i][0] - box_to_box_padding_size  && x_pos + width <= boxLocation[i][0] + boxLocation[i][2] + box_to_box_padding_size)) &&
             ((y_pos >= boxLocation[i][1] && y_pos <= boxLocation[i][1] + boxLocation[i][3]) ||
             (y_pos <= boxLocation[i][1] && y_pos + height >= boxLocation[i][1] + boxLocation[i][3]) ||
             (y_pos + height >= boxLocation[i][1] && y_pos + height <= boxLocation[i][1] + boxLocation[i][3]))) {
@@ -693,46 +705,66 @@ function removeHypoAdaptation(eventID, callback) {
     callback(eventID);
 }
 function redrawHypo(size){
-    if(!redrawHypo_lock){ //redraw lock
-        redrawHypo_lock = 1;
+    //if(!redrawHypo_lock){ //redraw lock
+    //    redrawHypo_lock = 1;
         var boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
         var adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
         // Reposition boxes only
-        // TODO account for hitdection on the x axis when zoming out 
-        if(Math.abs(last_scroll_ratio - scroll_ratio) > size && (last_hypo_font_size == hypo_box_font_size)) {
+        if(Math.abs(last_scroll_ratio - scroll_ratio) > size && (last_hypo_font_size == hypo_box_font_size) && size != 0) {
+            console.log("fast");
             var relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
-            last_scroll_ratio = scroll_ratio;
             // Clear boxes
             for(var i = 0; i < 12; i++) {
                 hypoCanvas[i].clearRect(0, 0, canvas_div_w, canvas_div_h_hypo);
             }
             // Move then redraw the same box
+
             boxLocation.forEach(function(item){
                 var date = adaptObj[item[5]][1];
                 emperical = (relationsObj[item[5]] != undefined)? true:false;
-                    if(date >= 1000000) {
-                        date = date + 4000000;
+                if(date >= 1000000) {
+                    date = date + 4000000;
+                }
+                else {
+                    date = date * 5;
+                }
+                timespan = (date_start - date_end);
+                viewable_time = timespan * scroll_ratio;
+                increment_per_pixel = (viewable_time/canvas_div_w);
+                var canvas_usage = timespan/12000000;
+                var usable_canvas = canvas_timeline_w * canvas_usage;
+                var viewable_canvas = canvas_div_w / viewable_time;
+                x_pos = date/increment_per_pixel;
+                x_pos = ((canvas_div_w/scroll_ratio) - x_pos) - item[2]/2;
+                item[0] = x_pos;
+                /*
+                if(last_scroll_ratio < scroll_ratio){
+                    var i = 0;
+                    while (i < boxLocation.length) {
+                        // Hit x or y
+                        if(((x_pos >= boxLocation[i][0] - box_to_box_padding_size && x_pos <= boxLocation[i][0] + boxLocation[i][2] + box_to_box_padding_size) ||
+                            (x_pos  <= boxLocation[i][0] + box_to_box_padding_size && x_pos + item[2] >= boxLocation[i][0] + boxLocation[i][2] + box_to_box_padding_size) ||
+                            (x_pos + item[2] >= boxLocation[i][0] - box_to_box_padding_size  && x_pos + item[2] <= boxLocation[i][0] + boxLocation[i][2] + box_to_box_padding_size)) &&
+                            ((item[2] >= boxLocation[i][1] && item[2] <= boxLocation[i][1] + boxLocation[i][3]) ||
+                            (item[2] <= boxLocation[i][1] && item[2] + item[3] >= boxLocation[i][1] + boxLocation[i][3]) ||
+                            (item[2] + item[3] >= boxLocation[i][1] && item[2] + item[3] <= boxLocation[i][1] + boxLocation[i][3]))) {
+                                last_hypo_font_size = 0;
+                        }
+                        else{
+                            i++;
+                        }
                     }
-                    else {
-                        date = date * 5;
-                    }
-
-                    timespan = (date_start - date_end);
-                    viewable_time = timespan * scroll_ratio;
-                    increment_per_pixel = (viewable_time/canvas_div_w);
-
-                    var canvas_usage = timespan/12000000;
-                    var usable_canvas = canvas_timeline_w * canvas_usage;
-                    var viewable_canvas = canvas_div_w / viewable_time;
-
-                    x_pos = date/increment_per_pixel;
-                    item[0] = ((canvas_div_w/scroll_ratio) - x_pos) - item[2]/2;
-                    boxCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4], emperical);
+                }*/
+                boxCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4], emperical);
             });
+            last_scroll_ratio = scroll_ratio;
             sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
         }
+
+        // TODO if needed medium redraw speedm, redraw and move without remaking boxes
          // Slowest redraw
-        else if(Math.abs(last_scroll_ratio - scroll_ratio) > size) {
+        else if(Math.abs(last_scroll_ratio - scroll_ratio) > size || size == 0) {
+            console.log('slow');
             last_scroll_ratio = scroll_ratio;
             last_hypo_font_size = hypo_box_font_size;
             // Clear boxes
@@ -749,8 +781,8 @@ function redrawHypo(size){
                 });
             });
         }
-        redrawHypo_lock = 0;
-    }
+    //    redrawHypo_lock = 0;
+    //}
 }
 
 // Scroolbar functions
