@@ -103,8 +103,8 @@ var max_char_per_line = 15; // Used in positionAdaptBox
 var hypo_box_fill_style_relation = "rgba(111,130,145,0.9)";
 var hypo_box_fill_style_emperical = "rgba(6,74,121,0.9)";
 var hypo_box_font_color = "rgba(255,255,255,1)";
-var box_to_box_padding_size = 15;
-var text_in_box_padding_w = 10;
+var box_to_box_padding_size = 18;
+var text_in_box_padding_w = 5;
 var text_in_box_padding_h = 5;
 var hypo_box_font_size = 25;
 var last_hypo_font_size = 25; // Used in redrawHypo
@@ -705,8 +705,6 @@ function removeHypoAdaptation(eventID, callback) {
     callback(eventID);
 }
 function redrawHypo(size){
-    //if(!redrawHypo_lock){ //redraw lock
-    //    redrawHypo_lock = 1;
         var boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
         var adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
         // Reposition boxes only
@@ -781,8 +779,6 @@ function redrawHypo(size){
                 });
             });
         }
-    //    redrawHypo_lock = 0;
-    //}
 }
 
 // Scroolbar functions
