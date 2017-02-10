@@ -102,6 +102,7 @@ var max_char_per_line = 15;
 var hypo_box_fill_style_relation = "rgba(111,130,145,0.9)";
 var hypo_box_fill_style_emperical = "rgba(6,74,121,0.9)";
 var hypo_box_font_color = "rgba(255,255,255,1)";
+var box_padding_size = 15;
 var hypo_box_font_size = 25;
 var last_hypo_font_size = 25;
 var hypo_box_font_family = "Roboto";
@@ -236,7 +237,7 @@ function initCanvas() {
             }
 
             // redraw
-            redrawHypo(.01);
+            redrawHypo(.05);
             drawScrollbarBlock();
 
             // reset the starting mouse position for the next mousemove
@@ -554,50 +555,40 @@ function positionAdaptBox(eventID, text, width, height, date, callback) {
     var up = 0;
     var down = 0;
     var dir = 0;
-    console.log(eventID);
+    var l_i = 0;
     while (i < boxLocation.length) {
-        if((x_pos > boxLocation[i][0] && x_pos < boxLocation[i][0] + boxLocation[i][2]) ||
-         (x_pos < boxLocation[i][0] && x_pos + width > boxLocation[i][0] + boxLocation[i][2]) ||
-          (x_pos + width > boxLocation[i][0] && x_pos + width < boxLocation[i][0] + boxLocation[i][2])) {
-             console.log('1 ' + (y_pos >= boxLocation[i][1] && y_pos <= boxLocation[i][1] + boxLocation[i][3]) + ' 2 '+
-              (y_pos <= boxLocation[i][1] && y_pos + height >= boxLocation[i][1] + boxLocation[i][3]) + ' 3 '+
-               (y_pos + height >= boxLocation[i][1] && y_pos + height <= boxLocation[i][1] + boxLocation[i][3]));
-               console.log(x_pos +  " " + y_pos);
-
-            if((y_pos >= boxLocation[i][1] && y_pos <= boxLocation[i][1] + boxLocation[i][3]) ||
-             (y_pos <= boxLocation[i][1] && y_pos + height >= boxLocation[i][1] + boxLocation[i][3]) ||
-              (y_pos + height >= boxLocation[i][1] && y_pos + height <= boxLocation[i][1] + boxLocation[i][3])) {
-                  console.log("y-hit");
-
-                  if(!down) {
-                      if (boxLocation[i][1] + boxLocation[i][3] + 5 < canvas_div_h_hypo) {
-                          y_pos = boxLocation[i][1] + boxLocation[i][3] + 5;
-                          console.log(y_pos);
-                          i = 0;
-                         // dir = 0;
-                      } else {
-                          down = 1;
-                      }
-                      i = 0;
-                  }
-                  else if(!up) {
-                      if (boxLocation[i][1] - 5 - height > 0) {
-                          y_pos = boxLocation[i][1] - 5 - height;
-                          i = 0;
-                         // dir = 1;
-                      } else {
-                          up = 1;
-                      }
-                      i = 0;
-                  }
-                  else {
-                      console.log('brk');
-                      // TODO resizing text
-                  }
-            }
-            else{
-                i++;
-            }
+        // Hit x or y
+        if(((x_pos >= boxLocation[i][0] && x_pos <= boxLocation[i][0] + boxLocation[i][2]) ||
+            (x_pos <= boxLocation[i][0] && x_pos + width >= boxLocation[i][0] + boxLocation[i][2]) ||
+            (x_pos + width >= boxLocation[i][0] && x_pos + width <= boxLocation[i][0] + boxLocation[i][2])) &&
+            ((y_pos >= boxLocation[i][1] && y_pos <= boxLocation[i][1] + boxLocation[i][3]) ||
+            (y_pos <= boxLocation[i][1] && y_pos + height >= boxLocation[i][1] + boxLocation[i][3]) ||
+            (y_pos + height >= boxLocation[i][1] && y_pos + height <= boxLocation[i][1] + boxLocation[i][3]))) {
+                if(i > l_i) {
+                    dir = (dir)? 0:1;
+                    l_i = i;
+                }
+                if(!down && !dir) {
+                    if (boxLocation[i][1] + boxLocation[i][3] + height + box_padding_size < canvas_div_h_hypo) {
+                        y_pos = boxLocation[i][1] + boxLocation[i][3] + box_padding_size;
+                        i = 0;
+                    }
+                    else
+                        down = 1;
+                }
+                else if(!up && dir) {
+                    if (boxLocation[i][1] - box_padding_size - height > 0) {
+                        y_pos = boxLocation[i][1] - box_padding_size - height;
+                        i = 0;
+                    }
+                    else
+                        up = 1;
+                }
+                else {
+                    console.log('brk');
+                    break;
+                    // TODO resizing text
+                }
         }
         else{
             i++;
