@@ -103,6 +103,7 @@ var hypo_box_fill_style_relation = "rgba(111,130,145,0.9)";
 var hypo_box_fill_style_emperical = "rgba(6,74,121,0.9)";
 var hypo_box_font_color = "rgba(255,255,255,1)";
 var hypo_box_font_size = 20;
+var last_hypo_font_size = 20;
 var hypo_box_font_family = "Roboto";
 var scrollbar_container_fill_style = "rgba(220,220,220,0.3)";
 var scrollbar_block_fill_style = "rgba(239,185,37,0.5)";
@@ -235,7 +236,7 @@ function initCanvas() {
             }
 
             // redraw
-            redrawHypo(.05);
+            redrawHypo(.01);
             drawScrollbarBlock();
 
             // reset the starting mouse position for the next mousemove
@@ -647,17 +648,18 @@ function removeHypoAdaptation(eventID, callback) {
     callback(eventID);
 }
 function redrawHypo(size){
-    if(Math.abs(last_scroll_ratio - scroll_ratio) > size) {
-        last_scroll_ratio = scroll_ratio;
-        // Remove all the old data from the timeline
-        var boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
+    // Reposition boxes only
+    var boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
         var relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
         var adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
+    if(Math.abs(last_scroll_ratio - scroll_ratio) > size && (last_hypo_font_size == hypo_box_font_size)) {
+        last_scroll_ratio = scroll_ratio;
+        // Clear boxes
         boxLocation.forEach(function(item){
             boxCanvasWrapperClear(item[0], item[1], item[2], item[3]);
         });
-
-        // Resize every object and redraw them
+        // Move then redraw the same box
+        sessionStorage.setItem("boxLocation", '[]');
         boxLocation.forEach(function(item){
             createAdaptBox(item[5], adaptObj[item[5]][0], adaptObj[item[5]][1], function(eventID, text, width, height, date) {
                 positionAdaptBox(eventID, text, width, height, date, function(x,y,width,height,text,emperical) {
@@ -666,6 +668,7 @@ function redrawHypo(size){
             });
         });
     }
+
 }
 
 // Scroolbar functions
