@@ -85,6 +85,7 @@ var ctx2_2;
 
 // Global Variables
 var scroll_ratio = 0.0; // Block/Container ratio in percent
+var last_scroll_ratio = 1.0;
 var scroll_position = 0.0; // Block/Container ratio in percent
 var scroll_left_handle_x_position = 0;
 var scroll_right_handle_x_position = 0;
@@ -144,6 +145,7 @@ function initCanvas() {
     // Initialize Scrollbar
     drawScrollbarContainer();
     drawScrollbarBlock();
+    last_scroll_ratio = scroll_ratio;
 
     // handle mousedown events
     function scrollbarDown(e) {
@@ -175,6 +177,7 @@ function initCanvas() {
         // tell the browser we're handling this mouse event
         e.preventDefault();
         e.stopPropagation();
+        redrawHypo(0);
 
         // clear all the dragging flags
         dragok = false;
@@ -232,6 +235,7 @@ function initCanvas() {
             }
 
             // redraw
+            redrawHypo(.05);
             drawScrollbarBlock();
 
             // reset the starting mouse position for the next mousemove
@@ -641,6 +645,27 @@ function removeHypoAdaptation(eventID, callback) {
     });
     sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
     callback(eventID);
+}
+function redrawHypo(size){
+    if(Math.abs(last_scroll_ratio - scroll_ratio) > size) {
+        last_scroll_ratio = scroll_ratio;
+        // Remove all the old data from the timeline
+        var boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
+        var relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
+        var adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
+        boxLocation.forEach(function(item){
+            boxCanvasWrapperClear(item[0], item[1], item[2], item[3]);
+        });
+
+        // Resize every object and redraw them
+        boxLocation.forEach(function(item){
+            createAdaptBox(item[5], adaptObj[item[5]][0], adaptObj[item[5]][1], function(eventID, text, width, height, date) {
+                positionAdaptBox(eventID, text, width, height, date, function(x,y,width,height,text,emperical) {
+                    boxCanvasWrapperDraw(x,y,width,height,text,emperical)
+                });
+            });
+        });
+    }
 }
 
 // Scroolbar functions
