@@ -85,6 +85,8 @@ var ctx2_2;
 
 // Global Variables
 var scroll_ratio = 0.0; // Block/Container ratio in percent
+var last_scroll_ratio = 1.0; // Used in redrawHypo
+var redrawHypo_lock = 0;
 var scroll_position = 0.0; // Block/Container ratio in percent
 var scroll_left_handle_x_position = 0;
 var scroll_right_handle_x_position = 0;
@@ -97,11 +99,15 @@ var date_start = 12000000; // Earliest date from selected adapations
 var date_end = 000000; // Latest date from selected adaptations
 var largest_timespan = 12000000; // When user is all the way scaled out, what is the largest amount of time to be viewed
 var smallest_timespan = 1000000; // When user is all the way scaled in, what is the smallest amount of time to be viewed
-var max_char_per_line = 15;
+var max_char_per_line = 15; // Used in positionAdaptBox
 var hypo_box_fill_style_relation = "rgba(111,130,145,0.9)";
 var hypo_box_fill_style_emperical = "rgba(6,74,121,0.9)";
 var hypo_box_font_color = "rgba(255,255,255,1)";
-var hypo_box_font_size = 20;
+var box_to_box_padding_size = 18;
+var text_in_box_padding_w = 5;
+var text_in_box_padding_h = 5;
+var hypo_box_font_size = 25;
+var last_hypo_font_size = 25; // Used in redrawHypo
 var hypo_box_font_family = "Roboto";
 var scrollbar_container_fill_style = "rgba(220,220,220,0.3)";
 var scrollbar_block_fill_style = "rgba(239,185,37,0.5)";
@@ -144,6 +150,7 @@ function initCanvas() {
     // Initialize Scrollbar
     drawScrollbarContainer();
     drawScrollbarBlock();
+    last_scroll_ratio = scroll_ratio;
 
     // handle mousedown events
     function scrollbarDown(e) {
@@ -175,6 +182,19 @@ function initCanvas() {
         // tell the browser we're handling this mouse event
         e.preventDefault();
         e.stopPropagation();
+
+        var mx=parseInt(e.clientX-offsetX);
+        var my=parseInt(e.clientY-offsetY);
+        var r=scrollRegions[0];
+        if(mx>r.x && mx<r.x+r.width && my>r.y && my<r.y+r.height) {
+            console.log('Ran1');
+            redrawHypo(0);
+        }
+        r=scrollRegions[2];
+        if(mx>r.x && mx<r.x+r.width && my>r.y && my<r.y+r.height) {
+            console.log('Ran2');
+            redrawHypo(0);
+        }
 
         // clear all the dragging flags
         dragok = false;
@@ -233,6 +253,7 @@ function initCanvas() {
 
             // redraw
             drawScrollbarBlock();
+            redrawHypo(.0001);
 
             // reset the starting mouse position for the next mousemove
             startX=mx;
@@ -444,7 +465,7 @@ function boxCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text,emperi
             hypoCanvas[selected_canvas + i].fillStyle = hypo_box_font_color;
             hypoCanvas[selected_canvas + i].textAlign = "center";
             for (j = 0; j < text.length; j++) {
-                hypoCanvas[selected_canvas + i].fillText(text[j], temp_x + (0.5 * width_length), y_pos + (hypo_box_font_size * (j + 1)));
+                hypoCanvas[selected_canvas + i].fillText(text[j], temp_x + (0.5 * width_length), y_pos + ((hypo_box_font_size + ((j)?1:0)) * (j + 1)));
             }
         }
     }
@@ -482,7 +503,7 @@ function boxCanvasWrapperClear(x_pos,y_pos,width_length,height_length) {
     for(var i = -1; i < 2; i++) {
         if(selected_canvas + i >= 0 && selected_canvas + i <= 11) {
             temp_x = x_pos - (i * canvas_div_w);
-            hypoCanvas[selected_canvas].clearRect((temp_x - 1), (y_pos - 1), (width_length + 2), (height_length + 1));
+            hypoCanvas[selected_canvas].clearRect((temp_x - 1), (y_pos - 1), (width_length + 3), (height_length + 3));
        }
     }
 }
@@ -507,10 +528,10 @@ function createAdaptBox(eventID, eventName, date, callback) {
     textArray.forEach(function(item) {
         if(longest_line < item.length) {
             longest_line = item.length;
-            width = parseInt((ctx_top_1.measureText(item).width + 5).toFixed(0));
+            width = parseInt((ctx_top_1.measureText(item).width + text_in_box_padding_w).toFixed(0));
         }
     });
-    var height = (hypo_box_font_size * textArray.length) + (5 * textArray.length);
+    var height = (hypo_box_font_size * textArray.length) + (text_in_box_padding_h * ((textArray.length > 1)?2:1));
     callback(eventID, textArray, width, height, date);
 }
 function positionAdaptBox(eventID, text, width, height, date, callback) {
@@ -518,13 +539,13 @@ function positionAdaptBox(eventID, text, width, height, date, callback) {
     var y_pos = 0;
     var emperical;
     var relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
+    var boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
     if(relationsObj[eventID] != undefined) {
         emperical = true;
     }
     else {
         emperical = false;
     }
-
     if(date >= 1000000) {
         date = date + 4000000;
     }
@@ -545,7 +566,50 @@ function positionAdaptBox(eventID, text, width, height, date, callback) {
 
     y_pos = canvas_div_h_hypo/2 - height/2;
 
-    var boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
+    var i = 0;
+    var up = 0;
+    var down = 0;
+    var dir = 0;
+    var l_i = 0;
+    while (i < boxLocation.length) {
+        // Hit x or y
+        if(((x_pos >= boxLocation[i][0] - box_to_box_padding_size && x_pos <= boxLocation[i][0] + boxLocation[i][2] + box_to_box_padding_size) ||
+            (x_pos  <= boxLocation[i][0] + box_to_box_padding_size && x_pos + width >= boxLocation[i][0] + boxLocation[i][2] + box_to_box_padding_size) ||
+            (x_pos + width >= boxLocation[i][0] - box_to_box_padding_size  && x_pos + width <= boxLocation[i][0] + boxLocation[i][2] + box_to_box_padding_size)) &&
+            ((y_pos >= boxLocation[i][1] && y_pos <= boxLocation[i][1] + boxLocation[i][3]) ||
+            (y_pos <= boxLocation[i][1] && y_pos + height >= boxLocation[i][1] + boxLocation[i][3]) ||
+            (y_pos + height >= boxLocation[i][1] && y_pos + height <= boxLocation[i][1] + boxLocation[i][3]))) {
+                if(i > l_i) {
+                    dir = (dir)? 0:1;
+                    l_i = i;
+                }
+                if(!down && !dir) {
+                    if (boxLocation[i][1] + boxLocation[i][3] + height + box_to_box_padding_size < canvas_div_h_hypo) {
+                        y_pos = boxLocation[i][1] + boxLocation[i][3] + box_to_box_padding_size;
+                        i = 0;
+                    }
+                    else
+                        down = 1;
+                }
+                else if(!up && dir) {
+                    if (boxLocation[i][1] - box_to_box_padding_size - height > 0) {
+                        y_pos = boxLocation[i][1] - box_to_box_padding_size - height;
+                        i = 0;
+                    }
+                    else
+                        up = 1;
+                }
+                else {
+                    console.log('brk');
+                    break;
+                    // TODO resizing text
+                }
+        }
+        else{
+            i++;
+        }
+    }
+
     boxLocation.push([x_pos,y_pos,width,height,text,eventID]);
     boxLocation.sort(function(a,b) {
         if(a[0] === b[0]) {
@@ -556,8 +620,6 @@ function positionAdaptBox(eventID, text, width, height, date, callback) {
         }
     });
     sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
-
-
     callback(x_pos, y_pos, width, height, text, emperical);
 }
 function addHypoAdaptation(eventID) {
@@ -641,6 +703,82 @@ function removeHypoAdaptation(eventID, callback) {
     });
     sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
     callback(eventID);
+}
+function redrawHypo(size){
+        var boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
+        var adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
+        // Reposition boxes only
+        if(Math.abs(last_scroll_ratio - scroll_ratio) > size && (last_hypo_font_size == hypo_box_font_size) && size != 0) {
+            console.log("fast");
+            var relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
+            // Clear boxes
+            for(var i = 0; i < 12; i++) {
+                hypoCanvas[i].clearRect(0, 0, canvas_div_w, canvas_div_h_hypo);
+            }
+            // Move then redraw the same box
+
+            boxLocation.forEach(function(item){
+                var date = adaptObj[item[5]][1];
+                emperical = (relationsObj[item[5]] != undefined)? true:false;
+                if(date >= 1000000) {
+                    date = date + 4000000;
+                }
+                else {
+                    date = date * 5;
+                }
+                timespan = (date_start - date_end);
+                viewable_time = timespan * scroll_ratio;
+                increment_per_pixel = (viewable_time/canvas_div_w);
+                var canvas_usage = timespan/12000000;
+                var usable_canvas = canvas_timeline_w * canvas_usage;
+                var viewable_canvas = canvas_div_w / viewable_time;
+                x_pos = date/increment_per_pixel;
+                x_pos = ((canvas_div_w/scroll_ratio) - x_pos) - item[2]/2;
+                item[0] = x_pos;
+                /*
+                if(last_scroll_ratio < scroll_ratio){
+                    var i = 0;
+                    while (i < boxLocation.length) {
+                        // Hit x or y
+                        if(((x_pos >= boxLocation[i][0] - box_to_box_padding_size && x_pos <= boxLocation[i][0] + boxLocation[i][2] + box_to_box_padding_size) ||
+                            (x_pos  <= boxLocation[i][0] + box_to_box_padding_size && x_pos + item[2] >= boxLocation[i][0] + boxLocation[i][2] + box_to_box_padding_size) ||
+                            (x_pos + item[2] >= boxLocation[i][0] - box_to_box_padding_size  && x_pos + item[2] <= boxLocation[i][0] + boxLocation[i][2] + box_to_box_padding_size)) &&
+                            ((item[2] >= boxLocation[i][1] && item[2] <= boxLocation[i][1] + boxLocation[i][3]) ||
+                            (item[2] <= boxLocation[i][1] && item[2] + item[3] >= boxLocation[i][1] + boxLocation[i][3]) ||
+                            (item[2] + item[3] >= boxLocation[i][1] && item[2] + item[3] <= boxLocation[i][1] + boxLocation[i][3]))) {
+                                last_hypo_font_size = 0;
+                        }
+                        else{
+                            i++;
+                        }
+                    }
+                }*/
+                boxCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4], emperical);
+            });
+            last_scroll_ratio = scroll_ratio;
+            sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
+        }
+
+        // TODO if needed medium redraw speedm, redraw and move without remaking boxes
+         // Slowest redraw
+        else if(Math.abs(last_scroll_ratio - scroll_ratio) > size || size == 0) {
+            console.log('slow');
+            last_scroll_ratio = scroll_ratio;
+            last_hypo_font_size = hypo_box_font_size;
+            // Clear boxes
+            for(var i = 0; i < 12; i++) {
+                hypoCanvas[i].clearRect(0, 0, canvas_div_w, canvas_div_h_hypo);
+            }
+            // Move then redraw the same box
+            sessionStorage.setItem("boxLocation", '[]'); // Clear the array to be drawn to
+            boxLocation.forEach(function(item){
+                createAdaptBox(item[5], adaptObj[item[5]][0], adaptObj[item[5]][1], function(eventID, text, width, height, date) {
+                    positionAdaptBox(eventID, text, width, height, date, function(x,y,width,height,text,emperical) {
+                        boxCanvasWrapperDraw(x,y,width,height,text,emperical)
+                    });
+                });
+            });
+        }
 }
 
 // Scroolbar functions
