@@ -127,8 +127,10 @@ overflow: hidden;
 .canvas-wrapper-div {
     height: 100%;
     width: calc(12*100%);
-    position: relative;
+    position: absolute;;
     overflow: hidden;
+    left: 0;
+    top: 0;
 }
 
 .scrollbar-canvas {

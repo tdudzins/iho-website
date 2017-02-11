@@ -34,6 +34,19 @@ var topcanvas10;
 var topcanvas11;
 var topcanvas12;
 
+var topcanvas21;
+var topcanvas22;
+var topcanvas23;
+var topcanvas24;
+var topcanvas25;
+var topcanvas26;
+var topcanvas27;
+var topcanvas28;
+var topcanvas29;
+var topcanvas210;
+var topcanvas211;
+var topcanvas212;
+
 var botcanvas1;
 var botcanvas2;
 var botcanvas3;
@@ -65,6 +78,19 @@ var ctx_top_10;
 var ctx_top_11;
 var ctx_top_12;
 
+var ctx_top2_1;
+var ctx_top2_2;
+var ctx_top2_3;
+var ctx_top2_4;
+var ctx_top2_5;
+var ctx_top2_6;
+var ctx_top2_7;
+var ctx_top2_8;
+var ctx_top2_9;
+var ctx_top2_10;
+var ctx_top2_11;
+var ctx_top2_12;
+
 var ctx_bot_1;
 var ctx_bot_2;
 var ctx_bot_3;
@@ -93,6 +119,7 @@ var scroll_right_handle_x_position = 0;
 var minScrollbar = 151;
 var scrollRegions = [];
 var hypoCanvas = [];
+var hypoCanvas2 = [];
 var draw_start = 0; // Redrawable Area start in pixels
 var draw_end = 0; // Redrawable Area start in pixels
 var date_start = 12000000; // Earliest date from selected adapations
@@ -271,16 +298,18 @@ function initCanvas() {
         usable_canvas = canvas_timeline_w * canvas_usage;
         left_edge_date = timespan - (timespan * scroll_position) + date_end;
         var offset = -1 * ((12000000 - left_edge_date)/increment_per_pixel);
-        $('#canvas-wrapper-div').css("margin-left", offset + "px");
+        $('#canvas-wrapper-lines-div').css("margin-left", offset + "px");
+        $('#canvas-wrapper-adaptations-div').css("margin-left", offset + "px");
     }
 };
 function resizeCanvas() {
-    $('#canvas-wrapper-div').append(hypothesis_canvas);
+    $('#canvas-wrapper-lines-div').append(hypothesis_lines_canvas);
+    $('#canvas-wrapper-adaptations-div').append(hypothesis_adapt_canvas);
     $('#emperical-canvas-div').append(emperical_canvas);
 
     // Set Canvas Div Size from Browser Realtime Values
     canvas_div_w = $('#hypothesis-canvas-div').width();
-    canvas_div_h_hypo = $('#canvas-wrapper-div').height();
+    canvas_div_h_hypo = $('#canvas-wrapper-adaptations-div').height();
     canvas_div_h_scroll = $('#scrollbar-canvas-div').height();
     canvas_div_h_emper = $('#emperical-canvas-div').height();
     canvas_timeline_w = canvas_div_w * 12;
@@ -294,7 +323,8 @@ function resizeCanvas() {
     canvas2_h = $('#scrollbar-canvas-div').height();
 
     // Resize Hypothetical Canvas
-    $('#canvas-wrapper-div').width = canvas_timeline_w;
+    $('#canvas-wrapper-lines-div').width = canvas_timeline_w;
+    $('#canvas-wrapper-adaptations-div').width = canvas_timeline_w;
 
     // Resize Scrollbar Canvas
     $('#scrollbar-canvas-container').width = canvas_div_w;
@@ -316,6 +346,19 @@ function resizeCanvas() {
     topcanvas10 = document.getElementById('hypothesis-canvas-10');
     topcanvas11 = document.getElementById('hypothesis-canvas-11');
     topcanvas12 = document.getElementById('hypothesis-canvas-12');
+
+    topcanvas21 = document.getElementById('hypothesis-canvas2-1');
+    topcanvas22 = document.getElementById('hypothesis-canvas2-2');
+    topcanvas23 = document.getElementById('hypothesis-canvas2-3');
+    topcanvas24 = document.getElementById('hypothesis-canvas2-4');
+    topcanvas25 = document.getElementById('hypothesis-canvas2-5');
+    topcanvas26 = document.getElementById('hypothesis-canvas2-6');
+    topcanvas27 = document.getElementById('hypothesis-canvas2-7');
+    topcanvas28 = document.getElementById('hypothesis-canvas2-8');
+    topcanvas29 = document.getElementById('hypothesis-canvas2-9');
+    topcanvas210 = document.getElementById('hypothesis-canvas2-10');
+    topcanvas211 = document.getElementById('hypothesis-canvas2-11');
+    topcanvas212 = document.getElementById('hypothesis-canvas2-12');
 
     botcanvas1 = document.getElementById('emperical-canvas-1');
     botcanvas2 = document.getElementById('emperical-canvas-2');
@@ -372,6 +415,43 @@ function resizeCanvas() {
     ctx_top_12.canvas.width = canvas_div_w;
     ctx_top_12.canvas.height = canvas_div_h_hypo;
 
+    ctx_top2_1 = topcanvas21.getContext("2d");
+    ctx_top2_1.canvas.width = canvas_div_w;
+    ctx_top2_1.canvas.height = canvas_div_h_hypo;
+    ctx_top2_2 = topcanvas22.getContext("2d");
+    ctx_top2_2.canvas.width = canvas_div_w;
+    ctx_top2_2.canvas.height = canvas_div_h_hypo;
+    ctx_top2_3 = topcanvas23.getContext("2d");
+    ctx_top2_3.canvas.width = canvas_div_w;
+    ctx_top2_3.canvas.height = canvas_div_h_hypo;
+    ctx_top2_4 = topcanvas24.getContext("2d");
+    ctx_top2_4.canvas.width = canvas_div_w;
+    ctx_top2_4.canvas.height = canvas_div_h_hypo;
+    ctx_top2_5 = topcanvas25.getContext("2d");
+    ctx_top2_5.canvas.width = canvas_div_w;
+    ctx_top2_5.canvas.height = canvas_div_h_hypo;
+    ctx_top2_6 = topcanvas26.getContext("2d");
+    ctx_top2_6.canvas.width = canvas_div_w;
+    ctx_top2_6.canvas.height = canvas_div_h_hypo;
+    ctx_top2_7 = topcanvas27.getContext("2d");
+    ctx_top2_7.canvas.width = canvas_div_w;
+    ctx_top2_7.canvas.height = canvas_div_h_hypo;
+    ctx_top2_8 = topcanvas28.getContext("2d");
+    ctx_top2_8.canvas.width = canvas_div_w;
+    ctx_top2_8.canvas.height = canvas_div_h_hypo;
+    ctx_top2_9 = topcanvas29.getContext("2d");
+    ctx_top2_9.canvas.width = canvas_div_w;
+    ctx_top2_9.canvas.height = canvas_div_h_hypo;
+    ctx_top2_10 = topcanvas210.getContext("2d");
+    ctx_top2_10.canvas.width = canvas_div_w;
+    ctx_top2_10.canvas.height = canvas_div_h_hypo;
+    ctx_top2_11 = topcanvas211.getContext("2d");
+    ctx_top2_11.canvas.width = canvas_div_w;
+    ctx_top2_11.canvas.height = canvas_div_h_hypo;
+    ctx_top2_12 = topcanvas212.getContext("2d");
+    ctx_top2_12.canvas.width = canvas_div_w;
+    ctx_top2_12.canvas.height = canvas_div_h_hypo;
+
     hypoCanvas[0] = ctx_top_1;
     hypoCanvas[1] = ctx_top_2;
     hypoCanvas[2] = ctx_top_3;
@@ -384,6 +464,19 @@ function resizeCanvas() {
     hypoCanvas[9] = ctx_top_10;
     hypoCanvas[10] = ctx_top_11;
     hypoCanvas[11] = ctx_top_12;
+
+    hypoCanvas2[0] = ctx_top_1;
+    hypoCanvas2[1] = ctx_top_2;
+    hypoCanvas2[2] = ctx_top_3;
+    hypoCanvas2[3] = ctx_top_4;
+    hypoCanvas2[4] = ctx_top_5;
+    hypoCanvas2[5] = ctx_top_6;
+    hypoCanvas2[6] = ctx_top_7;
+    hypoCanvas2[7] = ctx_top_8;
+    hypoCanvas2[8] = ctx_top_9;
+    hypoCanvas2[9] = ctx_top_10;
+    hypoCanvas2[10] = ctx_top_11;
+    hypoCanvas2[11] = ctx_top_12;
 
 
     ctx_bot_1 = botcanvas1.getContext("2d");
@@ -418,7 +511,7 @@ function setdate (start, end) {
 
 // Hypo Timeline function
 function boxCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text,emperical) {
-    var canvas_total_width = 13 * canvas_div_w;
+    var canvas_total_width = 12 * canvas_div_w;
 
     var c_value = x_pos/canvas_div_w;
     var selected_canvas = 0;
@@ -473,7 +566,7 @@ function boxCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text,emperi
     }
 }
 function boxCanvasWrapperClear(x_pos,y_pos,width_length,height_length) {
-    var canvas_total_width = 13 * canvas_div_w;
+    var canvas_total_width = 12 * canvas_div_w;
     var c_value = x_pos/canvas_div_w;
     var selected_canvas = 0;
     if(c_value <= 1)
@@ -529,6 +622,81 @@ function addHypoAdaptation(eventID) {
     });
     drawLines();
     drawAllBoxes();
+}
+function lineCanvasWrapperDraw(x_pos,y_pos,x2_pos,y2_pos,color) {
+    var canvas_total_width = 12 * canvas_div_w;
+
+    var c_value = x_pos/canvas_div_w;
+    var selected_canvas = 0;
+
+    if(c_value <= 1)
+        selected_canvas = 0;
+    else if(c_value <= 2)
+        selected_canvas = 1;
+    else if(c_value <= 3)
+        selected_canvas = 2;
+    else if(c_value <= 4)
+        selected_canvas = 3;
+    else if(c_value <= 5)
+        selected_canvas = 4;
+    else if(c_value <= 6)
+        selected_canvas = 5;
+    else if(c_value <= 7)
+        selected_canvas = 6;
+    else if(c_value <= 8)
+        selected_canvas = 7;
+    else if(c_value <= 9)
+        selected_canvas = 8;
+    else if(c_value <= 10)
+        selected_canvas = 9;
+    else if(c_value <= 11)
+        selected_canvas = 10;
+    else if(c_value <= 12)
+        selected_canvas = 11;
+
+    var c_value2 = y_pos/canvas_div_w;
+    var selected_canvas2 = 0;
+
+    if(c_value2 <= 1)
+        selected_canvas2 = 0;
+    else if(c_value2 <= 2)
+        selected_canvas2 = 1;
+    else if(c_value2 <= 3)
+        selected_canvas2 = 2;
+    else if(c_value2 <= 4)
+        selected_canvas2 = 3;
+    else if(c_value2 <= 5)
+        selected_canvas2 = 4;
+    else if(c_value2 <= 6)
+        selected_canvas2 = 5;
+    else if(c_value2 <= 7)
+        selected_canvas2 = 6;
+    else if(c_value2 <= 8)
+        selected_canvas2 = 7;
+    else if(c_value2 <= 9)
+        selected_canvas2 = 8;
+    else if(c_value2 <= 10)
+        selected_canvas2 = 9;
+    else if(c_value2 <= 11)
+        selected_canvas2 = 10;
+    else if(c_value2 <= 12)
+        selected_canvas2 = 11;
+
+    var temp_x = 0;
+    var temp_y = 0;
+    var line_reach = selected_canvas2 - selected_canvas + 1;
+
+    for(var i = 0; i < line_reach; i++) {
+        temp_x1 = x_pos - (i * canvas_div_w);
+        temp_x2 = x2_pos - (i * canvas_div_w);
+        hypoCanvas2[selected_canvas + i].strokeStyle = color;
+        hypoCanvas2[selected_canvas + i].lineWidth = 2;
+        hypoCanvas2[selected_canvas + i].beginPath();
+        hypoCanvas2[selected_canvas + i].moveTo(temp_x1,y_pos);
+        hypoCanvas2[selected_canvas + i].lineTo(temp_x2,y2_pos);
+        hypoCanvas2[selected_canvas + i].closePath();
+        hypoCanvas2[selected_canvas + i].stroke();
+        }
 }
 function createAdaptBox(eventID, eventName, date, callback) {
     var textArray = [];
@@ -935,20 +1103,34 @@ function drawTimelineIncrements() {
 }
 
 // HTML injection strings
-var hypothesis_canvas = `
-    <canvas id="hypothesis-canvas-1" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="hypothesis-canvas-2" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="hypothesis-canvas-3" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="hypothesis-canvas-4" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="hypothesis-canvas-5" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="hypothesis-canvas-6" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="hypothesis-canvas-7" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="hypothesis-canvas-8" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="hypothesis-canvas-9" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="hypothesis-canvas-10" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="hypothesis-canvas-11" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="hypothesis-canvas-12" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    `;
+var hypothesis_adapt_canvas = `
+<canvas id="hypothesis-canvas-1" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas-2" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas-3" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas-4" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas-5" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas-6" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas-7" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas-8" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas-9" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas-10" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas-11" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas-12" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+`;
+var hypothesis_lines_canvas = `
+<canvas id="hypothesis-canvas2-1" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas2-2" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas2-3" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas2-4" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas2-5" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas2-6" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas2-7" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas2-8" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas2-9" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas2-10" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas2-11" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas2-12" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+`;
 var emperical_canvas = `
     <canvas id="emperical-canvas-1" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
     <canvas id="emperical-canvas-2" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
