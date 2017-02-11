@@ -120,6 +120,9 @@ var increments_font_size = 25;
 var increments_font_family = "Roboto";
 var hypo_timeline_font_color = "rgba(255,255,255,1)";
 
+var adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
+var relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
+var boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
 
 var timespan;
 var viewable_time;
@@ -447,7 +450,6 @@ function boxCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text,emperi
 
     x_pos = x_pos%canvas_div_w;
     var temp_x = 0;
-    var relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
 
     for(var i = -1; i < 2; i++) {
         if(selected_canvas + i >= 0 && selected_canvas + i <= 11) {
@@ -507,6 +509,27 @@ function boxCanvasWrapperClear(x_pos,y_pos,width_length,height_length) {
        }
     }
 }
+
+function addHypoAdaptation(eventID) {
+    // Pull in new changes
+    adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
+    relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
+    boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
+    if(adaptObj[eventID][4] < 1) {
+        createAdaptBox(eventID, adaptObj[eventID][0], adaptObj[eventID][1], function(eventID, text, width, height, date) {
+            positionAdaptBox(eventID, text, width, height, date);
+        });
+    }
+    relationsObj[eventID].forEach(function(item) {
+        if(adaptObj[item[0]][4] == 0) {
+            createAdaptBox(item[0], adaptObj[item[0]][0], adaptObj[item[0]][1], function(eventID, text, width, height, date) {
+                positionAdaptBox(eventID, text, width, height, date);
+            });
+        }
+    });
+    drawLines();
+    drawAllBoxes();
+}
 function createAdaptBox(eventID, eventName, date, callback) {
     var textArray = [];
     ctx_top_1.font = hypo_box_font_size + "px " + hypo_box_font_family;
@@ -534,18 +557,9 @@ function createAdaptBox(eventID, eventName, date, callback) {
     var height = (hypo_box_font_size * textArray.length) + (text_in_box_padding_h * ((textArray.length > 1)?2:1));
     callback(eventID, textArray, width, height, date);
 }
-function positionAdaptBox(eventID, text, width, height, date, callback) {
+function positionAdaptBox(eventID, text, width, height, date) {
     var x_pos = 0;
     var y_pos = 0;
-    var emperical;
-    var relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
-    var boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
-    if(relationsObj[eventID] != undefined) {
-        emperical = true;
-    }
-    else {
-        emperical = false;
-    }
     if(date >= 1000000) {
         date = date + 4000000;
     }
@@ -620,62 +634,19 @@ function positionAdaptBox(eventID, text, width, height, date, callback) {
         }
     });
     sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
-    callback(x_pos, y_pos, width, height, text, emperical);
-}
-function addHypoAdaptation(eventID) {
-    var adaptArray = JSON.parse(sessionStorage.getItem("adaptArray"));
-    var adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
-    var relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
-
-    var eventName = adaptObj[eventID][0];
-    var eventDate = adaptObj[eventID][1];
-    var eventBoundaryStart = adaptObj[eventID][2];
-    var eventBoundaryEnd = adaptObj[eventID][3];
-    var count = adaptObj[eventID][4];
-
-    if(adaptObj[eventID][4] > 0) {
-        var boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
-        for (var i = 0; i < boxLocation.length; i++) {
-            if(boxLocation[i][5] == eventID) {
-                boxCanvasWrapperClear(boxLocation[i][0], boxLocation[i][1], boxLocation[i][2], boxLocation[i][3]);
-                boxCanvasWrapperDraw(boxLocation[i][0],boxLocation[i][1],boxLocation[i][2],boxLocation[i][3],boxLocation[i][4],true);
-                i = boxLocation.length;
-            }
-        }
-    }
-    else {
-        createAdaptBox(eventID, eventName, eventDate, function(eventID, text, width, height, date) {
-            positionAdaptBox(eventID, text, width, height, date, function(x,y,width,height,text,emperical) {
-                boxCanvasWrapperDraw(x,y,width,height,text,emperical)
-            });
-        });
-    }
-    relationsObj[eventID].forEach(function(item) {
-        if(adaptObj[item[0]][4] == 0) {
-            var eventName = adaptObj[item[0]][0];
-            var eventDate = adaptObj[item[0]][1];
-            var eventBoundaryStart = adaptObj[item[0]][2];
-            var eventBoundaryEnd = adaptObj[item[0]][3];
-            var count = adaptObj[item[0]][4];
-            createAdaptBox(item[0], eventName, eventDate, function(eventID, text, width, height, date) {
-                positionAdaptBox(eventID, text, width, height, date, function(x,y,width,height,text,emperical) {
-                    boxCanvasWrapperDraw(x,y,width,height,text,emperical)
-                });
-            });
-        }
-    });
 }
 function removeHypoAdaptation(eventID, callback) {
-    var adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
-    var relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
-    var boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
-
     // Emperical undraw
+    relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
+    adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
     if(adaptObj[eventID][4] == 0) {
-        for (var i = 0; i < boxLocation.length; i++) {
+        for (var i = 0; i <= boxLocation.length; i++) {
             if(boxLocation[i][5] == eventID) {
                 boxCanvasWrapperClear(boxLocation[i][0], boxLocation[i][1], boxLocation[i][2], boxLocation[i][3]);
-                boxLocation.splice(i, 1);
+                if(boxLocation.length == 1)
+                    boxLocation = [];
+                else
+                    boxLocation.splice(i, 1);
                 i = boxLocation.length;
             }
         }
@@ -692,10 +663,13 @@ function removeHypoAdaptation(eventID, callback) {
     // Relations undraw
     relationsObj[eventID].forEach(function(item) {
         if(adaptObj[item[0]][4] < 1) {
-            for(var i = 0; i < boxLocation.length; i++) {
+            for(var i = 0; i <= boxLocation.length; i++) {
                 if(boxLocation[i][5] == item[0]) {
                     boxCanvasWrapperClear(boxLocation[i][0], boxLocation[i][1], boxLocation[i][2], boxLocation[i][3]);
-                    boxLocation.splice(i, 1);
+                    if(boxLocation.length == 1)
+                        boxLocation = [];
+                    else
+                        boxLocation.splice(i, 1);
                     i = boxLocation.length;
                 }
             }
@@ -704,22 +678,30 @@ function removeHypoAdaptation(eventID, callback) {
     sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
     callback(eventID);
 }
+function drawAllBoxes(){
+    console.log("draw all");
+    // Clear boxes
+    for(var i = 0; i < 12; i++) {
+        hypoCanvas[i].clearRect(0, 0, canvas_div_w, canvas_div_h_hypo);
+    }
+    boxLocation.forEach(function(item){
+        var emperical = (relationsObj[item[5]] == undefined)? false:true;
+        boxCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4], emperical);
+    });
+}
 function redrawHypo(size){
-        var boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
-        var adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
+
         // Reposition boxes only
         if(Math.abs(last_scroll_ratio - scroll_ratio) > size && (last_hypo_font_size == hypo_box_font_size) && size != 0) {
             console.log("fast");
-            var relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
             // Clear boxes
             for(var i = 0; i < 12; i++) {
                 hypoCanvas[i].clearRect(0, 0, canvas_div_w, canvas_div_h_hypo);
             }
             // Move then redraw the same box
-
             boxLocation.forEach(function(item){
                 var date = adaptObj[item[5]][1];
-                emperical = (relationsObj[item[5]] != undefined)? true:false;
+                var emperical = (relationsObj[item[5]] != undefined)? true:false;
                 if(date >= 1000000) {
                     date = date + 4000000;
                 }
@@ -773,12 +755,15 @@ function redrawHypo(size){
             sessionStorage.setItem("boxLocation", '[]'); // Clear the array to be drawn to
             boxLocation.forEach(function(item){
                 createAdaptBox(item[5], adaptObj[item[5]][0], adaptObj[item[5]][1], function(eventID, text, width, height, date) {
-                    positionAdaptBox(eventID, text, width, height, date, function(x,y,width,height,text,emperical) {
-                        boxCanvasWrapperDraw(x,y,width,height,text,emperical)
-                    });
+                    positionAdaptBox(eventID, text, width, height, date);
                 });
             });
+            drawLines();
+            drawAllBoxes();
         }
+}
+function drawLines(){
+
 }
 
 // Scroolbar functions
