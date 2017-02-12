@@ -1,40 +1,54 @@
 footer {
-background:#fff;
-height: 100%;
+    background:#fff;
+    height: 100%;
 }
 
 /* sticky footer css */
 html {
-height: 100%;
-overflow: hidden;
-margin: 0;
+    height: 100%;
+    overflow: hidden;
+    margin: 0;
 }
 
 body {
-height: 100%;
-overflow: hidden;
-margin: 0;
+    height: 100%;
+    overflow: hidden;
+    margin: 0;
 }
 
 footer,
 .push {
-  height: 100px;
+      height: 100px;
 }
 
 .wrapper {
-height: calc(100vh - 100px);
-width: 100%;
-overflow: hidden;
+    height: calc(100vh - 100px);
+    width: 100%;
+    overflow: hidden;
 }
 
 .timeline-div {
-    height: 100%;
+    height: calc(100%);
     width: calc(100vw - 60px);
     float: right;
-    padding-left: 20px;
-    padding-right: 20px;
     overflow: hidden;
     transition: all 0.5s ease-out;
+}
+
+.timeline-div-top {
+    height: calc(70%);
+    width: 100%;
+    padding-left: 20px;
+    padding-right: 20px;
+    background: rgba(255,255,255,.5);
+}
+
+.timeline-div-bottom {
+    height: calc(30%);
+    width: 100%;
+    padding-left: 20px;
+    padding-right: 20px;
+    background: rgba(40,40,40,.5);
 }
 
 /* The side navigation menu */
@@ -49,7 +63,7 @@ overflow: hidden;
     overflow-x: hidden; /* Disable horizontal scroll */
     /*padding-top: 60px; /* Place content 60px from the top */
     transition: all 0.5s ease-out;
-    background: rgba(0,0,0,0.65);
+    background: rgba(69,106,131,0.65);
     float: left;
     overflow-y: hidden;
 }
@@ -84,7 +98,7 @@ overflow: hidden;
 }
 
 .top-timeline {
-  height: calc(70% - 30px);
+  height: calc(100% - 30px);
   width: 100%;
   position: relative;
   overflow: hidden;
@@ -145,12 +159,12 @@ overflow: hidden;
     height: 100%;
     width: 0px;
 	vertical-align: middle;
-	background-color: #2e4a5e;
+	background-color: #456a83;
     float: left;
 }
 
 .adaptation-items {
-    background-color: #2e4a5e;
+    background-color: #456a83;
 	height: 100%;
 	margin-left: 0px;
 	margin-right: 0px;
@@ -176,6 +190,6 @@ ul.adaptation-items li {
 }
 
 .adaptation-item-unselected {
-    background-color: #2e4a5e;
+    background-color: #456a83;
 	color: white;
 }

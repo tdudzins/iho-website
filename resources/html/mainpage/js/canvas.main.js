@@ -136,12 +136,12 @@ var hypo_box_font_size = 25;
 var last_hypo_font_size = 25; // Used in redrawHypo
 var hypo_box_font_family = "Roboto";
 var scrollbar_container_fill_style = "rgba(220,220,220,0.3)";
-var scrollbar_block_fill_style = "rgba(239,185,37,0.5)";
-var scrollbar_handle_fill_style = "rgba(239,185,37,1.0)";
-var scrollbar_font_color = "rgba(255,255,255,1)";
+var scrollbar_block_fill_style = "rgba(250,250,250,0.5)";
+var scrollbar_handle_fill_style = "rgba(255,255,255,1.0)";
+var scrollbar_font_color = "rgba(255,255,255,0)";
 var scrollbar_font_size = 13;
 var scrollbar_font_family = "Roboto";
-var increments_font_color = "rgba(255,255,255,1)";
+var increments_font_color = "rgba(0,0,0,1)";
 var increments_font_size = 25;
 var increments_font_family = "Roboto";
 var hypo_timeline_font_color = "rgba(255,255,255,1)";
@@ -996,7 +996,7 @@ function drawScrollbarBlock() {
     ctx2_2.beginPath();
     ctx2_2.arc(hndl_cnt_left_x,hndl_cnt_left_y,block_radius,arc_top,arc_bot,true);
     ctx2_2.lineTo(hndl_cnt_left_x,hndl_cnt_left_y + block_radius);
-    ctx2_2.lineTo(hndl_cnt_left_x + block_radius,hndl_cnt_left_y + (2 * block_radius));
+    //ctx2_2.lineTo(hndl_cnt_left_x + block_radius,hndl_cnt_left_y + (2 * block_radius));
     ctx2_2.lineTo(hndl_cnt_left_x + (2 * block_radius),hndl_cnt_left_y + block_radius);
     ctx2_2.arc(hndl_cnt_left_x + (2 * block_radius),hndl_cnt_left_y,block_radius,arc_bot,arc_top,true);
     ctx2_2.closePath();
@@ -1033,7 +1033,7 @@ function drawScrollbarBlock() {
     ctx2_2.beginPath();
     ctx2_2.arc(hndl_cnt_right_x,hndl_cnt_right_y,block_radius,arc_top,arc_bot,false);
     ctx2_2.lineTo(hndl_cnt_right_x,hndl_cnt_right_y + block_radius);
-    ctx2_2.lineTo(hndl_cnt_right_x - block_radius,hndl_cnt_right_y + (2 * block_radius));
+    //ctx2_2.lineTo(hndl_cnt_right_x - block_radius,hndl_cnt_right_y + (2 * block_radius));
     ctx2_2.lineTo(hndl_cnt_right_x - (2 * block_radius),hndl_cnt_right_y + block_radius);
     ctx2_2.arc(hndl_cnt_right_x - (2 * block_radius),hndl_cnt_right_y,block_radius,arc_bot,arc_top,false)
     ctx2_2.closePath();
