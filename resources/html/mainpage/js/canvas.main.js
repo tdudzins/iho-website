@@ -83,7 +83,7 @@ var ctx1_1;
 var ctx2_1;
 var ctx2_2;
 
-// Global Variables
+// Global Variables for hypothetical timeline
 var scroll_ratio = 0.0; // Block/Container ratio in percent
 var scroll_position = 0.0; // Block/Container ratio in percent
 var scroll_left_handle_x_position = 0;
@@ -91,6 +91,7 @@ var scroll_right_handle_x_position = 0;
 var minScrollbar = 151;
 var scrollRegions = [];
 var hypoCanvas = [];
+var emperCanvas = [];
 var draw_start = 0; // Redrawable Area start in pixels
 var draw_end = 0; // Redrawable Area start in pixels
 var date_start = 12000000; // Earliest date from selected adapations
@@ -113,6 +114,9 @@ var increments_font_color = "rgba(255,255,255,1)";
 var increments_font_size = 25;
 var increments_font_family = "Roboto";
 var hypo_timeline_font_color = "rgba(255,255,255,1)";
+
+
+//Global Variables for emperical timeline will go here
 
 
 var timespan;
@@ -276,8 +280,11 @@ function resizeCanvas() {
     $('#scrollbar-canvas-container').width = canvas_div_w;
     $('#scrollbar-canvas-block').width = canvas_div_w;
     minScrollbar = 1/12 * canvas_div_w;
+	
     // Resize Emperical Canvas
-    // TODO set emperical canvas wrapper width to canvas_timeline_w
+	// TODO set emperical canvas wrapper width to canvas_timeline_w => done
+	$('#emperical-wrapper-div').width = canvas_timeline_w;
+  
 
     // Redefine Canvas Context(s)
     topcanvas1 = document.getElementById('hypothesis-canvas-1');
@@ -311,7 +318,8 @@ function resizeCanvas() {
     canvas2_1 = document.getElementById('scrollbar-canvas-container');
     canvas2_2 = document.getElementById('scrollbar-canvas-block');
 
-    ctx_top_1 = topcanvas1.getContext("2d");
+	//Hypothetical timeline
+	ctx_top_1 = topcanvas1.getContext("2d");
     ctx_top_1.canvas.width = canvas_div_w;
     ctx_top_1.canvas.height = canvas_div_h_hypo;
     ctx_top_2 = topcanvas2.getContext("2d");
@@ -348,33 +356,55 @@ function resizeCanvas() {
     ctx_top_12.canvas.width = canvas_div_w;
     ctx_top_12.canvas.height = canvas_div_h_hypo;
 
-    hypoCanvas[0] = ctx_top_1;
-    hypoCanvas[1] = ctx_top_2;
-    hypoCanvas[2] = ctx_top_3;
-    hypoCanvas[3] = ctx_top_4;
-    hypoCanvas[4] = ctx_top_5;
-    hypoCanvas[5] = ctx_top_6;
-    hypoCanvas[6] = ctx_top_7;
-    hypoCanvas[7] = ctx_top_8;
-    hypoCanvas[8] = ctx_top_9;
-    hypoCanvas[9] = ctx_top_10;
-    hypoCanvas[10] = ctx_top_11;
-    hypoCanvas[11] = ctx_top_12;
-
-
+	
+	hypoCanvas = [ctx_top_1, ctx_top_2, ctx_top_3, ctx_top_4,
+				ctx_top_5, ctx_top_6, ctx_top_7, ctx_top_8,
+				ctx_top_9, ctx_top_10, ctx_top_11, ctx_top_12];
+	
+	//Emperical timeline
     ctx_bot_1 = botcanvas1.getContext("2d");
+	ctx_bot_1.canvas.width = canvas_div_w;
+    ctx_bot_1.canvas.height = canvas_div_h_emper;
     ctx_bot_2 = botcanvas2.getContext("2d");
+	ctx_bot_2.canvas.width = canvas_div_w;
+    ctx_bot_2.canvas.height = canvas_div_h_emper;
     ctx_bot_3 = botcanvas3.getContext("2d");
+	ctx_bot_3.canvas.width = canvas_div_w;
+    ctx_bot_3.canvas.height = canvas_div_h_emper;
     ctx_bot_4 = botcanvas4.getContext("2d");
+	ctx_bot_4.canvas.width = canvas_div_w;
+    ctx_bot_4.canvas.height = canvas_div_h_emper;
     ctx_bot_5 = botcanvas5.getContext("2d");
+	ctx_bot_5.canvas.width = canvas_div_w;
+    ctx_bot_5.canvas.height = canvas_div_h_emper;
     ctx_bot_6 = botcanvas6.getContext("2d");
+	ctx_bot_6.canvas.width = canvas_div_w;
+    ctx_bot_6.canvas.height = canvas_div_h_emper;
     ctx_bot_7 = botcanvas7.getContext("2d");
+	ctx_bot_7.canvas.width = canvas_div_w;
+    ctx_bot_7.canvas.height = canvas_div_h_emper;
     ctx_bot_8 = botcanvas8.getContext("2d");
+	ctx_bot_8.canvas.width = canvas_div_w;
+    ctx_bot_8.canvas.height = canvas_div_h_emper;
     ctx_bot_9 = botcanvas9.getContext("2d");
+	ctx_bot_9.canvas.width = canvas_div_w;
+    ctx_bot_9.canvas.height = canvas_div_h_emper;
     ctx_bot_10 = botcanvas10.getContext("2d");
+	ctx_bot_10.canvas.width = canvas_div_w;
+    ctx_bot_10.canvas.height = canvas_div_h_emper;
     ctx_bot_11 = botcanvas11.getContext("2d");
+	ctx_bot_11.canvas.width = canvas_div_w;
+    ctx_bot_11.canvas.height = canvas_div_h_emper;
     ctx_bot_12 = botcanvas12.getContext("2d");
-
+	ctx_bot_12.canvas.width = canvas_div_w;
+    ctx_bot_12.canvas.height = canvas_div_h_emper;
+	
+	emperCanvas = [ctx_bot_1, ctx_bot_2, ctx_bot_3, ctx_bot_4,
+				ctx_bot_5, ctx_bot_6, ctx_bot_7, ctx_bot_8,
+				ctx_bot_9, ctx_bot_10, ctx_bot_11, ctx_bot_12];
+				
+	
+	//Scrollbar
     ctx1_1 = canvas1_1.getContext("2d");
     ctx1_1.canvas.width = canvas1_1_w;
     ctx1_1.canvas.height = canvas1_1_h;
@@ -387,6 +417,8 @@ function resizeCanvas() {
     ctx2_2.canvas.width = canvas2_w;
     ctx2_2.canvas.height = canvas2_h;
 }
+
+//This funciton is never used...
 function setdate (start, end) {
     date_start = start;
     date_end = end;
@@ -449,6 +481,59 @@ function boxCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text,emperi
         }
     }
 }
+
+//TODO 
+// Emperical Timeline function
+function boxEmpericalCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text,emperical) {
+    var canvas_total_width = 13 * canvas_div_w;
+
+    var c_value = x_pos/canvas_div_w;
+    var selected_canvas = 0;
+
+    if(c_value <= 1)
+        selected_canvas = 0;
+    else if(c_value <= 2)
+        selected_canvas = 1;
+    else if(c_value <= 3)
+        selected_canvas = 2;
+    else if(c_value <= 4)
+        selected_canvas = 3;
+    else if(c_value <= 5)
+        selected_canvas = 4;
+    else if(c_value <= 6)
+        selected_canvas = 5;
+    else if(c_value <= 7)
+        selected_canvas = 6;
+    else if(c_value <= 8)
+        selected_canvas = 7;
+    else if(c_value <= 9)
+        selected_canvas = 8;
+    else if(c_value <= 10)
+        selected_canvas = 9;
+    else if(c_value <= 11)
+        selected_canvas = 10;
+    else if(c_value <= 12)
+        selected_canvas = 11;
+
+    x_pos = x_pos%canvas_div_w;
+    var temp_x = 0;
+
+    for(var i = -1; i < 2; i++) {
+        if(selected_canvas + i >= 0 && selected_canvas + i <= 11) {
+            temp_x = x_pos - (i * canvas_div_w);
+
+            emperCanvas[selected_canvas + i].fillStyle = hypo_box_fill_style_emperical;
+            emperCanvas[selected_canvas + i].fillRect(temp_x, y_pos, width_length, height_length);
+            emperCanvas[selected_canvas + i].font = hypo_box_font_size + "px " + hypo_box_font_family;
+            emperCanvas[selected_canvas + i].fillStyle = hypo_box_font_color;
+            emperCanvas[selected_canvas + i].textAlign = "center";
+            for (j = 0; j < text.length; j++) {
+                emperCanvas[selected_canvas + i].fillText(text[j], temp_x + (0.5 * width_length), y_pos + (hypo_box_font_size * (j + 1)));
+            }
+        }
+    }
+}
+
 function boxCanvasWrapperClear(x_pos,y_pos,width_length,height_length) {
     var canvas_total_width = 13 * canvas_div_w;
     var c_value = x_pos/canvas_div_w;
@@ -486,6 +571,46 @@ function boxCanvasWrapperClear(x_pos,y_pos,width_length,height_length) {
        }
     }
 }
+
+//TODO
+function boxEmpericalCanvasWrapperClear(x_pos,y_pos,width_length,height_length) {
+    var canvas_total_width = 13 * canvas_div_w;
+    var c_value = x_pos/canvas_div_w;
+    var selected_canvas = 0;
+    if(c_value <= 1)
+        selected_canvas = 0;
+    else if(c_value <= 2)
+        selected_canvas = 1;
+    else if(c_value <= 3)
+        selected_canvas = 2;
+    else if(c_value <= 4)
+        selected_canvas = 3;
+    else if(c_value <= 5)
+        selected_canvas = 4;
+    else if(c_value <= 6)
+        selected_canvas = 5;
+    else if(c_value <= 7)
+        selected_canvas = 6;
+    else if(c_value <= 8)
+        selected_canvas = 7;
+    else if(c_value <= 9)
+        selected_canvas = 8;
+    else if(c_value <= 10)
+        selected_canvas = 9;
+    else if(c_value <= 11)
+        selected_canvas = 10;
+    else if(c_value <= 12)
+        selected_canvas = 11;
+    x_pos = x_pos%canvas_div_w;
+    var temp_x = 0;
+    for(var i = -1; i < 2; i++) {
+        if(selected_canvas + i >= 0 && selected_canvas + i <= 11) {
+            temp_x = x_pos - (i * canvas_div_w);
+           emperCanvas[selected_canvas].clearRect((temp_x - 1), (y_pos - 1), (width_length + 2), (height_length + 1));
+       }
+    }
+}
+
 function createAdaptBox(eventID, eventName, date, callback) {
     var textArray = [];
     ctx_top_1.font = hypo_box_font_size + "px " + hypo_box_font_family;
@@ -513,6 +638,7 @@ function createAdaptBox(eventID, eventName, date, callback) {
     var height = (hypo_box_font_size * textArray.length) + (5 * textArray.length);
     callback(eventID, textArray, width, height, date);
 }
+
 function positionAdaptBox(eventID, text, width, height, date, callback) {
     var x_pos = 0;
     var y_pos = 0;
@@ -560,6 +686,7 @@ function positionAdaptBox(eventID, text, width, height, date, callback) {
 
     callback(x_pos, y_pos, width, height, text, emperical);
 }
+
 function addHypoAdaptation(eventID) {
     var adaptArray = JSON.parse(sessionStorage.getItem("adaptArray"));
     var adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
@@ -603,6 +730,37 @@ function addHypoAdaptation(eventID) {
         }
     });
 }
+
+//TODO
+function addEmperAdaptation(eventID) {
+    var adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
+
+    var eventName = adaptObj[eventID][0];
+    var eventDate = adaptObj[eventID][1];
+    var eventBoundaryStart = adaptObj[eventID][2];
+    var eventBoundaryEnd = adaptObj[eventID][3];
+    var count = adaptObj[eventID][4];
+
+    if(adaptObj[eventID][4] > 0) {
+        var boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
+        for (var i = 0; i < boxLocation.length; i++) {
+            if(boxLocation[i][5] == eventID) {
+                boxEmpericalCanvasWrapperClear(boxLocation[i][0], boxLocation[i][1], boxLocation[i][2], boxLocation[i][3]);
+                boxEmpericalCanvasWrapperDraw(boxLocation[i][0],boxLocation[i][1],boxLocation[i][2],boxLocation[i][3],boxLocation[i][4],true);
+                i = boxLocation.length;
+            }
+        }
+    }
+    else {
+        createAdaptBox(eventID, eventName, eventDate, function(eventID, text, width, height, date) {
+            positionAdaptBox(eventID, text, width, height, date, function(x,y,width,height,text,emperical) {
+                boxEmpericalCanvasWrapperDraw(x,y,width,height,text,emperical)
+            });
+        });
+    }
+}
+
+
 function removeHypoAdaptation(eventID, callback) {
     var adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
     var relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
@@ -639,6 +797,34 @@ function removeHypoAdaptation(eventID, callback) {
             }
         }
     });
+    sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
+    callback(eventID);
+}
+
+//TODO
+function removeEmperAdaptation(eventID, callback) {
+    var adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
+    var boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
+
+    // Emperical undraw
+    if(adaptObj[eventID][4] == 0) {
+        for (var i = 0; i < boxLocation.length; i++) {
+            if(boxLocation[i][5] == eventID) {
+                boxEmpericalCanvasWrapperClear(boxLocation[i][0], boxLocation[i][1], boxLocation[i][2], boxLocation[i][3]);
+                boxLocation.splice(i, 1);
+                i = boxLocation.length;
+            }
+        }
+    }
+    else {
+        for(var i = 0; i < boxLocation.length; i++) {
+            if(boxLocation[i][5] == eventID) {
+                boxEmpericalCanvasWrapperClear(boxLocation[i][0], boxLocation[i][1], boxLocation[i][2], boxLocation[i][3]);
+                boxEmpericalCanvasWrapperDraw(boxLocation[i][0], boxLocation[i][1], boxLocation[i][2], boxLocation[i][3], boxLocation[i][4], false);
+            }
+        }
+    }
+
     sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
     callback(eventID);
 }
