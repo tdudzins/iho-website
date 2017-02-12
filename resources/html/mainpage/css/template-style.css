@@ -1,52 +1,45 @@
 html {
-height: 100%;
-overflow: hidden;
-margin: 0;
+    height: 100%;
+    overflow: hidden;
+    margin: 0;
+    font-family: Roboto;
 }
 
 body {
-height: 100%;
-overflow: hidden;
-margin: 0;
+    height: 100%;
+    overflow: hidden;
+    margin: 0;
 }
 
 footer,
 .push {
-  height: 141px;
+    height: 141px;
+    z-index: 2;
 }
 
 .wrapper {
-height: calc(100vh - 141px);
-width: 100%;
-overflow: hidden;
-}
-
-.side-nav {
-    width: 40px;
-	position: absolute;
-	left: 0;
-	text-align: right;
-	background-color: #000000;
-	color: #ffffff;
-	cursor: pointer;
-	font-size: 18px;
-	transition: 0.4s;
-}
-
-.timeline-div {
-    height: 100%;
-    width: calc(100vw - 40px);
-    position: relative;
-    padding-left: 20px;
-    padding-right: 20px;
+    height: calc(100vh - 141px);
+    width: 100%;
     overflow: hidden;
 }
 
+.timeline-div {
+    height: calc(100vh - 141px);;
+    width: calc(100vw);
+    padding-left: 20px;
+    padding-right: 20px;
+    float: left;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
 .top-timeline {
-  height: calc(70% - 30px);
-  width: 100%;
-  position: relative;
-  overflow: hidden;
+    height: calc(70% - 30px);
+    width: 100%;
+    position: relative;
+    overflow: hidden;
 }
 
 .timeline-increments-div {
@@ -65,22 +58,22 @@ overflow: hidden;
 }
 
 .scrollbar-container {
-  height: 40px;
-  width: 100%;
-  position: relative;
-  margin: 0;
-  overflow: hidden;
+    height: 40px;
+    width: 100%;
+    position: relative;
+    margin: 0;
+    overflow: hidden;
 }
 
 .bottom-timeline {
-  height: calc(30% - 40px);
-  width: 100%;
-  position: relative;
-  overflow: hidden;
+    height: calc(30% - 40px);
+    width: 100%;
+    position: relative;
+    overflow: hidden;
 }
 
 .canvas-wrapper {
-  float:left; display:inline;
+    float:left; display:inline;
 }
 
 .canvas-wrapper-div {
@@ -91,90 +84,130 @@ overflow: hidden;
 }
 
 .scrollbar-canvas {
-  height: 100%;
-  width: 100%;
-  position: absolute;
-  left: 0;
-  top: 0;
-}
-
-.adaptation-items-div {
-	height: 100%;
+    height: 100%;
     width: 100%;
-	vertical-align: middle;
-	background-color: lightgrey;
-    float: left;
-    display: none;
-	padding: 10px;
-	transition: max-width 0.2s ease-out;
-}
-
-.adaptation-items {
-	background-color: white;
-	height: 100%;
-	margin-left: 0px;
-	margin-right: 0px;
-	margin-top: 0px;
-	margin-bottom: 0px;
-	padding-left: 0px;
-	list-style:none;
-	overflow-x: hidden;
-}
-
-ul.adaptation-items li {
-	border-bottom-width: 2px;
-	border-bottom-style: solid;
-	border-radius: 5px;
-	cursor: pointer;
-	padding: 5px 0 5px 5px;
-	position: relative;
-	border-bottom-color: #ccc;
-}
-
-.adaptation-item-selected {
-	background-color: #3b73af;
-	font-weight: bold;
-	color: white;
-}
-
-.adaptation-item-unselected {
-	background-color: white;
-	font-weight: bold;
-	color: black;
+    position: absolute;
+    left: 0;
+    top: 0;
 }
 
 #lower {
-	width: 100%;
-	position: absolute;
-	bottom: 0;
-	text-align: right;
-	background-color: #000000;
-	color: #ffffff;
-	cursor: pointer;
-	font-size: 18px;
-	transition: 0.4s;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    text-align: right;
+    background-color: #000000;
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 18px;
+    transition: 0.4s;
+    z-index: 1;
 }
 
 #about-page-toggle:hover {
-  color: rgba(255,255,255,.8);
+    color: rgba(255,255,255,0.8);
 }
 
 #about-page-toggle {
-  text-decoration: none;
-  color: rgba(255,255,255,1);
+    text-decoration: none;
+    color: rgba(255,255,255,1);
 }
 
 #about-page-bar {
-  height: 35px;
-	padding: 10px;
-	color: #353535;
+    height: 35px;
+    padding: 10px;
+    color: #353535;
 
 }
 #about-page-panel {
-	display: none;
-	height: calc(100vh - 35px);
-	background-color: white;
-	color:#323232;
-	padding: 10px;
-	transition: max-height 0.2s ease-out;
+    display: none;
+    height: calc(100vh - 141px);
+    background-color: white;
+    color:#323232;
+    padding: 10px;
+    transition: max-height 0.2s ease-out;
+}
+
+#side-nav {
+    height: 100%;
+    bottom: 0;
+    text-align: left;
+    padding: 0;
+    font-size: 18px;
+    transition: 0.4s;
+    float: left;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+#side-nav-bar {
+    width: 20px;
+    height: 100%;
+    color: #353535;
+}
+
+#side-nav-toggle:hover {
+    color: rgba(255,255,255,0.8);
+    background-color: rgba(0,90,50,0.4);
+}
+
+#side-nav-toggle {
+    text-decoration: none;
+    color: rgba(255,255,255,1);
+    background-color: rgba(0,0,0,0.9);
+    cursor: pointer;
+}
+
+#side-nav-adaptation-panel {
+    display: none;
+    height: 100%;
+    width: calc(100vw * .30);
+    background-color: white;
+    color:#323232;
+    padding: 10px;
+    transition: max-width 0.2s ease-out;
+}
+
+#adaptation-items-div {
+    height: 100%;
+    width: 100%;
+    vertical-align: middle;
+    background-color: lightgrey;
+}
+
+.adaptation-items {
+    background-color: white;
+    height: 100%;
+    width: 100%;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    padding-left: 0px;
+    list-style:none;
+    overflow-x: hidden;
+}
+
+ul.adaptation-items li {
+    border-bottom-width: 2px;
+    border-bottom-style: solid;
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 5px 0 5px 5px;
+    position: relative;
+    border-bottom-color: #ccc;
+}
+
+.adaptation-item-selected {
+    background-color: #3b73af;
+    font-weight: bold;
+    color: white;
+}
+
+.adaptation-item-unselected {
+    background-color: white;
+    font-weight: bold;
+    color: black;
 }

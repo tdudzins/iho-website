@@ -148,6 +148,7 @@ footer {
 	margin-left: 0;
 	font-size: 20px;
 	list-style: none;
+	color: rgba(10,75,119,1);
 }
 
 .line:after, nav:after, .center:after, .box:after, .margin:after{

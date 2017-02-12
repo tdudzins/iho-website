@@ -5,9 +5,9 @@ $(document).ready(function() {
     $("#about-page-toggle").click(function(){
         $("#about-page-panel").slideToggle("slow");
     });
-    $("#side-nav-toggle").click(function(){
-        $("#adaptation-items-div").slideToggle("slow");
-    });
+    $("#side-nav-toggle").click(function () {
+         $("side-nav-adaptation-panel").show("slide", { direction: "left" }, 1000);
+   });
 });
 $('#adaptation-items').ready(function(){
     getEventList(function(){});
