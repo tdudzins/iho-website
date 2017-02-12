@@ -3,6 +3,11 @@ createArrays();
 $(document).ready(function() {
     initCanvas();
 });
+$(window).resize(function(){
+    initCanvas();
+    redrawHypo(0);
+    redrawLines(0);
+});
 $('#adaptation-items').ready(function(){
     getEventList(function(){});
 });

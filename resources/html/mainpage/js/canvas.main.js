@@ -112,7 +112,6 @@ var ctx2_2;
 // Global Variables
 var scroll_ratio = 0.0; // Block/Container ratio in percent
 var last_scroll_ratio = 1.0; // Used in redrawHypo
-var redrawHypo_lock = 0;
 var scroll_position = 0.0; // Block/Container ratio in percent
 var scroll_left_handle_x_position = 0;
 var scroll_right_handle_x_position = 0;
@@ -127,8 +126,8 @@ var date_end = 000000; // Latest date from selected adaptations
 var largest_timespan = 12000000; // When user is all the way scaled out, what is the largest amount of time to be viewed
 var smallest_timespan = 1000000; // When user is all the way scaled in, what is the smallest amount of time to be viewed
 var max_char_per_line = 15; // Used in positionAdaptBox
-var hypo_box_fill_style_relation = "rgba(111,130,145,0.9)";
-var hypo_box_fill_style_emperical = "rgba(6,74,121,0.9)";
+var hypo_box_fill_style_relation = "rgba(111,130,145,1.0)";
+var hypo_box_fill_style_emperical = "rgba(6,74,121,1.0)";
 var hypo_box_font_color = "rgba(255,255,255,1)";
 var box_to_box_padding_size = 18;
 var text_in_box_padding_w = 5;
@@ -150,11 +149,13 @@ var hypo_timeline_font_color = "rgba(255,255,255,1)";
 var adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
 var relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
 var boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
+var lineLocation = [];
 
 var timespan;
 var viewable_time;
 var left_edge_date;
 var right_edge_date;
+var bar_mouse_up = 0;
 
 var canvasAdaptation = [];
 
@@ -213,17 +214,10 @@ function initCanvas() {
         e.preventDefault();
         e.stopPropagation();
 
-        var mx=parseInt(e.clientX-offsetX);
-        var my=parseInt(e.clientY-offsetY);
-        var r=scrollRegions[0];
-        if(mx>r.x && mx<r.x+r.width && my>r.y && my<r.y+r.height) {
-            console.log('Ran1');
+        if(bar_mouse_up) {
+            redrawLines(0);
             redrawHypo(0);
-        }
-        r=scrollRegions[2];
-        if(mx>r.x && mx<r.x+r.width && my>r.y && my<r.y+r.height) {
-            console.log('Ran2');
-            redrawHypo(0);
+            bar_mouse_up = 0;
         }
 
         // clear all the dragging flags
@@ -265,11 +259,13 @@ function initCanvas() {
                             scroll_left_handle_x_position += dx;
                             r2.x += dx;
                             r2.width -= dx;
+                            bar_mouse_up = 1;
                     }
                     else if(r.id == 'right' && r.x+r3.width+dx<canvas_div_w&&((r1.width+r2.width+r3.width+dx)>minScrollbar||(r2.width + dx)>minScrollbar)) {
                             r3.x += dx;
                             scroll_right_handle_x_position += dx;
                             r2.width += dx;
+                            bar_mouse_up = 1;
                     }
                     else if(r.id == 'middle' && r1.x + dx > 0 && r3.x + r3.width + dx  < canvas_div_w) {
                         r1.x += dx;
@@ -283,8 +279,8 @@ function initCanvas() {
 
             // redraw
             drawScrollbarBlock();
-            redrawHypo(.0001);
-
+            redrawLines(.00001);
+            redrawHypo(.00001);
             // reset the starting mouse position for the next mousemove
             startX=mx;
             startY=my;
@@ -465,18 +461,18 @@ function resizeCanvas() {
     hypoCanvas[10] = ctx_top_11;
     hypoCanvas[11] = ctx_top_12;
 
-    hypoCanvas2[0] = ctx_top_1;
-    hypoCanvas2[1] = ctx_top_2;
-    hypoCanvas2[2] = ctx_top_3;
-    hypoCanvas2[3] = ctx_top_4;
-    hypoCanvas2[4] = ctx_top_5;
-    hypoCanvas2[5] = ctx_top_6;
-    hypoCanvas2[6] = ctx_top_7;
-    hypoCanvas2[7] = ctx_top_8;
-    hypoCanvas2[8] = ctx_top_9;
-    hypoCanvas2[9] = ctx_top_10;
-    hypoCanvas2[10] = ctx_top_11;
-    hypoCanvas2[11] = ctx_top_12;
+    hypoCanvas2[0] = ctx_top2_1;
+    hypoCanvas2[1] = ctx_top2_2;
+    hypoCanvas2[2] = ctx_top2_3;
+    hypoCanvas2[3] = ctx_top2_4;
+    hypoCanvas2[4] = ctx_top2_5;
+    hypoCanvas2[5] = ctx_top2_6;
+    hypoCanvas2[6] = ctx_top2_7;
+    hypoCanvas2[7] = ctx_top2_8;
+    hypoCanvas2[8] = ctx_top2_9;
+    hypoCanvas2[9] = ctx_top2_10;
+    hypoCanvas2[10] = ctx_top2_11;
+    hypoCanvas2[11] = ctx_top2_12;
 
 
     ctx_bot_1 = botcanvas1.getContext("2d");
@@ -509,10 +505,8 @@ function setdate (start, end) {
     date_end = end;
 }
 
-// Hypo Timeline function
+// Canvas drawing functions
 function boxCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text,emperical) {
-    var canvas_total_width = 12 * canvas_div_w;
-
     var c_value = x_pos/canvas_div_w;
     var selected_canvas = 0;
 
@@ -566,7 +560,6 @@ function boxCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text,emperi
     }
 }
 function boxCanvasWrapperClear(x_pos,y_pos,width_length,height_length) {
-    var canvas_total_width = 12 * canvas_div_w;
     var c_value = x_pos/canvas_div_w;
     var selected_canvas = 0;
     if(c_value <= 1)
@@ -602,30 +595,7 @@ function boxCanvasWrapperClear(x_pos,y_pos,width_length,height_length) {
        }
     }
 }
-
-function addHypoAdaptation(eventID) {
-    // Pull in new changes
-    adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
-    relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
-    boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
-    if(adaptObj[eventID][4] < 1) {
-        createAdaptBox(eventID, adaptObj[eventID][0], adaptObj[eventID][1], function(eventID, text, width, height, date) {
-            positionAdaptBox(eventID, text, width, height, date);
-        });
-    }
-    relationsObj[eventID].forEach(function(item) {
-        if(adaptObj[item[0]][4] == 0) {
-            createAdaptBox(item[0], adaptObj[item[0]][0], adaptObj[item[0]][1], function(eventID, text, width, height, date) {
-                positionAdaptBox(eventID, text, width, height, date);
-            });
-        }
-    });
-    drawLines();
-    drawAllBoxes();
-}
 function lineCanvasWrapperDraw(x_pos,y_pos,x2_pos,y2_pos,color) {
-    var canvas_total_width = 12 * canvas_div_w;
-
     var c_value = x_pos/canvas_div_w;
     var selected_canvas = 0;
 
@@ -654,7 +624,7 @@ function lineCanvasWrapperDraw(x_pos,y_pos,x2_pos,y2_pos,color) {
     else if(c_value <= 12)
         selected_canvas = 11;
 
-    var c_value2 = y_pos/canvas_div_w;
+    var c_value2 = x2_pos/canvas_div_w;
     var selected_canvas2 = 0;
 
     if(c_value2 <= 1)
@@ -683,20 +653,41 @@ function lineCanvasWrapperDraw(x_pos,y_pos,x2_pos,y2_pos,color) {
         selected_canvas2 = 11;
 
     var temp_x = 0;
-    var temp_y = 0;
-    var line_reach = selected_canvas2 - selected_canvas + 1;
+    var temp_x2 = 0;
 
-    for(var i = 0; i < line_reach; i++) {
+    for(var i = selected_canvas; i <= selected_canvas2; i++) {
         temp_x1 = x_pos - (i * canvas_div_w);
         temp_x2 = x2_pos - (i * canvas_div_w);
-        hypoCanvas2[selected_canvas + i].strokeStyle = color;
-        hypoCanvas2[selected_canvas + i].lineWidth = 2;
-        hypoCanvas2[selected_canvas + i].beginPath();
-        hypoCanvas2[selected_canvas + i].moveTo(temp_x1,y_pos);
-        hypoCanvas2[selected_canvas + i].lineTo(temp_x2,y2_pos);
-        hypoCanvas2[selected_canvas + i].closePath();
-        hypoCanvas2[selected_canvas + i].stroke();
+        hypoCanvas2[i].strokeStyle = color;
+        hypoCanvas2[i].lineWidth = 2;
+        hypoCanvas2[i].beginPath();
+        hypoCanvas2[i].moveTo(temp_x1,y_pos);
+        hypoCanvas2[i].lineTo(temp_x2,y2_pos);
+        hypoCanvas2[i].closePath();
+        hypoCanvas2[i].stroke();
+    }
+}
+
+// Hypo Timeline function
+function addHypoAdaptation(eventID) {
+    // Pull in new changes
+    adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
+    relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
+    boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
+    if(adaptObj[eventID][4] < 1) {
+        createAdaptBox(eventID, adaptObj[eventID][0], adaptObj[eventID][1], function(eventID, text, width, height, date) {
+            positionAdaptBox(eventID, text, width, height, date);
+        });
+    }
+    relationsObj[eventID].forEach(function(item) {
+        if(adaptObj[item[0]][4] == 0) {
+            createAdaptBox(item[0], adaptObj[item[0]][0], adaptObj[item[0]][1], function(eventID, text, width, height, date) {
+                positionAdaptBox(eventID, text, width, height, date);
+            });
         }
+    });
+    drawLines();
+    drawAllBoxes();
 }
 function createAdaptBox(eventID, eventName, date, callback) {
     var textArray = [];
@@ -844,10 +835,31 @@ function removeHypoAdaptation(eventID, callback) {
         }
     });
     sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
+    redrawLines(0);
     callback(eventID);
 }
-function drawAllBoxes(){
-    console.log("draw all");
+function drawLines() {
+    var middleBoxObj = {};
+    lineLocation = [];
+    boxLocation.forEach(function(item){
+        middleBoxObj[item[5]] = [(item[0] + (item[2]/2)), (item[1] + (item[3]/2))];
+    });
+    boxLocation.forEach(function(item){
+        if(relationsObj[item[5]] != undefined){
+                relationsObj[item[5]].forEach(function(item2){
+                    if(middleBoxObj[item[5]][0] < middleBoxObj[item2[0]][1])
+                        lineLocation.push([middleBoxObj[item[5]][0], middleBoxObj[item[5]][1], middleBoxObj[item2[0]][0], middleBoxObj[item2[0]][1], "black"]);
+                    else
+                        lineLocation.push([middleBoxObj[item2[0]][0], middleBoxObj[item2[0]][1], middleBoxObj[item[5]][0], middleBoxObj[item[5]][1], "black"]);
+                });
+        }
+    });
+
+    lineLocation.forEach(function(item){
+        lineCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4]);
+    });
+}
+function drawAllBoxes() {
     // Clear boxes
     for(var i = 0; i < 12; i++) {
         hypoCanvas[i].clearRect(0, 0, canvas_div_w, canvas_div_h_hypo);
@@ -857,11 +869,10 @@ function drawAllBoxes(){
         boxCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4], emperical);
     });
 }
-function redrawHypo(size){
+function redrawHypo(size) {
 
         // Reposition boxes only
         if(Math.abs(last_scroll_ratio - scroll_ratio) > size && (last_hypo_font_size == hypo_box_font_size) && size != 0) {
-            console.log("fast");
             // Clear boxes
             for(var i = 0; i < 12; i++) {
                 hypoCanvas[i].clearRect(0, 0, canvas_div_w, canvas_div_h_hypo);
@@ -905,6 +916,8 @@ function redrawHypo(size){
                 }*/
                 boxCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4], emperical);
             });
+
+            redrawLines(.01);
             last_scroll_ratio = scroll_ratio;
             sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
         }
@@ -912,26 +925,30 @@ function redrawHypo(size){
         // TODO if needed medium redraw speedm, redraw and move without remaking boxes
          // Slowest redraw
         else if(Math.abs(last_scroll_ratio - scroll_ratio) > size || size == 0) {
-            console.log('slow');
             last_scroll_ratio = scroll_ratio;
             last_hypo_font_size = hypo_box_font_size;
             // Clear boxes
             for(var i = 0; i < 12; i++) {
                 hypoCanvas[i].clearRect(0, 0, canvas_div_w, canvas_div_h_hypo);
             }
-            // Move then redraw the same box
-            sessionStorage.setItem("boxLocation", '[]'); // Clear the array to be drawn to
-            boxLocation.forEach(function(item){
-                createAdaptBox(item[5], adaptObj[item[5]][0], adaptObj[item[5]][1], function(eventID, text, width, height, date) {
+            for (var i = 0; i < boxLocation.length; i++) {
+                var tempLoc = boxLocation[i];
+                boxLocation.splice(i, 1);
+                createAdaptBox(tempLoc[5], adaptObj[tempLoc[5]][0], adaptObj[tempLoc[5]][1], function(eventID, text, width, height, date) {
                     positionAdaptBox(eventID, text, width, height, date);
                 });
-            });
-            drawLines();
+            }
+            redrawLines(0);
             drawAllBoxes();
         }
 }
-function drawLines(){
-
+function redrawLines(size) {
+    if(Math.abs(last_scroll_ratio - scroll_ratio) > size || size == 0) {
+        for(var i = 0; i < 12; i++) {
+            hypoCanvas2[i].clearRect(0, 0, canvas_div_w, canvas_div_h_hypo);
+        }
+        drawLines();
+    }
 }
 
 // Scroolbar functions
@@ -1104,33 +1121,33 @@ function drawTimelineIncrements() {
 
 // HTML injection strings
 var hypothesis_adapt_canvas = `
-<canvas id="hypothesis-canvas-1" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas-2" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas-3" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas-4" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas-5" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas-6" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas-7" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas-8" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas-9" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas-10" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas-11" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas-12" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-`;
+    <canvas id="hypothesis-canvas-1" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas-2" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas-3" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas-4" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas-5" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas-6" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas-7" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas-8" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas-9" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas-10" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas-11" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas-12" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    `;
 var hypothesis_lines_canvas = `
-<canvas id="hypothesis-canvas2-1" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas2-2" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas2-3" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas2-4" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas2-5" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas2-6" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas2-7" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas2-8" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas2-9" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas2-10" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas2-11" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas2-12" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-`;
+    <canvas id="hypothesis-canvas2-1" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas2-2" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas2-3" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas2-4" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas2-5" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas2-6" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas2-7" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas2-8" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas2-9" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas2-10" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas2-11" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas2-12" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    `;
 var emperical_canvas = `
     <canvas id="emperical-canvas-1" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
     <canvas id="emperical-canvas-2" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
