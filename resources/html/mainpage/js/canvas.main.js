@@ -854,7 +854,6 @@ function drawLines() {
                 });
         }
     });
-
     lineLocation.forEach(function(item){
         lineCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4]);
     });
@@ -917,7 +916,6 @@ function redrawHypo(size) {
                 boxCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4], emperical);
             });
 
-            redrawLines(.01);
             last_scroll_ratio = scroll_ratio;
             sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
         }
@@ -931,10 +929,10 @@ function redrawHypo(size) {
             for(var i = 0; i < 12; i++) {
                 hypoCanvas[i].clearRect(0, 0, canvas_div_w, canvas_div_h_hypo);
             }
-            for (var i = 0; i < boxLocation.length; i++) {
-                var tempLoc = boxLocation[i];
-                boxLocation.splice(i, 1);
-                createAdaptBox(tempLoc[5], adaptObj[tempLoc[5]][0], adaptObj[tempLoc[5]][1], function(eventID, text, width, height, date) {
+            var tempLoc = boxLocation;
+            boxLocation = [];
+            for (var i = 0; i < tempLoc.length; i++) {
+                createAdaptBox(tempLoc[i][5], adaptObj[tempLoc[i][5]][0], adaptObj[tempLoc[i][5]][1], function(eventID, text, width, height, date) {
                     positionAdaptBox(eventID, text, width, height, date);
                 });
             }
