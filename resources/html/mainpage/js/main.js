@@ -20,17 +20,27 @@ function getEventList(callback) {
             // Unselect
             if($(this).hasClass('adaptation-item-selected') && relationsObj[$(this).attr('id')] !== undefined){
                 $(this).removeClass('adaptation-item-selected').addClass('adaptation-item-unselected');
-                //TODO remove empirical boxes
+                
                 removeHypoAdaptation($(this).attr('id'), function(eid){
                     removeAdaption(eid, function(){});
                 });
+				//TODO remove empirical boxes - in process	
+				/*
+					Fun fact: if you put the following three lines before removeHypoAdaptation, 
+					removeHypoAdaptation doesn't work properly - Travis Evidence cannot be removed. 
+					Travis Evidence 2 will, but Travis Evidence won't go away.
+				*/
+				removeEmperAdaptation($(this).attr('id'), function(eid){
+					removeAdaption(eid, function(){});
+				});
             }
             // Select
             else if($(this).hasClass('adaptation-item-unselected') && relationsObj[$(this).attr('id')] === undefined){
                 $(this).removeClass('adaptation-item-unselected').addClass('adaptation-item-selected');
                 getAdaption($(this).attr('id'), function(eid){
                     addHypoAdaptation(eid);
-                    //TODO Add empirical boxes
+                    //TODO Add empirical boxes - in process
+					addEmperAdaptation(eid);
                 });
             }
         });
@@ -82,7 +92,7 @@ function removeAdaption(eventID, callback){
             i = empiricalTable.length;
         }
     }
-    for(var i = 0; i < empiricalTable.length; i++){
+    for(var i = 0; i < empiricalTable.length; i++){ //Why are we doing the exact same thing twice? Am I missing something?
         if(empiricalTable[i][0] === eventID){
             empiricalTable.splice(i, 1);
             i = empiricalTable.length;

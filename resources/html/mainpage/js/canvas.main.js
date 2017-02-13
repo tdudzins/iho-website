@@ -10,14 +10,14 @@ var canvas_div_h_emper = 0; // Container of Emperical Canvas height in pixels
 
 // Hypothetical Canvas Dimensions
 var canvas1_1_h = 0; // Hypothetical Canvas (Layer 1: Timeline) height in pixels
-var canvas1_234_h = 0; // Hypothetical Canvas (Layer 2: Grey Areas, Layer 3: Connections, Layer 4: Adaptaions) height in pixels
+var canvas1_234_h = 0; // Hypothetical Canvas (Layer 2: Grey Areas, Layer 3: Connections, Layer 4: Adaptaions) height in pixels 
 
 // Scrollbar Canvas Dimentsions
 var canvas2_12_w = 0; // Scrollbar Canvas (Layer 1: Scrollbar Container, Layer 2: Scrollbar Block) width in pixels
 var canvas2_12_h = 0; // Scrollbar Canvas (Layer 1: Scrollbar Container, Layer 2: Scrollbar Block) height in pixels
 
 // Emperical Canvas Dimensions
-var canvas3_1_h = 0; // Emperical Canvas (Layer 1: Timeline) height in pixels
+var canvas3_1_h = 0; // Emperical Canvas (Layer 1: Timeline) height in pixels 
 var canvas3_2_h = 0; // Emperical Canvas (Layer 2: Connections, Layer 3: Adaptations) height in pixels
 
 // Canvas Drawing Variables
@@ -91,12 +91,11 @@ var scroll_right_handle_x_position = 0;
 var minScrollbar = 151;
 var scrollRegions = [];
 var hypoCanvas = [];
-var emperCanvas = [];
 var draw_start = 0; // Redrawable Area start in pixels
 var draw_end = 0; // Redrawable Area start in pixels
 var date_start = 12000000; // Earliest date from selected adapations
 var date_end = 000000; // Latest date from selected adaptations
-var largest_timespan = 12000000; // When user is all the way scaled out, what is the largest amount of time to be viewed
+var largest_timespan = 12000000; // When user is all the way scaled out, what is the largest amount of time to be viewed 
 var smallest_timespan = 1000000; // When user is all the way scaled in, what is the smallest amount of time to be viewed
 var max_char_per_line = 15;
 var hypo_box_fill_style_relation = "rgba(111,130,145,0.9)";
@@ -117,6 +116,8 @@ var hypo_timeline_font_color = "rgba(255,255,255,1)";
 
 
 //Global Variables for emperical timeline will go here
+var emperCanvas = [];
+
 
 
 var timespan;
@@ -253,7 +254,8 @@ function initCanvas() {
         var offset = -1 * ((12000000 - left_edge_date)/increment_per_pixel);
         $('#canvas-wrapper-div').css("margin-left", offset + "px");
     }
-};
+}
+
 function resizeCanvas() {
     $('#canvas-wrapper-div').append(hypothesis_canvas);
     $('#emperical-canvas-div').append(emperical_canvas);
@@ -418,7 +420,7 @@ function resizeCanvas() {
     ctx2_2.canvas.height = canvas2_h;
 }
 
-//This funciton is never used...
+
 function setdate (start, end) {
     date_start = start;
     date_end = end;
@@ -426,7 +428,7 @@ function setdate (start, end) {
 
 // Hypo Timeline function
 function boxCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text,emperical) {
-    var canvas_total_width = 13 * canvas_div_w;
+    var canvas_total_width = 12 * canvas_div_w;
 
     var c_value = x_pos/canvas_div_w;
     var selected_canvas = 0;
@@ -482,10 +484,10 @@ function boxCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text,emperi
     }
 }
 
-//TODO 
+//In process 
 // Emperical Timeline function
 function boxEmpericalCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text,emperical) {
-    var canvas_total_width = 13 * canvas_div_w;
+    var canvas_total_width = 12 * canvas_div_w;
 
     var c_value = x_pos/canvas_div_w;
     var selected_canvas = 0;
@@ -535,7 +537,7 @@ function boxEmpericalCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,te
 }
 
 function boxCanvasWrapperClear(x_pos,y_pos,width_length,height_length) {
-    var canvas_total_width = 13 * canvas_div_w;
+    var canvas_total_width = 12 * canvas_div_w;
     var c_value = x_pos/canvas_div_w;
     var selected_canvas = 0;
     if(c_value <= 1)
@@ -572,9 +574,9 @@ function boxCanvasWrapperClear(x_pos,y_pos,width_length,height_length) {
     }
 }
 
-//TODO
+//In process
 function boxEmpericalCanvasWrapperClear(x_pos,y_pos,width_length,height_length) {
-    var canvas_total_width = 13 * canvas_div_w;
+    var canvas_total_width = 12 * canvas_div_w;
     var c_value = x_pos/canvas_div_w;
     var selected_canvas = 0;
     if(c_value <= 1)
@@ -606,7 +608,7 @@ function boxEmpericalCanvasWrapperClear(x_pos,y_pos,width_length,height_length) 
     for(var i = -1; i < 2; i++) {
         if(selected_canvas + i >= 0 && selected_canvas + i <= 11) {
             temp_x = x_pos - (i * canvas_div_w);
-           emperCanvas[selected_canvas].clearRect((temp_x - 1), (y_pos - 1), (width_length + 2), (height_length + 1));
+           emperCanvas[selected_canvas].clearRect((temp_x - 1), (y_pos - 1), (width_length + 3), (height_length + 3));
        }
     }
 }
@@ -642,14 +644,6 @@ function createAdaptBox(eventID, eventName, date, callback) {
 function positionAdaptBox(eventID, text, width, height, date, callback) {
     var x_pos = 0;
     var y_pos = 0;
-    var emperical;
-    var relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
-    if(relationsObj[eventID] != undefined) {
-        emperical = true;
-    }
-    else {
-        emperical = false;
-    }
 
     if(date >= 1000000) {
         date = date + 4000000;
@@ -731,7 +725,7 @@ function addHypoAdaptation(eventID) {
     });
 }
 
-//TODO
+//In process
 function addEmperAdaptation(eventID) {
     var adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
 
@@ -759,7 +753,6 @@ function addEmperAdaptation(eventID) {
         });
     }
 }
-
 
 function removeHypoAdaptation(eventID, callback) {
     var adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
@@ -801,7 +794,7 @@ function removeHypoAdaptation(eventID, callback) {
     callback(eventID);
 }
 
-//TODO
+//In Process
 function removeEmperAdaptation(eventID, callback) {
     var adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
     var boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
@@ -962,6 +955,7 @@ function drawScrollbarBlock() {
 
     drawTimelineIncrements();
 }
+
 function drawTimelineIncrements() {
     ctx1_1.clearRect(0,0,ctx1_1.canvas.width,ctx1_1.canvas.height);
     ctx1_1.font = increments_font_size + "px " + increments_font_family;
