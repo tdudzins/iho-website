@@ -681,8 +681,6 @@ function addHypoAdaptation(eventID) {
         createAdaptBox(eventID, adaptObj[eventID][0], adaptObj[eventID][1], function(eventID, text, width, height, date) {
             positionAdaptBox(eventID, text, width, height, date);
         });
-        if(hypo_box_font_size_change != temp_text)
-            break;
     }
     relationsObj[eventID].forEach(function(item) {
         if(adaptObj[item[0]][4] == 0) {
@@ -692,7 +690,7 @@ function addHypoAdaptation(eventID) {
             });
         }
         if(hypo_box_font_size_change != temp_text)
-            break;
+            return;
     });
 
     while(hypo_box_font_size_change != temp_text) {
@@ -946,6 +944,7 @@ function redrawHypo(size) {
             }
             var tempLoc = boxLocation;
             boxLocation = [];
+            var temp_text = hypo_box_font_size_change;
             for (var i = 0; i < tempLoc.length; i++) {
                 createAdaptBox(tempLoc[i][5], adaptObj[tempLoc[i][5]][0], adaptObj[tempLoc[i][5]][1], function(eventID, text, width, height, date) {
                     positionAdaptBox(eventID, text, width, height, date);
