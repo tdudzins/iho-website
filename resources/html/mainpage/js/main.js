@@ -1,11 +1,11 @@
 // Event Listeners
 createArrays();
 $(document).ready(function() {
-     initCanvas();
+     initCanvas(1);
      initSlidePanels();
 });
 $(window).resize(function(){
-     initCanvas();
+     initCanvas(1);
      redrawHypo(0);
      redrawLines(0);
 });

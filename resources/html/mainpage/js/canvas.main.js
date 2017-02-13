@@ -166,7 +166,7 @@ var bar_mouse_up = 0;
 
 var canvasAdaptation = [];
 
-function initCanvas() {
+function initCanvas(firstRun) {
     scrollRegions = [];
     hypo_box_font_size_change = hypo_box_font_size;
 
@@ -182,10 +182,11 @@ function initCanvas() {
     var startY;
 
     // listen for mouse events
-    canvas2_2.onmousedown = scrollbarDown;
-    window.onmouseup = scrollbarUp;
-    window.onmousemove = scrollbarMove;
-
+    if(firstRun){
+        canvas2_2.onmousedown = scrollbarDown;
+        window.onmouseup = scrollbarUp;
+        window.onmousemove = scrollbarMove;
+    }
     // Initialize Scrollbar
     drawScrollbarContainer();
     drawScrollbarBlock();
@@ -995,6 +996,7 @@ function drawScrollbarContainer () {
     var arc_bot = 0.5*Math.PI;
 
     // Scrollbar Container
+    ctx2_1.clearRect(0,0,ctx2_1.canvas.width, ctx2_1.canvas.height);
     ctx2_1.fillStyle = scrollbar_container_fill_style;
     ctx2_1.beginPath();
     ctx2_1.arc(center_left_x,center_left_y,container_radius,arc_top,arc_bot,true);
@@ -1084,7 +1086,7 @@ function drawScrollbarBlock() {
     right_edge_date = timespan - (timespan * scroll_position) + date_end - (timespan * scroll_ratio);
 
     // draw increment text under scrollbar handles
-    var x = scroll_left_handle_x_position + (2 * block_radius);
+    var x = 0 + (2.3 * block_radius);
     var y = hndl_cnt_left_y + (3.5 * block_radius);
     var left_text = 0;
     if(left_edge_date > 5000000) {
@@ -1100,7 +1102,7 @@ function drawScrollbarBlock() {
     ctx2_2.fillStyle = scrollbar_font_color;
     ctx2_2.textAlign = "center";
     ctx2_2.fillText(left_text, x, y);
-    x = scrollRegions[2].x + (2 * block_radius);
+    x = canvas_div_w - (2.3 * block_radius);
     y = hndl_cnt_left_y + (3.5 * block_radius);
     var right_text = 0;
     if(right_edge_date > 5000000) {
