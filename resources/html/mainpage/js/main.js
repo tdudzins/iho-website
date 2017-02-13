@@ -9,40 +9,78 @@ $(window).resize(function(){
      redrawHypo(0);
      redrawLines(0);
 });
-$('#adaptation-items').ready(function(){
-     getEventList(function(){});
+$('#side-nav').ready(function(){
+    setupSideNav(function(){
+
+    });
 });
 
 // Functions
-function getEventList(callback) {
-     serverPost({action:'t'}, function(data, status){
-          var obj = JSON.parse(data);
-          $('#adaptation-items').empty();
-          obj.forEach(function(item){
-               $('#adaptation-items').append('<li id=\'' + item.eventID + '\' class=\'adaptation-item-unselected\' >'+ item.eventName + '</li>');
-          });
-          $('li.adaptation-item-unselected').click(function(){
-               var relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
-               // Unselect
-               if($(this).hasClass('adaptation-item-selected') && relationsObj[$(this).attr('id')] !== undefined){
-                    $(this).removeClass('adaptation-item-selected').addClass('adaptation-item-unselected');
+function setupSideNav(callback) {
+    var categoryArr = [];
+    var categoryObj = {};
+    var sideHTML = '';
+    serverPost({action:'v'}, function(data, status){
+        serverPost({action:'t'}, function(data2, status2){
+            var obj = JSON.parse(data);
+            obj.forEach(function(item){
+                categoryObj[item.categoryID] = [item.categoryName,[]];
+                categoryArr.push(item.categoryID);
+            });
+            obj = JSON.parse(data2);
+            obj.forEach(function(item){
+                categoryObj[item.category][1].push([item.eventName, item.eventID])
+            });
+            $('#adaptation-items-div').empty();
+            categoryArr.forEach(function(item){
+                sideHTML += '<div id="' + item + '" class="category"><span class="category-span">' + categoryObj[item][0].toUpperCase() + '</span><div class="category-pic"><img src="/resources/html/mainpage/img/list_plus.png" class="category-right"></div></div>'
+                sideHTML += '<div id="' + item +'-adaptation-container" class="adaptation-container"><ul class="adaptation-items">';
+                categoryObj[item][1].forEach(function(item2){
+                    sideHTML += '<li id="' + item2[1] + '" class="adaptation-item-selected"><img src="/resources/html/mainpage/img/unselected.png" class="adaptation-pic"><span class="adaptation-span">' + item2[0] + '</span></li>'
+                });
+                sideHTML += '</ul>';
+                $('#adaptation-items-div').append(sideHTML);
+                sideHTML = '';
+            });
+
+
+            $('li.adaptation-item-selected').click(function(){
+                var relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
+                // Unselect
+                if($(this).hasClass('adaptation-item-selected') && relationsObj[$(this).attr('id')] !== undefined){
+                    $(this).children('img').attr('src', '/resources/html/mainpage/img/unselected.png');
                     //TODO remove empirical boxes
                     removeHypoAdaptation($(this).attr('id'), function(eid){
-                         removeAdaption(eid, function(){});
+                        removeAdaption(eid, function(){});
                     });
-               }
-               // Select
-               else if($(this).hasClass('adaptation-item-unselected') && relationsObj[$(this).attr('id')] === undefined){
-                    $(this).removeClass('adaptation-item-unselected').addClass('adaptation-item-selected');
+                }
+                // Select
+                else if($(this).hasClass('adaptation-item-selected') && relationsObj[$(this).attr('id')] === undefined){
+                    $(this).children('img').attr('src', '/resources/html/mainpage/img/selected.png');
                     getAdaption($(this).attr('id'), function(eid){
-                         addHypoAdaptation(eid);
-                         //TODO Add empirical boxes
+                        addHypoAdaptation(eid);
+                        //TODO Add empirical boxes
                     });
-               }
-          });
+                }
+            });
 
-          callback();
-     });
+            $('div.category').click(function(){
+                if($(this).find('img').attr('src') == '/resources/html/mainpage/img/list_plus.png'){
+                    $(this).find('img').attr('src', '/resources/html/mainpage/img/list_minus.png');
+                    $('#' + $(this).attr('id') + '-adaptation-container').slideDown(200);
+                }
+                // Select
+                else if($(this).find('img').attr('src') == '/resources/html/mainpage/img/list_minus.png'){
+                    $(this).find('img').attr('src', '/resources/html/mainpage/img/list_plus.png');
+                    $('#' + $(this).attr('id') + '-adaptation-container').slideUp(200);
+                }
+            });
+            categoryArr.forEach(function(item){
+                $('#' + item + '-adaptation-container').slideUp(0);
+            });
+            callback();
+        });
+    });
 }
 function getAdaption(eventID, callback){
      serverPost({action:"s", eventid:eventID}, function(data, status){
@@ -172,12 +210,11 @@ function initSlidePanels() {
           $(this).toggleClass("active");
      });
      $("#side-nav-toggle").click(function () {
-          console.log(side_nav_width);
           if ($(this).hasClass("active")) {
-               $("#side-nav-panel").animate({marginLeft: side_nav_width + "px"});
+               $("#side-nav-panel").animate({marginLeft: side_nav_width + "px"}, 300);
                $("#side-nav-toggle").html(`<img src="/resources/html/mainpage/img/arrow_open.png" style="height:100%;width:100%;">`);
           } else {
-               $("#side-nav-panel").animate({marginLeft: "0px"});
+               $("#side-nav-panel").animate({marginLeft: "0px"}, 300);
                $("#side-nav-toggle").html(`<img src="/resources/html/mainpage/img/arrow_close.png" style="height:100%;width:100%;">`);
           }
           $(this).toggleClass("active");
