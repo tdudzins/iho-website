@@ -1128,10 +1128,10 @@ function drawTimelineIncrements() {
 
     var total_increments = (timespan/1000000) + 1;
 
-    var increment_per_pixel = (viewable_time/ctx1_1.canvas.width);
+    var increment_per_pixel = (viewable_time/(ctx1_1.canvas.width-40));
     var total_scale_size = timespan / increment_per_pixel;
     var change = total_scale_size / (total_increments - 1);
-    var xpos = 0 - (total_scale_size * scroll_position);
+    var xpos = 0 - (total_scale_size * scroll_position) + 20;
 
     var text = '';
     for(var i = 0; i < total_increments; i++) {
@@ -1143,6 +1143,7 @@ function drawTimelineIncrements() {
         else {
           text = ((date_start-4000000)/1000000) - i;
           text = (.8 + (text * 0.2)).toFixed(1);
+          text = (text < 0.09)?0:text;
           text += 'M';
         }
         ctx1_1.fillText(text, xpos, 20);
