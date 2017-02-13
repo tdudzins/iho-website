@@ -644,6 +644,14 @@ function createAdaptBox(eventID, eventName, date, callback) {
 function positionAdaptBox(eventID, text, width, height, date, callback) {
     var x_pos = 0;
     var y_pos = 0;
+    var emperical;
+    var relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
+    if(relationsObj[eventID] != undefined) {
+        emperical = true;
+    }
+    else {
+        emperical = false;
+    }
 
     if(date >= 1000000) {
         date = date + 4000000;

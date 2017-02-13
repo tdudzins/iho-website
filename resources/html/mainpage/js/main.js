@@ -30,9 +30,9 @@ function getEventList(callback) {
 					removeHypoAdaptation doesn't work properly - Travis Evidence cannot be removed. 
 					Travis Evidence 2 will, but Travis Evidence won't go away.
 				*/
-				removeEmperAdaptation($(this).attr('id'), function(eid){
+				/*removeEmperAdaptation($(this).attr('id'), function(eid){
 					removeAdaption(eid, function(){});
-				});
+				});*/
             }
             // Select
             else if($(this).hasClass('adaptation-item-unselected') && relationsObj[$(this).attr('id')] === undefined){
@@ -40,7 +40,7 @@ function getEventList(callback) {
                 getAdaption($(this).attr('id'), function(eid){
                     addHypoAdaptation(eid);
                     //TODO Add empirical boxes - in process
-					addEmperAdaptation(eid);
+					//addEmperAdaptation(eid);
                 });
             }
         });
