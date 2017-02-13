@@ -112,22 +112,28 @@ footer,
     width: 100%;
     position: absolute;
     bottom: 0;
-    text-align: right;
+    text-align: left;
     background-color: #000000;
     color: #ffffff;
-    font-size: 18px;
+    font-family: Roboto;
+    letter-spacing: 2px;
+    font-size: 15px;
     transition: 0.4s;
     z-index: 1;
 }
 
 #about-page-toggle:hover {
-    color: rgba(255,255,255,0.8);
+    color: rgba(255,255,255,0.75);
 }
+#about-page-clickable {
+     cursor: pointer;
 
+}
 #about-page-toggle {
-    cursor: pointer;
     text-decoration: none;
     color: rgba(255,255,255,1);
+    float: left;
+    line-height: 15px;
 }
 
 #about-page-bar {
@@ -143,6 +149,13 @@ footer,
     color:#323232;
     padding: 10px;
     transition: max-height 0.2s ease-out;
+}
+
+.about-page-pic {
+     height: 15px;
+     width: 15px;
+     float: left;
+     margin-left: 5px;
 }
 
 #side-nav {
