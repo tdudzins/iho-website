@@ -223,8 +223,8 @@ function initCanvas() {
         e.stopPropagation();
 
         if(bar_mouse_up) {
-            redrawLines(0);
             redrawHypo(0);
+            redrawLines(0);
             bar_mouse_up = 0;
         }
 
@@ -950,6 +950,7 @@ function redrawHypo(size) {
         else if(Math.abs(last_scroll_ratio - scroll_ratio) > size || size == 0) {
             last_scroll_ratio = scroll_ratio;
             last_hypo_font_size = hypo_box_font_size_change;
+            hypo_box_font_size_change = hypo_box_font_size;
             // Clear boxes
             for(var i = 0; i < 12; i++) {
                 hypoCanvas[i].clearRect(0, 0, canvas_div_w, canvas_div_h_hypo);
@@ -969,7 +970,6 @@ function redrawHypo(size) {
                 }
             }
             console.log('All fit');
-            redrawLines(0);
             drawAllBoxes();
         }
 }
