@@ -133,6 +133,7 @@ var box_to_box_padding_size = 18;
 var text_in_box_padding_w = 5;
 var text_in_box_padding_h = 5;
 var hypo_box_font_size = 25;
+var hypo_box_font_size_change = 25;
 var last_hypo_font_size = 25; // Used in redrawHypo
 var hypo_box_font_family = "Roboto";
 var scrollbar_container_fill_style = "rgba(220,220,220,0.3)";
@@ -161,10 +162,11 @@ var canvasAdaptation = [];
 
 function initCanvas() {
     scrollRegions = [];
+    hypo_box_font_size_change = hypo_box_font_size;
 
     // Resize Canvases
     resizeCanvas();
-
+    font
     var BB = canvas2_2.getBoundingClientRect();
     var offsetX = BB.left;
     var offsetY = BB.top;
@@ -674,6 +676,7 @@ function addHypoAdaptation(eventID) {
     adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
     relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
     boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
+    var temp_text = hypo_box_font_size_change;
     if(adaptObj[eventID][4] < 1) {
         createAdaptBox(eventID, adaptObj[eventID][0], adaptObj[eventID][1], function(eventID, text, width, height, date) {
             positionAdaptBox(eventID, text, width, height, date);
@@ -686,6 +689,9 @@ function addHypoAdaptation(eventID) {
             });
         }
     });
+    while(hypo_box_font_size_change != temp text) {
+        temp_text = hypo_box_font_size_change;
+    }
     drawLines();
     drawAllBoxes();
 }
@@ -798,6 +804,7 @@ function removeHypoAdaptation(eventID, callback) {
     // Emperical undraw
     relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
     adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
+    hypo_box_font_size_change = hypo_box_font_size; // reset font size
     if(adaptObj[eventID][4] == 0) {
         for (var i = 0; i <= boxLocation.length; i++) {
             if(boxLocation[i][5] == eventID) {
