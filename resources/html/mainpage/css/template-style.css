@@ -1,13 +1,8 @@
-footer {
-    background:#fff;
-    height: 100%;
-}
-
-/* sticky footer css */
 html {
     height: 100%;
     overflow: hidden;
     margin: 0;
+    font-family: Roboto;
 }
 
 body {
@@ -18,25 +13,28 @@ body {
 
 footer,
 .push {
-      height: 100px;
+    height: 141px;
+    z-index: 2;
 }
 
 .wrapper {
-    height: calc(100vh - 100px);
+    height: calc(100vh - 141px);
     width: 100%;
     overflow: hidden;
 }
 
 .timeline-div {
-    height: calc(100%);
-    width: calc(100vw - 60px);
-    float: right;
+    height: calc(100vh - 141px);;
+    width: 100%;
+    float: left;
     overflow: hidden;
-    transition: all 0.5s ease-out;
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 
 .timeline-div-top {
-    height: calc(70%);
+    height: 70%;
     width: 100%;
     padding-left: 20px;
     padding-right: 20px;
@@ -44,64 +42,19 @@ footer,
 }
 
 .timeline-div-bottom {
-    height: calc(30%);
+    height: 30%;
     width: 100%;
     padding-left: 20px;
     padding-right: 20px;
     background: rgba(40,40,40,.5);
 }
 
-/* The side navigation menu */
-.side-nav {
-    width: 60px; /* 0 width - change this with JavaScript */
-    height: 100%;
-    position: relative; /* Stay in place */
-    z-index: 1; /* Stay on top */
-    top: 0;
-    left: 0;
-    background-color: #3D3D3D; /* Black*/
-    overflow-x: hidden; /* Disable horizontal scroll */
-    /*padding-top: 60px; /* Place content 60px from the top */
-    transition: all 0.5s ease-out;
-    background: rgba(69,106,131,0.65);
-    float: left;
-    overflow-y: hidden;
-}
-
-.info-tab {
-  width: 40px;
-  height: 100%;
-  padding: 5px;
-  float: right;
-  position: relative;
-  text-align: center;
-  overflow: hidden;
-}
-
-.tab-container {
-  width: 100%;
-  height: 50%;
-  position: relative;
-  overflow: hidden;
-}
-
-.tab-container:hover {
-    background-color: #3D3D3D; /* Black*/
-      background: rgba(0,0,0,0.65);
-}
-
-.info-div {
-  width: 0px;
-  height: 100%;
-  position: relative;
-  float: left;
-}
 
 .top-timeline {
-  height: calc(100% - 30px);
-  width: 100%;
-  position: relative;
-  overflow: hidden;
+    height: calc(100% - 30px);
+    width: 100%;
+    position: relative;
+    overflow: hidden;
 }
 
 .timeline-increments-div {
@@ -141,10 +94,10 @@ footer,
 .canvas-wrapper-div {
     height: 100%;
     width: calc(12*100%);
-    position: absolute;;
+    position: absolute;
     overflow: hidden;
-    left: 0;
     top: 0;
+    left: 0;
 }
 
 .scrollbar-canvas {
@@ -155,17 +108,107 @@ footer,
   top: 0;
 }
 
-.adaptation-items-div {
+#lower {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    text-align: right;
+    background-color: #000000;
+    color: #ffffff;
+    font-size: 18px;
+    transition: 0.4s;
+    z-index: 1;
+}
+
+#about-page-toggle:hover {
+    color: rgba(255,255,255,0.8);
+}
+
+#about-page-toggle {
+    cursor: pointer;
+    text-decoration: none;
+    color: rgba(255,255,255,1);
+}
+
+#about-page-bar {
+    height: 35px;
+    padding: 10px;
+    color: #353535;
+
+}
+#about-page-panel {
+    display: none;
+    height: calc(100vh - 141px);
+    background-color: white;
+    color:#323232;
+    padding: 10px;
+    transition: max-height 0.2s ease-out;
+}
+
+#side-nav {
+    all: unset;
+    height: calc(100vh - 141px);
+    bottom: 0;
+    text-align: left;
+    padding: 0;
+    font-size: 18px;
+    transition: 0.4s;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+#side-nav-bar {
+    all: unset;
+    width: 20px;
     height: 100%;
-    width: 0px;
-	vertical-align: middle;
-	background-color: #456a83;
+    float: right;
+    color: #353535;
+    display: inline;
+    position: relative;
+}
+
+#side-nav-toggle:hover {
+    background-color: rgba(10,75,119,1);
+    cursor: pointer;
+}
+
+#side-nav-toggle {
+    text-decoration: none;
+    width: 20px;
+    height: 30px;
+    background-color: rgba(10,75,119,1);
+    margin: 0;
+    padding: 0;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+#side-nav-adaptation-panel {
+    all: unset;
+    height: 100%;
+    width: calc(100vw * 0.3);
+    background-color: rgba(10,75,119,1);
+    color: white;
+    padding: 10px;
+    display: none;
+    margin: 0;
     float: left;
+    transition: max-width 0.2s ease-out;
+}
+
+#adaptation-items-div {
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    color:#323232;
+    padding: 10px;
 }
 
 .adaptation-items {
-    background-color: #456a83;
 	height: 100%;
+    width: 100%;
 	margin-left: 0px;
 	margin-right: 0px;
 	margin-top: 0px;

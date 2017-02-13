@@ -166,7 +166,7 @@ function initCanvas() {
 
     // Resize Canvases
     resizeCanvas();
-    font
+
     var BB = canvas2_2.getBoundingClientRect();
     var offsetX = BB.left;
     var offsetY = BB.top;
