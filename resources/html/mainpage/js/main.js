@@ -156,16 +156,18 @@ function createArrays() {
 
 function initSlidePanels() {
     var side_nav_open = false;
+    var side_nav_width = -1 * ( 25 + parseInt($("#side-nav-panel").css('width')));
     $("#side-nav-toggle").html(`<img src="/resources/html/mainpage/img/arrow_open.png" style="height:100%;width:100%;">`);
     $("#about-page-toggle").click(function(){
         $("#about-page-panel").slideToggle("slow");
     });
     $("#side-nav-toggle").click(function () {
+        console.log(side_nav_width);
         if ($(this).hasClass("active")) {
-            $("#side-nav-adaptation-panel").animate({ width: "toggle"}, 500);
+            $("#side-nav-panel").animate({marginLeft: side_nav_width + "px"});
             $("#side-nav-toggle").html(`<img src="/resources/html/mainpage/img/arrow_open.png" style="height:100%;width:100%;">`);
         } else {
-            $("#side-nav-adaptation-panel").animate({ width: "toggle" }, 500);
+            $("#side-nav-panel").animate({marginLeft: "0px"});
             $("#side-nav-toggle").html(`<img src="/resources/html/mainpage/img/arrow_close.png" style="height:100%;width:100%;">`);
         }
         $(this).toggleClass("active");
