@@ -142,7 +142,7 @@ var hypo_box_font_family = "Roboto";
 var scrollbar_container_fill_style = "rgba(220,220,220,0.3)";
 var scrollbar_block_fill_style = "rgba(250,250,250,0.5)";
 var scrollbar_handle_fill_style = "rgba(255,255,255,1.0)";
-var scrollbar_font_color = "rgba(255,255,255,0)";
+var scrollbar_font_color = "rgba(255,255,255,1)";
 var scrollbar_font_size = 13;
 var scrollbar_font_family = "Roboto";
 var increments_font_color = "rgba(0,0,0,1)";
@@ -158,6 +158,7 @@ var lineLocation = [];
 var middleBoxObj = {};
 
 var timespan;
+var dir = 0;
 var viewable_time;
 var left_edge_date;
 var right_edge_date;
@@ -306,9 +307,9 @@ function initCanvas() {
     }
 };
 function resizeCanvas() {
-    $('#canvas-wrapper-lines-div').append(hypothesis_lines_canvas);
-    $('#canvas-wrapper-adaptations-div').append(hypothesis_adapt_canvas);
-    $('#emperical-canvas-div').append(emperical_canvas);
+    $('#canvas-wrapper-lines-div').html(hypothesis_lines_canvas);
+    $('#canvas-wrapper-adaptations-div').html(hypothesis_adapt_canvas);
+    $('#emperical-canvas-div').html(emperical_canvas);
 
     // Set Canvas Div Size from Browser Realtime Values
     canvas_div_w = $('#hypothesis-canvas-div').width();
@@ -770,7 +771,6 @@ function positionAdaptBox(eventID, text, width, height, date) {
     var i = 0;
     var up = 0;
     var down = 0;
-    var dir = 0;
     var l_i = 0;
     while (i < boxLocation.length) {
         // Hit x or y
@@ -1128,10 +1128,10 @@ function drawTimelineIncrements() {
 
     var total_increments = (timespan/1000000) + 1;
 
-    var increment_per_pixel = (viewable_time/(ctx1_1.canvas.width-40));
+    var increment_per_pixel = (viewable_time/ctx1_1.canvas.width);
     var total_scale_size = timespan / increment_per_pixel;
     var change = total_scale_size / (total_increments - 1);
-    var xpos = 0 - (total_scale_size * scroll_position) + 20;
+    var xpos = 0 - (total_scale_size * scroll_position);
 
     var text = '';
     for(var i = 0; i < total_increments; i++) {
@@ -1143,7 +1143,6 @@ function drawTimelineIncrements() {
         else {
           text = ((date_start-4000000)/1000000) - i;
           text = (.8 + (text * 0.2)).toFixed(1);
-          text = (text < 0.09)?0:text;
           text += 'M';
         }
         ctx1_1.fillText(text, xpos, 20);

@@ -36,6 +36,8 @@ footer,
 .timeline-div-top {
     height: 70%;
     width: 100%;
+    padding-left: 20px;
+    padding-right: 20px;
     background: rgba(255,255,255,.5);
 }
 
@@ -51,8 +53,6 @@ footer,
 .top-timeline {
     height: calc(100% - 30px);
     width: 100%;
-    padding-left: 20px;
-    padding-right: 20px;
     position: relative;
     overflow: hidden;
 }
@@ -223,7 +223,7 @@ footer,
 	height: 100%;
     width: 100%;
 	list-style:none;
-	overflow-x: hidden;
+	overflow: hidden;
 }
 
 /*69 106 131 - 5 74 120*/
@@ -288,6 +288,7 @@ ul.adaptation-items li {
     padding-left: 20px;
     padding-top: 10px;
     padding-bottom: 10px;
+    overflow: hidden;
 }
 
 .adaptation-pic {

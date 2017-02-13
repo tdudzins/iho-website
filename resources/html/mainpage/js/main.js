@@ -36,7 +36,7 @@ function setupSideNav(callback) {
                 sideHTML += '<div id="' + item + '" class="category"><span class="category-span">' + categoryObj[item][0].toUpperCase() + '</span><div class="category-pic"><img src="/resources/html/mainpage/img/list_plus.png" class="category-right"></div></div>'
                 sideHTML += '<div id="' + item +'-adaptation-container" class="adaptation-container"><ul class="adaptation-items">';
                 categoryObj[item][1].forEach(function(item2){
-                    sideHTML += '<li id="' + item2[1] + '" class="adaptation-item-selected"><img src="/resources/html/mainpage/img/unselected.png" class="adaptation-pic"><span class="adaptation-span">' + item2[0] + '</span></li>'
+                    sideHTML += '<li id="' + item2[1] + '" class="adaptation-item-selected"><img src="/resources/html/mainpage/img/unselected.png" class="adaptation-pic"><span class="adaptation-span">' + item2[0].toUpperCase() + '</span></li>'
                 });
                 sideHTML += '</ul>';
                 $('#adaptation-items-div').append(sideHTML);
