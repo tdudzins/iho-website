@@ -734,32 +734,43 @@ function addHypoAdaptation(eventID) {
 }
 
 //In process
+//Fix - use empiricalTable instead of adaptObj
+//empiricalTable[eventID]
+//var empiricalTable = JSON.parse(sessionStorage.getItem(("empiricalTable"));
 function addEmperAdaptation(eventID) {
-    var adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
+    var empiricalTable = JSON.parse(sessionStorage.getItem("empiricalTable"));
+	empiricalTable.forEach(function(item){
+		console.log(item);
+	});
+	console.log(empiricalTable);
+	console.log(empiricalTable[0][0]);
+	var eventName = empiricalTable[0][1];
+	console.log(eventName);
+	var eventDate = empiricalTable[0][2];
+	console.log(eventDate);
+	
+	empiricalTable.forEach(function(item){
+		if(item[0] == eventID){
+			var boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
+			console.log(boxLocation);
+			for (var i = 0; i < boxLocation.length; i++) {
+				if(boxLocation[i][5] == eventID) {
+					boxEmpericalCanvasWrapperClear(boxLocation[i][0], boxLocation[i][1], boxLocation[i][2], boxLocation[i][3]);
+					boxEmpericalCanvasWrapperDraw(boxLocation[i][0],boxLocation[i][1],boxLocation[i][2],boxLocation[i][3],boxLocation[i][4],true);
+					i = boxLocation.length;
+					console.log("this happened");
+				}
+			}
+		}else {
+			createAdaptBox(eventID, eventName, eventDate, function(eventID, text, width, height, date) {
+				positionAdaptBox(eventID, text, width, height, date, function(x,y,width,height,text,emperical) {
+					boxEmpericalCanvasWrapperDraw(x,y,width,height,text,emperical)
+				});
+			});
+			console.log("or maybe this");
+		}
+	});
 
-    var eventName = adaptObj[eventID][0];
-    var eventDate = adaptObj[eventID][1];
-    var eventBoundaryStart = adaptObj[eventID][2];
-    var eventBoundaryEnd = adaptObj[eventID][3];
-    var count = adaptObj[eventID][4];
-
-    if(adaptObj[eventID][4] > 0) {
-        var boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
-        for (var i = 0; i < boxLocation.length; i++) {
-            if(boxLocation[i][5] == eventID) {
-                boxEmpericalCanvasWrapperClear(boxLocation[i][0], boxLocation[i][1], boxLocation[i][2], boxLocation[i][3]);
-                boxEmpericalCanvasWrapperDraw(boxLocation[i][0],boxLocation[i][1],boxLocation[i][2],boxLocation[i][3],boxLocation[i][4],true);
-                i = boxLocation.length;
-            }
-        }
-    }
-    else {
-        createAdaptBox(eventID, eventName, eventDate, function(eventID, text, width, height, date) {
-            positionAdaptBox(eventID, text, width, height, date, function(x,y,width,height,text,emperical) {
-                boxEmpericalCanvasWrapperDraw(x,y,width,height,text,emperical)
-            });
-        });
-    }
 }
 
 function removeHypoAdaptation(eventID, callback) {
