@@ -4,7 +4,7 @@
 var canvas_div_w = 0; // Container of Canvas width in pixels
 var canvas_div_h_hypo = 0; // Container of Hypothetical Canvas height in pixels
 var canvas_div_h_scroll = 0; // Container of Scrollbar Canvas height in pixels
-var canvas_div_h_emper = 0; // Container of Emperical Canvas height in pixels
+var canvas_div_h_empir = 0; // Container of Empirical Canvas height in pixels
 
 /* Canvas Dimensions */
 
@@ -16,9 +16,9 @@ var canvas1_234_h = 0; // Hypothetical Canvas (Layer 2: Grey Areas, Layer 3: Con
 var canvas2_12_w = 0; // Scrollbar Canvas (Layer 1: Scrollbar Container, Layer 2: Scrollbar Block) width in pixels
 var canvas2_12_h = 0; // Scrollbar Canvas (Layer 1: Scrollbar Container, Layer 2: Scrollbar Block) height in pixels
 
-// Emperical Canvas Dimensions
-var canvas3_1_h = 0; // Emperical Canvas (Layer 1: Timeline) height in pixels 
-var canvas3_2_h = 0; // Emperical Canvas (Layer 2: Connections, Layer 3: Adaptations) height in pixels
+// Empirical Canvas Dimensions
+var canvas3_1_h = 0; // Empirical Canvas (Layer 1: Timeline) height in pixels 
+var canvas3_2_h = 0; // Empirical Canvas (Layer 2: Connections, Layer 3: Adaptations) height in pixels
 
 // Canvas Drawing Variables
 var topcanvas1;
@@ -99,7 +99,7 @@ var largest_timespan = 12000000; // When user is all the way scaled out, what is
 var smallest_timespan = 1000000; // When user is all the way scaled in, what is the smallest amount of time to be viewed
 var max_char_per_line = 15;
 var hypo_box_fill_style_relation = "rgba(111,130,145,0.9)";
-var hypo_box_fill_style_emperical = "rgba(6,74,121,0.9)";
+var hypo_box_fill_style_empirical = "rgba(6,74,121,0.9)";
 var hypo_box_font_color = "rgba(255,255,255,1)";
 var hypo_box_font_size = 20;
 var hypo_box_font_family = "Roboto";
@@ -115,8 +115,8 @@ var increments_font_family = "Roboto";
 var hypo_timeline_font_color = "rgba(255,255,255,1)";
 
 
-//Global Variables for emperical timeline will go here
-var emperCanvas = [];
+//Global Variables for empirical timeline will go here
+var empirCanvas = [];
 
 
 
@@ -258,13 +258,13 @@ function initCanvas() {
 
 function resizeCanvas() {
     $('#canvas-wrapper-div').append(hypothesis_canvas);
-    $('#emperical-canvas-div').append(emperical_canvas);
+    $('#empirical-canvas-div').append(empirical_canvas);
 
     // Set Canvas Div Size from Browser Realtime Values
     canvas_div_w = $('#hypothesis-canvas-div').width();
     canvas_div_h_hypo = $('#canvas-wrapper-div').height();
     canvas_div_h_scroll = $('#scrollbar-canvas-div').height();
-    canvas_div_h_emper = $('#emperical-canvas-div').height();
+    canvas_div_h_empir = $('#empirical-canvas-div').height();
     canvas_timeline_w = canvas_div_w * 12;
 
     // Calculate Hypothetical Canvas Dimensions
@@ -283,9 +283,9 @@ function resizeCanvas() {
     $('#scrollbar-canvas-block').width = canvas_div_w;
     minScrollbar = 1/12 * canvas_div_w;
 	
-    // Resize Emperical Canvas
-	// TODO set emperical canvas wrapper width to canvas_timeline_w => done
-	$('#emperical-wrapper-div').width = canvas_timeline_w;
+    // Resize Empirical Canvas
+	// TODO set empirical canvas wrapper width to canvas_timeline_w => done
+	$('#empirical-wrapper-div').width = canvas_timeline_w;
   
 
     // Redefine Canvas Context(s)
@@ -302,18 +302,18 @@ function resizeCanvas() {
     topcanvas11 = document.getElementById('hypothesis-canvas-11');
     topcanvas12 = document.getElementById('hypothesis-canvas-12');
 
-    botcanvas1 = document.getElementById('emperical-canvas-1');
-    botcanvas2 = document.getElementById('emperical-canvas-2');
-    botcanvas3 = document.getElementById('emperical-canvas-3');
-    botcanvas4 = document.getElementById('emperical-canvas-4');
-    botcanvas5 = document.getElementById('emperical-canvas-5');
-    botcanvas6 = document.getElementById('emperical-canvas-6');
-    botcanvas7 = document.getElementById('emperical-canvas-7');
-    botcanvas8 = document.getElementById('emperical-canvas-8');
-    botcanvas9 = document.getElementById('emperical-canvas-9');
-    botcanvas10 = document.getElementById('emperical-canvas-10');
-    botcanvas11 = document.getElementById('emperical-canvas-11');
-    botcanvas12 = document.getElementById('emperical-canvas-12');
+    botcanvas1 = document.getElementById('empirical-canvas-1');
+    botcanvas2 = document.getElementById('empirical-canvas-2');
+    botcanvas3 = document.getElementById('empirical-canvas-3');
+    botcanvas4 = document.getElementById('empirical-canvas-4');
+    botcanvas5 = document.getElementById('empirical-canvas-5');
+    botcanvas6 = document.getElementById('empirical-canvas-6');
+    botcanvas7 = document.getElementById('empirical-canvas-7');
+    botcanvas8 = document.getElementById('empirical-canvas-8');
+    botcanvas9 = document.getElementById('empirical-canvas-9');
+    botcanvas10 = document.getElementById('empirical-canvas-10');
+    botcanvas11 = document.getElementById('empirical-canvas-11');
+    botcanvas12 = document.getElementById('empirical-canvas-12');
 
     canvas1_1 = document.getElementById('timeline-increments');
 
@@ -363,45 +363,45 @@ function resizeCanvas() {
 				ctx_top_5, ctx_top_6, ctx_top_7, ctx_top_8,
 				ctx_top_9, ctx_top_10, ctx_top_11, ctx_top_12];
 	
-	//Emperical timeline
+	//Empirical timeline
     ctx_bot_1 = botcanvas1.getContext("2d");
 	ctx_bot_1.canvas.width = canvas_div_w;
-    ctx_bot_1.canvas.height = canvas_div_h_emper;
+    ctx_bot_1.canvas.height = canvas_div_h_empir;
     ctx_bot_2 = botcanvas2.getContext("2d");
 	ctx_bot_2.canvas.width = canvas_div_w;
-    ctx_bot_2.canvas.height = canvas_div_h_emper;
+    ctx_bot_2.canvas.height = canvas_div_h_empir;
     ctx_bot_3 = botcanvas3.getContext("2d");
 	ctx_bot_3.canvas.width = canvas_div_w;
-    ctx_bot_3.canvas.height = canvas_div_h_emper;
+    ctx_bot_3.canvas.height = canvas_div_h_empir;
     ctx_bot_4 = botcanvas4.getContext("2d");
 	ctx_bot_4.canvas.width = canvas_div_w;
-    ctx_bot_4.canvas.height = canvas_div_h_emper;
+    ctx_bot_4.canvas.height = canvas_div_h_empir;
     ctx_bot_5 = botcanvas5.getContext("2d");
 	ctx_bot_5.canvas.width = canvas_div_w;
-    ctx_bot_5.canvas.height = canvas_div_h_emper;
+    ctx_bot_5.canvas.height = canvas_div_h_empir;
     ctx_bot_6 = botcanvas6.getContext("2d");
 	ctx_bot_6.canvas.width = canvas_div_w;
-    ctx_bot_6.canvas.height = canvas_div_h_emper;
+    ctx_bot_6.canvas.height = canvas_div_h_empir;
     ctx_bot_7 = botcanvas7.getContext("2d");
 	ctx_bot_7.canvas.width = canvas_div_w;
-    ctx_bot_7.canvas.height = canvas_div_h_emper;
+    ctx_bot_7.canvas.height = canvas_div_h_empir;
     ctx_bot_8 = botcanvas8.getContext("2d");
 	ctx_bot_8.canvas.width = canvas_div_w;
-    ctx_bot_8.canvas.height = canvas_div_h_emper;
+    ctx_bot_8.canvas.height = canvas_div_h_empir;
     ctx_bot_9 = botcanvas9.getContext("2d");
 	ctx_bot_9.canvas.width = canvas_div_w;
-    ctx_bot_9.canvas.height = canvas_div_h_emper;
+    ctx_bot_9.canvas.height = canvas_div_h_empir;
     ctx_bot_10 = botcanvas10.getContext("2d");
 	ctx_bot_10.canvas.width = canvas_div_w;
-    ctx_bot_10.canvas.height = canvas_div_h_emper;
+    ctx_bot_10.canvas.height = canvas_div_h_empir;
     ctx_bot_11 = botcanvas11.getContext("2d");
 	ctx_bot_11.canvas.width = canvas_div_w;
-    ctx_bot_11.canvas.height = canvas_div_h_emper;
+    ctx_bot_11.canvas.height = canvas_div_h_empir;
     ctx_bot_12 = botcanvas12.getContext("2d");
 	ctx_bot_12.canvas.width = canvas_div_w;
-    ctx_bot_12.canvas.height = canvas_div_h_emper;
+    ctx_bot_12.canvas.height = canvas_div_h_empir;
 	
-	emperCanvas = [ctx_bot_1, ctx_bot_2, ctx_bot_3, ctx_bot_4,
+	empirCanvas = [ctx_bot_1, ctx_bot_2, ctx_bot_3, ctx_bot_4,
 				ctx_bot_5, ctx_bot_6, ctx_bot_7, ctx_bot_8,
 				ctx_bot_9, ctx_bot_10, ctx_bot_11, ctx_bot_12];
 				
@@ -427,7 +427,7 @@ function setdate (start, end) {
 }
 
 // Hypo Timeline function
-function boxCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text,emperical) {
+function boxCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text,empirical) {
     var canvas_total_width = 12 * canvas_div_w;
 
     var c_value = x_pos/canvas_div_w;
@@ -466,8 +466,8 @@ function boxCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text,emperi
         if(selected_canvas + i >= 0 && selected_canvas + i <= 11) {
             temp_x = x_pos - (i * canvas_div_w);
 
-            if (emperical) {
-                    hypoCanvas[selected_canvas + i].fillStyle = hypo_box_fill_style_emperical;
+            if (empirical) {
+                    hypoCanvas[selected_canvas + i].fillStyle = hypo_box_fill_style_empirical;
             }
             else {
                 hypoCanvas[selected_canvas + i].fillStyle = hypo_box_fill_style_relation;
@@ -485,8 +485,8 @@ function boxCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text,emperi
 }
 
 //In process 
-// Emperical Timeline function
-function boxEmpericalCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text,emperical) {
+// Empirical Timeline function
+function boxEmpiricalCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text,empirical) {
     var canvas_total_width = 12 * canvas_div_w;
 
     var c_value = x_pos/canvas_div_w;
@@ -524,13 +524,13 @@ function boxEmpericalCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,te
         if(selected_canvas + i >= 0 && selected_canvas + i <= 11) {
             temp_x = x_pos - (i * canvas_div_w);
 
-            emperCanvas[selected_canvas + i].fillStyle = hypo_box_fill_style_emperical;
-            emperCanvas[selected_canvas + i].fillRect(temp_x, y_pos, width_length, height_length);
-            emperCanvas[selected_canvas + i].font = hypo_box_font_size + "px " + hypo_box_font_family;
-            emperCanvas[selected_canvas + i].fillStyle = hypo_box_font_color;
-            emperCanvas[selected_canvas + i].textAlign = "center";
+            empirCanvas[selected_canvas + i].fillStyle = hypo_box_fill_style_empirical;
+            empirCanvas[selected_canvas + i].fillRect(temp_x, y_pos, width_length, height_length);
+            empirCanvas[selected_canvas + i].font = hypo_box_font_size + "px " + hypo_box_font_family;
+            empirCanvas[selected_canvas + i].fillStyle = hypo_box_font_color;
+            empirCanvas[selected_canvas + i].textAlign = "center";
             for (j = 0; j < text.length; j++) {
-                emperCanvas[selected_canvas + i].fillText(text[j], temp_x + (0.5 * width_length), y_pos + (hypo_box_font_size * (j + 1)));
+                empirCanvas[selected_canvas + i].fillText(text[j], temp_x + (0.5 * width_length), y_pos + (hypo_box_font_size * (j + 1)));
             }
         }
     }
@@ -575,7 +575,7 @@ function boxCanvasWrapperClear(x_pos,y_pos,width_length,height_length) {
 }
 
 //In process
-function boxEmpericalCanvasWrapperClear(x_pos,y_pos,width_length,height_length) {
+function boxEmpiricalCanvasWrapperClear(x_pos,y_pos,width_length,height_length) {
     var canvas_total_width = 12 * canvas_div_w;
     var c_value = x_pos/canvas_div_w;
     var selected_canvas = 0;
@@ -608,7 +608,7 @@ function boxEmpericalCanvasWrapperClear(x_pos,y_pos,width_length,height_length) 
     for(var i = -1; i < 2; i++) {
         if(selected_canvas + i >= 0 && selected_canvas + i <= 11) {
             temp_x = x_pos - (i * canvas_div_w);
-           emperCanvas[selected_canvas].clearRect((temp_x - 1), (y_pos - 1), (width_length + 3), (height_length + 3));
+           empirCanvas[selected_canvas].clearRect((temp_x - 1), (y_pos - 1), (width_length + 3), (height_length + 3));
        }
     }
 }
@@ -641,16 +641,44 @@ function createAdaptBox(eventID, eventName, date, callback) {
     callback(eventID, textArray, width, height, date);
 }
 
+function createEmpirAdaptBox(eventID, eventName, date, callback) {
+    var textArray = [];
+    ctx_bot_1.font = hypo_box_font_size + "px " + hypo_box_font_family;
+    var line = "";
+    var temp_str = eventName.split(" ");
+    temp_str.forEach(function(item) {
+        if(line.length + item.length <= max_char_per_line) {
+            line += item + " ";
+        }
+        else {
+            textArray.push(line.trim());
+            line = item + " ";
+        }
+    });
+    textArray.push(line.trim());
+
+    var longest_line = 0;
+    var width = 0;
+    textArray.forEach(function(item) {
+        if(longest_line < item.length) {
+            longest_line = item.length;
+            width = parseInt((ctx_bot_1.measureText(item).width + 5).toFixed(0));
+        }
+    });
+    var height = (hypo_box_font_size * textArray.length) + (5 * textArray.length);
+    callback(eventID, textArray, width, height, date);
+}
+
 function positionAdaptBox(eventID, text, width, height, date, callback) {
     var x_pos = 0;
     var y_pos = 0;
-    var emperical;
+    var empirical;
     var relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
     if(relationsObj[eventID] != undefined) {
-        emperical = true;
+        empirical = true;
     }
     else {
-        emperical = false;
+        empirical = false;
     }
 
     if(date >= 1000000) {
@@ -686,8 +714,57 @@ function positionAdaptBox(eventID, text, width, height, date, callback) {
     sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
 
 
-    callback(x_pos, y_pos, width, height, text, emperical);
+    callback(x_pos, y_pos, width, height, text, empirical);
 }
+
+function positionEmpirAdaptBox(eventID, text, width, height, date, callback) {
+    var x_pos = 0;
+    var y_pos = 0;
+    var empirical;
+    var relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
+    if(relationsObj[eventID] != undefined) {
+        empirical = true;
+    }
+    else {
+        empirical = false;
+    }
+
+    if(date >= 1000000) {
+        date = date + 4000000;
+    }
+    else {
+        date = date * 5;
+    }
+
+    timespan = (date_start - date_end);
+    viewable_time = timespan * scroll_ratio;
+    increment_per_pixel = (viewable_time/canvas_div_w);
+
+    var canvas_usage = timespan/12000000;
+    var usable_canvas = canvas_timeline_w * canvas_usage;
+    var viewable_canvas = canvas_div_w / viewable_time;
+
+    x_pos = date/increment_per_pixel;
+    x_pos = ((canvas_div_w/scroll_ratio) - x_pos) - width/2;
+
+    y_pos = canvas_div_h_empir/2 - height/2;
+
+    var boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
+    boxLocation.push([x_pos,y_pos,width,height,text,eventID]);
+    boxLocation.sort(function(a,b) {
+        if(a[0] === b[0]) {
+            return 0;
+        }
+        else {
+            return (a[0] < b[0]) ? -1 : 1;
+        }
+    });
+    sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
+
+
+    callback(x_pos, y_pos, width, height, text, empirical);
+}
+
 
 function addHypoAdaptation(eventID) {
     var adaptArray = JSON.parse(sessionStorage.getItem("adaptArray"));
@@ -712,8 +789,8 @@ function addHypoAdaptation(eventID) {
     }
     else {
         createAdaptBox(eventID, eventName, eventDate, function(eventID, text, width, height, date) {
-            positionAdaptBox(eventID, text, width, height, date, function(x,y,width,height,text,emperical) {
-                boxCanvasWrapperDraw(x,y,width,height,text,emperical)
+            positionAdaptBox(eventID, text, width, height, date, function(x,y,width,height,text,empirical) {
+                boxCanvasWrapperDraw(x,y,width,height,text,empirical)
             });
         });
     }
@@ -725,8 +802,8 @@ function addHypoAdaptation(eventID) {
             var eventBoundaryEnd = adaptObj[item[0]][3];
             var count = adaptObj[item[0]][4];
             createAdaptBox(item[0], eventName, eventDate, function(eventID, text, width, height, date) {
-                positionAdaptBox(eventID, text, width, height, date, function(x,y,width,height,text,emperical) {
-                    boxCanvasWrapperDraw(x,y,width,height,text,emperical)
+                positionAdaptBox(eventID, text, width, height, date, function(x,y,width,height,text,empirical) {
+                    boxCanvasWrapperDraw(x,y,width,height,text,empirical)
                 });
             });
         }
@@ -737,37 +814,20 @@ function addHypoAdaptation(eventID) {
 //Fix - use empiricalTable instead of adaptObj
 //empiricalTable[eventID]
 //var empiricalTable = JSON.parse(sessionStorage.getItem(("empiricalTable"));
-function addEmperAdaptation(eventID) {
+function addEmpirAdaptation(eventID) {
     var empiricalTable = JSON.parse(sessionStorage.getItem("empiricalTable"));
-	empiricalTable.forEach(function(item){
-		console.log(item);
-	});
-	console.log(empiricalTable);
-	console.log(empiricalTable[0][0]);
-	var eventName = empiricalTable[0][1];
-	console.log(eventName);
-	var eventDate = empiricalTable[0][2];
-	console.log(eventDate);
 	
-	empiricalTable.forEach(function(item){
-		if(item[0] == eventID){
-			var boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
-			console.log(boxLocation);
-			for (var i = 0; i < boxLocation.length; i++) {
-				if(boxLocation[i][5] == eventID) {
-					boxEmpericalCanvasWrapperClear(boxLocation[i][0], boxLocation[i][1], boxLocation[i][2], boxLocation[i][3]);
-					boxEmpericalCanvasWrapperDraw(boxLocation[i][0],boxLocation[i][1],boxLocation[i][2],boxLocation[i][3],boxLocation[i][4],true);
-					i = boxLocation.length;
-					console.log("this happened");
-				}
-			}
-		}else {
-			createAdaptBox(eventID, eventName, eventDate, function(eventID, text, width, height, date) {
-				positionAdaptBox(eventID, text, width, height, date, function(x,y,width,height,text,emperical) {
-					boxEmpericalCanvasWrapperDraw(x,y,width,height,text,emperical)
+	empiricalTable.forEach(function(empirRecord){
+
+		if(empirRecord[0] == eventID){
+			var eventName = empirRecord[1];
+			var eventDate = empirRecord[2];
+			console.log(empirRecord[0]);
+			createEmpirAdaptBox(eventID, eventName, eventDate, function(eventID, text, width, height, date) {
+				positionEmpirAdaptBox(eventID, text, width, height, date, function(x,y,width,height,text,empirical) {
+					boxEmpiricalCanvasWrapperDraw(x,y,width,height,text,empirical)
 				});
 			});
-			console.log("or maybe this");
 		}
 	});
 
@@ -778,7 +838,7 @@ function removeHypoAdaptation(eventID, callback) {
     var relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
     var boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
 
-    // Emperical undraw
+    // Empirical undraw
     if(adaptObj[eventID][4] == 0) {
         for (var i = 0; i < boxLocation.length; i++) {
             if(boxLocation[i][5] == eventID) {
@@ -814,28 +874,19 @@ function removeHypoAdaptation(eventID, callback) {
 }
 
 //In Process
-function removeEmperAdaptation(eventID, callback) {
-    var adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
+function removeEmpirAdaptation(eventID, callback) {
+    var empiricalTable = JSON.parse(sessionStorage.getItem("empiricalTable"));
     var boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
 
-    // Emperical undraw
-    if(adaptObj[eventID][4] == 0) {
-        for (var i = 0; i < boxLocation.length; i++) {
-            if(boxLocation[i][5] == eventID) {
-                boxEmpericalCanvasWrapperClear(boxLocation[i][0], boxLocation[i][1], boxLocation[i][2], boxLocation[i][3]);
-                boxLocation.splice(i, 1);
-                i = boxLocation.length;
-            }
-        }
-    }
-    else {
+    // Empirical undraw
+
         for(var i = 0; i < boxLocation.length; i++) {
             if(boxLocation[i][5] == eventID) {
-                boxEmpericalCanvasWrapperClear(boxLocation[i][0], boxLocation[i][1], boxLocation[i][2], boxLocation[i][3]);
-                boxEmpericalCanvasWrapperDraw(boxLocation[i][0], boxLocation[i][1], boxLocation[i][2], boxLocation[i][3], boxLocation[i][4], false);
+                boxEmpiricalCanvasWrapperClear(boxLocation[i][0], boxLocation[i][1], boxLocation[i][2], boxLocation[i][3]);
+                boxEmpiricalCanvasWrapperDraw(boxLocation[i][0], boxLocation[i][1], boxLocation[i][2], boxLocation[i][3], boxLocation[i][4], false);
             }
         }
-    }
+    
 
     sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
     callback(eventID);
@@ -1025,17 +1076,17 @@ var hypothesis_canvas = `
     <canvas id="hypothesis-canvas-11" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
     <canvas id="hypothesis-canvas-12" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
     `;
-var emperical_canvas = `
-    <canvas id="emperical-canvas-1" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="emperical-canvas-2" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="emperical-canvas-3" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="emperical-canvas-4" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="emperical-canvas-5" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="emperical-canvas-6" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="emperical-canvas-7" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="emperical-canvas-8" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="emperical-canvas-9" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="emperical-canvas-10" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="emperical-canvas-11" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="emperical-canvas-12" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+var empirical_canvas = `
+    <canvas id="empirical-canvas-1" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="empirical-canvas-2" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="empirical-canvas-3" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="empirical-canvas-4" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="empirical-canvas-5" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="empirical-canvas-6" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="empirical-canvas-7" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="empirical-canvas-8" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="empirical-canvas-9" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="empirical-canvas-10" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="empirical-canvas-11" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="empirical-canvas-12" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
     `;
