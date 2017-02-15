@@ -7,7 +7,7 @@ $(document).ready(function() {
 $(window).resize(function(){
      initCanvas(1);
      redrawHypo(0);
-     redrawLines(0);
+     drawLines(0);
 });
 $('#side-nav').ready(function(){
     setupSideNav(function(){

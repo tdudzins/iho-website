@@ -186,6 +186,9 @@ function initCanvas(firstRun) {
         canvas2_2.onmousedown = scrollbarDown;
         window.onmouseup = scrollbarUp;
         window.onmousemove = scrollbarMove;
+        canvas2_2.touchstart = scrollbarDown;
+        window.touchend = scrollbarUp;
+        window.touchmove = scrollbarMove;
     }
     // Initialize Scrollbar
     drawScrollbarContainer();
