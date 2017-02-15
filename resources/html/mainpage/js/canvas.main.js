@@ -843,10 +843,8 @@ function positionAdaptBox(eventID, text, width, height, date) {
 }
 function removeHypoAdaptation(eventID, callback) {
     // Emperical undraw
-    relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
-    adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
-    hypo_box_font_size_change = hypo_box_font_size; // reset font size
     if(adaptObj[eventID][4] == 0) {
+         delete middleBoxObj[eventID];
         for (var i = 0; i <= boxLocation.length; i++) {
             if(boxLocation[i][5] == eventID) {
                 boxCanvasWrapperClear(boxLocation[i][0], boxLocation[i][1], boxLocation[i][2], boxLocation[i][3]);
@@ -870,6 +868,7 @@ function removeHypoAdaptation(eventID, callback) {
     // Relations undraw
     relationsObj[eventID].forEach(function(item) {
         if(adaptObj[item[0]][4] < 1) {
+            delete middleBoxObj[item[0]];
             for(var i = 0; i <= boxLocation.length; i++) {
                 if(boxLocation[i][5] == item[0]) {
                     boxCanvasWrapperClear(boxLocation[i][0], boxLocation[i][1], boxLocation[i][2], boxLocation[i][3]);
@@ -882,8 +881,9 @@ function removeHypoAdaptation(eventID, callback) {
             }
         }
     });
+    delete relationsObj[eventID];
+    hypo_box_font_size_change = hypo_box_font_size; // reset font size
     sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
-    drawLines(0);
     callback(eventID);
 }
 function drawAllBoxes() {
