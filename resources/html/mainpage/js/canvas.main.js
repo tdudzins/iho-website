@@ -186,9 +186,9 @@ function initCanvas(firstRun) {
         canvas2_2.onmousedown = scrollbarDown;
         window.onmouseup = scrollbarUp;
         window.onmousemove = scrollbarMove;
-        canvas2_2.touchstart = scrollbarDown;
-        window.touchend = scrollbarUp;
-        window.touchmove = scrollbarMove;
+        canvas2_2.ontouchstart = scrollbarDown;
+        window.ontouchend = scrollbarUp;
+        window.ontouchmove = scrollbarMove;
     }
     // Initialize Scrollbar
     drawScrollbarContainer();
@@ -197,14 +197,19 @@ function initCanvas(firstRun) {
 
     // handle mousedown events
     function scrollbarDown(e) {
-
         // tell the browser we're handling this mouse event
         e.preventDefault();
         e.stopPropagation();
 
         // get the current mouse position
-        var mx=parseInt(e.clientX-offsetX);
-        var my=parseInt(e.clientY-offsetY);
+        if(e.clientX == undefined){
+            var mx=parseInt(e.changedTouches[0].clientX-offsetX);
+            var my=parseInt(e.changedTouches[0].clientY-offsetY);
+        }
+        else{
+            var mx=parseInt(e.clientX-offsetX);
+            var my=parseInt(e.clientY-offsetY);
+        }
         // test each rect to see if mouse is inside
         dragok=false;
         for (var i=0;i<scrollRegions.length;i++) {
@@ -223,6 +228,7 @@ function initCanvas(firstRun) {
     // handle mouseup events
     function scrollbarUp(e) {
         // tell the browser we're handling this mouse event
+
         e.preventDefault();
         e.stopPropagation();
 
@@ -241,6 +247,7 @@ function initCanvas(firstRun) {
 
     // handle mouse moves
     function scrollbarMove(e) {
+
         // if we're dragging anything...
         if(dragok) {
             // tell the browser we're handling this mouse event
@@ -248,9 +255,14 @@ function initCanvas(firstRun) {
             e.stopPropagation();
 
             // get the current mouse position
-            var mx=parseInt(e.clientX-offsetX);
-            var my=parseInt(e.clientY-offsetY);
-
+            if(e.clientX == undefined){
+                var mx=parseInt(e.changedTouches[0].clientX-offsetX);
+                var my=parseInt(e.changedTouches[0].clientY-offsetY);
+            }
+            else{
+                var mx=parseInt(e.clientX-offsetX);
+                var my=parseInt(e.clientY-offsetY);
+            }
             // calculate the distance the mouse has moved
             // since the last mousemove
             var dx=mx-startX;
@@ -938,6 +950,7 @@ function redrawHypo(size) {
             last_scroll_ratio = scroll_ratio;
             last_hypo_font_size = hypo_box_font_size_change;
             hypo_box_font_size_change = hypo_box_font_size;
+            temp_text = 0;
             // Clear boxes
             for(var i = 0; i < 12; i++) {
                 hypoCanvas[i].clearRect(0, 0, canvas_div_w, canvas_div_h_hypo);
