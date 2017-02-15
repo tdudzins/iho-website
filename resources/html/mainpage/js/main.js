@@ -126,12 +126,6 @@ function removeAdaption(eventID, callback){
                i = empiricalTable.length;
           }
      }
-     for(var i = 0; i < empiricalTable.length; i++){
-          if(empiricalTable[i][0] === eventID){
-               empiricalTable.splice(i, 1);
-               i = empiricalTable.length;
-          }
-     }
      relationsObj[eventID].forEach(function(item){
           if (adaptObj[item[0]][4] === 0) {
                delete adaptObj[item[0]];

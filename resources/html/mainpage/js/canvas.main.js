@@ -224,8 +224,8 @@ function initCanvas(firstRun) {
         e.stopPropagation();
 
         if(bar_mouse_up) {
+            drawLines(0);
             redrawHypo(0);
-            redrawLines(0);
             bar_mouse_up = 0;
         }
 
@@ -288,7 +288,7 @@ function initCanvas(firstRun) {
 
             // redraw
             drawScrollbarBlock();
-            redrawLines(.00001);
+            drawLines(.00001);
             redrawHypo(.00001);
             // reset the starting mouse position for the next mousemove
             startX=mx;
@@ -714,7 +714,7 @@ function addHypoAdaptation(eventID) {
     }
     // Draw all the boxes when done
     console.log('All fit');
-    drawLines();
+    drawLines(0);
     drawAllBoxes();
 }
 function createAdaptBox(eventID, eventName, date, callback) {
@@ -868,25 +868,8 @@ function removeHypoAdaptation(eventID, callback) {
         }
     });
     sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
-    redrawLines(0);
+    drawLines(0);
     callback(eventID);
-}
-function drawLines() {
-    lineLocation = [];
-    boxLocation.forEach(function(item){
-        if(relationsObj[item[5]] != undefined){
-                relationsObj[item[5]].forEach(function(item2){
-
-                    if(middleBoxObj[item[5]][0] < middleBoxObj[item2[0]][1])
-                        lineLocation.push([middleBoxObj[item[5]][0], middleBoxObj[item[5]][1], middleBoxObj[item2[0]][0], middleBoxObj[item2[0]][1], "black"]);
-                    else
-                        lineLocation.push([middleBoxObj[item2[0]][0], middleBoxObj[item2[0]][1], middleBoxObj[item[5]][0], middleBoxObj[item[5]][1], "black"]);
-                });
-        }
-    });
-    lineLocation.forEach(function(item){
-        lineCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4]);
-    });
 }
 function drawAllBoxes() {
     // Clear boxes
@@ -974,12 +957,26 @@ function redrawHypo(size) {
             drawAllBoxes();
         }
 }
-function redrawLines(size) {
+function drawLines(size) {
     if(Math.abs(last_scroll_ratio - scroll_ratio) > size || size == 0) {
         for(var i = 0; i < 12; i++) {
             hypoCanvas2[i].clearRect(0, 0, canvas_div_w, canvas_div_h_hypo);
         }
-        drawLines();
+        lineLocation = [];
+        boxLocation.forEach(function(item){
+            if(relationsObj[item[5]] != undefined){
+                    relationsObj[item[5]].forEach(function(item2){
+
+                        if(middleBoxObj[item[5]][0] < middleBoxObj[item2[0]][1])
+                            lineLocation.push([middleBoxObj[item[5]][0], middleBoxObj[item[5]][1], middleBoxObj[item2[0]][0], middleBoxObj[item2[0]][1], "black"]);
+                        else
+                            lineLocation.push([middleBoxObj[item2[0]][0], middleBoxObj[item2[0]][1], middleBoxObj[item[5]][0], middleBoxObj[item[5]][1], "black"]);
+                    });
+            }
+        });
+        lineLocation.forEach(function(item){
+            lineCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4]);
+        });
     }
 }
 
