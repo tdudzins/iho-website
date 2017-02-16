@@ -112,6 +112,7 @@ var ctx2_2;
 // Global Variables
 var scroll_ratio = 0.0; // Block/Container ratio in percent
 var last_scroll_ratio = 1.0; // Used in redrawHypo
+var last_scroll_ratio_lines = 1.0; // Used in redrawHypo
 var scroll_position = 0.0; // Block/Container ratio in percent
 var scroll_left_handle_x_position = 0;
 var scroll_right_handle_x_position = 0;
@@ -194,6 +195,7 @@ function initCanvas(firstRun) {
     drawScrollbarContainer();
     drawScrollbarBlock();
     last_scroll_ratio = scroll_ratio;
+    last_scroll_ratio_lines = scroll_ratio;
 
     // handle mousedown events
     function scrollbarDown(e) {
@@ -233,8 +235,8 @@ function initCanvas(firstRun) {
         e.stopPropagation();
 
         if(bar_mouse_up) {
-            drawLines(0);
             redrawHypo(0);
+            drawLines(0);
             bar_mouse_up = 0;
         }
 
@@ -303,8 +305,8 @@ function initCanvas(firstRun) {
 
             // redraw
             drawScrollbarBlock();
-            drawLines(.00001);
             redrawHypo(.00001);
+            drawLines(.00001);
             // reset the starting mouse position for the next mousemove
             startX=mx;
             startY=my;
@@ -955,6 +957,7 @@ function redrawHypo(size) {
             for(var i = 0; i < 12; i++) {
                 hypoCanvas[i].clearRect(0, 0, canvas_div_w, canvas_div_h_hypo);
             }
+            dir = (dir>0)?0:1;
             while(hypo_box_font_size_change != temp_text) {
                 console.log('temp_text ' + temp_text);
                 console.log('hypo_box_font_size_change ' + hypo_box_font_size_change);
@@ -974,7 +977,8 @@ function redrawHypo(size) {
         }
 }
 function drawLines(size) {
-    if(Math.abs(last_scroll_ratio - scroll_ratio) > size || size == 0) {
+    if(Math.abs(last_scroll_ratio_lines - scroll_ratio) > size || size == 0) {
+        last_scroll_ratio_lines = scroll_ratio;
         for(var i = 0; i < 12; i++) {
             hypoCanvas2[i].clearRect(0, 0, canvas_div_w, canvas_div_h_hypo);
         }
