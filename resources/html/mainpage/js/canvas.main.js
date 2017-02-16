@@ -316,10 +316,8 @@ function initCanvas(firstRun) {
         timespan = (date_start - date_end);
         viewable_time = timespan * scroll_ratio;
         increment_per_pixel = (viewable_time/canvas_div_w);
-        //canvas_usage = timespan/12000000;
-        //usable_canvas = canvas_timeline_w * canvas_usage;
         left_edge_date = timespan - (timespan * scroll_position) + date_end;
-        var offset = -1 * ((12000000 - left_edge_date)/increment_per_pixel);
+        var offset = 20+(-1 * ((12000000 - left_edge_date)/increment_per_pixel));
         $('#canvas-wrapper-lines-div').css("margin-left", offset + "px");
         $('#canvas-wrapper-adaptations-div').css("margin-left", offset + "px");
     }
@@ -1150,10 +1148,10 @@ function drawTimelineIncrements() {
 
     var total_increments = (timespan/1000000) + 1;
 
-    var increment_per_pixel = (viewable_time/ctx1_1.canvas.width);
+    var increment_per_pixel = (viewable_time/(ctx1_1.canvas.width-40));
     var total_scale_size = timespan / increment_per_pixel;
     var change = total_scale_size / (total_increments - 1);
-    var xpos = 0 - (total_scale_size * scroll_position);
+    var xpos = 20+(0 - (total_scale_size * scroll_position));
 
     var text = '';
     for(var i = 0; i < total_increments; i++) {
@@ -1165,6 +1163,7 @@ function drawTimelineIncrements() {
         else {
           text = ((date_start-4000000)/1000000) - i;
           text = (.8 + (text * 0.2)).toFixed(1);
+          text = (text < 0.09)?0:text;
           text += 'M';
         }
         ctx1_1.fillText(text, xpos, 20);
