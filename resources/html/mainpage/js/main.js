@@ -51,7 +51,9 @@ function setupSideNav(callback) {
                     $(this).children('img').attr('src', '/resources/html/mainpage/img/unselected.png');
                     //TODO remove empirical boxes
                     removeHypoAdaptation($(this).attr('id'), function(eid){
-                        removeAdaption(eid, function(){});
+                        removeAdaption(eid, function(){
+                            drawLines(0);
+                        });
                     });
                 }
                 // Select
