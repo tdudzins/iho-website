@@ -50,10 +50,8 @@ function setupSideNav(callback) {
                 if($(this).hasClass('adaptation-item-selected') && relationsObj[$(this).attr('id')] !== undefined){
                     $(this).children('img').attr('src', '/resources/html/mainpage/img/unselected.png');
                     //TODO remove empirical boxes
-                    removeHypoAdaptation($(this).attr('id'), function(eid){
-                        removeAdaption(eid, function(){
-                            drawLines(0);
-                        });
+                    removeAdaption($(this).attr('id'), function(eid){
+                        removeHypoAdaptation(eid, function(){});
                     });
                 }
                 // Select
@@ -161,7 +159,7 @@ function removeAdaption(eventID, callback){
      sessionStorage.setItem("adaptObj", JSON.stringify(adaptObj));
      sessionStorage.setItem("relationsObj", JSON.stringify(relationsObj));
      sessionStorage.setItem("empiricalTable", JSON.stringify(empiricalTable));
-     callback();
+     callback(eventID);
 }
 
 // Server interaction functions

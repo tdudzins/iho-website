@@ -715,6 +715,8 @@ function addHypoAdaptation(eventID) {
             return;
     });
     // Shrink all the boxes untill they fit
+
+    dir = (dir)? 0:1;
     while(hypo_box_font_size_change != temp_text) {
         console.log('temp_text ' + temp_text + 'hypo_box_font_size_change ' + hypo_box_font_size_change);
         temp_text = hypo_box_font_size_change;
@@ -842,20 +844,17 @@ function positionAdaptBox(eventID, text, width, height, date) {
     sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
 }
 function removeHypoAdaptation(eventID, callback) {
-    adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
-    adaptArray = JSON.parse(sessionStorage.getItem("adaptArray"));
-    relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
     // Emperical undraw
     if(adaptObj[eventID][4] == 0) {
         delete middleBoxObj[eventID];
-        for (var i = 0; i <= boxLocation.length; i++) {
+        for (var i = 0; i < boxLocation.length; i++) {
             if(boxLocation[i][5] == eventID) {
                 boxCanvasWrapperClear(boxLocation[i][0], boxLocation[i][1], boxLocation[i][2], boxLocation[i][3]);
                 if(boxLocation.length == 1)
                     boxLocation = [];
                 else
                     boxLocation.splice(i, 1);
-                i = boxLocation.length;
+                //i = boxLocation.length;
             }
         }
     }
@@ -872,21 +871,26 @@ function removeHypoAdaptation(eventID, callback) {
     relationsObj[eventID].forEach(function(item) {
         if(adaptObj[item[0]][4] < 1) {
             delete middleBoxObj[item[0]];
-            for(var i = 0; i <= boxLocation.length; i++) {
+            for(var i = 0; i < boxLocation.length; i++) {
                 if(boxLocation[i][5] == item[0]) {
                     boxCanvasWrapperClear(boxLocation[i][0], boxLocation[i][1], boxLocation[i][2], boxLocation[i][3]);
                     if(boxLocation.length == 1)
                         boxLocation = [];
                     else
                         boxLocation.splice(i, 1);
-                    i = boxLocation.length;
+                    //i = boxLocation.length;
                 }
             }
         }
     });
     delete relationsObj[eventID];
     hypo_box_font_size_change = hypo_box_font_size; // reset font size
+    adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
+    adaptArray = JSON.parse(sessionStorage.getItem("adaptArray"));
+    relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
     sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
+
+    drawLines(0);
     callback(eventID);
 }
 function drawAllBoxes() {
@@ -958,7 +962,8 @@ function redrawHypo(size) {
             for(var i = 0; i < 12; i++) {
                 hypoCanvas[i].clearRect(0, 0, canvas_div_w, canvas_div_h_hypo);
             }
-            dir = (dir>0)?0:1;
+
+            dir = (dir)? 0:1;
             while(hypo_box_font_size_change != temp_text) {
                 console.log('temp_text ' + temp_text);
                 console.log('hypo_box_font_size_change ' + hypo_box_font_size_change);
