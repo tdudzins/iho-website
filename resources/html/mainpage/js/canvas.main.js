@@ -844,9 +844,12 @@ function positionAdaptBox(eventID, text, width, height, date) {
     sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
 }
 function removeHypoAdaptation(eventID, callback) {
+    adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
+    adaptArray = JSON.parse(sessionStorage.getItem("adaptArray"));
+    relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
     // Emperical undraw
     if(adaptObj[eventID][4] == 0) {
-         delete middleBoxObj[eventID];
+        delete middleBoxObj[eventID];
         for (var i = 0; i <= boxLocation.length; i++) {
             if(boxLocation[i][5] == eventID) {
                 boxCanvasWrapperClear(boxLocation[i][0], boxLocation[i][1], boxLocation[i][2], boxLocation[i][3]);
