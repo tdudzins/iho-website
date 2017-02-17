@@ -718,7 +718,6 @@ function addHypoAdaptation(eventID) {
 
     dir = (dir)? 0:1;
     while(hypo_box_font_size_change != temp_text) {
-        console.log('temp_text ' + temp_text + 'hypo_box_font_size_change ' + hypo_box_font_size_change);
         temp_text = hypo_box_font_size_change;
         boxLocation = [];
         for (var i = 0; i < adaptArray.length; i++) {
@@ -730,7 +729,6 @@ function addHypoAdaptation(eventID) {
         }
     }
     // Draw all the boxes when done
-    console.log('All fit');
     drawLines(0);
     drawAllBoxes();
 }
@@ -761,8 +759,8 @@ function createAdaptBox(eventID, eventName, date, callback) {
     var longest_line = 0;
     var width = 0;
     textArray.forEach(function(item) {
-        if(longest_line < item.length) {
-            longest_line = item.length;
+        if(longest_line < ctx_top_1.measureText(item).width) {
+            longest_line = ctx_top_1.measureText(item).width;
             width = parseInt((ctx_top_1.measureText(item).width + text_in_box_padding_w).toFixed(0));
         }
     });
@@ -819,7 +817,6 @@ function positionAdaptBox(eventID, text, width, height, date) {
                         up = 1;
                 }
                 else {
-                    console.log('brk');
                     if(temp_text == hypo_box_font_size_change){
                         hypo_box_font_size_change -= 1;
                         if(hypo_box_font_size_change > 5){}// TODO dots
@@ -965,8 +962,6 @@ function redrawHypo(size) {
 
             dir = (dir)? 0:1;
             while(hypo_box_font_size_change != temp_text) {
-                console.log('temp_text ' + temp_text);
-                console.log('hypo_box_font_size_change ' + hypo_box_font_size_change);
                 temp_text = hypo_box_font_size_change;
                 boxLocation = [];
                 temp_text = hypo_box_font_size_change;
@@ -978,7 +973,6 @@ function redrawHypo(size) {
                         break;
                 }
             }
-            console.log('All fit');
             drawAllBoxes();
         }
 }

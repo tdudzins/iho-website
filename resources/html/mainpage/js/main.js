@@ -1,18 +1,20 @@
 // Event Listeners
 createArrays();
 $(document).ready(function() {
-     initCanvas(1);
-     initSlidePanels();
+    initCanvas(1);
+    initSlidePanels();
 });
 $(window).resize(function(){
-     initCanvas(1);
-     redrawHypo(0);
-     drawLines(0);
+    if($('#side-nav-toggle').find('img').attr('src') == '/resources/html/mainpage/img/arrow_open.png'){
+        var side_nav_width = -1 * ( 25 + parseInt($("#side-nav-panel").css('width')));
+        $("#side-nav-panel").css('margin-left', (side_nav_width + "px"));
+    }
+    initCanvas(1);
+    redrawHypo(0);
+    drawLines(0);
 });
 $('#side-nav').ready(function(){
-    setupSideNav(function(){
-
-    });
+    setupSideNav(function(){});
 });
 
 // Functions
@@ -187,30 +189,31 @@ function createArrays() {
 }
 
 function initSlidePanels() {
-     var side_nav_open = false;
-     var side_nav_width = -1 * ( 25 + parseInt($("#side-nav-panel").css('width')));
-     $("#side-nav-toggle").html(`<img src="/resources/html/mainpage/img/arrow_open.png" style="height:100%;width:100%;">`);
-     $("#about-page-clickable").click(function(){
-          if ($(this).hasClass("active")) {
-               $("#about-page-clickable").html(`<span id="about-page-toggle">ABOUT IHO PROJECT</span>
-               <img src="/resources/html/mainpage/img/about_plus.png" class="about-page-pic">`);
-               $("#about-page-panel").slideToggle("slow");
-          }
-          else {
-               $("#about-page-clickable").html(`<span id="about-page-toggle">ABOUT IHO PROJECT</span>
-               <img src="/resources/html/mainpage/img/about_minus.png" class="about-page-pic">`);
-               $("#about-page-panel").slideToggle("slow");
-          }
-          $(this).toggleClass("active");
-     });
-     $("#side-nav-toggle").click(function () {
-          if ($(this).hasClass("active")) {
-               $("#side-nav-panel").animate({marginLeft: side_nav_width + "px"}, 300);
-               $("#side-nav-toggle").html(`<img src="/resources/html/mainpage/img/arrow_open.png" style="height:100%;width:100%;">`);
-          } else {
-               $("#side-nav-panel").animate({marginLeft: "0px"}, 300);
-               $("#side-nav-toggle").html(`<img src="/resources/html/mainpage/img/arrow_close.png" style="height:100%;width:100%;">`);
-          }
-          $(this).toggleClass("active");
+    var side_nav_width = -1 * ( 25 + parseInt($("#side-nav-panel").css('width')));
+    $("#side-nav-toggle").html(`<img src="/resources/html/mainpage/img/arrow_open.png" style="height:100%;width:100%;">`);
+    $("#about-page-clickable").click(function(){
+        if ($(this).hasClass("active")) {
+            $("#about-page-clickable").html(`<span id="about-page-toggle">ABOUT IHO PROJECT</span>
+                <img src="/resources/html/mainpage/img/about_plus.png" class="about-page-pic">`);
+            $("#about-page-panel").slideToggle("slow");
+        }
+        else {
+            $("#about-page-clickable").html(`<span id="about-page-toggle">ABOUT IHO PROJECT</span>
+                <img src="/resources/html/mainpage/img/about_minus.png" class="about-page-pic">`);
+            $("#about-page-panel").slideToggle("slow");
+        }
+        $(this).toggleClass("active");
+    });
+    $("#side-nav-toggle").click(function () {
+        if ($(this).hasClass("active")) {
+            side_nav_width = -1 * ( 25 + parseInt($("#side-nav-panel").css('width')));
+            $("#side-nav-panel").animate({marginLeft: side_nav_width + "px"}, 300);
+            $("#side-nav-toggle").html(`<img src="/resources/html/mainpage/img/arrow_open.png" style="height:100%;width:100%;">`);
+        }
+        else {
+            $("#side-nav-panel").animate({marginLeft: "0px"}, 300);
+            $("#side-nav-toggle").html(`<img src="/resources/html/mainpage/img/arrow_close.png" style="height:100%;width:100%;">`);
+        }
+        $(this).toggleClass("active");
      });
 }
