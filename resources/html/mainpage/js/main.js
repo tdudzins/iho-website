@@ -1,6 +1,7 @@
 // Event Listeners
-createArrays();
 $(document).ready(function() {
+    createArrays();
+    initStorage()
     initCanvas(1);
     initSlidePanels();
 });

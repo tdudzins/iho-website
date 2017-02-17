@@ -1,113 +1,17 @@
 /************** Canvas Main **************/
 
 /* Canvas Div Dimensions */
-var canvas_div_w = 0; // Container of Canvas width in pixels
-var canvas_div_h_hypo = 0; // Container of Hypothetical Canvas height in pixels
-var canvas_div_h_scroll = 0; // Container of Scrollbar Canvas height in pixels
-var canvas_div_h_emper = 0; // Container of Emperical Canvas height in pixels
-
-/* Canvas Dimensions */
-
-// Hypothetical Canvas Dimensions
-var canvas1_1_h = 0; // Hypothetical Canvas (Layer 1: Timeline) height in pixels
-var canvas1_234_h = 0; // Hypothetical Canvas (Layer 2: Grey Areas, Layer 3: Connections, Layer 4: Adaptaions) height in pixels
-
-// Scrollbar Canvas Dimentsions
-var canvas2_12_w = 0; // Scrollbar Canvas (Layer 1: Scrollbar Container, Layer 2: Scrollbar Block) width in pixels
-var canvas2_12_h = 0; // Scrollbar Canvas (Layer 1: Scrollbar Container, Layer 2: Scrollbar Block) height in pixels
-
-// Emperical Canvas Dimensions
-var canvas3_1_h = 0; // Emperical Canvas (Layer 1: Timeline) height in pixels
-var canvas3_2_h = 0; // Emperical Canvas (Layer 2: Connections, Layer 3: Adaptations) height in pixels
+var canvas_div_w = canvas_div_h_hypo = canvas_div_h_scroll = canvas_div_h_emper =
+canvas1_1_h =  canvas1_234_h = canvas2_12_w =  canvas2_12_h = canvas3_1_h = canvas3_2_h = 0; // Emperical Canvas (Layer 2: Connections, Layer 3: Adaptations) height in pixels
 
 // Canvas Drawing Variables
-var topcanvas1;
-var topcanvas2;
-var topcanvas3;
-var topcanvas4;
-var topcanvas5;
-var topcanvas6;
-var topcanvas7;
-var topcanvas8;
-var topcanvas9;
-var topcanvas10;
-var topcanvas11;
-var topcanvas12;
-
-var topcanvas21;
-var topcanvas22;
-var topcanvas23;
-var topcanvas24;
-var topcanvas25;
-var topcanvas26;
-var topcanvas27;
-var topcanvas28;
-var topcanvas29;
-var topcanvas210;
-var topcanvas211;
-var topcanvas212;
-
-var botcanvas1;
-var botcanvas2;
-var botcanvas3;
-var botcanvas4;
-var botcanvas5;
-var botcanvas6;
-var botcanvas7;
-var botcanvas8;
-var botcanvas9;
-var botcanvas10;
-var botcanvas11;
-var botcanvas12;
-
-var canvas1_1;
-
-var canvas2_1;
-var canvas2_2;
-
-var ctx_top_1;
-var ctx_top_2;
-var ctx_top_3;
-var ctx_top_4;
-var ctx_top_5;
-var ctx_top_6;
-var ctx_top_7;
-var ctx_top_8;
-var ctx_top_9;
-var ctx_top_10;
-var ctx_top_11;
-var ctx_top_12;
-
-var ctx_top2_1;
-var ctx_top2_2;
-var ctx_top2_3;
-var ctx_top2_4;
-var ctx_top2_5;
-var ctx_top2_6;
-var ctx_top2_7;
-var ctx_top2_8;
-var ctx_top2_9;
-var ctx_top2_10;
-var ctx_top2_11;
-var ctx_top2_12;
-
-var ctx_bot_1;
-var ctx_bot_2;
-var ctx_bot_3;
-var ctx_bot_4;
-var ctx_bot_5;
-var ctx_bot_6;
-var ctx_bot_7;
-var ctx_bot_8;
-var ctx_bot_9;
-var ctx_bot_10;
-var ctx_bot_11;
-var ctx_bot_12;
-
-var ctx1_1;
-
-var ctx2_1;
-var ctx2_2;
+var topcanvas1, topcanvas2, topcanvas3, topcanvas4, topcanvas5, topcanvas6, topcanvas7, topcanvas8, topcanvas9, topcanvas10, topcanvas11, topcanvas12,
+topcanvas21, topcanvas22, topcanvas23, topcanvas24, topcanvas25, topcanvas26, topcanvas27, topcanvas28, topcanvas29, topcanvas210, topcanvas211, topcanvas212,
+botcanvas1, botcanvas2, botcanvas3, botcanvas4, botcanvas5, botcanvas6, botcanvas7, botcanvas8, botcanvas9, botcanvas10, botcanvas11, botcanvas12,
+ctx_top_1, ctx_top_2, ctx_top_3, ctx_top_4, ctx_top_5, ctx_top_6, ctx_top_7, ctx_top_8, ctx_top_9, ctx_top_10, ctx_top_11, ctx_top_12,
+ctx_top2_1, ctx_top2_2, ctx_top2_3, ctx_top2_4, ctx_top2_5, ctx_top2_6, ctx_top2_7, ctx_top2_8, ctx_top2_9, ctx_top2_10, ctx_top2_11, ctx_top2_12,
+ctx_bot_1, ctx_bot_2, ctx_bot_3, ctx_bot_4, ctx_bot_5, ctx_bot_6, ctx_bot_7, ctx_bot_8, ctx_bot_9, ctx_bot_10, ctx_bot_11, ctx_bot_12,
+canvas1_1, canvas2_1, canvas2_2,vctx1_1, ctx2_1, ctx2_2;
 
 // Global Variables
 var scroll_ratio = 0.0; // Block/Container ratio in percent
@@ -127,29 +31,22 @@ var date_end = 000000; // Latest date from selected adaptations
 var largest_timespan = 12000000; // When user is all the way scaled out, what is the largest amount of time to be viewed
 var smallest_timespan = 1000000; // When user is all the way scaled in, what is the smallest amount of time to be viewed
 var max_char_per_line = 15; // Used in positionAdaptBox
+var box_to_box_padding_size = 18;
+var text_in_box_padding_w = std_text_in_box_padding_w = 5;
+var text_in_box_padding_h = std_text_in_box_padding_h = 5;
+var hypo_box_font_size = temp_text = last_hypo_font_size = hypo_box_font_size_change = 25;
+var scrollbar_font_size = 13;
+var increments_font_size = 25;
+var hypo_box_font_family = scrollbar_font_family = increments_font_family = "Roboto";
+var increments_font_color = "rgba(0,0,0,1)";
 var hypo_box_fill_style_relation = "rgba(111,130,145,1.0)";
 var hypo_box_fill_style_emperical = "rgba(6,74,121,1.0)";
-var hypo_box_font_color = "rgba(255,255,255,1)";
-var box_to_box_padding_size = 18;
-var text_in_box_padding_w = 5;
-var text_in_box_padding_h = 5;
-var std_text_in_box_padding_w = 5;
-var std_text_in_box_padding_h = 5;
-var hypo_box_font_size = 25;
-var hypo_box_font_size_change = 25;
-var temp_text = hypo_box_font_size_change;
-var last_hypo_font_size = 25; // Used in redrawHypo
-var hypo_box_font_family = "Roboto";
 var scrollbar_container_fill_style = "rgba(220,220,220,0.3)";
 var scrollbar_block_fill_style = "rgba(250,250,250,0.5)";
 var scrollbar_handle_fill_style = "rgba(255,255,255,1.0)";
-var scrollbar_font_color = "rgba(255,255,255,1)";
-var scrollbar_font_size = 13;
-var scrollbar_font_family = "Roboto";
-var increments_font_color = "rgba(0,0,0,1)";
-var increments_font_size = 25;
-var increments_font_family = "Roboto";
-var hypo_timeline_font_color = "rgba(255,255,255,1)";
+var hypo_timeline_font_color = "rgba(255,255,255,1.0)";
+var hypo_box_font_color = "rgba(255,255,255,1.0)";
+var scrollbar_font_color = "rgba(255,255,255,1.0)";
 
 var adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
 var relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
@@ -166,7 +63,12 @@ var right_edge_date;
 var bar_mouse_up = 0;
 
 var canvasAdaptation = [];
-
+function initStorage(){
+    adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
+    relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
+    boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
+    adaptArray = JSON.parse(sessionStorage.getItem("adaptArray"));
+}
 function initCanvas(firstRun) {
     scrollRegions = [];
     hypo_box_font_size_change = hypo_box_font_size;
@@ -698,7 +600,7 @@ function addHypoAdaptation(eventID) {
     adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
     adaptArray = JSON.parse(sessionStorage.getItem("adaptArray"));
     relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
-    boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
+    //boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
     // Draw new things if they all fit
     if(adaptObj[eventID][4] < 1) {
         createAdaptBox(eventID, adaptObj[eventID][0], adaptObj[eventID][1], function(eventID, text, width, height, date) {
@@ -838,7 +740,7 @@ function positionAdaptBox(eventID, text, width, height, date) {
             return (a[0] < b[0]) ? -1 : 1;
         }
     });
-    sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
+    //sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
 }
 function removeHypoAdaptation(eventID, callback) {
     // Emperical undraw
@@ -880,12 +782,12 @@ function removeHypoAdaptation(eventID, callback) {
             }
         }
     });
-    delete relationsObj[eventID];
+    //delete relationsObj[eventID];
     hypo_box_font_size_change = hypo_box_font_size; // reset font size
     adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
     adaptArray = JSON.parse(sessionStorage.getItem("adaptArray"));
     relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
-    sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
+    //sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
 
     drawLines(0);
     callback(eventID);
@@ -945,7 +847,7 @@ function redrawHypo(size) {
                 boxCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4], emperical);
             });
             last_scroll_ratio = scroll_ratio;
-            sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
+            //sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
         }
 
         // TODO if needed medium redraw speedm, redraw and move without remaking boxes
