@@ -717,6 +717,7 @@ function positionAdaptBox(eventID, text, width, height, date, callback) {
     callback(x_pos, y_pos, width, height, text, empirical);
 }
 
+//In process
 function positionEmpirAdaptBox(eventID, text, width, height, date, callback) {
     var x_pos = 0;
     var y_pos = 0;
@@ -748,19 +749,18 @@ function positionEmpirAdaptBox(eventID, text, width, height, date, callback) {
     x_pos = ((canvas_div_w/scroll_ratio) - x_pos) - width/2;
 
     y_pos = canvas_div_h_empir/2 - height/2;
-
-    var boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
-    boxLocation.push([x_pos,y_pos,width,height,text,eventID]);
-    boxLocation.sort(function(a,b) {
-        if(a[0] === b[0]) {
-            return 0;
-        }
-        else {
-            return (a[0] < b[0]) ? -1 : 1;
-        }
-    });
-    sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
-
+	
+	var empiricalBox = JSON.parse(sessionStorage.getItem("empiricalBox"));
+	empiricalBox.push([x_pos, y_pos, width, height, text, eventID]);
+	empiricalBox.sort(function(a,b){
+		if(a[0] === b[0]){
+			return 0;
+		}else{
+			return (a[0] < b[0]) ? -1 : 1;
+		}
+	});
+	
+	sessionStorage.setItem("empiricalBox", JSON.stringify(empiricalBox));
 
     callback(x_pos, y_pos, width, height, text, empirical);
 }
@@ -822,7 +822,6 @@ function addEmpirAdaptation(eventID) {
 		if(empirRecord[0] == eventID){
 			var eventName = empirRecord[1];
 			var eventDate = empirRecord[2];
-			console.log(empirRecord[0]);
 			createEmpirAdaptBox(eventID, eventName, eventDate, function(eventID, text, width, height, date) {
 				positionEmpirAdaptBox(eventID, text, width, height, date, function(x,y,width,height,text,empirical) {
 					boxEmpiricalCanvasWrapperDraw(x,y,width,height,text,empirical)
@@ -875,20 +874,17 @@ function removeHypoAdaptation(eventID, callback) {
 
 //In Process
 function removeEmpirAdaptation(eventID, callback) {
-    var empiricalTable = JSON.parse(sessionStorage.getItem("empiricalTable"));
-    var boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
+	var empiricalBox = JSON.parse(sessionStorage.getItem("empiricalBox"));
 
-    // Empirical undraw
-
-        for(var i = 0; i < boxLocation.length; i++) {
-            if(boxLocation[i][5] == eventID) {
-                boxEmpiricalCanvasWrapperClear(boxLocation[i][0], boxLocation[i][1], boxLocation[i][2], boxLocation[i][3]);
-                boxEmpiricalCanvasWrapperDraw(boxLocation[i][0], boxLocation[i][1], boxLocation[i][2], boxLocation[i][3], boxLocation[i][4], false);
-            }
+    for(var i = 0; i < empiricalBox.length; i++) {
+		if(empiricalBox[i][5] == eventID) {
+			boxEmpiricalCanvasWrapperClear(empiricalBox[i][0], empiricalBox[i][1], empiricalBox[i][2], empiricalBox[i][3]);
+			empiricalBox.splice(i, 1);
+			i = empiricalBox.length;
         }
+    }
     
-
-    sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
+    sessionStorage.setItem("empiricalBox", JSON.stringify(empiricalBox));
     callback(eventID);
 }
 

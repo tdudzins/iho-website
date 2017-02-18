@@ -20,20 +20,15 @@ function getEventList(callback) {
             // Unselect
             if($(this).hasClass('adaptation-item-selected') && relationsObj[$(this).attr('id')] !== undefined){
                 $(this).removeClass('adaptation-item-selected').addClass('adaptation-item-unselected');
-                
+               	//TODO remove empirical boxes - in process	
+				removeEmpirAdaptation($(this).attr('id'), function(eid){
+					removeAdaption(eid, true, function(){});
+				});
+				
                 removeHypoAdaptation($(this).attr('id'), function(eid){
                     removeAdaption(eid, false, function(){});
                 });
-				//TODO remove empirical boxes - in process	
-				/*
-					Fun fact: if you put the following three lines before removeHypoAdaptation, 
-					removeHypoAdaptation doesn't work properly - Travis Evidence cannot be removed. 
-					Travis Evidence 2 will, but Travis Evidence won't go away.
-				*/
-				removeEmpirAdaptation($(this).attr('id'), function(eid){
-					removeAdaption(eid, true, function(){});
-					console.log("this happened");
-				});
+
             }
             // Select
             else if($(this).hasClass('adaptation-item-unselected') && relationsObj[$(this).attr('id')] === undefined){
@@ -94,7 +89,7 @@ function removeAdaption(eventID, empirical, callback){
             i = empiricalTable.length;
         }
     }
-	if(!empirical){
+	if(!empirical){//Needed - adaptObj is undefined for empirical adaptations
 		relationsObj[eventID].forEach(function(item){
 			if (adaptObj[item[0]][4] === 0) {
 				delete adaptObj[item[0]];
@@ -123,19 +118,7 @@ function removeAdaption(eventID, empirical, callback){
 		else {
 			adaptObj[eventID][4]--;
 		}
-	}else{
-		for(var i = 0; i < empiricalTable.length; ++i){
-			empiricalTable.forEach(function(item){
-				console.log(empiricalTable);
-			});
-			if(empiricalTable[i][0] == eventID){
-				console.log(empiricalTable[i][0]);
-				empiricalTable.splice(i, 1);
-			}
-		}
 	}
-
-
 
     sessionStorage.setItem("adaptArray", JSON.stringify(adaptArray));
     sessionStorage.setItem("adaptObj", JSON.stringify(adaptObj));
