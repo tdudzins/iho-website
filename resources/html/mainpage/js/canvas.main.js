@@ -284,7 +284,6 @@ function resizeCanvas() {
     minScrollbar = 1/12 * canvas_div_w;
 	
     // Resize Empirical Canvas
-	// TODO set empirical canvas wrapper width to canvas_timeline_w => done
 	$('#empirical-wrapper-div').width = canvas_timeline_w;
   
 
@@ -484,7 +483,6 @@ function boxCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text,empiri
     }
 }
 
-//In process 
 // Empirical Timeline function
 function boxEmpiricalCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text,empirical) {
     var canvas_total_width = 12 * canvas_div_w;
@@ -574,7 +572,6 @@ function boxCanvasWrapperClear(x_pos,y_pos,width_length,height_length) {
     }
 }
 
-//In process
 function boxEmpiricalCanvasWrapperClear(x_pos,y_pos,width_length,height_length) {
     var canvas_total_width = 12 * canvas_div_w;
     var c_value = x_pos/canvas_div_w;
@@ -717,7 +714,6 @@ function positionAdaptBox(eventID, text, width, height, date, callback) {
     callback(x_pos, y_pos, width, height, text, empirical);
 }
 
-//In process
 function positionEmpirAdaptBox(eventID, text, width, height, date, callback) {
     var x_pos = 0;
     var y_pos = 0;
@@ -810,10 +806,6 @@ function addHypoAdaptation(eventID) {
     });
 }
 
-//In process
-//Fix - use empiricalTable instead of adaptObj
-//empiricalTable[eventID]
-//var empiricalTable = JSON.parse(sessionStorage.getItem(("empiricalTable"));
 function addEmpirAdaptation(eventID) {
     var empiricalTable = JSON.parse(sessionStorage.getItem("empiricalTable"));
 	
@@ -872,7 +864,6 @@ function removeHypoAdaptation(eventID, callback) {
     callback(eventID);
 }
 
-//In Process
 function removeEmpirAdaptation(eventID, callback) {
 	var empiricalBox = JSON.parse(sessionStorage.getItem("empiricalBox"));
 

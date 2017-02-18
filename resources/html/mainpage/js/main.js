@@ -20,7 +20,6 @@ function getEventList(callback) {
             // Unselect
             if($(this).hasClass('adaptation-item-selected') && relationsObj[$(this).attr('id')] !== undefined){
                 $(this).removeClass('adaptation-item-selected').addClass('adaptation-item-unselected');
-               	//TODO remove empirical boxes - in process	
 				removeEmpirAdaptation($(this).attr('id'), function(eid){
 					removeAdaption(eid, true, function(){});
 				});
@@ -35,7 +34,6 @@ function getEventList(callback) {
                 $(this).removeClass('adaptation-item-unselected').addClass('adaptation-item-selected');
                 getAdaption($(this).attr('id'), function(eid){
                     addHypoAdaptation(eid);
-                    //TODO Add empirical boxes - in process
 					addEmpirAdaptation(eid);
                 });
             }
