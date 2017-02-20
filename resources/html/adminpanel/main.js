@@ -795,11 +795,11 @@ function saveValues(id, callback) {
     switch (id) {
         case 'tab-description':
             obj.push($('#adaptationName').val());
-            if (!$('#earliestDirectEvidence').val())
+            if (!Number($('#earliestDirectEvidence').val()))
                 obj.push(-1);
             else
                 obj.push(Number($('#earliestDirectEvidence').val())*(($('#earliestDirectEvidence-units').val() == 'Ma')? 1000000: 1000));
-            if (!$('#earliestIndirectEvidence').val())
+            if (!Number($('#earliestIndirectEvidence').val()))
                 obj.push(-1);
             else
                 obj.push(Number($('#earliestIndirectEvidence').val())*(($('#earliestIndirectEvidence-units').val() == 'Ma')? 1000000: 1000))
@@ -833,11 +833,11 @@ function updateValues(id, callback) {
     switch (id) {
         case 'tab-description':
             obj.push($('#adaptationName').val());
-            if (!$('#earliestDirectEvidence').val())
+            if (!Number($('#earliestDirectEvidence').val()))
                 obj.push(-1);
             else
                 obj.push(Number($('#earliestDirectEvidence').val())*(($('#earliestDirectEvidence-units').val() == 'Ma')? 1000000: 1000));
-            if (!$('#earliestIndirectEvidence').val())
+            if (!Number($('#earliestIndirectEvidence').val()))
                 obj.push(-1);
             else
                 obj.push(Number($('#earliestIndirectEvidence').val())*(($('#earliestIndirectEvidence-units').val() == 'Ma')? 1000000: 1000))
