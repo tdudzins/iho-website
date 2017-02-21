@@ -11,7 +11,7 @@ botcanvas1, botcanvas2, botcanvas3, botcanvas4, botcanvas5, botcanvas6, botcanva
 ctx_top_1, ctx_top_2, ctx_top_3, ctx_top_4, ctx_top_5, ctx_top_6, ctx_top_7, ctx_top_8, ctx_top_9, ctx_top_10, ctx_top_11, ctx_top_12,
 ctx_top2_1, ctx_top2_2, ctx_top2_3, ctx_top2_4, ctx_top2_5, ctx_top2_6, ctx_top2_7, ctx_top2_8, ctx_top2_9, ctx_top2_10, ctx_top2_11, ctx_top2_12,
 ctx_bot_1, ctx_bot_2, ctx_bot_3, ctx_bot_4, ctx_bot_5, ctx_bot_6, ctx_bot_7, ctx_bot_8, ctx_bot_9, ctx_bot_10, ctx_bot_11, ctx_bot_12,
-canvas1_1, canvas2_1, canvas2_2,vctx1_1, ctx2_1, ctx2_2;
+canvas1_1, canvas2_1, canvas2_2, ctx1_1, ctx2_1, ctx2_2;
 
 // Global Variables
 var scroll_ratio = 0.0; // Block/Container ratio in percent
@@ -30,11 +30,11 @@ var date_start = 12000000; // Earliest date from selected adapations
 var date_end = 000000; // Latest date from selected adaptations
 var largest_timespan = 12000000; // When user is all the way scaled out, what is the largest amount of time to be viewed
 var smallest_timespan = 1000000; // When user is all the way scaled in, what is the smallest amount of time to be viewed
-var max_char_per_line = 15; // Used in positionAdaptBox
+var max_char_per_line = 20; // Used in positionAdaptBox
 var box_to_box_padding_size = 18;
-var text_in_box_padding_w = std_text_in_box_padding_w = 5;
-var text_in_box_padding_h = std_text_in_box_padding_h = 5;
-var hypo_box_font_size = temp_text = last_hypo_font_size = hypo_box_font_size_change = 25;
+var text_in_box_padding_w = std_text_in_box_padding_w = 15;
+var text_in_box_padding_h = std_text_in_box_padding_h = 10;
+var hypo_box_font_size = temp_text = last_hypo_font_size = hypo_box_font_size_change = 20;
 var scrollbar_font_size = 13;
 var increments_font_size = 25;
 var hypo_box_font_family = scrollbar_font_family = increments_font_family = "Roboto";
@@ -479,8 +479,9 @@ function boxCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text,emperi
             hypoCanvas[selected_canvas + i].font = hypo_box_font_size_change + "px " + hypo_box_font_family;
             hypoCanvas[selected_canvas + i].fillStyle = hypo_box_font_color;
             hypoCanvas[selected_canvas + i].textAlign = "center";
+            hypoCanvas[selected_canvas + i].textBaseline="hanging";
             for (j = 0; j < text.length; j++) {
-                hypoCanvas[selected_canvas + i].fillText(text[j], temp_x + (0.5 * width_length), y_pos + ((hypo_box_font_size_change + ((j)?1:0)) * (j + 1)));
+                hypoCanvas[selected_canvas + i].fillText(text[j], temp_x + (0.5 * width_length), y_pos + (text_in_box_padding_h*.5) + ((hypo_box_font_size_change + ((j)?1:0)) * (j)));
             }
         }
     }
@@ -600,8 +601,8 @@ function addHypoAdaptation(eventID) {
     adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
     adaptArray = JSON.parse(sessionStorage.getItem("adaptArray"));
     relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
-    //boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
     // Draw new things if they all fit
+    temp_text = hypo_box_font_size_change;
     if(adaptObj[eventID][4] < 1) {
         createAdaptBox(eventID, adaptObj[eventID][0], adaptObj[eventID][1], function(eventID, text, width, height, date) {
             positionAdaptBox(eventID, text, width, height, date);
@@ -616,8 +617,6 @@ function addHypoAdaptation(eventID) {
         if(hypo_box_font_size_change != temp_text)
             return;
     });
-    // Shrink all the boxes untill they fit
-
     dir = (dir)? 0:1;
     while(hypo_box_font_size_change != temp_text) {
         temp_text = hypo_box_font_size_change;
@@ -636,11 +635,11 @@ function addHypoAdaptation(eventID) {
 }
 function createAdaptBox(eventID, eventName, date, callback) {
     var textArray = [];
-    if(hypo_box_font_size_change <= 10){
+    if(hypo_box_font_size_change <= 5){
         text_in_box_padding_w = 1;
         text_in_box_padding_h = 1;
     }
-    else if(hypo_box_font_size_change > 10){
+    else if(hypo_box_font_size_change > 5){
         text_in_box_padding_w = std_text_in_box_padding_w;
         text_in_box_padding_h = std_text_in_box_padding_h;
     }
@@ -666,7 +665,7 @@ function createAdaptBox(eventID, eventName, date, callback) {
             width = parseInt((ctx_top_1.measureText(item).width + text_in_box_padding_w).toFixed(0));
         }
     });
-    var height = (hypo_box_font_size_change * textArray.length) + (text_in_box_padding_h * ((textArray.length > 1)?2:1));
+    var height = (hypo_box_font_size_change * textArray.length) + ((textArray.length > 1)?(textArray.length-1):0) + text_in_box_padding_h;
     callback(eventID, textArray, width, height, date);
 }
 function positionAdaptBox(eventID, text, width, height, date) {
