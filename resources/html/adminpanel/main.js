@@ -452,6 +452,44 @@ function tabConfig(id) {
 
 
             break;
+        case 'sequence':
+            $('#information-container').empty();
+            $('#information-container').append(sequencePane);
+            loadCategories(function(){});
+            $('li.adpt-focused').removeClass('adpt-focused').addClass('adpt-unfocused');
+            $('#editsaveButton').val('Done');
+            $('#editsaveButton').click(function(){
+                tabConfig('firstLoad');
+            });
+            $('#addsequenceButton').click(function(){
+                $('li.sequence-focused').removeClass('sequence-focused').addClass('sequence-unfocused');
+                $('#sequence').val('');
+                $('#updatesequenceButton').val('Save');
+            });
+            $('#removesequenceButton').click(function(){
+                deletesequence();
+            });
+            $('#updatesequenceButton').click(function(){
+                if($('#updatesequenceButton').val() == 'Save'){
+                    saveValues('sequence');
+                    $('#updatesequenceButton').val('Update');
+                    loadCategories(function(){
+                        loadCategories(function(){
+                            $($('li.sequence-unfocused').contains($('#sequence').val())).removeClass('sequence-unfocused').addClass('sequence-focused');
+
+                        });
+                    });
+                }
+                if($('#updatesequenceButton').val() == 'Update')
+                    updateValues('sequence');
+                    $('#sequence').val('');
+                    loadCategories(function(){
+                        $($('li.sequence-unfocused').contains($('#sequence').val())).removeClass('sequence-unfocused').addClass('sequence-focused');
+                    });
+            });
+
+
+            break;
         default:
             console.log('Error: tabConfig');
             window.location = '/error';
@@ -929,6 +967,13 @@ $('#category-button').ready(function(){
     $('#category-button').click(function(){
         if($('#editsaveButton').val() == 'Edit'){
             tabConfig('category');
+        }
+    });
+});
+$('#sequence-button').ready(function(){
+    $('#sequence-button').click(function(){
+        if($('#editsaveButton').val() == 'Edit'){
+            tabConfig('sequence');
         }
     });
 });

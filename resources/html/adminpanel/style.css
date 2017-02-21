@@ -43,6 +43,12 @@
   font-family: "Bitter",serif;
 }
 
+.sequence-button {
+	float: right;
+	margin: 10px;;
+  font-family: "Bitter",serif;
+}
+
 .list-panel {
 	float: left;
 	height: calc(100vh - 95px);
@@ -1050,4 +1056,371 @@ ul.category-items li {
 	width: 40%;
 	height: 20px;
 	line-height: 1.5;
+}
+
+/* Sequence Pane */
+.sequence-pane {
+	vertical-align: bottom;
+	height: calc(100vh - 185px);
+	width: 100%;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+.sequence-list {
+	float: left;
+	height: 100%;
+	width: 25%;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+.sequence-list-header {
+	vertical-align: top;
+	padding: 5px;
+	height: 25px;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	background-color: darkgrey;
+	text-align: center;
+}
+
+.sequence-list-label {
+	width: 100%;
+	font-family: georgia;
+	font-weight: bold;
+	font-size: 100%;
+}
+
+.sequence-collection {
+	height: calc(100% - 60px);
+	vertical-align: middle;
+	background-color: darkgrey;
+}
+
+.sequence-items {
+	background-color: white;
+	height: 100%;
+	margin-left: 5px;
+	margin-right: 5px;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	padding-left: 0px;
+	list-style:none;
+	overflow-x: hidden;
+}
+
+ul.sequence-items li {
+	border-bottom-width: 2px;
+	border-bottom-style: solid;
+	border-radius: 5px;
+	cursor: pointer;
+	padding: 5px 0 5px 5px;
+	position: relative;
+	border-bottom-color: darkgrey;
+}
+
+.sequence-focused {
+	background-color: #3b73af;
+	font-weight: bold;
+	color: white;
+}
+
+.sequence-unfocused {
+	background-color: white;
+	font-weight: bold;
+	color: black;
+}
+
+.sequence-buttons {
+	vertical-align: bottom;
+	height: 35px;
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+	background-color: darkgrey;
+}
+
+.addsequence {
+	float: left;
+	margin-left: 5px;
+    margin-top: 5px;
+	width: 45%;
+	vertical-align: middle;
+}
+
+.addsequenceButton {
+	width: 100%;
+	line-height: 1.5;
+	text-align: center;
+}
+
+.removesequence {
+	float: right;
+	margin-right: 5px;
+    margin-top: 5px;
+	width: 45%;
+	vertical-align: middle;
+}
+
+.removesequenceButton {
+	width: 100%;
+	line-height: 1.5;
+	text-align: center;
+}
+
+.sequence-info {
+	float: right;
+	height: 100%;
+	width: 75%;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+.sequence-div {
+	width: 100%;
+	height: 25px;
+	padding: 5px;
+}
+
+.sequence-label {
+	float: left;
+	width: 30%;
+}
+
+.sequence-field {
+	float: right;
+	width: 70%;
+}
+
+.sequence {
+	width: 40%;
+	height: 20px;
+	line-height: 1.5;
+}
+
+.sequence-lists-area {
+	width: 100%;
+	height: calc(100% - 35px);
+	padding: 5px;
+}
+
+.sequence-all-adapts-pane {
+	float: left;
+	height: 100%;
+	width: 30%;
+}
+
+.sequence-stacked-pane {
+	float: right;
+	height: 100%;
+	width: 70%;
+}
+
+.sequence-relations-buttons-pane {
+	float: left;
+	height: 100%;
+	width: 33%;
+}
+
+.sequence-relations-header {
+	vertical-align: top;
+	text-align: center;
+	height: 30px;
+	width: 100%;
+}
+
+.sequence-relations-sorting {
+	padding: 5px;
+	height: 25px;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	background-color: darkgrey;
+}
+
+.sequence-relations-searchbar-text {
+	float: left;
+	width: 80%;
+	vertical-align: middle;
+	margin-top: 1px;
+}
+
+.sequence-relations-searchbutton {
+	float: right;
+	width: 15%;
+	vertical-align: middle;
+	height: 25px;
+}
+
+.sequence-relations-database-collection {
+	height: calc(100% - 60px);
+	vertical-align: middle;
+	background-color: darkgrey;
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+}
+
+.sequence-relations-items {
+	background-color: white;
+	height: 98%;
+	margin-left: 5px;
+	margin-right: 5px;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	padding-left: 0px;
+	list-style:none;
+	overflow-x: hidden;
+}
+
+ul.sequence-relations-items li {
+	border-bottom-width: 2px;
+	border-bottom-style: solid;
+	border-radius: 5px;
+	cursor: pointer;
+	padding: 5px 0 5px 5px;
+	position: relative;
+	border-bottom-color: #ccc;
+}
+
+.sequence-relations-focused {
+	background-color: #3b73af;
+	font-weight: bold;
+	color: white;
+}
+
+.sequence-relations-unfocused {
+	background-color: white;
+	font-weight: bold;
+	color: black;
+}
+
+.sequence-add-to-sequence {
+	height: 30px;
+	width: 70%;
+	vertical-align: top;
+	margin-top: 50%;
+	margin-bottom: 10%;
+	margin-left: 15%;
+}
+
+.sequence-remove-from-list {
+	height: 30px;
+	width: 70%;
+	margin-left: 15%;
+	vertical-align: bottom;
+}
+
+.sequence-relations-div-pane {
+	float: right;
+	height: 100%;
+	width: 64%;
+}
+
+.sequence-preconditions-div {
+	height: 100%;
+	width: 100%;
+	vertical-align: top;
+}
+
+.sequence-preconditions-header {
+	vertical-align: top;
+	text-align: center;
+	height: 30px;
+	width: 100%;
+}
+
+.sequence-preconditions-database-collection {
+	height: calc(100% - 30px);
+	vertical-align: middle;
+	background-color: darkgrey;
+	border-radius: 10px;
+	padding-top: 5px;
+}
+
+.sequence-preconditions-items {
+	background-color: white;
+	height: 98%;
+	margin-left: 5px;
+	margin-right: 5px;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	padding-left: 0px;
+	list-style:none;
+	overflow-x: hidden;
+}
+
+ul.sequence-preconditions-items li {
+	border-bottom-width: 2px;
+	border-bottom-style: solid;
+	border-radius: 5px;
+	cursor: pointer;
+	padding: 5px 0 5px 5px;
+	position: relative;
+	border-bottom-color: #ccc;
+}
+
+.sequence-preconditions-focused {
+	background-color: #3b73af;
+	font-weight: bold;
+	color: white;
+}
+
+.sequence-preconditions-unfocused {
+	background-color: white;
+	font-weight: bold;
+	color: black;
+}
+
+.sequence-relationships-div {
+	height: 50%;
+	width: 100%;
+	vertical-align: bottom;
+}
+
+.sequence-relationships-header {
+	vertical-align: top;
+	text-align: center;
+	height: 30px;
+	width: 100%;
+}
+
+.sequence-relationships-database-collection {
+	height: calc(100% - 40px);
+	vertical-align: middle;
+	background-color: darkgrey;
+	border-radius: 10px;
+	padding-top: 5px;
+}
+
+.sequence-relationships-items {
+	background-color: white;
+	height: 98%;
+	margin-left: 5px;
+	margin-right: 5px;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	padding-left: 0px;
+	list-style:none;
+	overflow-x: hidden;
+}
+
+ul.sequence-relationships-items li {
+	border-bottom-width: 2px;
+	border-bottom-style: solid;
+	border-radius: 5px;
+	cursor: pointer;
+	padding: 5px 0 5px 5px;
+	position: relative;
+	border-bottom-color: #ccc;
+}
+
+.sequence-relationships-focused {
+	background-color: #3b73af;
+	font-weight: bold;
+	color: white;
+}
+
+.sequence-relationships-unfocused {
+	background-color: white;
+	font-weight: bold;
+	color: black;
 }

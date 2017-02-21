@@ -260,6 +260,75 @@ var categoryPane =
       </div>
   </div>`;
 
+var sequencePane =
+   `<div id="save-edit-container" class="save-edit-container">
+     <input id="editsaveButton" class="editsaveButton" value="Edit" type="submit">
+   </div>
+
+   <div id="sequence-pane" class="sequence-pane">
+       <div id="sequence-list" class="sequence-list">
+           <div id="sequence-list-header" class="sequence-list-header">
+               <label id="sequence-list-label" class="sequence-list-label">Sequence List</label>
+           </div>
+           <div id="sequence-collection" class="sequence-collection">
+               <ul id="sequence-items" class="sequence-items">
+               </ul>
+           </div>
+           <div id="sequence-buttons" class="sequence-buttons">
+               <div id="addsequence" class="addsequence">
+                   <input id="addsequenceButton" class="addsequenceButton" type="submit" value="Add Sequence">
+               </div>
+               <div id="removesequence" class="removesequence">
+                   <input id="removesequenceButton" class="removesequenceButton" type="submit" value="Remove Sequence">
+               </div>
+           </div>
+       </div>
+       <div id="sequence-info>" class="sequence-info">
+
+           <div id="sequence-div" class="sequence-div">
+               <div id="sequence-label" class="sequence-label">
+                   <label class="sequence-labels"> Sequence Name: </label>
+               </div>
+               <div id="sequence-field" class="sequence-field">
+                   <input id="sequence" class="sequence" type="text">
+                   <input id="updatesequenceButton" value="Update" type="button">
+               </div>
+           </div>
+           <div id="sequence-lists-area" class="sequence-lists-area">
+           <div id="all-adapts-pane" class="sequence-all-adapts-pane">
+             <div id="relations-header" class="sequence-relations-header">
+               <label class="sequence-description-labels"> All Adaptations </label>
+             </div>
+             <div id="relations-sorting" class="sequence-relations-sorting">
+               <input id="relations-searchbar-text" class="sequence-relations-searchbar-text" type="text" placeholder="Search for an adaptation..." >
+               <input id="relations-searchbutton" class="sequence-relations-searchbutton" type="submit" value="Go">
+             </div>
+             <div id="relations-database-collection" class="sequence-relations-database-collection">
+               <ul id="relations-items" class="sequence-relations-items">
+               </ul>
+             </div>
+           </div>
+           <div id="stacked-pane" class="sequence-stacked-pane">
+             <div id="relations-buttons-pane" class="sequence-relations-buttons-pane">
+               <input id="add-to-preconditions" class="sequence-add-to-sequence" type="button" value="Add To Sequence">
+               <input id="remove-from-list" class="sequence-remove-from-list" type="button" value="Remove">
+             </div>
+             <div id="relations-div-pane" class="sequence-relations-div-pane">
+               <div id="preconditions-div" class="sequence-preconditions-div">
+                   <div id="preconditions-header" class="sequence-preconditions-header">
+                     <label class="sequence-description-labels"> Sequence Contents </label>
+                   </div>
+                   <div id="preconditions-database-collection" class="sequence-preconditions-database-collection">
+                     <ul id="preconditions-items" class="sequence-preconditions-items">
+                     </ul>
+                   </div>
+                 </div>
+               </div>
+             </div>
+           </div>
+       </div>
+   </div>`;
+
 var firstLoadPane =
 	`<div id="save-edit-container" class="save-edit-container">
 		<input id="editsaveButton" class="editsaveButton" value="Edit" type="submit" hidden>
