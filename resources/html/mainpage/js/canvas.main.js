@@ -2,7 +2,7 @@
 
 /* Canvas Div Dimensions */
 var canvas_div_w = canvas_div_h_hypo = canvas_div_h_scroll = canvas_div_h_empir =
-canvas1_1_h =  canvas1_234_h = canvas2_12_w =  canvas2_12_h = canvas3_1_h = canvas3_2_h = 0; // Emperical Canvas (Layer 2: Connections, Layer 3: Adaptations) height in pixels
+canvas1_1_h =  canvas1_234_h = canvas2_12_w =  canvas2_12_h = canvas3_1_h = canvas3_2_h = 0; // Empirical Canvas (Layer 2: Connections, Layer 3: Adaptations) height in pixels
 
 // Canvas Drawing Variables
 var topcanvas1, topcanvas2, topcanvas3, topcanvas4, topcanvas5, topcanvas6, topcanvas7, topcanvas8, topcanvas9, topcanvas10, topcanvas11, topcanvas12,
@@ -41,7 +41,7 @@ var increments_font_size = 25;
 var hypo_box_font_family = scrollbar_font_family = increments_font_family = "Roboto";
 var increments_font_color = "rgba(0,0,0,1)";
 var hypo_box_fill_style_relation = "rgba(111,130,145,1.0)";
-var hypo_box_fill_style_emperical = "rgba(6,74,121,1.0)";
+var hypo_box_fill_style_empirical = "rgba(6,74,121,1.0)";
 var scrollbar_container_fill_style = "rgba(220,220,220,0.3)";
 var scrollbar_block_fill_style = "rgba(250,250,250,0.5)";
 var scrollbar_handle_fill_style = "rgba(255,255,255,1.0)";
@@ -228,13 +228,13 @@ function initCanvas(firstRun) {
 function resizeCanvas() {
     $('#canvas-wrapper-lines-div').html(hypothesis_lines_canvas);
     $('#canvas-wrapper-adaptations-div').html(hypothesis_adapt_canvas);
-    $('#canvas-wrapper-emperical-adaptations-div').html(empirical_canvas);
+    $('#canvas-wrapper-empirical-adaptations-div').html(empirical_canvas);
 
     // Set Canvas Div Size from Browser Realtime Values
     canvas_div_w = $('#hypothesis-canvas-div').width();
     canvas_div_h_hypo = $('#canvas-wrapper-adaptations-div').height();
     canvas_div_h_scroll = $('#scrollbar-canvas-div').height();
-    canvas_div_h_empir = $('#emperical-canvas-div').height();
+    canvas_div_h_empir = $('#empirical-canvas-div').height();
     canvas_timeline_w = canvas_div_w * 12;
 
     // Calculate Hypothetical Canvas Dimensions
@@ -253,7 +253,7 @@ function resizeCanvas() {
     $('#scrollbar-canvas-container').width = canvas_div_w;
     $('#scrollbar-canvas-block').width = canvas_div_w;
     minScrollbar = 1/12 * canvas_div_w;
-    // Resize Emperical Canvas
+    // Resize Empirical Canvas
     $('#empirical-wrapper-div').width = canvas_timeline_w;
 
     // Redefine Canvas Context(s)
@@ -461,7 +461,7 @@ function setdate (start, end) {
 }
 
 // Canvas drawing functions
-function boxCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text,emperical) {
+function boxCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text,empirical) {
     var c_value = x_pos/canvas_div_w;
     var selected_canvas = 0;
 
@@ -497,8 +497,8 @@ function boxCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text,emperi
         if(selected_canvas + i >= 0 && selected_canvas + i <= 11) {
             temp_x = x_pos - (i * canvas_div_w);
 
-            if (emperical) {
-                    hypoCanvas[selected_canvas + i].fillStyle = hypo_box_fill_style_emperical;
+            if (empirical) {
+                    hypoCanvas[selected_canvas + i].fillStyle = hypo_box_fill_style_empirical;
             }
             else {
                 hypoCanvas[selected_canvas + i].fillStyle = hypo_box_fill_style_relation;
@@ -554,7 +554,7 @@ function boxEmpiricalCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,te
         if(selected_canvas + i >= 0 && selected_canvas + i <= 11) {
             temp_x = x_pos - (i * canvas_div_w);
 
-            empirCanvas[selected_canvas + i].fillStyle = hypo_box_fill_style_emperical;
+            empirCanvas[selected_canvas + i].fillStyle = hypo_box_fill_style_empirical;
             empirCanvas[selected_canvas + i].fillRect(temp_x, y_pos, width_length, height_length);
             empirCanvas[selected_canvas + i].font = hypo_box_font_size + "px " + hypo_box_font_family;
             empirCanvas[selected_canvas + i].fillStyle = hypo_box_font_color;
@@ -956,7 +956,7 @@ function addEmpirAdaptation(eventID) {
 
 }
 function removeHypoAdaptation(eventID, callback) {
-    // Emperical undraw
+    // Empirical undraw
     if(adaptObj[eventID][4] == 0) {
         delete middleBoxObj[eventID];
         for (var i = 0; i < boxLocation.length; i++) {
@@ -1011,8 +1011,8 @@ function drawAllBoxes() {
         hypoCanvas[i].clearRect(0, 0, canvas_div_w, canvas_div_h_hypo);
     }
     boxLocation.forEach(function(item){
-        var emperical = (relationsObj[item[5]] == undefined)? false:true;
-        boxCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4], emperical);
+        var empirical = (relationsObj[item[5]] == undefined)? false:true;
+        boxCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4], empirical);
     });
 }
 function redrawHypo(size) {
@@ -1025,7 +1025,7 @@ function redrawHypo(size) {
             // Move then redraw the same box
             boxLocation.forEach(function(item){
                 var date = adaptObj[item[5]][1];
-                var emperical = (relationsObj[item[5]] != undefined)? true:false;
+                var empirical = (relationsObj[item[5]] != undefined)? true:false;
                 if(date >= 1000000) {
                     date = date + 4000000;
                 }
@@ -1057,7 +1057,7 @@ function redrawHypo(size) {
                     }
                 }*/
                 middleBoxObj[item[5]] = [(item[0] + (item[2]/2)), (item[1] + (item[3]/2))];
-                boxCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4], emperical);
+                boxCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4], empirical);
             });
             last_scroll_ratio = scroll_ratio;
             //sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
@@ -1130,7 +1130,7 @@ function removeEmpirAdaptation(eventID, callback) {
     callback(eventID);
 }
 
-// Scroolbar functions
+// Scrollbar functions
 function drawScrollbarContainer () {
     var container_height = 0.2;
     var container_radius = canvas2_h * container_height;
