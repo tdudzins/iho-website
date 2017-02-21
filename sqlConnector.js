@@ -4,7 +4,7 @@ var pool  = mysql.createPool({
     host            : '127.0.0.1',
     user            : 'tdudzins',
     password        : 'Password',
-    database        : 'ihotestdatabase',
+    database        : 'ihodatabase',
     port            : '3306'
 });
 
