@@ -8,14 +8,20 @@ var pool  = mysql.createPool({
     port            : '3306'
 });
 
-// Admin functions
+exports.removeRow = function removeRow(table, key, value, callback) {
+    pool.getConnection(function(err,connection){
+        if (err) callback(err, null);
+        else
+            var result = connection.query('DELETE FROM ? WHERE ? = ?',[table, key, value] ,function (err, res) {
+                connection.release();
+                if(err)
+                    callback(err, null);
+                else
+                    callback(err, res[0]);
+            });
+    });
+};
 
-/**
-* Inserts a row to the table of choice in the dataBase
-* @param {string} table is the table the row is being added to
-* @param {object} data the data object being added to the table in the required format
-* @param {function} callback is the callback function to be run when complete
-*/
 exports.addRow = function addRow(table, data, callback) {
     pool.getConnection(function(err,connection){
         if (err) callback(err, null);
@@ -35,12 +41,15 @@ exports.addRow = function addRow(table, data, callback) {
                 case 'text':
                     var temp = connection.query('INSERT INTO text (eventID, type, position, text) VALUES (?, ?, ?, ?)', data, function(err,result){
                         connection.release();
-                        if(result)
-                            callback(err, null);
-                        else
-                            callback(err, null);
+                        callback(err, null);
                     });
                     break;
+                case 'sequence':
+                        var temp = connection.query('INSERT INTO sequence (sequenceID, eventID) VALUES (?, ?)', data, function(err,result){
+                            connection.release();
+                            callback(err, null);
+                        });
+                        break;
                 case 'relationship':
                     var temp = connection.query('INSERT INTO relationships (primaryEventID, secondaryEventID, precondition) VALUES (?, ?, ?)', data, function(err,result){
                         connection.release();
@@ -88,33 +97,6 @@ exports.addRow = function addRow(table, data, callback) {
         }
     });
 };
-
-/**
-* Removes a row from the table
-* @param {string} table is the name of the table that the row is in
-* @param {string} key the primary key name in the table
-* @param {string} value the value of the primary key
-* @param {function} callback is the callback function to be run when complete
-*/
-exports.removeRow = function removeRow(table, key, value, callback) {
-    pool.getConnection(function(err,connection){
-        if (err) callback(err, null);
-        else
-            var result = connection.query('DELETE FROM ? WHERE ? = ?',[table, key, value] ,function (err, res) {
-                connection.release();
-                if(err)
-                    callback(err, null);
-                else
-                    callback(err, res[0]);
-            });
-    });
-};
-
-/**
-* Removes a row from the table
-* @param {string} value the value of the primary key
-* @param {function} callback is the callback function to be run when complete
-*/
 exports.removeMedia = function removeMedia(value, callback) {
     pool.getConnection(function(err,connection){
         if (err) callback(err, null);
@@ -128,12 +110,6 @@ exports.removeMedia = function removeMedia(value, callback) {
             });
     });
 };
-
-/**
-* Removes a row from the table
-* @param {string} value the value of the primary key
-* @param {function} callback is the callback function to be run when complete
-*/
 exports.removeRelation = function removeRelation(value, callback) {
     pool.getConnection(function(err,connection){
         if (err) callback(err, null);
@@ -147,14 +123,6 @@ exports.removeRelation = function removeRelation(value, callback) {
             });
     });
 };
-
-/**
-* Removes a row from the table
-* @param {string} table is the name of the table that the row is in
-* @param {string} key the primary key name in the table
-* @param {string} value the value of the primary key
-* @param {function} callback is the callback function to be run when complete
-*/
 exports.removeCategory = function removeCategory(table, key, value, callback) {
     pool.getConnection(function(err,connection){
         if (err) callback(err, null);
@@ -175,12 +143,6 @@ exports.removeCategory = function removeCategory(table, key, value, callback) {
             });
     });
 };
-
-/**
-* Removes a event and all related content from the database
-* @param {string} key the primary key name in the event table
-* @param {function} callback is the callback function to be run when complete
-*/
 exports.removeEvent = function removeEvent(value, callback) {
     pool.getConnection(function(err,connection){
         if (err) callback(err, null);
@@ -206,12 +168,6 @@ exports.removeEvent = function removeEvent(value, callback) {
         }
     });
 };
-
-/**
-* Removes a event and all related content from the database
-* @param {string} key the primary key name in the event table
-* @param {function} callback is the callback function to be run when complete
-*/
 exports.removeText = function removeText(data, callback) {
     pool.getConnection(function(err,connection){
         if (err) callback(err, null);
@@ -227,15 +183,21 @@ exports.removeText = function removeText(data, callback) {
         }
     });
 }
+exports.removeSequence = function removeSequence(data, callback) {
+    pool.getConnection(function(err,connection){
+        if (err) callback(err, null);
+        else{
 
-/**
-* Edits a row in the table
-* @param {string} table is the name of the table that the row is in
-* @param {string} key the primary key name in the table
-* @param {string} value the value of the primary key
-* @param {string} data is an array of values to be changed formated like 'id='vlaue',id='vlaue''
-* @param {function} callback is the callback function to be run when complete
-*/
+            connection.query('DELETE FROM sequence WHERE sequenceID = ? AND eventID = ?', data ,function (err, res) {
+                connection.release();
+                if(err)
+                    callback(err, null);
+                else
+                    callback(err, res);
+            });
+        }
+    });
+}
 exports.editRow = function editRow(table, key, data, callback) {
     pool.getConnection(function(err,connection){
         if (err) callback(err, null);
@@ -267,12 +229,6 @@ exports.editRow = function editRow(table, key, data, callback) {
         }
     });
 };
-
-/**
-* Inserts a row to the user table in the dataBase
-* @param {object} data the data object being added to the user table in the required format (firstName, lastName, email, password)
-* @return error and array containing any attributes that should be sent back to the callback function.
-*/
 exports.getUser = function getUser(data, callback) {
     pool.getConnection(function(err,connection){
         if (err) callback(err, null);
@@ -291,14 +247,6 @@ exports.getUser = function getUser(data, callback) {
         }
     });
 };
-
-// Get data by eventID
-
-/**
-* Queries the database by the eventID and gets all the data associated with the event
-* @param {int} eventID the eventID for the required data
-* @param {function} callback is the callback function to be run when complete
-*/
 exports.getEvent = function getEvent(eventID, callback){
     pool.getConnection(function(err,connection){
         if (err) callback(err, null);
@@ -312,12 +260,6 @@ exports.getEvent = function getEvent(eventID, callback){
             });
     });
 }
-
-/**
-* Queries the database by the eventID and gets all the data associated with the event
-* @param {int} eventID the eventID for the required data
-* @param {function} callback is the callback function to be run when complete
-*/
 exports.getText = function getText(eventID, type, callback){
     pool.getConnection(function(err,connection){
         if (err) callback(err, null);
@@ -331,12 +273,32 @@ exports.getText = function getText(eventID, type, callback){
             });
     });
 }
-
-/**
-* Queries the database by the eventID and gets all the media associated with the event
-* @param {int} eventID the eventID for the required data
-* @return returns an array
-*/
+exports.getSequence = function getSequence(sequenceID, callback){
+    pool.getConnection(function(err,connection){
+        if (err) callback(err, null);
+        else
+            var result = connection.query('SELECT * FROM sequence WHERE sequenceID = ?', sequenceID, function (err, res) {
+                connection.release();
+                if(err)
+                    callback(err, null);
+                else
+                    callback(null, res);
+            });
+    });
+}
+exports.getSequences = function getSequences(callback){
+    pool.getConnection(function(err,connection){
+        if (err) callback(err, null);
+        else
+            var result = connection.query('SELECT * FROM sequence', function (err, res) {
+                connection.release();
+                if(err)
+                    callback(err, null);
+                else
+                    callback(null, res);
+            });
+    });
+}
 exports.getMedia = function getMedia(eventID, callback){
     pool.getConnection(function(err,connection){
         if (err) callback(err, null);
@@ -350,12 +312,6 @@ exports.getMedia = function getMedia(eventID, callback){
             });
     });
 }
-
-/**
-* Queries the database by the eventID and gets all the relation entries associated with the eventID
-* @param {int} eventID the eventID for the required data
-* @param {function} callback is the callback function to be run when complete
-*/
 exports.getRelations = function getRelations(eventID, callback){
     pool.getConnection(function(err,connection){
         if (err) callback(err, null);
@@ -369,12 +325,6 @@ exports.getRelations = function getRelations(eventID, callback){
             });
     });
 }
-
-/**
-* Queries the database by the categoryID
-* @param {int} categoryID the categoryID for the required data
-* @param {function} callback is the callback function to be run when complete
-*/
 exports.getCategory = function getCategory(categoryID, callback){
     pool.getConnection(function(err,connection){
         if (err) callback(err, null);
@@ -388,14 +338,6 @@ exports.getCategory = function getCategory(categoryID, callback){
             });
     });
 }
-
-// Premade searches
-
-/**
-* Queries the database by the categoryID and returns it in abc order
-* @param {int} categoryID the categoryID for the required data
-* @param {function} callback is the callback function to be run when complete
-*/
 exports.getCategories = function getCategories(callback){
     pool.getConnection(function(err,connection){
         if (err) callback(err, null);
@@ -409,14 +351,6 @@ exports.getCategories = function getCategories(callback){
             });
     });
 }
-
-/**
-* Queries the relation table for primaryEventID by the eventID given. It then returns
-* all the data from the event table joined with the data from the relation table to
-* provide all the data needed for loading preconditions and relations in the timeline.
-* @param {int} eventID the eventID for the required data
-* @return returns an array
-*/
 exports.getAllRelationData = function getAllRelationData(eventID, callback){
     pool.getConnection(function(err,connection){
         if (err) callback(err, null);
@@ -439,12 +373,6 @@ exports.getAllRelationData = function getAllRelationData(eventID, callback){
             });
     });
 }
-
-/**
-* Queries the database for all the eventID and the eventName
-* @param {function} callback is the callback function to be run when complete
-* returns all the data in an array of objects {eventID:1, eventName:'Name'},{}...
-*/
 exports.getNamesandIDs = function getNamesandIDs(callback){
     pool.getConnection(function(err,connection){
         if (err) callback(err, null);

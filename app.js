@@ -228,8 +228,15 @@ app.post('/datatoserver', requireLogin, function(req, res){
                             res.end(JSON.stringify(data));
                     });
                 }
+                else if (req.body.table === 'sequence') {
+                    dataBase.removeSequence(req.body.value, req.body.type, function(err, data){
+                        if(err)
+                            res.status(500).end();
+                        else
+                            res.end(JSON.stringify(data));
+                    });
+                }
                 else if (req.body.table === 'media') {
-
                     dataBase.removeMedia(req.body.value, function(err, data){
                         if(err)
                             res.status(500).end();
@@ -252,6 +259,7 @@ app.post('/datatoserver', requireLogin, function(req, res){
                 }
                 else{
                     dataBase.removeRow(req.body.table, req.body.key, req.body.value, function(err, data){
+                        console.log("If you see this let chris know");
                         if(err)
                             res.status(500).end();
                         else
@@ -293,6 +301,14 @@ app.post('/datafromserver', function(req, res){
                                 });
                                 res.end(JSON.stringify(str));
                             }
+                        });
+                        break;
+                    case 'sequence':
+                        dataBase.sequenceText(req.body.eventid, req.body.type, function(err, data){
+                            if(err)
+                                res.status(500).end();
+                            else
+                                res.end(JSON.stringify(data));
                         });
                         break;
                     case 'media':
@@ -348,6 +364,14 @@ app.post('/datafromserver', function(req, res){
                 break;
             case 'v':
                 dataBase.getCategories(function(err, data){
+                    if(err)
+                        res.status(500).end();
+                    else
+                        res.end(JSON.stringify(data));
+                });
+                break;
+            case 'w':
+                dataBase.getSequences(function(err, data){
                     if(err)
                         res.status(500).end();
                     else
