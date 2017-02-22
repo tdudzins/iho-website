@@ -24,7 +24,7 @@ var minScrollbar = 151;
 var scrollRegions = [];
 var hypoCanvas = [];
 var hypoCanvas2 = [];
-var empirCanvas = [];
+var empirCanvas = []; //Empirical canvas
 var draw_start = 0; // Redrawable Area start in pixels
 var draw_end = 0; // Redrawable Area start in pixels
 var date_start = 12000000; // Earliest date from selected adapations
@@ -64,12 +64,14 @@ var right_edge_date;
 var bar_mouse_up = 0;
 
 var canvasAdaptation = [];
+
 function initStorage(){
     adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
     relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
     boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
     adaptArray = JSON.parse(sessionStorage.getItem("adaptArray"));
 }
+
 function initCanvas(firstRun) {
     scrollRegions = [];
     hypo_box_font_size_change = hypo_box_font_size;
@@ -225,6 +227,7 @@ function initCanvas(firstRun) {
         $('#canvas-wrapper-adaptations-div').css("margin-left", offset + "px");
     }
 };
+
 function resizeCanvas() {
     $('#canvas-wrapper-lines-div').html(hypothesis_lines_canvas);
     $('#canvas-wrapper-adaptations-div').html(hypothesis_adapt_canvas);
@@ -257,6 +260,7 @@ function resizeCanvas() {
     $('#empirical-wrapper-div').width = canvas_timeline_w;
 
     // Redefine Canvas Context(s)
+	//Hypothetical canvas
     topcanvas1 = document.getElementById('hypothesis-canvas-1');
     topcanvas2 = document.getElementById('hypothesis-canvas-2');
     topcanvas3 = document.getElementById('hypothesis-canvas-3');
@@ -282,24 +286,6 @@ function resizeCanvas() {
     topcanvas210 = document.getElementById('hypothesis-canvas2-10');
     topcanvas211 = document.getElementById('hypothesis-canvas2-11');
     topcanvas212 = document.getElementById('hypothesis-canvas2-12');
-
-    botcanvas1 = document.getElementById('empirical-canvas-1');
-    botcanvas2 = document.getElementById('empirical-canvas-2');
-    botcanvas3 = document.getElementById('empirical-canvas-3');
-    botcanvas4 = document.getElementById('empirical-canvas-4');
-    botcanvas5 = document.getElementById('empirical-canvas-5');
-    botcanvas6 = document.getElementById('empirical-canvas-6');
-    botcanvas7 = document.getElementById('empirical-canvas-7');
-    botcanvas8 = document.getElementById('empirical-canvas-8');
-    botcanvas9 = document.getElementById('empirical-canvas-9');
-    botcanvas10 = document.getElementById('empirical-canvas-10');
-    botcanvas11 = document.getElementById('empirical-canvas-11');
-    botcanvas12 = document.getElementById('empirical-canvas-12');
-
-    canvas1_1 = document.getElementById('timeline-increments');
-
-    canvas2_1 = document.getElementById('scrollbar-canvas-container');
-    canvas2_2 = document.getElementById('scrollbar-canvas-block');
 
     ctx_top_1 = topcanvas1.getContext("2d");
     ctx_top_1.canvas.width = canvas_div_w;
@@ -400,7 +386,21 @@ function resizeCanvas() {
     hypoCanvas2[9] = ctx_top2_10;
     hypoCanvas2[10] = ctx_top2_11;
     hypoCanvas2[11] = ctx_top2_12;
-
+	
+	
+	//Empirical canvas
+	botcanvas1 = document.getElementById('empirical-canvas-1');
+    botcanvas2 = document.getElementById('empirical-canvas-2');
+    botcanvas3 = document.getElementById('empirical-canvas-3');
+    botcanvas4 = document.getElementById('empirical-canvas-4');
+    botcanvas5 = document.getElementById('empirical-canvas-5');
+    botcanvas6 = document.getElementById('empirical-canvas-6');
+    botcanvas7 = document.getElementById('empirical-canvas-7');
+    botcanvas8 = document.getElementById('empirical-canvas-8');
+    botcanvas9 = document.getElementById('empirical-canvas-9');
+    botcanvas10 = document.getElementById('empirical-canvas-10');
+    botcanvas11 = document.getElementById('empirical-canvas-11');
+    botcanvas12 = document.getElementById('empirical-canvas-12');
 
     ctx_bot_1 = botcanvas1.getContext("2d");
 	ctx_bot_1.canvas.width = canvas_div_w;
@@ -442,6 +442,13 @@ function resizeCanvas() {
 	empirCanvas = [ctx_bot_1, ctx_bot_2, ctx_bot_3, ctx_bot_4,
 				ctx_bot_5, ctx_bot_6, ctx_bot_7, ctx_bot_8,
 				ctx_bot_9, ctx_bot_10, ctx_bot_11, ctx_bot_12];
+				
+	
+	//Scrollbar and timeline increments
+	canvas1_1 = document.getElementById('timeline-increments');
+
+    canvas2_1 = document.getElementById('scrollbar-canvas-container');
+    canvas2_2 = document.getElementById('scrollbar-canvas-block');
 
     ctx1_1 = canvas1_1.getContext("2d");
     ctx1_1.canvas.width = canvas1_1_w;
@@ -455,6 +462,7 @@ function resizeCanvas() {
     ctx2_2.canvas.width = canvas2_w;
     ctx2_2.canvas.height = canvas2_h;
 }
+
 function setdate (start, end) {
     date_start = start;
     date_end = end;
@@ -516,9 +524,7 @@ function boxCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text,empiri
 }
 
 // Empirical Timeline function
-function boxEmpiricalCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text,empirical) {
-    var canvas_total_width = 12 * canvas_div_w;
-
+function boxEmpiricalCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text) {
     var c_value = x_pos/canvas_div_w;
     var selected_canvas = 0;
 
@@ -560,7 +566,7 @@ function boxEmpiricalCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,te
             empirCanvas[selected_canvas + i].fillStyle = hypo_box_font_color;
             empirCanvas[selected_canvas + i].textAlign = "center";
             for (j = 0; j < text.length; j++) {
-                empirCanvas[selected_canvas + i].fillText(text[j], temp_x + (0.5 * width_length), y_pos + (hypo_box_font_size * (j + 1)));
+                empirCanvas[selected_canvas + i].fillText(text[j], temp_x + (0.5 * width_length), y_pos + ((hypo_box_font_size_change + ((j)?1:0)) * (j + 1)));
             }
         }
     }
@@ -754,6 +760,30 @@ function addHypoAdaptation(eventID) {
     drawLines(0);
     drawAllBoxes();
 }
+
+
+//Needs to be updated - in process
+/*Need to update it so that positionEmpirAdaptBox doesn't have a callback. 
+boxEmpiricalCanvasWrapperDraw shouldn't be called here anymore. Need to handle
+shrinking boxes and calling drawEmpirLines (to be created) and drawAllEmpirBoxes */
+function addEmpirAdaptation(eventID) {
+    var empiricalTable = JSON.parse(sessionStorage.getItem("empiricalTable"));
+
+	empiricalTable.forEach(function(empirRecord){
+
+		if(empirRecord[0] == eventID){
+			var eventName = empirRecord[1];
+			var eventDate = empirRecord[2];
+			createEmpirAdaptBox(eventID, eventName, eventDate, function(eventID, text, width, height, date) {
+				positionEmpirAdaptBox(eventID, text, width, height, date, function(x,y,width,height,text) {
+					boxEmpiricalCanvasWrapperDraw(x,y,width,height,text)
+				});
+			});
+		}
+	});
+
+}
+
 function createAdaptBox(eventID, eventName, date, callback) {
     var textArray = [];
     if(hypo_box_font_size_change <= 10){
@@ -789,8 +819,18 @@ function createAdaptBox(eventID, eventName, date, callback) {
     var height = (hypo_box_font_size_change * textArray.length) + (text_in_box_padding_h * ((textArray.length > 1)?2:1));
     callback(eventID, textArray, width, height, date);
 }
+
+//Needs to be updated - should be finished
 function createEmpirAdaptBox(eventID, eventName, date, callback) {
     var textArray = [];
+    if(hypo_box_font_size_change <= 10){
+        text_in_box_padding_w = 1;
+        text_in_box_padding_h = 1;
+    }
+    else if(hypo_box_font_size_change > 10){
+        text_in_box_padding_w = std_text_in_box_padding_w;
+        text_in_box_padding_h = std_text_in_box_padding_h;
+    }
     ctx_bot_1.font = hypo_box_font_size + "px " + hypo_box_font_family;
     var line = "";
     var temp_str = eventName.split(" ");
@@ -808,12 +848,12 @@ function createEmpirAdaptBox(eventID, eventName, date, callback) {
     var longest_line = 0;
     var width = 0;
     textArray.forEach(function(item) {
-        if(longest_line < item.length) {
-            longest_line = item.length;
-            width = parseInt((ctx_bot_1.measureText(item).width + 5).toFixed(0));
+        if(longest_line < ctx_bot_1.measureText(item).width) {
+            longest_line = ctx_bot_1.measureText(item).width;
+            width = parseInt((ctx_bot_1.measureText(item).width + text_in_box_padding_w).toFixed(0));
         }
     });
-    var height = (hypo_box_font_size * textArray.length) + (5 * textArray.length);
+    var height = (hypo_box_font_size_change * textArray.length) + (text_in_box_padding_h * ((textArray.length > 1)?2:1));
     callback(eventID, textArray, width, height, date);
 }
 
@@ -891,17 +931,12 @@ function positionAdaptBox(eventID, text, width, height, date) {
     //sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
 }
 
+
+//Needs to be updated - in process
+/*Needs to not have a callback, among other additions*/
 function positionEmpirAdaptBox(eventID, text, width, height, date, callback) {
     var x_pos = 0;
     var y_pos = 0;
-    var empirical;
-    var relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
-    if(relationsObj[eventID] != undefined) {
-        empirical = true;
-    }
-    else {
-        empirical = false;
-    }
 
     if(date >= 1000000) {
         date = date + 4000000;
@@ -935,26 +970,10 @@ function positionEmpirAdaptBox(eventID, text, width, height, date, callback) {
 
 	sessionStorage.setItem("empiricalBox", JSON.stringify(empiricalBox));
 
-    callback(x_pos, y_pos, width, height, text, empirical);
+    callback(x_pos, y_pos, width, height, text);
 }
 
-function addEmpirAdaptation(eventID) {
-    var empiricalTable = JSON.parse(sessionStorage.getItem("empiricalTable"));
 
-	empiricalTable.forEach(function(empirRecord){
-
-		if(empirRecord[0] == eventID){
-			var eventName = empirRecord[1];
-			var eventDate = empirRecord[2];
-			createEmpirAdaptBox(eventID, eventName, eventDate, function(eventID, text, width, height, date) {
-				positionEmpirAdaptBox(eventID, text, width, height, date, function(x,y,width,height,text,empirical) {
-					boxEmpiricalCanvasWrapperDraw(x,y,width,height,text,empirical)
-				});
-			});
-		}
-	});
-
-}
 function removeHypoAdaptation(eventID, callback) {
     // Empirical undraw
     if(adaptObj[eventID][4] == 0) {
@@ -1005,6 +1024,24 @@ function removeHypoAdaptation(eventID, callback) {
     drawLines(0);
     callback(eventID);
 }
+
+
+//Might need to be updated
+function removeEmpirAdaptation(eventID, callback) {
+	var empiricalBox = JSON.parse(sessionStorage.getItem("empiricalBox"));
+
+    for(var i = 0; i < empiricalBox.length; i++) {
+		if(empiricalBox[i][5] == eventID) {
+			boxEmpiricalCanvasWrapperClear(empiricalBox[i][0], empiricalBox[i][1], empiricalBox[i][2], empiricalBox[i][3]);
+			empiricalBox.splice(i, 1);
+			i = empiricalBox.length;
+        }
+    }
+
+    sessionStorage.setItem("empiricalBox", JSON.stringify(empiricalBox));
+    callback(eventID);
+}
+
 function drawAllBoxes() {
     // Clear boxes
     for(var i = 0; i < 12; i++) {
@@ -1015,6 +1052,18 @@ function drawAllBoxes() {
         boxCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4], empirical);
     });
 }
+
+//Needs to be updated - should be done
+function drawAllEmpirBoxes() {
+    // Clear boxes
+    for(var i = 0; i < 12; i++) {
+        empirCanvas[i].clearRect(0, 0, canvas_div_w, canvas_div_h_empir);
+    }
+    empiricalBox.forEach(function(item){
+        boxEmpiricalCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4]);
+    });
+}
+
 function redrawHypo(size) {
         // Reposition boxes only
         if(Math.abs(last_scroll_ratio - scroll_ratio) > size && (last_hypo_font_size == hypo_box_font_size_change) && size != 0) {
@@ -1091,6 +1140,7 @@ function redrawHypo(size) {
             drawAllBoxes();
         }
 }
+
 function drawLines(size) {
     if(Math.abs(last_scroll_ratio_lines - scroll_ratio) > size || size == 0) {
         last_scroll_ratio_lines = scroll_ratio;
@@ -1115,21 +1165,6 @@ function drawLines(size) {
     }
 }
 
-function removeEmpirAdaptation(eventID, callback) {
-	var empiricalBox = JSON.parse(sessionStorage.getItem("empiricalBox"));
-
-    for(var i = 0; i < empiricalBox.length; i++) {
-		if(empiricalBox[i][5] == eventID) {
-			boxEmpiricalCanvasWrapperClear(empiricalBox[i][0], empiricalBox[i][1], empiricalBox[i][2], empiricalBox[i][3]);
-			empiricalBox.splice(i, 1);
-			i = empiricalBox.length;
-        }
-    }
-
-    sessionStorage.setItem("empiricalBox", JSON.stringify(empiricalBox));
-    callback(eventID);
-}
-
 // Scrollbar functions
 function drawScrollbarContainer () {
     var container_height = 0.2;
@@ -1152,6 +1187,7 @@ function drawScrollbarContainer () {
     ctx2_1.closePath();
     ctx2_1.fill();
 }
+
 function drawScrollbarBlock() {
     // Defining Handles
     ctx2_2.clearRect(0, 0, ctx2_2.canvas.width, ctx2_2.canvas.height);
