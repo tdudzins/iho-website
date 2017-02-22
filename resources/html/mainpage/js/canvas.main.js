@@ -35,7 +35,10 @@ var max_char_per_line = 15; // Used in positionAdaptBox
 var box_to_box_padding_size = 18;
 var text_in_box_padding_w = std_text_in_box_padding_w = 5;
 var text_in_box_padding_h = std_text_in_box_padding_h = 5;
+var text_in_empir_box_padding_w = std_text_in_empir_box_padding_w = 5;
+var text_in_empir_box_padding_h = std_text_in_empir_box_padding_h = 5;
 var hypo_box_font_size = temp_text = last_hypo_font_size = hypo_box_font_size_change = 25;
+var empir_box_font_size = empir_temp_text = last_empir_font_size = empir_box_font_size_change = 25;
 var scrollbar_font_size = 13;
 var increments_font_size = 25;
 var hypo_box_font_family = scrollbar_font_family = increments_font_family = "Roboto";
@@ -53,6 +56,10 @@ var adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
 var relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
 var boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
 var adaptArray = JSON.parse(sessionStorage.getItem("adaptArray"));
+
+var empiricalBox = JSON.parse(sessionStorage.getItem("empiricalBox"));
+var empiricalTable = JSON.parse(sessionStorage.getItem("empiricalTable"));
+
 var lineLocation = [];
 var middleBoxObj = {};
 
@@ -70,11 +77,15 @@ function initStorage(){
     relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
     boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
     adaptArray = JSON.parse(sessionStorage.getItem("adaptArray"));
+	
+	empiricalBox = JSON.parse(sessionStorage.getItem("empiricalBox"));
+	empiricalTable = JSON.parse(sessionStorage.getItem("empiricalTable"));
 }
 
 function initCanvas(firstRun) {
     scrollRegions = [];
     hypo_box_font_size_change = hypo_box_font_size;
+	empir_box_font_size_change = empir_box_font_size;
 
     // Resize Canvases
     resizeCanvas();
@@ -141,6 +152,7 @@ function initCanvas(firstRun) {
 
         if(bar_mouse_up) {
             redrawHypo(0);
+			redrawEmpir(0)
             drawLines(0);
             bar_mouse_up = 0;
         }
@@ -211,6 +223,7 @@ function initCanvas(firstRun) {
             // redraw
             drawScrollbarBlock();
             redrawHypo(.00001);
+			redrawEmpir(.00001);
             drawLines(.00001);
             // reset the starting mouse position for the next mousemove
             startX=mx;
@@ -225,6 +238,7 @@ function initCanvas(firstRun) {
         var offset = 20+(-1 * ((12000000 - left_edge_date)/increment_per_pixel));
         $('#canvas-wrapper-lines-div').css("margin-left", offset + "px");
         $('#canvas-wrapper-adaptations-div').css("margin-left", offset + "px");
+		$('#canvas-wrapper-empirical-adaptations-div').css("margin-left", offset + "px");
     }
 };
 
@@ -256,8 +270,9 @@ function resizeCanvas() {
     $('#scrollbar-canvas-container').width = canvas_div_w;
     $('#scrollbar-canvas-block').width = canvas_div_w;
     minScrollbar = 1/12 * canvas_div_w;
+	
     // Resize Empirical Canvas
-    $('#empirical-wrapper-div').width = canvas_timeline_w;
+    $('#canvas-wrapper-empirical-adaptations-div').width = canvas_timeline_w;
 
     // Redefine Canvas Context(s)
 	//Hypothetical canvas
@@ -562,11 +577,11 @@ function boxEmpiricalCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,te
 
             empirCanvas[selected_canvas + i].fillStyle = hypo_box_fill_style_empirical;
             empirCanvas[selected_canvas + i].fillRect(temp_x, y_pos, width_length, height_length);
-            empirCanvas[selected_canvas + i].font = hypo_box_font_size + "px " + hypo_box_font_family;
+            empirCanvas[selected_canvas + i].font = empir_box_font_size + "px " + hypo_box_font_family;
             empirCanvas[selected_canvas + i].fillStyle = hypo_box_font_color;
             empirCanvas[selected_canvas + i].textAlign = "center";
             for (j = 0; j < text.length; j++) {
-                empirCanvas[selected_canvas + i].fillText(text[j], temp_x + (0.5 * width_length), y_pos + ((hypo_box_font_size_change + ((j)?1:0)) * (j + 1)));
+                empirCanvas[selected_canvas + i].fillText(text[j], temp_x + (0.5 * width_length), y_pos + ((empir_box_font_size_change + ((j)?1:0)) * (j + 1)));
             }
         }
     }
@@ -610,7 +625,6 @@ function boxCanvasWrapperClear(x_pos,y_pos,width_length,height_length) {
 }
 
 function boxEmpiricalCanvasWrapperClear(x_pos,y_pos,width_length,height_length) {
-    var canvas_total_width = 12 * canvas_div_w;
     var c_value = x_pos/canvas_div_w;
     var selected_canvas = 0;
     if(c_value <= 1)
@@ -765,22 +779,39 @@ function addHypoAdaptation(eventID) {
 //Needs to be updated - in process
 /*Need to update it so that positionEmpirAdaptBox doesn't have a callback. 
 boxEmpiricalCanvasWrapperDraw shouldn't be called here anymore. Need to handle
-shrinking boxes and calling drawEmpirLines (to be created) and drawAllEmpirBoxes */
+shrinking boxes and calling drawAllEmpirBoxes */
 function addEmpirAdaptation(eventID) {
-    var empiricalTable = JSON.parse(sessionStorage.getItem("empiricalTable"));
+    empiricalTable = JSON.parse(sessionStorage.getItem("empiricalTable"));
+	//empiricalBox = JSON.parse(sessionStorage.getItem("empiricalBox"));
 
 	empiricalTable.forEach(function(empirRecord){
-
 		if(empirRecord[0] == eventID){
 			var eventName = empirRecord[1];
 			var eventDate = empirRecord[2];
 			createEmpirAdaptBox(eventID, eventName, eventDate, function(eventID, text, width, height, date) {
-				positionEmpirAdaptBox(eventID, text, width, height, date, function(x,y,width,height,text) {
-					boxEmpiricalCanvasWrapperDraw(x,y,width,height,text)
-				});
+				positionEmpirAdaptBox(eventID, text, width, height, date)
 			});
 		}
+		if(empir_box_font_size_change != empir_temp_text)
+			return;
 	});
+	
+	//Shrink boxes to fit
+	dir = (dir)? 0:1;
+    while(empir_box_font_size_change != empir_temp_text) {
+        empir_temp_text = empir_box_font_size_change;
+        empiricalBox = [];
+        for(var i = 0; i < empiricalTable.length; ++i){
+            createEmpirAdaptBox(empiricalTable[i][0], empiricalTable[i][1], empiricalTable[i][2], function(eventID, text, width, height, date) {
+                positionEmpirAdaptBox(eventID, text, width, height, date);
+            });
+            if(empir_box_font_size_change != empir_temp_text)
+                break;
+        }
+    }
+	
+	//Draw all empirical boxes
+	drawAllEmpirBoxes();
 
 }
 
@@ -823,15 +854,15 @@ function createAdaptBox(eventID, eventName, date, callback) {
 //Needs to be updated - should be finished
 function createEmpirAdaptBox(eventID, eventName, date, callback) {
     var textArray = [];
-    if(hypo_box_font_size_change <= 10){
-        text_in_box_padding_w = 1;
-        text_in_box_padding_h = 1;
+    if(empir_box_font_size_change <= 10){
+        text_in_empir_box_padding_w = 1;
+        text_in_empir_box_padding_h = 1;
     }
-    else if(hypo_box_font_size_change > 10){
-        text_in_box_padding_w = std_text_in_box_padding_w;
-        text_in_box_padding_h = std_text_in_box_padding_h;
+    else if(empir_box_font_size_change > 10){
+        text_in_empir_box_padding_w = std_text_in_empir_box_padding_w;
+        text_in_empir_box_padding_h = std_text_in_empir_box_padding_h;
     }
-    ctx_bot_1.font = hypo_box_font_size + "px " + hypo_box_font_family;
+    ctx_bot_1.font = empir_box_font_size + "px " + hypo_box_font_family;
     var line = "";
     var temp_str = eventName.split(" ");
     temp_str.forEach(function(item) {
@@ -850,10 +881,10 @@ function createEmpirAdaptBox(eventID, eventName, date, callback) {
     textArray.forEach(function(item) {
         if(longest_line < ctx_bot_1.measureText(item).width) {
             longest_line = ctx_bot_1.measureText(item).width;
-            width = parseInt((ctx_bot_1.measureText(item).width + text_in_box_padding_w).toFixed(0));
+            width = parseInt((ctx_bot_1.measureText(item).width + text_in_empir_box_padding_w).toFixed(0));
         }
     });
-    var height = (hypo_box_font_size_change * textArray.length) + (text_in_box_padding_h * ((textArray.length > 1)?2:1));
+    var height = (empir_box_font_size_change * textArray.length) + (text_in_empir_box_padding_h * ((textArray.length > 1)?2:1));
     callback(eventID, textArray, width, height, date);
 }
 
@@ -934,7 +965,7 @@ function positionAdaptBox(eventID, text, width, height, date) {
 
 //Needs to be updated - in process
 /*Needs to not have a callback, among other additions*/
-function positionEmpirAdaptBox(eventID, text, width, height, date, callback) {
+function positionEmpirAdaptBox(eventID, text, width, height, date) {	
     var x_pos = 0;
     var y_pos = 0;
 
@@ -948,17 +979,56 @@ function positionEmpirAdaptBox(eventID, text, width, height, date, callback) {
     timespan = (date_start - date_end);
     viewable_time = timespan * scroll_ratio;
     increment_per_pixel = (viewable_time/canvas_div_w);
-
-    var canvas_usage = timespan/12000000;
-    var usable_canvas = canvas_timeline_w * canvas_usage;
-    var viewable_canvas = canvas_div_w / viewable_time;
-
-    x_pos = date/increment_per_pixel;
+	x_pos = date/increment_per_pixel;
     x_pos = ((canvas_div_w/scroll_ratio) - x_pos) - width/2;
-
     y_pos = canvas_div_h_empir/2 - height/2;
 
-	var empiricalBox = JSON.parse(sessionStorage.getItem("empiricalBox"));
+	var i = 0;
+    var up = 0;
+    var down = 0;
+    var l_i = 0;
+    while (i < empiricalBox.length) {
+        // Hit x or y
+        if(((x_pos >= empiricalBox[i][0] - box_to_box_padding_size && x_pos <= empiricalBox[i][0] + empiricalBox[i][2] + box_to_box_padding_size) ||
+            (x_pos  <= empiricalBox[i][0] + box_to_box_padding_size && x_pos + width >= empiricalBox[i][0] + empiricalBox[i][2] + box_to_box_padding_size) ||
+            (x_pos + width >= empiricalBox[i][0] - box_to_box_padding_size  && x_pos + width <= empiricalBox[i][0] + empiricalBox[i][2] + box_to_box_padding_size)) &&
+            ((y_pos >= empiricalBox[i][1] && y_pos <= empiricalBox[i][1] + empiricalBox[i][3]) ||
+            (y_pos <= empiricalBox[i][1] && y_pos + height >= empiricalBox[i][1] + empiricalBox[i][3]) ||
+            (y_pos + height >= empiricalBox[i][1] && y_pos + height <= empiricalBox[i][1] + empiricalBox[i][3]))) {
+                if(i > l_i) {
+                    dir = (dir)? 0:1;
+                    l_i = i;
+                }
+                if(!down && !dir) {
+                    if (empiricalBox[i][1] + empiricalBox[i][3] + height + box_to_box_padding_size < canvas_div_h_hypo) {
+                        y_pos = empiricalBox[i][1] + empiricalBox[i][3] + box_to_box_padding_size;
+                        i = 0;
+                    }
+                    else
+                        down = 1;
+                }
+                else if(!up && dir) {
+                    if (empiricalBox[i][1] - box_to_box_padding_size - height > 0) {
+                        y_pos = empiricalBox[i][1] - box_to_box_padding_size - height;
+                        i = 0;
+                    }
+                    else
+                        up = 1;
+                }
+                else {
+                    if(empir_temp_text == empir_box_font_size_change){
+                        empir_box_font_size_change -= 1;
+                        if(empir_box_font_size_change > 5){}// TODO dots
+                    }
+                    break;
+                }
+        }
+        else{
+            i++;
+        }
+    }
+
+	//empiricalBox = JSON.parse(sessionStorage.getItem("empiricalBox"));
 	empiricalBox.push([x_pos, y_pos, width, height, text, eventID]);
 	empiricalBox.sort(function(a,b){
 		if(a[0] === b[0]){
@@ -968,9 +1038,10 @@ function positionEmpirAdaptBox(eventID, text, width, height, date, callback) {
 		}
 	});
 
+	//?
 	sessionStorage.setItem("empiricalBox", JSON.stringify(empiricalBox));
 
-    callback(x_pos, y_pos, width, height, text);
+    //callback(x_pos, y_pos, width, height, text);
 }
 
 
@@ -1134,6 +1205,82 @@ function redrawHypo(size) {
                         positionAdaptBox(eventID, text, width, height, date);
                     });
                     if(hypo_box_font_size_change != temp_text)
+                        break;
+                }
+            }
+            drawAllBoxes();
+        }
+}
+
+function redrawEmpir(size) {
+        // Reposition boxes only
+        if(Math.abs(last_scroll_ratio - scroll_ratio) > size && (last_empir_font_size == empir_box_font_size_change) && size != 0) {
+            // Clear boxes
+            for(var i = 0; i < 12; i++) {
+                empirCanvas[i].clearRect(0, 0, canvas_div_w, canvas_div_h_empir);
+            }
+            // Move then redraw the same box
+            empiricalBox.forEach(function(item){
+                var date = empiricalTable[item[5]][1];
+                if(date >= 1000000) {
+                    date = date + 4000000;
+                }
+                else {
+                    date = date * 5;
+                }
+                timespan = (date_start - date_end);
+                viewable_time = timespan * scroll_ratio;
+                increment_per_pixel = (viewable_time/canvas_div_w);
+                x_pos = date/increment_per_pixel;
+                x_pos = ((canvas_div_w/scroll_ratio) - x_pos) - item[2]/2;
+                item[0] = x_pos;
+                /*
+                if(last_scroll_ratio < scroll_ratio){
+                    var i = 0;
+                    while (i < boxLocation.length) {
+                        // Hit x or y
+                        if(((x_pos >= boxLocation[i][0] - box_to_box_padding_size && x_pos <= boxLocation[i][0] + boxLocation[i][2] + box_to_box_padding_size) ||
+                            (x_pos  <= boxLocation[i][0] + box_to_box_padding_size && x_pos + item[2] >= boxLocation[i][0] + boxLocation[i][2] + box_to_box_padding_size) ||
+                            (x_pos + item[2] >= boxLocation[i][0] - box_to_box_padding_size  && x_pos + item[2] <= boxLocation[i][0] + boxLocation[i][2] + box_to_box_padding_size)) &&
+                            ((item[2] >= boxLocation[i][1] && item[2] <= boxLocation[i][1] + boxLocation[i][3]) ||
+                            (item[2] <= boxLocation[i][1] && item[2] + item[3] >= boxLocation[i][1] + boxLocation[i][3]) ||
+                            (item[2] + item[3] >= boxLocation[i][1] && item[2] + item[3] <= boxLocation[i][1] + boxLocation[i][3]))) {
+                                last_hypo_font_size = 0;
+                        }
+                        else{
+                            i++;
+                        }
+                    }
+                }*/
+                //middleBoxObj[item[5]] = [(item[0] + (item[2]/2)), (item[1] + (item[3]/2))];
+                boxEmpiricalCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4]);
+            });
+            last_scroll_ratio = scroll_ratio;
+            //sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
+        }
+
+        // TODO if needed medium redraw speedm, redraw and move without remaking boxes
+
+        else if(Math.abs(last_scroll_ratio - scroll_ratio) > size || size == 0) {
+            last_scroll_ratio = scroll_ratio;
+            last_empir_font_size = empir_box_font_size_change;
+            empir_box_font_size_change = empir_box_font_size;
+            empir_temp_text = 0;
+            // Clear boxes
+            for(var i = 0; i < 12; i++) {
+                empirCanvas[i].clearRect(0, 0, canvas_div_w, canvas_div_h_empir);
+            }
+
+            dir = (dir)? 0:1;
+            while(empir_box_font_size_change != empir_temp_text) {
+                empir_temp_text = empir_box_font_size_change;
+                empiricalBox = [];
+                empir_temp_text = empir_box_font_size_change;
+                for (var i = 0; i < empiricalTable.length; i++) {
+                    createAdaptBox(empiricalTable[i][0], empiricalTable[i][1], empiricalTable[i][2], function(eventID, text, width, height, date) {
+                        positionAdaptBox(eventID, text, width, height, date);
+                    });
+                    if(empir_box_font_size_change != empir_temp_text)
                         break;
                 }
             }

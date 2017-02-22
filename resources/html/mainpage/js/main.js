@@ -55,7 +55,7 @@ function setupSideNav(callback) {
                     //TODO remove empirical boxes
                     removeAdaption($(this).attr('id'), function(eid){
                         removeHypoAdaptation(eid, function(){});
-			removeEmpirAdaptation(eid, function(){});
+						removeEmpirAdaptation(eid, function(){});
                     });
                 }
                 // Select
