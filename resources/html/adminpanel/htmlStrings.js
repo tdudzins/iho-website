@@ -285,41 +285,32 @@ var sequencePane =
        </div>
        <div id="sequence-info>" class="sequence-info">
 
-           <div id="sequence-div" class="sequence-div">
-               <div id="sequence-label" class="sequence-label">
-                   <label class="sequence-labels"> Sequence Name: </label>
-               </div>
-               <div id="sequence-field" class="sequence-field">
-                   <input id="sequence" class="sequence" type="text">
-                   <input id="updatesequenceButton" value="Update" type="button">
-               </div>
-           </div>
            <div id="sequence-lists-area" class="sequence-lists-area">
            <div id="all-adapts-pane" class="sequence-all-adapts-pane">
-             <div id="relations-header" class="sequence-relations-header">
-               <label class="sequence-description-labels"> All Adaptations </label>
+             <div id="adaptations-header" class="sequence-adaptations-header">
+               <label class="sequence-description-labels"> Adaptations </label>
              </div>
-             <div id="relations-sorting" class="sequence-relations-sorting">
-               <input id="relations-searchbar-text" class="sequence-relations-searchbar-text" type="text" placeholder="Search for an adaptation..." >
-               <input id="relations-searchbutton" class="sequence-relations-searchbutton" type="submit" value="Go">
+             <div id="sequence-adaptations-sorting" class="sequence-adaptations-sorting">
+               <input id="sequence-adaptations-searchbar-text" class="sequence-adaptations-searchbar-text" type="text" placeholder="Search for an adaptation..." >
+               <input id="sequence-adaptations-searchbutton" class="sequence-adaptations-searchbutton" type="submit" value="Go">
              </div>
-             <div id="relations-database-collection" class="sequence-relations-database-collection">
-               <ul id="relations-items" class="sequence-relations-items">
+             <div id="sequence-adaptations-database-collection" class="sequence-adaptations-database-collection">
+               <ul id="sequence-adaptations-items" class="sequence-adaptations-items">
                </ul>
              </div>
            </div>
            <div id="stacked-pane" class="sequence-stacked-pane">
-             <div id="relations-buttons-pane" class="sequence-relations-buttons-pane">
-               <input id="add-to-preconditions" class="sequence-add-to-sequence" type="button" value="Add To Sequence">
-               <input id="remove-from-list" class="sequence-remove-from-list" type="button" value="Remove">
+             <div id="sequence-buttons-pane" class="sequence-buttons-pane">
+               <input id="sequence-add-to-list" class="sequence-add-to-list" type="button" value="Add">
+               <input id="sequence-remove-from-list" class="sequence-remove-from-list" type="button" value="Remove">
              </div>
-             <div id="relations-div-pane" class="sequence-relations-div-pane">
-               <div id="preconditions-div" class="sequence-preconditions-div">
-                   <div id="preconditions-header" class="sequence-preconditions-header">
-                     <label class="sequence-description-labels"> Sequence Contents </label>
+             <div id="sequence-contents-div-pane" class="sequence-contents-div-pane">
+               <div id="sequence-contents-div" class="sequence-contents-div">
+                   <div id="sequence-contents-header" class="sequence-contents-header">
+                     <label class="sequence-description-labels"> Contents </label>
                    </div>
-                   <div id="preconditions-database-collection" class="sequence-preconditions-database-collection">
-                     <ul id="preconditions-items" class="sequence-preconditions-items">
+                   <div id="sequence-contents-database-collection" class="sequence-contents-database-collection">
+                     <ul id="sequence-contents-items" class="sequence-contents-items">
                      </ul>
                    </div>
                  </div>

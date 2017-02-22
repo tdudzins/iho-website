@@ -1061,7 +1061,7 @@ ul.category-items li {
 /* Sequence Pane */
 .sequence-pane {
 	vertical-align: bottom;
-	height: calc(100vh - 185px);
+	height: calc(100% - 45px);
 	width: 100%;
 	margin-top: 5px;
 	margin-bottom: 5px;
@@ -1176,32 +1176,13 @@ ul.sequence-items li {
 	margin-bottom: 5px;
 }
 
-.sequence-div {
-	width: 100%;
-	height: 25px;
-	padding: 5px;
-}
-
-.sequence-label {
-	float: left;
-	width: 30%;
-}
-
-.sequence-field {
-	float: right;
-	width: 70%;
-}
-
-.sequence {
-	width: 40%;
-	height: 20px;
-	line-height: 1.5;
-}
-
 .sequence-lists-area {
 	width: 100%;
-	height: calc(100% - 35px);
+	height: 100%;
 	padding: 5px;
+	font-family: georgia;
+    font-weight: bold;
+    font-size: 100%;
 }
 
 .sequence-all-adapts-pane {
@@ -1216,20 +1197,20 @@ ul.sequence-items li {
 	width: 70%;
 }
 
-.sequence-relations-buttons-pane {
+.sequence-buttons-pane {
 	float: left;
 	height: 100%;
 	width: 33%;
 }
 
-.sequence-relations-header {
+.sequence-adaptations-header {
 	vertical-align: top;
 	text-align: center;
 	height: 30px;
 	width: 100%;
 }
 
-.sequence-relations-sorting {
+.sequence-adaptations-sorting {
 	padding: 5px;
 	height: 25px;
 	border-top-left-radius: 10px;
@@ -1237,21 +1218,21 @@ ul.sequence-items li {
 	background-color: darkgrey;
 }
 
-.sequence-relations-searchbar-text {
+.sequence-adaptations-searchbar-text {
 	float: left;
 	width: 80%;
 	vertical-align: middle;
 	margin-top: 1px;
 }
 
-.sequence-relations-searchbutton {
+.sequence-adaptations-searchbutton {
 	float: right;
 	width: 15%;
 	vertical-align: middle;
 	height: 25px;
 }
 
-.sequence-relations-database-collection {
+.sequence-adaptations-database-collection {
 	height: calc(100% - 60px);
 	vertical-align: middle;
 	background-color: darkgrey;
@@ -1259,7 +1240,7 @@ ul.sequence-items li {
 	border-bottom-right-radius: 10px;
 }
 
-.sequence-relations-items {
+.sequence-adaptations-items {
 	background-color: white;
 	height: 98%;
 	margin-left: 5px;
@@ -1271,7 +1252,7 @@ ul.sequence-items li {
 	overflow-x: hidden;
 }
 
-ul.sequence-relations-items li {
+ul.sequence-adaptations-items li {
 	border-bottom-width: 2px;
 	border-bottom-style: solid;
 	border-radius: 5px;
@@ -1281,23 +1262,23 @@ ul.sequence-relations-items li {
 	border-bottom-color: #ccc;
 }
 
-.sequence-relations-focused {
+.sequence-adaptations-focused {
 	background-color: #3b73af;
 	font-weight: bold;
 	color: white;
 }
 
-.sequence-relations-unfocused {
+.sequence-adaptations-unfocused {
 	background-color: white;
 	font-weight: bold;
 	color: black;
 }
 
-.sequence-add-to-sequence {
+.sequence-add-to-list {
 	height: 30px;
 	width: 70%;
 	vertical-align: top;
-	margin-top: 50%;
+	margin-top: 60%;
 	margin-bottom: 10%;
 	margin-left: 15%;
 }
@@ -1309,26 +1290,26 @@ ul.sequence-relations-items li {
 	vertical-align: bottom;
 }
 
-.sequence-relations-div-pane {
+.sequence-contents-div-pane {
 	float: right;
 	height: 100%;
 	width: 64%;
 }
 
-.sequence-preconditions-div {
+.sequence-contents-div {
 	height: 100%;
 	width: 100%;
 	vertical-align: top;
 }
 
-.sequence-preconditions-header {
+.sequence-contents-header {
 	vertical-align: top;
 	text-align: center;
 	height: 30px;
 	width: 100%;
 }
 
-.sequence-preconditions-database-collection {
+.sequence-contents-database-collection {
 	height: calc(100% - 30px);
 	vertical-align: middle;
 	background-color: darkgrey;
@@ -1336,7 +1317,7 @@ ul.sequence-relations-items li {
 	padding-top: 5px;
 }
 
-.sequence-preconditions-items {
+.sequence-contents-items {
 	background-color: white;
 	height: 98%;
 	margin-left: 5px;
@@ -1348,7 +1329,7 @@ ul.sequence-relations-items li {
 	overflow-x: hidden;
 }
 
-ul.sequence-preconditions-items li {
+ul.sequence-contents-items li {
 	border-bottom-width: 2px;
 	border-bottom-style: solid;
 	border-radius: 5px;
@@ -1358,68 +1339,13 @@ ul.sequence-preconditions-items li {
 	border-bottom-color: #ccc;
 }
 
-.sequence-preconditions-focused {
+.sequence-contents-focused {
 	background-color: #3b73af;
 	font-weight: bold;
 	color: white;
 }
 
-.sequence-preconditions-unfocused {
-	background-color: white;
-	font-weight: bold;
-	color: black;
-}
-
-.sequence-relationships-div {
-	height: 50%;
-	width: 100%;
-	vertical-align: bottom;
-}
-
-.sequence-relationships-header {
-	vertical-align: top;
-	text-align: center;
-	height: 30px;
-	width: 100%;
-}
-
-.sequence-relationships-database-collection {
-	height: calc(100% - 40px);
-	vertical-align: middle;
-	background-color: darkgrey;
-	border-radius: 10px;
-	padding-top: 5px;
-}
-
-.sequence-relationships-items {
-	background-color: white;
-	height: 98%;
-	margin-left: 5px;
-	margin-right: 5px;
-	margin-top: 0px;
-	margin-bottom: 0px;
-	padding-left: 0px;
-	list-style:none;
-	overflow-x: hidden;
-}
-
-ul.sequence-relationships-items li {
-	border-bottom-width: 2px;
-	border-bottom-style: solid;
-	border-radius: 5px;
-	cursor: pointer;
-	padding: 5px 0 5px 5px;
-	position: relative;
-	border-bottom-color: #ccc;
-}
-
-.sequence-relationships-focused {
-	background-color: #3b73af;
-	font-weight: bold;
-	color: white;
-}
-
-.sequence-relationships-unfocused {
+.sequence-contents-unfocused {
 	background-color: white;
 	font-weight: bold;
 	color: black;
