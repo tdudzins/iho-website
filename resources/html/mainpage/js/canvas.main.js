@@ -1284,7 +1284,7 @@ function redrawEmpir(size) {
                         break;
                 }
             }
-            drawAllBoxes();
+            drawAllEmpirBoxes();
         }
 }
 
