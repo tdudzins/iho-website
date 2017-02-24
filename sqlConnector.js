@@ -5,7 +5,7 @@ var pool  = mysql.createPool({
     user            : 'tdudzins',
     password        : 'Password',
     database        : 'ihodatabase',
-    port            : '3300'
+    port            : '3306'
 });
 
 exports.removeRow = function removeRow(table, key, value, callback) {
