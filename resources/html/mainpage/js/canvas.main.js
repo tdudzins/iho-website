@@ -14,7 +14,7 @@ ctx_bot_1, ctx_bot_2, ctx_bot_3, ctx_bot_4, ctx_bot_5, ctx_bot_6, ctx_bot_7, ctx
 canvas1_1, canvas2_1, canvas2_2, ctx1_1, ctx2_1, ctx2_2;
 
 // Global Variables
-var scroll_ratio = 0.0; // Block/Container ratio in percent
+var scroll_ratio = 1.0; // Block/Container ratio in percent
 var last_scroll_ratio = 1.0; // Used in redrawHypo
 var last_scroll_ratio_lines = 1.0; // Used in redrawHypo
 var scroll_position = 0.0; // Block/Container ratio in percent
@@ -76,6 +76,9 @@ function initCanvas(firstRun) {
     // Resize Canvases
     resizeCanvas();
 
+    scroll_left_handle_x_position = canvas2_w * scroll_position;
+    scroll_right_handle_x_position = canvas2_w * scroll_ratio + canvas2_w * scroll_position - 2 * canvas2_h * .2;
+
     var BB = canvas2_2.getBoundingClientRect();
     var offsetX = BB.left;
     var offsetY = BB.top;
@@ -98,7 +101,6 @@ function initCanvas(firstRun) {
     drawScrollbarBlock();
     last_scroll_ratio = scroll_ratio;
     last_scroll_ratio_lines = scroll_ratio;
-
     // handle mousedown events
     function scrollbarDown(e) {
         // tell the browser we're handling this mouse event
@@ -929,10 +931,10 @@ function drawScrollbarBlock() {
     var block_height = 0.2;
     var block_radius = canvas2_h * block_height;
     var hndl_left_x_padding = scroll_left_handle_x_position + block_radius;
-    var hndl_right_x_padding = (-1 * scroll_right_handle_x_position) + block_radius;
+    var hndl_right_x_padding = scroll_right_handle_x_position + block_radius;
     var hndl_cnt_left_x = hndl_left_x_padding;
     var hndl_cnt_left_y = block_radius;
-    var hndl_cnt_right_x = canvas2_w - hndl_right_x_padding;
+    var hndl_cnt_right_x =  hndl_right_x_padding;
     var hndl_cnt_right_y = block_radius;
     var arc_top = 1.5 * Math.PI;
     var arc_bot = 0.5*Math.PI;
@@ -962,7 +964,7 @@ function drawScrollbarBlock() {
     // draw block between handles
     regx = scroll_left_handle_x_position + (4 * block_radius);
     regy = hndl_cnt_left_y - block_radius;
-    regwidth = canvas2_w - (8 * block_radius);
+    regwidth = canvas2_w * scroll_ratio - (8 * block_radius);
     regheight = 2 * block_radius;
 
     ctx2_2.beginPath();
@@ -978,7 +980,7 @@ function drawScrollbarBlock() {
 
     ctx2_2.fillStyle = scrollbar_handle_fill_style;
     // draw right handle
-    regx = canvas2_w - (4 * block_radius);
+    regx = scroll_right_handle_x_position - 2 * block_radius;
     regy = hndl_cnt_left_y - block_radius;
     regwidth = 4 * block_radius;
     regheight = 2 * block_radius;
