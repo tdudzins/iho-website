@@ -229,7 +229,7 @@ app.post('/datatoserver', requireLogin, function(req, res){
                     });
                 }
                 else if (req.body.table === 'sequence') {
-                    dataBase.removeSequence(req.body.value, req.body.type, function(err, data){
+                    dataBase.removeSequence(req.body.value, req.body.key, function(err, data){
                         if(err)
                             res.status(500).end();
                         else
@@ -267,6 +267,14 @@ app.post('/datatoserver', requireLogin, function(req, res){
                     });
                 }
                 break;
+            case 'a':
+                dataBase.removeSequences(req.body.value, function(err, data){
+                    if(err)
+                        res.status(500).end();
+                    else
+                        res.end(JSON.stringify(data));
+                });
+                break
             default:
                 res.status(404);
                 res.end('unknown action');
@@ -303,14 +311,6 @@ app.post('/datafromserver', function(req, res){
                             }
                         });
                         break;
-                    case 'sequence':
-                        dataBase.sequenceText(req.body.eventid, req.body.type, function(err, data){
-                            if(err)
-                                res.status(500).end();
-                            else
-                                res.end(JSON.stringify(data));
-                        });
-                        break;
                     case 'media':
                         dataBase.getMedia(req.body.eventid, function(err, data){
                             if(err)
@@ -327,15 +327,6 @@ app.post('/datafromserver', function(req, res){
                                 res.end(JSON.stringify(data));
                         });
                         break;
-                    case 'category':
-                        dataBase.getCategory(req.body.eventid, function(err, data){
-                            if(err)
-                                res.status(500).end();
-                            else
-                                res.end(JSON.stringify(data));
-                        });
-                        break;
-
                     default:
                         res.status(404);
                         res.end('unknown action');

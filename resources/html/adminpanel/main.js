@@ -1,4 +1,5 @@
 // gets all the event data and adds it to the list on the left
+var sequenceObj = {};
 function getEventList(listID, callback) {
     $.post('/datafromserver', {action:'t'}, function(data, status) {
         var obj = JSON.parse(data);
@@ -69,7 +70,7 @@ function deleteMedia(mediaID, mediaDis){
 }
 
 function deleteCategory(){
-    if (confirm('Are you sure you want to category: ' + $('li.category-focused').text()) == true){
+    if (confirm('Are you sure you want to delete category: ' + $('li.category-focused').text()) == true){
         $.post('/datatoserver', {action:'d', table:'category', value: $('li.category-focused').attr('id')}, function(data, status) {
             loadCategories(function(){});
 
@@ -80,6 +81,39 @@ function deleteCategory(){
         });
         $('#category').val('');
     }
+}
+
+function deleteSequence(){
+    if (confirm('Are you sure you want to category: ' + $('li.sequence-focused').text()) == true){
+        $.post('/datatoserver', {action:'a', table:'sequence', value: $('li.sequence-focused').text()}, function(data, status) {
+            loadSequences(function(){});
+
+        })
+        .fail(function(response) {
+            console.log('Error: deleteSequence');
+            window.location = '/error';
+        });
+    }
+}
+
+function removeSequence(){
+    $.post('/datatoserver', {action:'d', table:'sequence', value: $('li.sequence-focused').text(), key: $('li.sequence-focused').attr('id')}, function(data, status) {
+
+    })
+    .fail(function(response) {
+        console.log('Error: deleteSequence');
+        window.location = '/error';
+    });
+}
+
+function addSequence(){
+    $.post('/datatoserver', {action:'c', table:'sequence', data:[$('li.sequence-focused').text(), $('li.sequence-focused').attr('id')]}, function(data, status) {
+        loadSequences(function(){});
+    })
+    .fail(function(response) {
+        console.log('Error: deleteSequence');
+        window.location = '/error';
+    });
 }
 
 function deleteRelation(){
@@ -260,6 +294,42 @@ function loadCategories(callback) {
     });
 }
 
+function loadSequences(){
+    postFromServer({action:'w'} ,function(data, status){
+        var obj = JSON.parse(data);
+        var currentSequence = '';
+        sequenceObj = {};
+        $('#sequence-items').empty();
+        obj.forEach(function(item){
+            if(currentSequence != item.sequenceID){
+                $('#sequence-items').append('<li class=\'sequence-adaptations-unfocused\' >'+ item.sequenceID + '</li>');
+                currentSequence = item.sequenceID;
+                sequenceObj[item.sequenceID] = [];
+            }
+            sequenceObj[item.sequenceID].push(item.eventID);
+        });
+        $('li.sequence-adaptations-unfocused').click(function(){
+            if($('#editsaveButton').val() == 'Done'){
+                $('li.sequence-adaptations-focused').removeClass('sequence-adaptations-focused').addClass('sequence-adaptations-unfocused');
+                $(this).removeClass('sequence-adaptations-unfocused').addClass('sequence-adaptations-focused');
+                loadSequence($(this).text());
+            }
+        });
+    });
+}
+function loadSequence(text){
+    sequenceObj[text].forEach(function(item){
+        $('#sequence-items').append('<li class=\'sequence-adaptations-unfocused\' >'+ item + '</li>');
+
+    });
+    $('li.sequence-adaptations-unfocused').click(function(){
+        if($('#editsaveButton').val() == 'Done'){
+            $('li.sequence-adaptations-focused').removeClass('sequence-adaptations-focused').addClass('sequence-adaptations-unfocused');
+            $(this).removeClass('sequence-adaptations-unfocused').addClass('sequence-adaptations-focused');
+            loadSequence($(this).text());
+        }
+    });
+}
 function addRelationship() {
     if($('li.relations-focused').attr('id')){
         var obj = new Array();
@@ -455,7 +525,7 @@ function tabConfig(id) {
         case 'sequence':
             $('#information-container').empty();
             $('#information-container').append(sequencePane);
-            loadCategories(function(){});
+            loadSequences();
             $('li.adpt-focused').removeClass('adpt-focused').addClass('adpt-unfocused');
             $('#editsaveButton').val('Done');
             $('#editsaveButton').click(function(){
@@ -467,28 +537,17 @@ function tabConfig(id) {
                 $('#updatesequenceButton').val('Save');
             });
             $('#removesequenceButton').click(function(){
-                deletesequence();
+                deleteSequence();
             });
             $('#updatesequenceButton').click(function(){
                 if($('#updatesequenceButton').val() == 'Save'){
-                    saveValues('sequence');
-                    $('#updatesequenceButton').val('Update');
-                    loadCategories(function(){
-                        loadCategories(function(){
-                            $($('li.sequence-unfocused').contains($('#sequence').val())).removeClass('sequence-unfocused').addClass('sequence-focused');
 
-                        });
-                    });
                 }
-                if($('#updatesequenceButton').val() == 'Update')
-                    updateValues('sequence');
-                    $('#sequence').val('');
-                    loadCategories(function(){
-                        $($('li.sequence-unfocused').contains($('#sequence').val())).removeClass('sequence-unfocused').addClass('sequence-focused');
-                    });
+                if($('#updatesequenceButton').val() == 'Update'){
+
+                }
+
             });
-
-
             break;
         default:
             console.log('Error: tabConfig');

@@ -5,7 +5,7 @@ var pool  = mysql.createPool({
     user            : 'tdudzins',
     password        : 'Password',
     database        : 'ihodatabase',
-    port            : '3306'
+    port            : '3300'
 });
 
 exports.removeRow = function removeRow(table, key, value, callback) {
@@ -183,12 +183,26 @@ exports.removeText = function removeText(data, callback) {
         }
     });
 }
-exports.removeSequence = function removeSequence(data, callback) {
+exports.removeSequence = function removeSequence(sequenceID, eventID, callback) {
     pool.getConnection(function(err,connection){
         if (err) callback(err, null);
         else{
 
-            connection.query('DELETE FROM sequence WHERE sequenceID = ? AND eventID = ?', data ,function (err, res) {
+            connection.query('DELETE FROM sequence WHERE sequenceID = ? AND eventID = ?', [sequenceID, eventID], function (err, res) {
+                connection.release();
+                if(err)
+                    callback(err, null);
+                else
+                    callback(err, res);
+            });
+        }
+    });
+}
+exports.removeSequences = function removeSequences(sequenceID, callback) {
+    pool.getConnection(function(err,connection){
+        if (err) callback(err, null);
+        else{
+            connection.query('DELETE FROM sequence WHERE sequenceID = ?', sequenceID, function (err, res) {
                 connection.release();
                 if(err)
                     callback(err, null);
@@ -290,7 +304,7 @@ exports.getSequences = function getSequences(callback){
     pool.getConnection(function(err,connection){
         if (err) callback(err, null);
         else
-            var result = connection.query('SELECT * FROM sequence', function (err, res) {
+            var result = connection.query('SELECT * FROM sequence ORDER BY sequenceID ASC', function (err, res) {
                 connection.release();
                 if(err)
                     callback(err, null);
