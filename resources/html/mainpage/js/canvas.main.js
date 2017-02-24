@@ -223,8 +223,8 @@ function initCanvas(firstRun) {
             // redraw
             drawScrollbarBlock();
             redrawHypo(.00001);
-			redrawEmpir(.00001);
             drawLines(.00001);
+			redrawEmpir(.00001);
             // reset the starting mouse position for the next mousemove
             startX=mx;
             startY=my;
@@ -655,8 +655,8 @@ function boxEmpiricalCanvasWrapperClear(x_pos,y_pos,width_length,height_length) 
     var temp_x = 0;
     for(var i = -1; i < 2; i++) {
         if(selected_canvas + i >= 0 && selected_canvas + i <= 11) {
-            temp_x = x_pos - (i * canvas_div_w);
-           empirCanvas[selected_canvas].clearRect((temp_x - 1), (y_pos - 1), (width_length + 3), (height_length + 3));
+			temp_x = x_pos - (i * canvas_div_w);
+			empirCanvas[selected_canvas].clearRect((temp_x - 1), (y_pos - 1), (width_length + 3), (height_length + 3));
        }
     }
 }
@@ -777,9 +777,6 @@ function addHypoAdaptation(eventID) {
 
 
 //Needs to be updated - in process
-/*Need to update it so that positionEmpirAdaptBox doesn't have a callback. 
-boxEmpiricalCanvasWrapperDraw shouldn't be called here anymore. Need to handle
-shrinking boxes and calling drawAllEmpirBoxes */
 function addEmpirAdaptation(eventID) {
     empiricalTable = JSON.parse(sessionStorage.getItem("empiricalTable"));
 	//empiricalBox = JSON.parse(sessionStorage.getItem("empiricalBox"));
@@ -964,7 +961,6 @@ function positionAdaptBox(eventID, text, width, height, date) {
 
 
 //Needs to be updated - in process
-/*Needs to not have a callback, among other additions*/
 function positionEmpirAdaptBox(eventID, text, width, height, date) {	
     var x_pos = 0;
     var y_pos = 0;
@@ -1277,8 +1273,8 @@ function redrawEmpir(size) {
                 empiricalBox = [];
                 empir_temp_text = empir_box_font_size_change;
                 for (var i = 0; i < empiricalTable.length; i++) {
-                    createAdaptBox(empiricalTable[i][0], empiricalTable[i][1], empiricalTable[i][2], function(eventID, text, width, height, date) {
-                        positionAdaptBox(eventID, text, width, height, date);
+                    createEmpirAdaptBox(empiricalTable[i][0], empiricalTable[i][1], empiricalTable[i][2], function(eventID, text, width, height, date) {
+                        positionEmpirAdaptBox(eventID, text, width, height, date);
                     });
                     if(empir_box_font_size_change != empir_temp_text)
                         break;
