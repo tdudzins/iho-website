@@ -53,7 +53,7 @@ var relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
 var boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
 var adaptArray = JSON.parse(sessionStorage.getItem("adaptArray"));
 var lineLocation = [];
-var middleBoxObj = {};
+var lineRelationObj = {}; // {x,y,width,heigh,left, right, lines[x,y,x,y]}
 
 var timespan;
 var dir = 0;
@@ -731,7 +731,6 @@ function positionAdaptBox(eventID, text, width, height, date) {
             i++;
         }
     }
-    middleBoxObj[eventID] = [(x_pos + (width/2)), (y_pos + (height/2))];
     boxLocation.push([x_pos,y_pos,width,height,text,eventID]);
     boxLocation.sort(function(a,b) {
         if(a[0] === b[0]) {
@@ -789,7 +788,7 @@ function removeHypoAdaptation(eventID, callback) {
     adaptArray = JSON.parse(sessionStorage.getItem("adaptArray"));
     relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
     //sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
-
+    redrawHypo(0);
     drawLines(0);
     callback(eventID);
 }
@@ -886,17 +885,28 @@ function drawLines(size) {
             hypoCanvas2[i].clearRect(0, 0, canvas_div_w, canvas_div_h_hypo);
         }
         lineLocation = [];
+        var tempLineObj = {};
         boxLocation.forEach(function(item){
+            lineRelationObj[item[5]] = [item[0], item[1], item[2], item[3], item[4], adaptObj[item[5]][4]];
             if(relationsObj[item[5]] != undefined){
-                    relationsObj[item[5]].forEach(function(item2){
-
-                        if(middleBoxObj[item[5]][0] < middleBoxObj[item2[0]][1])
-                            lineLocation.push([middleBoxObj[item[5]][0], middleBoxObj[item[5]][1], middleBoxObj[item2[0]][0], middleBoxObj[item2[0]][1], "black"]);
-                        else
-                            lineLocation.push([middleBoxObj[item2[0]][0], middleBoxObj[item2[0]][1], middleBoxObj[item[5]][0], middleBoxObj[item[5]][1], "black"]);
-                    });
+                lineRelationObj[item[5]] = [item[0], item[1], item[2], item[3], item[4], adaptObj[item[5]][4]];
             }
         });
+
+        empiricalTable.forEach(function(item){
+            lineRelationObj[]
+        });
+        var left_adapts = 0;
+        var right_adapts = 0;
+        var emp_date = adaptObj[item[5]][1];
+
+        relationsObj[item[5]].forEach(function(item2){
+            if (arrayObj[item2[0]][1] > emp_date)
+                left_adapts++;
+            else
+                right_adapts++;
+        });
+
         lineLocation.forEach(function(item){
             lineCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4]);
         });

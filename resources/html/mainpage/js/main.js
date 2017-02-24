@@ -109,6 +109,7 @@ function getAdaption(eventID, callback){
                     empiricalTable.push([eventID, item.eventName, (item.earliestDirectEvidence >= 0)?item.earliestDirectEvidence : item.earliestindIrectEvidence]);
                }
           });
+          // TODO add left and right line numbers to adaptObj add field to relation object for order 
           adaptArray.sort();
           empiricalTable.sort();
           sessionStorage.setItem("adaptArray", JSON.stringify(adaptArray));
