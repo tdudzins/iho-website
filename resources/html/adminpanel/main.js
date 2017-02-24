@@ -1,5 +1,6 @@
 // gets all the event data and adds it to the list on the left
 var sequenceObj = {};
+var eventObj = {};
 function getEventList(listID, callback) {
     $.post('/datafromserver', {action:'t'}, function(data, status) {
         var obj = JSON.parse(data);
@@ -317,19 +318,33 @@ function loadSequences(){
         });
     });
 }
-function loadSequence(text){
-    sequenceObj[text].forEach(function(item){
-        $('#sequence-items').append('<li class=\'sequence-adaptations-unfocused\' >'+ item + '</li>');
 
+function loadSequence(text){
+    $('#sequence-adaptions-items').empty();
+    $('#sequence-contents-items').empty();
+    $.post('/datafromserver', {action:'t'}, function(data, status) {
+        var obj = JSON.parse(data);
+        obj.forEach(function(item){
+            $('#sequence-adaptations-items').append('<li id=\'' + item.eventID + '\' class=\'sequence-adaptations-unfocused\' >'+ item.eventName + '</li>');
+        });
+        $('#sequence-adaptations-items li.sequence-adaptations-unfocused').click(function(){
+            if($('#editsaveButton').val() == 'Done'){
+                $('#sequence-adaptations-items li.sequence-adaptations-unfocused').removeClass('sequence-adaptations-focused').addClass('sequence-adaptations-unfocused');
+                $(this).removeClass('sequence-adaptations-unfocused').addClass('sequence-adaptations-focused');
+            }
+        });
     });
-    $('li.sequence-adaptations-unfocused').click(function(){
+    sequenceObj[text].forEach(function(item){
+        $('#sequence-contents-items').append('<li class=\'sequence-adaptations-unfocused\' >'+ eventObj[item] + '</li>');
+    });
+    $('#sequence-contents-items li.sequence-adaptations-unfocused').click(function(){
         if($('#editsaveButton').val() == 'Done'){
-            $('li.sequence-adaptations-focused').removeClass('sequence-adaptations-focused').addClass('sequence-adaptations-unfocused');
+            $('#sequence-contents-items li.sequence-adaptations-focused').removeClass('sequence-adaptations-focused').addClass('sequence-adaptations-unfocused');
             $(this).removeClass('sequence-adaptations-unfocused').addClass('sequence-adaptations-focused');
-            loadSequence($(this).text());
         }
     });
 }
+
 function addRelationship() {
     if($('li.relations-focused').attr('id')){
         var obj = new Array();
@@ -523,6 +538,14 @@ function tabConfig(id) {
 
             break;
         case 'sequence':
+            postFromServer({action:'t'} ,function(data, status){
+                var obj = JSON.parse(data);
+                eventObj = {};
+                obj.forEach(function(item){
+                        eventObj[item.eventID] = item.eventName;
+                });
+            });
+
             $('#information-container').empty();
             $('#information-container').append(sequencePane);
             loadSequences();
@@ -532,9 +555,13 @@ function tabConfig(id) {
                 tabConfig('firstLoad');
             });
             $('#addsequenceButton').click(function(){
+                $('#sequence-adaptations-items').empty();
+                $('#sequence-contents-items').empty();
                 $('li.sequence-focused').removeClass('sequence-focused').addClass('sequence-unfocused');
-                $('#sequence').val('');
-                $('#updatesequenceButton').val('Save');
+                var name = prompt("Please enter a sequence name");
+                if (name != null) {
+                    $('#sequence-items').append('<li class=\'sequence-adaptations-focused\' >'+ name + '</li>');
+                }
             });
             $('#removesequenceButton').click(function(){
                 deleteSequence();
