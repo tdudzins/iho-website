@@ -53,7 +53,6 @@ function setupSideNav(callback) {
                 // Unselect
                 if($(this).hasClass('adaptation-item-selected') && relationsObj[$(this).attr('id')] !== undefined){
                     $(this).children('img').attr('src', '/resources/html/mainpage/img/unselected.png');
-                    //TODO remove empirical boxes
                     removeAdaption($(this).attr('id'), function(eid){
                         removeHypoAdaptation(eid, function(){});
 						removeEmpirAdaptation(eid, function(){});

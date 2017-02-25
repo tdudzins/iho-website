@@ -152,8 +152,8 @@ function initCanvas(firstRun) {
 
         if(bar_mouse_up) {
             redrawHypo(0);
-			redrawEmpir(0)
             drawLines(0);
+			redrawEmpir(0);
             bar_mouse_up = 0;
         }
 
@@ -521,7 +521,7 @@ function boxCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text,empiri
             temp_x = x_pos - (i * canvas_div_w);
 
             if (empirical) {
-                    hypoCanvas[selected_canvas + i].fillStyle = hypo_box_fill_style_empirical;
+                hypoCanvas[selected_canvas + i].fillStyle = hypo_box_fill_style_empirical;
             }
             else {
                 hypoCanvas[selected_canvas + i].fillStyle = hypo_box_fill_style_relation;
@@ -574,7 +574,6 @@ function boxEmpiricalCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,te
     for(var i = -1; i < 2; i++) {
         if(selected_canvas + i >= 0 && selected_canvas + i <= 11) {
             temp_x = x_pos - (i * canvas_div_w);
-
             empirCanvas[selected_canvas + i].fillStyle = hypo_box_fill_style_empirical;
             empirCanvas[selected_canvas + i].fillRect(temp_x, y_pos, width_length, height_length);
             empirCanvas[selected_canvas + i].font = empir_box_font_size + "px " + hypo_box_font_family;
@@ -775,11 +774,8 @@ function addHypoAdaptation(eventID) {
     drawAllBoxes();
 }
 
-
-//Needs to be updated - in process
 function addEmpirAdaptation(eventID) {
     empiricalTable = JSON.parse(sessionStorage.getItem("empiricalTable"));
-	//empiricalBox = JSON.parse(sessionStorage.getItem("empiricalBox"));
 
 	empiricalTable.forEach(function(empirRecord){
 		if(empirRecord[0] == eventID){
@@ -789,8 +785,6 @@ function addEmpirAdaptation(eventID) {
 				positionEmpirAdaptBox(eventID, text, width, height, date)
 			});
 		}
-		if(empir_box_font_size_change != empir_temp_text)
-			return;
 	});
 	
 	//Shrink boxes to fit
@@ -809,7 +803,6 @@ function addEmpirAdaptation(eventID) {
 	
 	//Draw all empirical boxes
 	drawAllEmpirBoxes();
-
 }
 
 function createAdaptBox(eventID, eventName, date, callback) {
@@ -848,7 +841,6 @@ function createAdaptBox(eventID, eventName, date, callback) {
     callback(eventID, textArray, width, height, date);
 }
 
-//Needs to be updated - should be finished
 function createEmpirAdaptBox(eventID, eventName, date, callback) {
     var textArray = [];
     if(empir_box_font_size_change <= 10){
@@ -1095,13 +1087,16 @@ function removeHypoAdaptation(eventID, callback) {
 
 //Might need to be updated
 function removeEmpirAdaptation(eventID, callback) {
-	var empiricalBox = JSON.parse(sessionStorage.getItem("empiricalBox"));
+	empiricalBox = JSON.parse(sessionStorage.getItem("empiricalBox"));
 
     for(var i = 0; i < empiricalBox.length; i++) {
 		if(empiricalBox[i][5] == eventID) {
 			boxEmpiricalCanvasWrapperClear(empiricalBox[i][0], empiricalBox[i][1], empiricalBox[i][2], empiricalBox[i][3]);
-			empiricalBox.splice(i, 1);
-			i = empiricalBox.length;
+			if(empiricalBox.length == 1)
+				empiricalBox = [];
+			else
+				empiricalBox.splice(i, 1);
+				//i = empiricalBox.length;
         }
     }
 
@@ -1209,79 +1204,58 @@ function redrawHypo(size) {
 }
 
 function redrawEmpir(size) {
-        // Reposition boxes only
-        if(Math.abs(last_scroll_ratio - scroll_ratio) > size && (last_empir_font_size == empir_box_font_size_change) && size != 0) {
-            // Clear boxes
-            for(var i = 0; i < 12; i++) {
-                empirCanvas[i].clearRect(0, 0, canvas_div_w, canvas_div_h_empir);
+    // Reposition boxes only
+    if(Math.abs(last_scroll_ratio - scroll_ratio) > size && (last_empir_font_size == empir_box_font_size_change) && size != 0) {
+        // Clear boxes
+        for(var i = 0; i < 12; i++) {
+            empirCanvas[i].clearRect(0, 0, canvas_div_w, canvas_div_h_empir);
+        }
+        // Move then redraw the same box
+        empiricalBox.forEach(function(item){
+            var date = empiricalTable[item[5]][1];
+            if(date >= 1000000) {
+                date = date + 4000000;
+            }else{
+				date = date * 5;
             }
-            // Move then redraw the same box
-            empiricalBox.forEach(function(item){
-                var date = empiricalTable[item[5]][1];
-                if(date >= 1000000) {
-                    date = date + 4000000;
-                }
-                else {
-                    date = date * 5;
-                }
-                timespan = (date_start - date_end);
-                viewable_time = timespan * scroll_ratio;
-                increment_per_pixel = (viewable_time/canvas_div_w);
-                x_pos = date/increment_per_pixel;
-                x_pos = ((canvas_div_w/scroll_ratio) - x_pos) - item[2]/2;
-                item[0] = x_pos;
-                /*
-                if(last_scroll_ratio < scroll_ratio){
-                    var i = 0;
-                    while (i < boxLocation.length) {
-                        // Hit x or y
-                        if(((x_pos >= boxLocation[i][0] - box_to_box_padding_size && x_pos <= boxLocation[i][0] + boxLocation[i][2] + box_to_box_padding_size) ||
-                            (x_pos  <= boxLocation[i][0] + box_to_box_padding_size && x_pos + item[2] >= boxLocation[i][0] + boxLocation[i][2] + box_to_box_padding_size) ||
-                            (x_pos + item[2] >= boxLocation[i][0] - box_to_box_padding_size  && x_pos + item[2] <= boxLocation[i][0] + boxLocation[i][2] + box_to_box_padding_size)) &&
-                            ((item[2] >= boxLocation[i][1] && item[2] <= boxLocation[i][1] + boxLocation[i][3]) ||
-                            (item[2] <= boxLocation[i][1] && item[2] + item[3] >= boxLocation[i][1] + boxLocation[i][3]) ||
-                            (item[2] + item[3] >= boxLocation[i][1] && item[2] + item[3] <= boxLocation[i][1] + boxLocation[i][3]))) {
-                                last_hypo_font_size = 0;
-                        }
-                        else{
-                            i++;
-                        }
-                    }
-                }*/
-                //middleBoxObj[item[5]] = [(item[0] + (item[2]/2)), (item[1] + (item[3]/2))];
-                boxEmpiricalCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4]);
-            });
-            last_scroll_ratio = scroll_ratio;
-            //sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
+            timespan = (date_start - date_end);
+            viewable_time = timespan * scroll_ratio;
+            increment_per_pixel = (viewable_time/canvas_div_w);
+            x_pos = date/increment_per_pixel;
+			x_pos = ((canvas_div_w/scroll_ratio) - x_pos) - item[2]/2;
+            item[0] = x_pos;
+			boxEmpiricalCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4]);
+        });
+        last_scroll_ratio = scroll_ratio;
+    }
+
+    // TODO if needed medium redraw speedm, redraw and move without remaking boxes
+
+    else if(Math.abs(last_scroll_ratio - scroll_ratio) > size || size == 0) {
+        last_scroll_ratio = scroll_ratio;
+        last_empir_font_size = empir_box_font_size_change;
+        empir_box_font_size_change = empir_box_font_size;
+        empir_temp_text = 0;
+        // Clear boxes
+        for(var i = 0; i < 12; i++) {
+            empirCanvas[i].clearRect(0, 0, canvas_div_w, canvas_div_h_empir);
         }
 
-        // TODO if needed medium redraw speedm, redraw and move without remaking boxes
-
-        else if(Math.abs(last_scroll_ratio - scroll_ratio) > size || size == 0) {
-            last_scroll_ratio = scroll_ratio;
-            last_empir_font_size = empir_box_font_size_change;
-            empir_box_font_size_change = empir_box_font_size;
-            empir_temp_text = 0;
-            // Clear boxes
-            for(var i = 0; i < 12; i++) {
-                empirCanvas[i].clearRect(0, 0, canvas_div_w, canvas_div_h_empir);
+        dir = (dir)? 0:1;
+        while(empir_box_font_size_change != empir_temp_text) {
+            empir_temp_text = empir_box_font_size_change;
+            empiricalBox = [];
+            empir_temp_text = empir_box_font_size_change;
+            for (var i = 0; i < empiricalTable.length; i++) {
+                createEmpirAdaptBox(empiricalTable[i][0], empiricalTable[i][1], empiricalTable[i][2], function(eventID, text, width, height, date) {
+                    positionEmpirAdaptBox(eventID, text, width, height, date);
+                });
+                if(empir_box_font_size_change != empir_temp_text)
+                     break;
             }
-
-            dir = (dir)? 0:1;
-            while(empir_box_font_size_change != empir_temp_text) {
-                empir_temp_text = empir_box_font_size_change;
-                empiricalBox = [];
-                empir_temp_text = empir_box_font_size_change;
-                for (var i = 0; i < empiricalTable.length; i++) {
-                    createEmpirAdaptBox(empiricalTable[i][0], empiricalTable[i][1], empiricalTable[i][2], function(eventID, text, width, height, date) {
-                        positionEmpirAdaptBox(eventID, text, width, height, date);
-                    });
-                    if(empir_box_font_size_change != empir_temp_text)
-                        break;
-                }
-            }
-            drawAllEmpirBoxes();
         }
+        drawAllEmpirBoxes();
+    }
 }
 
 function drawLines(size) {
