@@ -54,6 +54,8 @@ var boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
 var adaptArray = JSON.parse(sessionStorage.getItem("adaptArray"));
 var lineLocation = [];
 var middleBoxObj = {};
+var boxLocationObj = {};
+var sequenceObj = {};
 
 var timespan;
 var dir = 0;
@@ -62,12 +64,15 @@ var left_edge_date;
 var right_edge_date;
 var bar_mouse_up = 0;
 
+
 var canvasAdaptation = [];
 function initStorage(){
     adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
     relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
     boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
     adaptArray = JSON.parse(sessionStorage.getItem("adaptArray"));
+    sequenceObj = JSON.parse(sessionStorage.getItem("sequenceObj"));
+
 }
 function initCanvas(firstRun) {
     scrollRegions = [];
@@ -729,6 +734,7 @@ function positionAdaptBox(eventID, text, width, height, date) {
             i++;
         }
     }
+    boxLocationObj[eventID] = [x_pos, y_pos, width, height, adaptObj[eventID][5], adaptObj[eventID][5]];
     middleBoxObj[eventID] = [(x_pos + (width/2)), (y_pos + (height/2))];
     boxLocation.push([x_pos,y_pos,width,height,text,eventID]);
     boxLocation.sort(function(a,b) {
@@ -895,6 +901,7 @@ function drawLines(size) {
                     });
             }
         });
+        
         lineLocation.forEach(function(item){
             lineCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4]);
         });
