@@ -14,7 +14,7 @@ ctx_bot_1, ctx_bot_2, ctx_bot_3, ctx_bot_4, ctx_bot_5, ctx_bot_6, ctx_bot_7, ctx
 canvas1_1, canvas2_1, canvas2_2, ctx1_1, ctx2_1, ctx2_2;
 
 // Global Variables
-var scroll_ratio = 0.0; // Block/Container ratio in percent
+var scroll_ratio = 1.0; // Block/Container ratio in percent
 var last_scroll_ratio = 1.0; // Used in redrawHypo
 var last_scroll_ratio_lines = 1.0; // Used in redrawHypo
 var scroll_position = 0.0; // Block/Container ratio in percent
@@ -53,9 +53,13 @@ var relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
 var boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
 var adaptArray = JSON.parse(sessionStorage.getItem("adaptArray"));
 var lineLocation = [];
+<<<<<<< HEAD
 var middleBoxObj = {};
 var boxLocationObj = {};
 var sequenceObj = {};
+=======
+var lineRelationObj = {}; // {x,y,width,heigh,left, right, lines[x,y,x,y]}
+>>>>>>> af380b9cca6c908a4f17a5a25555136601955520
 
 var timespan;
 var dir = 0;
@@ -81,6 +85,9 @@ function initCanvas(firstRun) {
     // Resize Canvases
     resizeCanvas();
 
+    scroll_left_handle_x_position = canvas2_w * scroll_position;
+    scroll_right_handle_x_position = canvas2_w * scroll_ratio + canvas2_w * scroll_position - 2 * canvas2_h * .2;
+
     var BB = canvas2_2.getBoundingClientRect();
     var offsetX = BB.left;
     var offsetY = BB.top;
@@ -103,7 +110,6 @@ function initCanvas(firstRun) {
     drawScrollbarBlock();
     last_scroll_ratio = scroll_ratio;
     last_scroll_ratio_lines = scroll_ratio;
-
     // handle mousedown events
     function scrollbarDown(e) {
         // tell the browser we're handling this mouse event
@@ -734,8 +740,11 @@ function positionAdaptBox(eventID, text, width, height, date) {
             i++;
         }
     }
+<<<<<<< HEAD
     boxLocationObj[eventID] = [x_pos, y_pos, width, height, adaptObj[eventID][5], adaptObj[eventID][5]];
     middleBoxObj[eventID] = [(x_pos + (width/2)), (y_pos + (height/2))];
+=======
+>>>>>>> af380b9cca6c908a4f17a5a25555136601955520
     boxLocation.push([x_pos,y_pos,width,height,text,eventID]);
     boxLocation.sort(function(a,b) {
         if(a[0] === b[0]) {
@@ -793,7 +802,7 @@ function removeHypoAdaptation(eventID, callback) {
     adaptArray = JSON.parse(sessionStorage.getItem("adaptArray"));
     relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
     //sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
-
+    redrawHypo(0);
     drawLines(0);
     callback(eventID);
 }
@@ -890,18 +899,32 @@ function drawLines(size) {
             hypoCanvas2[i].clearRect(0, 0, canvas_div_w, canvas_div_h_hypo);
         }
         lineLocation = [];
+        var tempLineObj = {};
         boxLocation.forEach(function(item){
+            lineRelationObj[item[5]] = [item[0], item[1], item[2], item[3], item[4], adaptObj[item[5]][4]];
             if(relationsObj[item[5]] != undefined){
-                    relationsObj[item[5]].forEach(function(item2){
-
-                        if(middleBoxObj[item[5]][0] < middleBoxObj[item2[0]][1])
-                            lineLocation.push([middleBoxObj[item[5]][0], middleBoxObj[item[5]][1], middleBoxObj[item2[0]][0], middleBoxObj[item2[0]][1], "black"]);
-                        else
-                            lineLocation.push([middleBoxObj[item2[0]][0], middleBoxObj[item2[0]][1], middleBoxObj[item[5]][0], middleBoxObj[item[5]][1], "black"]);
-                    });
+                lineRelationObj[item[5]] = [item[0], item[1], item[2], item[3], item[4], adaptObj[item[5]][4]];
             }
         });
+<<<<<<< HEAD
         
+=======
+
+        empiricalTable.forEach(function(item){
+            lineRelationObj[]
+        });
+        var left_adapts = 0;
+        var right_adapts = 0;
+        var emp_date = adaptObj[item[5]][1];
+
+        relationsObj[item[5]].forEach(function(item2){
+            if (arrayObj[item2[0]][1] > emp_date)
+                left_adapts++;
+            else
+                right_adapts++;
+        });
+
+>>>>>>> af380b9cca6c908a4f17a5a25555136601955520
         lineLocation.forEach(function(item){
             lineCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4]);
         });
@@ -936,10 +959,10 @@ function drawScrollbarBlock() {
     var block_height = 0.2;
     var block_radius = canvas2_h * block_height;
     var hndl_left_x_padding = scroll_left_handle_x_position + block_radius;
-    var hndl_right_x_padding = (-1 * scroll_right_handle_x_position) + block_radius;
+    var hndl_right_x_padding = scroll_right_handle_x_position + block_radius;
     var hndl_cnt_left_x = hndl_left_x_padding;
     var hndl_cnt_left_y = block_radius;
-    var hndl_cnt_right_x = canvas2_w - hndl_right_x_padding;
+    var hndl_cnt_right_x =  hndl_right_x_padding;
     var hndl_cnt_right_y = block_radius;
     var arc_top = 1.5 * Math.PI;
     var arc_bot = 0.5*Math.PI;
@@ -969,7 +992,7 @@ function drawScrollbarBlock() {
     // draw block between handles
     regx = scroll_left_handle_x_position + (4 * block_radius);
     regy = hndl_cnt_left_y - block_radius;
-    regwidth = canvas2_w - (8 * block_radius);
+    regwidth = canvas2_w * scroll_ratio - (8 * block_radius);
     regheight = 2 * block_radius;
 
     ctx2_2.beginPath();
@@ -985,7 +1008,7 @@ function drawScrollbarBlock() {
 
     ctx2_2.fillStyle = scrollbar_handle_fill_style;
     // draw right handle
-    regx = canvas2_w - (4 * block_radius);
+    regx = scroll_right_handle_x_position - 2 * block_radius;
     regy = hndl_cnt_left_y - block_radius;
     regwidth = 4 * block_radius;
     regheight = 2 * block_radius;
