@@ -852,7 +852,8 @@ function redrawHypo(size) {
                         }
                     }
                 }*/
-                middleBoxObj[item[5]] = [(item[0] + (item[2]/2)), (item[1] + (item[3]/2))];
+
+                //boxLocationObj[item[5]] = [item[0], item[1], item[3], item[4], adaptObj[eventID][5], adaptObj[eventID][6]];
                 boxCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4], emperical);
             });
             last_scroll_ratio = scroll_ratio;
