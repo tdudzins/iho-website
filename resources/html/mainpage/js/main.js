@@ -5,6 +5,7 @@ $(document).ready(function() {
         var obj = JSON.parse(data);
         var currentSequence = '';
         var sequenceObj = {};
+        var sequenceCheckObj = {};
         $('#sequence-items').empty();
         obj.forEach(function(item){
             if(currentSequence != item.sequenceID){
@@ -12,8 +13,10 @@ $(document).ready(function() {
                 sequenceObj[item.sequenceID] = [];
             }
             sequenceObj[item.sequenceID].push(item.eventID);
+            sequenceCheckObj[item.eventID] = item.sequenceID;
         });
         sessionStorage.setItem("sequenceObj", sequenceObj);
+        sessionStorage.setItem("sequenceCheckObj", sequenceCheckObj);
     });
     initStorage()
     initCanvas(1);
@@ -113,14 +116,6 @@ function getAdaption(eventID, callback){
                 adaptArray.push(item.eventID);
             }
             else{
-                empiricalTable.forEach(function(item2){
-                    if(relationsObj[item2[0]].find(function(item3){return item3[0] == item.eventID;})){
-                        if(adaptObj[item.eventID][1] > adaptObj[item2[0]][1])
-                            adaptObj[item.eventID][5]++;
-                        else
-                            adaptObj[item.eventID][6]++;
-                    }
-                });
                 adaptObj[item.eventID][4]++;
             }
 
@@ -131,6 +126,16 @@ function getAdaption(eventID, callback){
                 empiricalTable.push([eventID, item.eventName, (item.earliestDirectEvidence >= 0)?item.earliestDirectEvidence : item.earliestindIrectEvidence]);
             }
         });
+        empiricalTable.forEach(function(item){
+            obj.forEach(function(item2){
+                if(relationsObj[item[0]].find(function(item3){return item3[0] == item2.eventID;})){
+                    if(adaptObj[item2.eventID][1] > adaptObj[item[0]][1])
+                        adaptObj[item[0]][5]++;
+                    else
+                        adaptObj[item[0]][6]++;
+                }
+            });
+        });
         adaptArray.sort();
         empiricalTable.sort();
         sessionStorage.setItem("adaptArray", JSON.stringify(adaptArray));
@@ -139,24 +144,6 @@ function getAdaption(eventID, callback){
         sessionStorage.setItem("empiricalTable", JSON.stringify(empiricalTable));
         callback(eventID);
     });
-
-               if(item.eventID != eventID){
-                    relationsObj[eventID].push([item.eventID, item.precondition]);
-               }
-               else{
-                    empiricalTable.push([eventID, item.eventName, (item.earliestDirectEvidence >= 0)?item.earliestDirectEvidence : item.earliestindIrectEvidence]);
-               }
-          });
-          // TODO add left and right line numbers to adaptObj add field to relation object for order
-          adaptArray.sort();
-          empiricalTable.sort();
-          sessionStorage.setItem("adaptArray", JSON.stringify(adaptArray));
-          sessionStorage.setItem("adaptObj", JSON.stringify(adaptObj));
-          sessionStorage.setItem("relationsObj", JSON.stringify(relationsObj));
-          sessionStorage.setItem("empiricalTable", JSON.stringify(empiricalTable));
-          callback(eventID);
-     });
-
 }
 function removeAdaption(eventID, callback){
     var adaptArray = JSON.parse(sessionStorage.getItem("adaptArray"));
@@ -222,7 +209,8 @@ function createArrays() {
         sessionStorage.setItem("empiricalTable", "[]"); // [[eventID, eventName, earliestDirectEvidence],[],[]....] array
         sessionStorage.setItem("empiricalBox", "[]"); // [[x,y,length,height,text[],eventID], .....] array sorted
         sessionStorage.setItem("boxLocation", "[]"); // [[x,y,length,height,text[],eventID], .....] array sorted
-        sessionStorage.setItem("sequenceObj", "[]"); // [[x,y,length,height,text[],eventID], .....] array sorted
+        sessionStorage.setItem("sequenceObj", "{}"); // [[x,y,length,height,text[],eventID], .....] array sorted
+        sessionStorage.setItem("sequenceCheckObj", "{}"); // [[x,y,length,height,text[],eventID], .....] array sorted
     }
     else{
         console.log("Sorry! No Web Storage support..");

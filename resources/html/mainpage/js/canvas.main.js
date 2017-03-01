@@ -52,10 +52,12 @@ var adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
 var relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
 var boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
 var adaptArray = JSON.parse(sessionStorage.getItem("adaptArray"));
+var empiricalTable = JSON.parse(sessionStorage.getItem("empiricalTable"));
 var lineLocation = [];
 var middleBoxObj = {};
 var boxLocationObj = {};
 var sequenceObj = {};
+var sequenceCheckObj = {};
 
 var timespan;
 var dir = 0;
@@ -72,7 +74,8 @@ function initStorage(){
     boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
     adaptArray = JSON.parse(sessionStorage.getItem("adaptArray"));
     sequenceObj = JSON.parse(sessionStorage.getItem("sequenceObj"));
-
+    sequenceCheckObj = JSON.parse(sessionStorage.getItem("sequenceCheckObj"));
+    empiricalTable = JSON.parse(sessionStorage.getItem("empiricalTable"));
 }
 function initCanvas(firstRun) {
     scrollRegions = [];
@@ -736,7 +739,7 @@ function positionAdaptBox(eventID, text, width, height, date) {
             i++;
         }
     }
-    boxLocationObj[eventID] = [x_pos, y_pos, width, height, adaptObj[eventID][5], adaptObj[eventID][5]];
+    boxLocationObj[eventID] = [x_pos, y_pos, width, height, adaptObj[eventID][5], adaptObj[eventID][6]];
     middleBoxObj[eventID] = [(x_pos + (width/2)), (y_pos + (height/2))];
     boxLocation.push([x_pos,y_pos,width,height,text,eventID]);
     boxLocation.sort(function(a,b) {
@@ -752,7 +755,7 @@ function positionAdaptBox(eventID, text, width, height, date) {
 function removeHypoAdaptation(eventID, callback) {
     // Emperical undraw
     if(adaptObj[eventID][4] == 0) {
-        delete middleBoxObj[eventID];
+        delete boxLocationObj[eventID];
         for (var i = 0; i < boxLocation.length; i++) {
             if(boxLocation[i][5] == eventID) {
                 boxCanvasWrapperClear(boxLocation[i][0], boxLocation[i][1], boxLocation[i][2], boxLocation[i][3]);
@@ -774,9 +777,8 @@ function removeHypoAdaptation(eventID, callback) {
     }
 
     // Relations undraw
-    relationsObj[eventID].forEach(function(item) {
+    relationsObj[eventID].forEach(function(item){
         if(adaptObj[item[0]][4] < 1) {
-            delete middleBoxObj[item[0]];
             for(var i = 0; i < boxLocation.length; i++) {
                 if(boxLocation[i][5] == item[0]) {
                     boxCanvasWrapperClear(boxLocation[i][0], boxLocation[i][1], boxLocation[i][2], boxLocation[i][3]);
@@ -886,6 +888,7 @@ function redrawHypo(size) {
         }
 }
 function drawLines(size) {
+    empiricalTable = JSON.parse(sessionStorage.getItem("empiricalTable"));
     if(Math.abs(last_scroll_ratio_lines - scroll_ratio) > size || size == 0) {
         last_scroll_ratio_lines = scroll_ratio;
         for(var i = 0; i < 12; i++) {
@@ -893,31 +896,56 @@ function drawLines(size) {
         }
         lineLocation = [];
         var tempLineObj = {};
-        boxLocation.forEach(function(item){
-            lineRelationObj[item[5]] = [item[0], item[1], item[2], item[3], item[4], adaptObj[item[5]][4]];
-            if(relationsObj[item[5]] != undefined){
-                lineRelationObj[item[5]] = [item[0], item[1], item[2], item[3], item[4], adaptObj[item[5]][4]];
-            }
-        });
-<<<<<<< HEAD
-
-=======
-
         empiricalTable.forEach(function(item){
-            lineRelationObj[]
-        });
-        var left_adapts = 0;
-        var right_adapts = 0;
-        var emp_date = adaptObj[item[5]][1];
+            var temp = relationsObj[item[0]].slice();
+            var temp_l = [];
+            var temp_r = [];
+            for(var i = 0; i < temp.length; i++){
+                if(adaptObj[temp[i][0]][1] > adaptObj[item[0]][1])
+                    temp_l.push(temp[i][0]);
+                else
+                    temp_r.push(temp[i][0]);
 
-        relationsObj[item[5]].forEach(function(item2){
-            if (arrayObj[item2[0]][1] > emp_date)
-                left_adapts++;
-            else
-                right_adapts++;
+            }
+            for (var i = 0; i < temp_l.length; i++) {
+                temp_l[i] = boxLocationObj[temp_l[i]];
+            }
+            for (var i = 0; i < temp_r.length; i++) {
+                temp_r[i] = boxLocationObj[temp_r[i]];
+            }
+            console.log(JSON.stringify(temp_l));
+            console.log(JSON.stringify(temp_r));
+            temp_r.sort(function(a,b) {if(a[1] === b[1]) {return 0;}else {return (a[1] < b[1]) ? -1 : 1;}});
+            temp_l.sort(function(a,b) {if(a[1] === b[1]) {return 0;}else {return (a[1] < b[1]) ? -1 : 1;}});
+            // Draw lines left of item (empirical)
+            for(var i = 0; i < boxLocationObj[item[0]][4]; i++){
+                var y_incr = boxLocationObj[item[0]][3]/(boxLocationObj[item[0]][4] + 1);
+                var end_x = boxLocationObj[item[0]][0] + (boxLocationObj[item[0]][2]/2);
+                var end_y = boxLocationObj[item[0]][1] + y_incr * (i+1);
+                var x1 = temp_l[i][0] + (temp_l[i][2]/2);
+                var start_y = temp_l[i][1] + (temp_l[i][3]/2);
+                var x2 = x1 + (end_x - x1)/2;
+                lineCanvasWrapperDraw(x1,start_y,x2,start_y);
+                lineCanvasWrapperDraw(x2,start_y,x2,end_y);
+                lineCanvasWrapperDraw(x2,end_y,end_x,end_y);
+            }
+
+            // Draw lines right of item (empirical)
+            for(var i = 0; i < boxLocationObj[item[0]][5]; i++){
+                var y_incr = boxLocationObj[item[0]][3]/(boxLocationObj[item[0]][5] + 1);
+                var end_x = temp_r[i][0] + (temp_r[i][2]/2);
+                var end_y = temp_r[i][1] + (temp_r[i][3]/2);
+                var x1 = boxLocationObj[item[0]][0] + (boxLocationObj[item[0]][2]/2);
+                var start_y = boxLocationObj[item[0]][1] + y_incr * (i+1);
+                var x2 = x1 + (end_x - x1)/2;
+                console.log(y_incr+ " " +end_x+ " " +end_y+ " " +x1+ " " +x2 + " " + start_y);
+                lineCanvasWrapperDraw(x1,start_y,x2,start_y);
+                lineCanvasWrapperDraw(x2,start_y,x2,end_y);
+                lineCanvasWrapperDraw(x2,end_y,end_x,end_y);
+            }
+
         });
 
->>>>>>> af380b9cca6c908a4f17a5a25555136601955520
         lineLocation.forEach(function(item){
             lineCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4]);
         });
