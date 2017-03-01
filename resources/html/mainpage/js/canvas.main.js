@@ -53,13 +53,9 @@ var relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
 var boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
 var adaptArray = JSON.parse(sessionStorage.getItem("adaptArray"));
 var lineLocation = [];
-<<<<<<< HEAD
 var middleBoxObj = {};
 var boxLocationObj = {};
 var sequenceObj = {};
-=======
-var lineRelationObj = {}; // {x,y,width,heigh,left, right, lines[x,y,x,y]}
->>>>>>> af380b9cca6c908a4f17a5a25555136601955520
 
 var timespan;
 var dir = 0;
@@ -740,11 +736,8 @@ function positionAdaptBox(eventID, text, width, height, date) {
             i++;
         }
     }
-<<<<<<< HEAD
     boxLocationObj[eventID] = [x_pos, y_pos, width, height, adaptObj[eventID][5], adaptObj[eventID][5]];
     middleBoxObj[eventID] = [(x_pos + (width/2)), (y_pos + (height/2))];
-=======
->>>>>>> af380b9cca6c908a4f17a5a25555136601955520
     boxLocation.push([x_pos,y_pos,width,height,text,eventID]);
     boxLocation.sort(function(a,b) {
         if(a[0] === b[0]) {
@@ -907,7 +900,7 @@ function drawLines(size) {
             }
         });
 <<<<<<< HEAD
-        
+
 =======
 
         empiricalTable.forEach(function(item){

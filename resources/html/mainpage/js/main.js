@@ -124,7 +124,6 @@ function getAdaption(eventID, callback){
                 adaptObj[item.eventID][4]++;
             }
 
-<<<<<<< HEAD
             if(item.eventID != eventID){
                 relationsObj[eventID].push([item.eventID, item.precondition]);
             }
@@ -140,7 +139,7 @@ function getAdaption(eventID, callback){
         sessionStorage.setItem("empiricalTable", JSON.stringify(empiricalTable));
         callback(eventID);
     });
-=======
+
                if(item.eventID != eventID){
                     relationsObj[eventID].push([item.eventID, item.precondition]);
                }
@@ -148,7 +147,7 @@ function getAdaption(eventID, callback){
                     empiricalTable.push([eventID, item.eventName, (item.earliestDirectEvidence >= 0)?item.earliestDirectEvidence : item.earliestindIrectEvidence]);
                }
           });
-          // TODO add left and right line numbers to adaptObj add field to relation object for order 
+          // TODO add left and right line numbers to adaptObj add field to relation object for order
           adaptArray.sort();
           empiricalTable.sort();
           sessionStorage.setItem("adaptArray", JSON.stringify(adaptArray));
@@ -157,7 +156,7 @@ function getAdaption(eventID, callback){
           sessionStorage.setItem("empiricalTable", JSON.stringify(empiricalTable));
           callback(eventID);
      });
->>>>>>> af380b9cca6c908a4f17a5a25555136601955520
+
 }
 function removeAdaption(eventID, callback){
     var adaptArray = JSON.parse(sessionStorage.getItem("adaptArray"));
