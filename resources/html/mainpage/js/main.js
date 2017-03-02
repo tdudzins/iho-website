@@ -112,6 +112,7 @@ function getAdaption(eventID, callback){
         relationsObj[eventID] = [];
         obj.forEach(function(item){
             if(adaptObj[item.eventID] === undefined){
+                console.log(item.eventID);
                 adaptObj[item.eventID] = [item.eventName, (item.earliestDirectEvidence > 0)?item.earliestDirectEvidence : item.earliestIndirectEvidence, item.boundaryStart, item.boundaryEnd, 0, 0, 0];
                 adaptArray.push(item.eventID);
             }
@@ -126,18 +127,17 @@ function getAdaption(eventID, callback){
                 empiricalTable.push([eventID, item.eventName, (item.earliestDirectEvidence >= 0)?item.earliestDirectEvidence : item.earliestindIrectEvidence]);
             }
         });
-        empiricalTable.forEach(function(item){
-            obj.forEach(function(item2){
-                if(relationsObj[item[0]].find(function(item3){return item3[0] == item2.eventID;})){
-                    if(adaptObj[item2.eventID][1] > adaptObj[item[0]][1])
-                        adaptObj[item[0]][5]++;
-                    else
-                        adaptObj[item[0]][6]++;
-                }
-            });
+        obj.forEach(function(item2){
+            if(relationsObj[eventID].find(function(item3){return item3[0] == item2.eventID;})){
+                if(adaptObj[item2.eventID][1] > adaptObj[eventID][1])
+                    adaptObj[eventID][5]++;
+                else
+                    adaptObj[eventID][6]++;
+            }
         });
         adaptArray.sort();
         empiricalTable.sort();
+        console.log(JSON.stringify(adaptObj));
         sessionStorage.setItem("adaptArray", JSON.stringify(adaptArray));
         sessionStorage.setItem("adaptObj", JSON.stringify(adaptObj));
         sessionStorage.setItem("relationsObj", JSON.stringify(relationsObj));
@@ -183,6 +183,8 @@ function removeAdaption(eventID, callback){
     }
     else {
         adaptObj[eventID][4]--;
+        adaptObj[eventID][5] = 0;
+        adaptObj[eventID][6] = 0;
     }
 
     sessionStorage.setItem("adaptArray", JSON.stringify(adaptArray));
