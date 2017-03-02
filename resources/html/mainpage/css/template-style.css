@@ -249,11 +249,11 @@ footer,
 #side-nav-panel {
     all: unset;
     height: 100%;
-    width: calc(100vw * 0.18);
+    width: 360px;
     background-color: rgba(69,106,131,1);
     color: white;
     float: left;
-    margin-left: calc(-1 * 100vw * 0.20);
+    margin-left: -380px;
     transition: max-width 0.2s ease-out;
     font-family: Montserrat;
 }
