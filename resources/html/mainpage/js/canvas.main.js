@@ -1,8 +1,8 @@
 /************** Canvas Main **************/
 
 /* Canvas Div Dimensions */
-var canvas_div_w = canvas_div_h_hypo = canvas_div_h_scroll = canvas_div_h_emper =
-canvas1_1_h =  canvas1_234_h = canvas2_12_w =  canvas2_12_h = canvas3_1_h = canvas3_2_h = 0; // Emperical Canvas (Layer 2: Connections, Layer 3: Adaptations) height in pixels
+var canvas_div_w = canvas_div_h_hypo = canvas_div_h_scroll = canvas_div_h_empir =
+canvas1_1_h =  canvas1_234_h = canvas2_12_w =  canvas2_12_h = canvas3_1_h = canvas3_2_h = 0; // empirical Canvas (Layer 2: Connections, Layer 3: Adaptations) height in pixels
 
 // Canvas Drawing Variables
 var topcanvas1, topcanvas2, topcanvas3, topcanvas4, topcanvas5, topcanvas6, topcanvas7, topcanvas8, topcanvas9, topcanvas10, topcanvas11, topcanvas12,
@@ -24,7 +24,7 @@ var minScrollbar = 151;
 var scrollRegions = [];
 var hypoCanvas = [];
 var hypoCanvas2 = [];
-var empirCanvas = []; //Empirical canvas
+var empirCanvas = []; //empirical canvas
 var draw_start = 0; // Redrawable Area start in pixels
 var draw_end = 0; // Redrawable Area start in pixels
 var date_start = 12000000; // Earliest date from selected adapations
@@ -266,8 +266,8 @@ function resizeCanvas() {
     $('#scrollbar-canvas-container').width = canvas_div_w;
     $('#scrollbar-canvas-block').width = canvas_div_w;
     minScrollbar = 1/12 * canvas_div_w;
-	
-    // Resize Empirical Canvas
+
+    // Resize empirical Canvas
     $('empirical-canvas-div').width = canvas_div_w;
     $('#canvas-wrapper-empirical-adaptations-div').width = canvas_timeline_w;
 
@@ -403,7 +403,7 @@ function resizeCanvas() {
     hypoCanvas2[10] = ctx_top2_11;
     hypoCanvas2[11] = ctx_top2_12;
 
-//Empirical canvas
+//empirical canvas
 	botcanvas1 = document.getElementById('empirical-canvas-1');
     botcanvas2 = document.getElementById('empirical-canvas-2');
     botcanvas3 = document.getElementById('empirical-canvas-3');
@@ -476,7 +476,7 @@ function setdate (start, end) {
 }
 
 // Canvas drawing functions
-function boxCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text,emperical) {
+function boxCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text,empirical) {
     var c_value = x_pos/canvas_div_w;
     var selected_canvas = 0;
 
@@ -512,8 +512,8 @@ function boxCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text,emperi
         if(selected_canvas + i >= 0 && selected_canvas + i <= 11) {
             temp_x = x_pos - (i * canvas_div_w);
 
-            if (emperical) {
-                    hypoCanvas[selected_canvas + i].fillStyle = hypo_box_fill_style_emperical;
+            if (empirical) {
+                    hypoCanvas[selected_canvas + i].fillStyle = hypo_box_fill_style_empirical;
             }
             else {
                 hypoCanvas[selected_canvas + i].fillStyle = hypo_box_fill_style_relation;
@@ -792,7 +792,7 @@ function positionAdaptBox(eventID, text, width, height, date) {
     //sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
 }
 function removeHypoAdaptation(eventID, callback) {
-    // Emperical undraw
+    // empirical undraw
     if(adaptObj[eventID][4] == 0) {
         delete boxLocationObj[eventID];
         for (var i = 0; i < boxLocation.length; i++) {
@@ -848,8 +848,8 @@ function drawAllBoxes() {
         hypoCanvas[i].clearRect(0, 0, canvas_div_w, canvas_div_h_hypo);
     }
     boxLocation.forEach(function(item){
-        var emperical = (relationsObj[item[5]] == undefined)? false:true;
-        boxCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4], emperical);
+        var empirical = (relationsObj[item[5]] == undefined)? false:true;
+        boxCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4], empirical);
     });
 }
 function redrawHypo(size) {
@@ -862,7 +862,7 @@ function redrawHypo(size) {
             // Move then redraw the same box
             boxLocation.forEach(function(item){
                 var date = adaptObj[item[5]][1];
-                var emperical = (relationsObj[item[5]] != undefined)? true:false;
+                var empirical = (relationsObj[item[5]] != undefined)? true:false;
                 if(date >= 1000000) {
                     date = date + 4000000;
                 }
@@ -895,7 +895,7 @@ function redrawHypo(size) {
                 }*/
 
                 boxLocationObj[item[5]][0] = x_pos;
-                boxCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4], emperical);
+                boxCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4], empirical);
             });
             last_scroll_ratio = scroll_ratio;
             //sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
@@ -964,7 +964,7 @@ function drawLines(size) {
                 var end_y = boxLocationObj[item[0]][1] + y_incr * (i+1);
                 var x1 = temp_l[i][0] + (temp_l[i][2]/2);
                 var start_y = temp_l[i][1] + (temp_l[i][3]/2);
-                if(temp_l[i][2]) > boxLocationObj[item[0]][2])
+                if(temp_l[i][2] > boxLocationObj[item[0]][2])
                     var x2 = (temp_l[i][0] + temp_l[i][2]) + (end_x - x1)/2;
                 else
                     var x2 = (temp_l[i][0] + temp_l[i][2]) + (end_x - x1)/2;
