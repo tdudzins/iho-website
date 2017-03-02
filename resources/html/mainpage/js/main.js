@@ -29,6 +29,7 @@ $(window).resize(function(){
     }
     initCanvas(1);
     redrawHypo(0);
+    redrawEmpir(0);
     drawLines(0);
 });
 $('#side-nav').ready(function(){
@@ -72,6 +73,7 @@ function setupSideNav(callback) {
                     //TODO remove empirical boxes
                     removeAdaption($(this).attr('id'), function(eid){
                         removeHypoAdaptation(eid, function(){});
+                        removeEmpirAdaptation(eid, function(){});
                     });
                 }
                 // Select
@@ -79,7 +81,7 @@ function setupSideNav(callback) {
                     $(this).children('img').attr('src', '/resources/html/mainpage/img/selected.png');
                     getAdaption($(this).attr('id'), function(eid){
                         addHypoAdaptation(eid);
-                        //TODO Add empirical boxes
+                        addEmpirAdaptation(eid);
                     });
                 }
             });
