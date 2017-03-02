@@ -37,8 +37,8 @@ var text_in_box_padding_w = std_text_in_box_padding_w = 15;
 var text_in_box_padding_h = std_text_in_box_padding_h = 10;
 var text_in_empir_box_padding_w = std_text_in_empir_box_padding_w = 5;
 var text_in_empir_box_padding_h = std_text_in_empir_box_padding_h = 5;
-var hypo_box_font_size = temp_text = last_hypo_font_size = hypo_box_font_size_change = 25;
-var empir_box_font_size = empir_temp_text = last_empir_font_size = empir_box_font_size_change = 25;
+var hypo_box_font_size = temp_text = last_hypo_font_size = hypo_box_font_size_change = 20;
+var empir_box_font_size = empir_temp_text = last_empir_font_size = empir_box_font_size_change = 20;
 var scrollbar_font_size = 13;
 var increments_font_size = 25;
 var hypo_box_font_family = scrollbar_font_family = increments_font_family = "Montserrat";
@@ -403,7 +403,7 @@ function resizeCanvas() {
     hypoCanvas2[10] = ctx_top2_11;
     hypoCanvas2[11] = ctx_top2_12;
 
-//empirical canvas
+    //empirical canvas
 	botcanvas1 = document.getElementById('empirical-canvas-1');
     botcanvas2 = document.getElementById('empirical-canvas-2');
     botcanvas3 = document.getElementById('empirical-canvas-3');
@@ -960,31 +960,72 @@ function drawLines(size) {
             // Draw lines left of item (empirical)
             for(var i = 0; i < boxLocationObj[item[0]][4]; i++){
                 var y_incr = boxLocationObj[item[0]][3]/(boxLocationObj[item[0]][4] + 1);
-                var end_x = boxLocationObj[item[0]][0] + (boxLocationObj[item[0]][2]/2);
-                var end_y = boxLocationObj[item[0]][1] + y_incr * (i+1);
-                var x1 = temp_l[i][0] + (temp_l[i][2]/2);
-                var start_y = temp_l[i][1] + (temp_l[i][3]/2);
-                if(temp_l[i][2] > boxLocationObj[item[0]][2])
-                    var x2 = (temp_l[i][0] + temp_l[i][2]) + (end_x - x1)/2;
-                else
-                    var x2 = (temp_l[i][0] + temp_l[i][2]) + (end_x - x1)/2;
 
-                lineCanvasWrapperDraw(x1,start_y,x2,start_y);
-                lineCanvasWrapperDraw(x2,start_y,x2,end_y);
-                lineCanvasWrapperDraw(x2,end_y,end_x,end_y);
+                // Box overlap case
+                if((temp_l[i][0] >= boxLocationObj[item[0]][0] - box_to_box_padding_size && temp_l[i][0] <= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size) ||
+                   (temp_l[i][0]  <= boxLocationObj[item[0]][0] + box_to_box_padding_size && temp_l[i][0] + temp_l[i][1] >= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size) ||
+                   (temp_l[i][0] + temp_l[i][1] >= boxLocationObj[item[0]][0] - box_to_box_padding_size  && temp_l[i][0] + temp_l[i][1] <= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size)) {
+                       console.log("eid: " + item[0] + " i: "+ temp_l[i]);
+                    var x1 = boxLocationObj[item[0]][0] + (boxLocationObj[item[0]][2]/2);
+                    var y1 = boxLocationObj[item[0]][1] + y_incr * (i+1);
+                    var x2 =  boxLocationObj[item[0]][0] - box_to_box_padding_size / 2;
+                    var y2 = (boxLocationObj[item[0]][1] > temp_l[i][1])? boxLocationObj[item[0]][1] - ((boxLocationObj[item[0]][1] - (temp_l[i][1] + temp_l[i][3])) / 2) : boxLocationObj[item[0]][1] + boxLocationObj[item[0]][3] + ((temp_l[i][1] - (boxLocationObj[item[0]][1] + boxLocationObj[item[0]][3])) / 2);
+                    var x3 = temp_l[i][0] + temp_l[i][2] + box_to_box_padding_size / 2;
+                    var y3 = temp_l[i][1] + (temp_l[i][3]/2);
+                    var x4 = temp_l[i][0] + (temp_l[i][2]/2);
+
+                    lineCanvasWrapperDraw(x1,y1,x2,y1);
+                    lineCanvasWrapperDraw(x2,y1,x2,y2);
+                    lineCanvasWrapperDraw(x2,y2,x3,y2);
+                    lineCanvasWrapperDraw(x3,y2,x3,y3);
+                    lineCanvasWrapperDraw(x3,y3,x4,y3);
+                }
+                // Ideal case
+                else{
+                    var x1 = boxLocationObj[item[0]][0] + (boxLocationObj[item[0]][2]/2);
+                    var y1 = boxLocationObj[item[0]][1] + y_incr * (i+1);
+                    var x2 = boxLocationObj[item[0]][0] - ((boxLocationObj[item[0]][0] - (temp_l[i][0] + temp_l[i][2]))/ 2);
+                    var y2 = temp_l[i][1] + (temp_l[i][3]/2);
+                    var x3 = temp_l[i][0] + (temp_l[i][2]/2);
+                    lineCanvasWrapperDraw(x1,y1,x2,y1);
+                    lineCanvasWrapperDraw(x2,y1,x2,y2);
+                    lineCanvasWrapperDraw(x2,y2,x3,y2);
+                }
             }
 
             // Draw lines right of item (empirical)
             for(var i = 0; i < boxLocationObj[item[0]][5]; i++){
                 var y_incr = boxLocationObj[item[0]][3]/(boxLocationObj[item[0]][5] + 1);
-                var end_x = temp_r[i][0] + (temp_r[i][2]/2);
-                var end_y = temp_r[i][1] + (temp_r[i][3]/2);
-                var x1 = boxLocationObj[item[0]][0] + (boxLocationObj[item[0]][2]/2);
-                var start_y = boxLocationObj[item[0]][1] + y_incr * (i+1);
-                var x2 = x1 + (end_x - x1)/2;
-                lineCanvasWrapperDraw(x1,start_y,x2,start_y);
-                lineCanvasWrapperDraw(x2,start_y,x2,end_y);
-                lineCanvasWrapperDraw(x2,end_y,end_x,end_y);
+                // Box overlap case
+                if((temp_r[i][0] >= boxLocationObj[item[0]][0] - box_to_box_padding_size && temp_r[i][0] <= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size) ||
+                    (temp_r[i][0]  <= boxLocationObj[item[0]][0] + box_to_box_padding_size && temp_r[i][0] + temp_r[i][1] >= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size) ||
+                    (temp_r[i][0] + temp_r[i][1] >= boxLocationObj[item[0]][0] - box_to_box_padding_size  && temp_r[i][0] + temp_r[i][1] <= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size)) {
+                    console.log("eid: " + item[0] + " temp_r[i]: " +temp_r[i]);
+                    var x1 = boxLocationObj[item[0]][0] + (boxLocationObj[item[0]][2]/2);
+                    var y1 = boxLocationObj[item[0]][1] + y_incr * (i+1);
+                    var x2 =  boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size / 2;
+                    var y2 = (boxLocationObj[item[0]][1] > temp_r[i][1])? boxLocationObj[item[0]][1] - ((boxLocationObj[item[0]][1] - (temp_r[i][1] + temp_r[i][3])) / 2) : boxLocationObj[item[0]][1] + boxLocationObj[item[0]][3] + ((temp_r[i][1] - (boxLocationObj[item[0]][1] + boxLocationObj[item[0]][3])) / 2);
+                    var x3 = temp_r[i][0] - (box_to_box_padding_size / 2);
+                    var y3 = temp_r[i][1] + (temp_r[i][3]/2);
+                    var x4 = temp_r[i][0] + (temp_r[i][2]/2);
+
+                    lineCanvasWrapperDraw(x1,y1,x2,y1);
+                    lineCanvasWrapperDraw(x2,y1,x2,y2);
+                    lineCanvasWrapperDraw(x2,y2,x3,y2);
+                    lineCanvasWrapperDraw(x3,y2,x3,y3);
+                    lineCanvasWrapperDraw(x3,y3,x4,y3);
+                }
+                // Ideal case
+                else{
+                    var x1 = boxLocationObj[item[0]][0] + (boxLocationObj[item[0]][2]/2);
+                    var y1 = boxLocationObj[item[0]][1] + y_incr * (i+1);
+                    var x2 = boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + ((temp_r[i][0] -(boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2]))/ 2);
+                    var y2 = temp_r[i][1] + (temp_r[i][3]/2);
+                    var x3 = temp_r[i][0] + (temp_r[i][2]/2);
+                    lineCanvasWrapperDraw(x1,y1,x2,y1);
+                    lineCanvasWrapperDraw(x2,y1,x2,y2);
+                    lineCanvasWrapperDraw(x2,y2,x3,y2);
+                }
             }
 
         });

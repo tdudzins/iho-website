@@ -112,7 +112,6 @@ function getAdaption(eventID, callback){
         relationsObj[eventID] = [];
         obj.forEach(function(item){
             if(adaptObj[item.eventID] === undefined){
-                console.log(item.eventID);
                 adaptObj[item.eventID] = [item.eventName, (item.earliestDirectEvidence > 0)?item.earliestDirectEvidence : item.earliestIndirectEvidence, item.boundaryStart, item.boundaryEnd, 0, 0, 0];
                 adaptArray.push(item.eventID);
             }
@@ -137,7 +136,6 @@ function getAdaption(eventID, callback){
         });
         adaptArray.sort();
         empiricalTable.sort();
-        console.log(JSON.stringify(adaptObj));
         sessionStorage.setItem("adaptArray", JSON.stringify(adaptArray));
         sessionStorage.setItem("adaptObj", JSON.stringify(adaptObj));
         sessionStorage.setItem("relationsObj", JSON.stringify(relationsObj));
