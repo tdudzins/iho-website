@@ -34,9 +34,9 @@ var date_start = 12000000; // Earliest date from selected adapations
 var date_end = 000000; // Latest date from selected adaptations
 var largest_timespan = 12000000; // When user is all the way scaled out, what is the largest amount of time to be viewed
 var smallest_timespan = 1000000; // When user is all the way scaled in, what is the smallest amount of time to be viewed
-var max_char_per_line = 20; // Used in positionAdaptBox
+var max_char_per_line = 20; // Used in positionBox
 var box_to_box_padding_size = 18;
-var empir_box_to_box_padding_size = 18;
+var empir_box_to_box_padding_size = 5;
 var text_in_box_padding_w = std_text_in_box_padding_w = 15;
 var text_in_box_padding_h = std_text_in_box_padding_h = 10;
 var empir_text_in_box_padding_w = empir_std_text_in_box_padding_w = 15;
@@ -1082,7 +1082,7 @@ function empiCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text) {
             empirCanvas[selected_canvas + i].textBaseline="hanging";
 
             for (j = 0; j < text.length; j++) {
-                empirCanvas[selected_canvas + i].fillText(text[j], temp_x + (0.5 * width_length), y_pos + (text_in_box_padding_h*.5) + ((empir_box_font_size_change + ((j)?1:0)) * (j)));
+                empirCanvas[selected_canvas + i].fillText(text[j], temp_x + (0.5 * width_length), y_pos + (empir_text_in_box_padding_h*.5) + ((empir_box_font_size_change + ((j)?1:0)) * (j)));
             }
         }
     }
@@ -1182,11 +1182,11 @@ function removeEmpirAdaptation(eventID, callback) {
 }
 function createEmpirBox(eventID, eventName, date, callback) {
     var textArray = [];
-    if(empir_box_font_size_change <= 5){
+    if(empir_box_font_size_change <= 10){
         empir_text_in_box_padding_w = 1;
         empir_text_in_box_padding_h = 1;
     }
-    else if(hypo_box_font_size_change > 5){
+    else if(empir_box_font_size_change > 10){
         empir_text_in_box_padding_w = empir_std_text_in_box_padding_w;
         empir_text_in_box_padding_h = empir_std_text_in_box_padding_h;
     }
@@ -1209,7 +1209,7 @@ function createEmpirBox(eventID, eventName, date, callback) {
     textArray.forEach(function(item) {
         if(longest_line < ctx_top_1.measureText(item).width) {
             longest_line = ctx_top_1.measureText(item).width;
-            width = parseInt((ctx_top_1.measureText(item).width + text_in_box_padding_w).toFixed(0));
+            width = parseInt((ctx_top_1.measureText(item).width + empir_text_in_box_padding_w).toFixed(0));
         }
     });
     var height = (empir_box_font_size_change * textArray.length) + ((textArray.length > 1)?(textArray.length-1):0) + empir_text_in_box_padding_h;
