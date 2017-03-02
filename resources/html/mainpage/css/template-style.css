@@ -54,6 +54,42 @@ footer,
     background: rgba(40,40,40,.7);
 }
 
+.hypo-title {
+    top: 0;
+    right: 0;
+    text-align: right;
+    padding: 5px;
+    font-size: 20px;
+    color: rgba(69,106,131,1);
+    z-index: -2;
+}
+
+.empir-title {
+    bottom: 0;
+    right: 0;
+    position: absolute;
+}
+.empir-title1 {
+    bottom: 0;
+    right: 0;
+    position: relative;;
+    text-align: right;
+    padding-top: 5px;
+    padding-right: 5px;
+    font-size: 20px;
+    color: rgba(255,255,255,1);
+}
+
+.empir-title2 {
+    bottom: 0;
+    right: 0;
+    position: relative;;
+    text-align: right;
+    padding-bottom: 5px;
+    padding-right: 5px;
+    font-size: 20px;
+    color: rgba(111,130,145,1);
+}
 
 .top-timeline {
     height: calc(100% - 30px);
@@ -88,7 +124,7 @@ footer,
 }
 
 .bottom-timeline {
-  height: calc(30% - 40px);
+  height: calc(100% - 40px);
   width: 100%;
   position: relative;
   overflow: hidden;
