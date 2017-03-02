@@ -24,6 +24,7 @@ var minScrollbar = 151;
 var scrollRegions = [];
 var hypoCanvas = [];
 var hypoCanvas2 = [];
+var empirCanvas = []; //Empirical canvas
 var draw_start = 0; // Redrawable Area start in pixels
 var draw_end = 0; // Redrawable Area start in pixels
 var date_start = 12000000; // Earliest date from selected adapations
@@ -34,13 +35,16 @@ var max_char_per_line = 20; // Used in positionAdaptBox
 var box_to_box_padding_size = 18;
 var text_in_box_padding_w = std_text_in_box_padding_w = 15;
 var text_in_box_padding_h = std_text_in_box_padding_h = 10;
-var hypo_box_font_size = temp_text = last_hypo_font_size = hypo_box_font_size_change = 20;
+var text_in_empir_box_padding_w = std_text_in_empir_box_padding_w = 5;
+var text_in_empir_box_padding_h = std_text_in_empir_box_padding_h = 5;
+var hypo_box_font_size = temp_text = last_hypo_font_size = hypo_box_font_size_change = 25;
+var empir_box_font_size = empir_temp_text = last_empir_font_size = empir_box_font_size_change = 25;
 var scrollbar_font_size = 13;
 var increments_font_size = 25;
 var hypo_box_font_family = scrollbar_font_family = increments_font_family = "Montserrat";
 var increments_font_color = "rgba(0,0,0,1)";
 var hypo_box_fill_style_relation = "rgba(111,130,145,1.0)";
-var hypo_box_fill_style_emperical = "rgba(6,74,121,1.0)";
+var hypo_box_fill_style_empirical = "rgba(6,74,121,1.0)";
 var scrollbar_container_fill_style = "rgba(220,220,220,0.3)";
 var scrollbar_block_fill_style = "rgba(250,250,250,0.5)";
 var scrollbar_handle_fill_style = "rgba(255,255,255,1.0)";
@@ -52,6 +56,7 @@ var adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
 var relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
 var boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
 var adaptArray = JSON.parse(sessionStorage.getItem("adaptArray"));
+var empiricalBox = JSON.parse(sessionStorage.getItem("empiricalBox"));
 var empiricalTable = JSON.parse(sessionStorage.getItem("empiricalTable"));
 var lineLocation = [];
 var middleBoxObj = {};
@@ -75,11 +80,13 @@ function initStorage(){
     adaptArray = JSON.parse(sessionStorage.getItem("adaptArray"));
     sequenceObj = JSON.parse(sessionStorage.getItem("sequenceObj"));
     sequenceCheckObj = JSON.parse(sessionStorage.getItem("sequenceCheckObj"));
+    empiricalBox = JSON.parse(sessionStorage.getItem("empiricalBox"));
     empiricalTable = JSON.parse(sessionStorage.getItem("empiricalTable"));
 }
 function initCanvas(firstRun) {
     scrollRegions = [];
     hypo_box_font_size_change = hypo_box_font_size;
+    empir_box_font_size_change = empir_box_font_size;
 
     // Resize Canvases
     resizeCanvas();
@@ -232,18 +239,19 @@ function initCanvas(firstRun) {
         var offset = 20+(-1 * ((12000000 - left_edge_date)/increment_per_pixel));
         $('#canvas-wrapper-lines-div').css("margin-left", offset + "px");
         $('#canvas-wrapper-adaptations-div').css("margin-left", offset + "px");
+	$('#canvas-wrapper-empirical-adaptations-div').css("margin-left", offset + "px");
     }
 };
 function resizeCanvas() {
     $('#canvas-wrapper-lines-div').html(hypothesis_lines_canvas);
     $('#canvas-wrapper-adaptations-div').html(hypothesis_adapt_canvas);
-    $('#emperical-canvas-div').html(emperical_canvas);
+    $('#canvas-wrapper-empirical-adaptations-div').html(empirical_canvas);
 
     // Set Canvas Div Size from Browser Realtime Values
     canvas_div_w = $('#hypothesis-canvas-div').width();
     canvas_div_h_hypo = $('#canvas-wrapper-adaptations-div').height();
     canvas_div_h_scroll = $('#scrollbar-canvas-div').height();
-    canvas_div_h_emper = $('#emperical-canvas-div').height();
+    canvas_div_h_empir = $('#empirical-canvas-div').height();
     canvas_timeline_w = canvas_div_w * 12;
 
     // Calculate Hypothetical Canvas Dimensions
@@ -262,8 +270,9 @@ function resizeCanvas() {
     $('#scrollbar-canvas-container').width = canvas_div_w;
     $('#scrollbar-canvas-block').width = canvas_div_w;
     minScrollbar = 1/12 * canvas_div_w;
-    // Resize Emperical Canvas
-    // TODO set emperical canvas wrapper width to canvas_timeline_w
+	
+    // Resize Empirical Canvas
+    $('#canvas-wrapper-empirical-adaptations-div').width = canvas_timeline_w;
 
     // Redefine Canvas Context(s)
     topcanvas1 = document.getElementById('hypothesis-canvas-1');
@@ -291,19 +300,6 @@ function resizeCanvas() {
     topcanvas210 = document.getElementById('hypothesis-canvas2-10');
     topcanvas211 = document.getElementById('hypothesis-canvas2-11');
     topcanvas212 = document.getElementById('hypothesis-canvas2-12');
-
-    botcanvas1 = document.getElementById('emperical-canvas-1');
-    botcanvas2 = document.getElementById('emperical-canvas-2');
-    botcanvas3 = document.getElementById('emperical-canvas-3');
-    botcanvas4 = document.getElementById('emperical-canvas-4');
-    botcanvas5 = document.getElementById('emperical-canvas-5');
-    botcanvas6 = document.getElementById('emperical-canvas-6');
-    botcanvas7 = document.getElementById('emperical-canvas-7');
-    botcanvas8 = document.getElementById('emperical-canvas-8');
-    botcanvas9 = document.getElementById('emperical-canvas-9');
-    botcanvas10 = document.getElementById('emperical-canvas-10');
-    botcanvas11 = document.getElementById('emperical-canvas-11');
-    botcanvas12 = document.getElementById('emperical-canvas-12');
 
     canvas1_1 = document.getElementById('timeline-increments');
 
@@ -410,19 +406,60 @@ function resizeCanvas() {
     hypoCanvas2[10] = ctx_top2_11;
     hypoCanvas2[11] = ctx_top2_12;
 
+//Empirical canvas
+	botcanvas1 = document.getElementById('empirical-canvas-1');
+    botcanvas2 = document.getElementById('empirical-canvas-2');
+    botcanvas3 = document.getElementById('empirical-canvas-3');
+    botcanvas4 = document.getElementById('empirical-canvas-4');
+    botcanvas5 = document.getElementById('empirical-canvas-5');
+    botcanvas6 = document.getElementById('empirical-canvas-6');
+    botcanvas7 = document.getElementById('empirical-canvas-7');
+    botcanvas8 = document.getElementById('empirical-canvas-8');
+    botcanvas9 = document.getElementById('empirical-canvas-9');
+    botcanvas10 = document.getElementById('empirical-canvas-10');
+    botcanvas11 = document.getElementById('empirical-canvas-11');
+    botcanvas12 = document.getElementById('empirical-canvas-12');
 
     ctx_bot_1 = botcanvas1.getContext("2d");
+	ctx_bot_1.canvas.width = canvas_div_w;
+    ctx_bot_1.canvas.height = canvas_div_h_empir;
     ctx_bot_2 = botcanvas2.getContext("2d");
+	ctx_bot_2.canvas.width = canvas_div_w;
+    ctx_bot_2.canvas.height = canvas_div_h_empir;
     ctx_bot_3 = botcanvas3.getContext("2d");
+	ctx_bot_3.canvas.width = canvas_div_w;
+    ctx_bot_3.canvas.height = canvas_div_h_empir;
     ctx_bot_4 = botcanvas4.getContext("2d");
+	ctx_bot_4.canvas.width = canvas_div_w;
+    ctx_bot_4.canvas.height = canvas_div_h_empir;
     ctx_bot_5 = botcanvas5.getContext("2d");
+	ctx_bot_5.canvas.width = canvas_div_w;
+    ctx_bot_5.canvas.height = canvas_div_h_empir;
     ctx_bot_6 = botcanvas6.getContext("2d");
+	ctx_bot_6.canvas.width = canvas_div_w;
+    ctx_bot_6.canvas.height = canvas_div_h_empir;
     ctx_bot_7 = botcanvas7.getContext("2d");
+	ctx_bot_7.canvas.width = canvas_div_w;
+    ctx_bot_7.canvas.height = canvas_div_h_empir;
     ctx_bot_8 = botcanvas8.getContext("2d");
+	ctx_bot_8.canvas.width = canvas_div_w;
+    ctx_bot_8.canvas.height = canvas_div_h_empir;
     ctx_bot_9 = botcanvas9.getContext("2d");
+	ctx_bot_9.canvas.width = canvas_div_w;
+    ctx_bot_9.canvas.height = canvas_div_h_empir;
     ctx_bot_10 = botcanvas10.getContext("2d");
+	ctx_bot_10.canvas.width = canvas_div_w;
+    ctx_bot_10.canvas.height = canvas_div_h_empir;
     ctx_bot_11 = botcanvas11.getContext("2d");
+	ctx_bot_11.canvas.width = canvas_div_w;
+    ctx_bot_11.canvas.height = canvas_div_h_empir;
     ctx_bot_12 = botcanvas12.getContext("2d");
+	ctx_bot_12.canvas.width = canvas_div_w;
+    ctx_bot_12.canvas.height = canvas_div_h_empir;
+
+	empirCanvas = [ctx_bot_1, ctx_bot_2, ctx_bot_3, ctx_bot_4,
+				ctx_bot_5, ctx_bot_6, ctx_bot_7, ctx_bot_8,
+				ctx_bot_9, ctx_bot_10, ctx_bot_11, ctx_bot_12];
 
     ctx1_1 = canvas1_1.getContext("2d");
     ctx1_1.canvas.width = canvas1_1_w;
@@ -1152,17 +1189,17 @@ var hypothesis_lines_canvas = `
     <canvas id="hypothesis-canvas2-11" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
     <canvas id="hypothesis-canvas2-12" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
     `;
-var emperical_canvas = `
-    <canvas id="emperical-canvas-1" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="emperical-canvas-2" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="emperical-canvas-3" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="emperical-canvas-4" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="emperical-canvas-5" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="emperical-canvas-6" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="emperical-canvas-7" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="emperical-canvas-8" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="emperical-canvas-9" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="emperical-canvas-10" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="emperical-canvas-11" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="emperical-canvas-12" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+var empirical_canvas = `
+    <canvas id="empirical-canvas-1" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="empirical-canvas-2" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="empirical-canvas-3" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="empirical-canvas-4" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="empirical-canvas-5" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="empirical-canvas-6" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="empirical-canvas-7" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="empirical-canvas-8" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="empirical-canvas-9" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="empirical-canvas-10" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="empirical-canvas-11" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="empirical-canvas-12" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
     `;
