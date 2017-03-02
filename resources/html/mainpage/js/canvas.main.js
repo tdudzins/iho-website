@@ -1171,6 +1171,8 @@ function drawTimelineIncrements() {
     ctx1_1.font = increments_font_size + "px " + increments_font_family;
     ctx1_1.fillStyle = increments_font_color;
     ctx1_1.textAlign = "center";
+    ctx1_1.strokeStyle = "rgb(0,0,0)";
+    ctx1_1.lineWidth = 2;
 
     timespan = (date_start - date_end);
     viewable_time = timespan * scroll_ratio;
@@ -1184,8 +1186,14 @@ function drawTimelineIncrements() {
     var change = total_scale_size / (total_increments - 1);
     var xpos = 20+(0 - (total_scale_size * scroll_position));
 
+    var textwidth = ctx1_1.measureText("0.2M").width;
     var text = '';
     for(var i = 0; i < total_increments; i++) {
+        ctx1_1.font = increments_font_size + "px " + increments_font_family;
+        ctx1_1.fillStyle = increments_font_color;
+        ctx1_1.textAlign = "center";
+        ctx1_1.strokeStyle = "rgb(0,0,0)";
+        ctx1_1.lineWidth = 2;
         text = '';
         if(((date_start - 4000000) / 1000000) - i >= 1) {
           text += ((date_start - 4000000) / 1000000) - i;
@@ -1198,6 +1206,86 @@ function drawTimelineIncrements() {
           text += 'M';
         }
         ctx1_1.fillText(text, xpos, 20);
+        if(change/4 > textwidth*3) {
+            for(var j = 1; j < 10; j++ ) {
+                if (j == 5) {
+                    ctx1_1.font = "15px " + increments_font_family;
+                    ctx1_1.fillStyle = increments_font_color;
+                    ctx1_1.textAlign = "center";
+                    ctx1_1.strokeStyle = "rgb(0,0,0)";
+                    ctx1_1.lineWidth = 2;
+                    text = '';
+                    if(((date_start - 4000000) / 1000000) - i >= 2) {
+                      text += ((date_start - 4500000) / 1000000) - i;
+                      text += 'M';
+                    }
+                    else {
+                      text = ((date_start-4000000)/1000000) - i;
+                      text = (.8 + (text * 0.2) - 0.1).toFixed(1);
+                      text = (text < 0.09)?0:text;
+                      text += 'M';
+                    }
+                    ctx1_1.fillText(text, xpos + j * change/10, canvas1_1.height + 2 - 2 *canvas1_1.height/4 - 3);
+                    ctx1_1.beginPath();
+                    ctx1_1.moveTo(xpos + j * change/10,canvas1_1.height + 2 - canvas1_1.height/4);
+                    ctx1_1.lineTo(xpos + j * change/10,canvas1_1.height + 2 - 2 * canvas1_1.height/4);
+                    ctx1_1.closePath();
+                    ctx1_1.stroke();
+                }
+                else {
+                    ctx1_1.beginPath();
+                    ctx1_1.moveTo(xpos + j * change/10,canvas1_1.height + 2 - canvas1_1.height/4);
+                    ctx1_1.lineTo(xpos + j * change/10,canvas1_1.height + 2 - 1.5 * canvas1_1.height/4);
+                    ctx1_1.closePath();
+                    ctx1_1.stroke();
+                }
+            }
+        }
+        else if(change/4 > textwidth) {
+            for(var j = 1; j < 4; j++ ) {
+                if (j == 2) {
+                    ctx1_1.font = "15px " + increments_font_family;
+                    ctx1_1.fillStyle = increments_font_color;
+                    ctx1_1.textAlign = "center";
+                    ctx1_1.strokeStyle = "rgb(0,0,0)";
+                    ctx1_1.lineWidth = 2;
+                    text = '';
+                    if(((date_start - 4000000) / 1000000) - i >= 2) {
+                      text += ((date_start - 4500000) / 1000000) - i;
+                      text += 'M';
+                    }
+                    else {
+                      text = ((date_start-4000000)/1000000) - i;
+                      text = (.8 + (text * 0.2) - 0.1).toFixed(1);
+                      text = (text < 0.09)?0:text;
+                      text += 'M';
+                    }
+                    ctx1_1.fillText(text, xpos + j * change/4, canvas1_1.height + 2 - 2 *canvas1_1.height/4 - 3);
+                    ctx1_1.beginPath();
+                    ctx1_1.moveTo(xpos + j * change/4,canvas1_1.height + 2 - canvas1_1.height/4);
+                    ctx1_1.lineTo(xpos + j * change/4,canvas1_1.height + 2 - 2 * canvas1_1.height/4);
+                    ctx1_1.closePath();
+                    ctx1_1.stroke();
+                }
+                else {
+                    ctx1_1.beginPath();
+                    ctx1_1.moveTo(xpos + j * change/4,canvas1_1.height + 2 - canvas1_1.height/4);
+                    ctx1_1.lineTo(xpos + j * change/4,canvas1_1.height + 2 - 1.5 * canvas1_1.height/4);
+                    ctx1_1.closePath();
+                    ctx1_1.stroke();
+                }
+            }
+        }
+        else {
+            ctx1_1.beginPath();
+            ctx1_1.moveTo(xpos + change/2,canvas1_1.height + 2 - canvas1_1.height/4);
+            ctx1_1.lineTo(xpos + change/2,canvas1_1.height + 2 - 2 * canvas1_1.height/4);
+            ctx1_1.closePath();
+            ctx1_1.stroke();
+        }
+
+
+
         xpos += change;
     }
 }
