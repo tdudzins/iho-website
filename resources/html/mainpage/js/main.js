@@ -125,7 +125,7 @@ function getAdaption(eventID, callback){
                 relationsObj[eventID].push([item.eventID, item.precondition]);
             }
             else{
-                empiricalTable.push([eventID, item.eventName, (item.earliestDirectEvidence >= 0)?item.earliestDirectEvidence : item.earliestindIrectEvidence]);
+                empiricalTable.push([eventID, item.eventName, (item.earliestDirectEvidence > 0)?item.earliestDirectEvidence : item.earliestIndirectEvidence]);
             }
         });
         obj.forEach(function(item2){
