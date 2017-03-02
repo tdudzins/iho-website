@@ -20,6 +20,7 @@ var last_scroll_ratio_lines = 1.0;
 var last_scroll_ratio_inc = 1.0;
 var last_empir_scroll_ratio = 1.0;
 var scroll_position = 0.0; // Block/Container ratio in percent
+var last_scroll_position_inc = 1.0;
 var scroll_left_handle_x_position = 0;
 var scroll_right_handle_x_position = 0;
 var minScrollbar = 151;
@@ -1461,8 +1462,9 @@ function drawScrollbarBlock(size) {
     drawTimelineIncrements(size);
 }
 function drawTimelineIncrements(size) {
-    if(Math.abs(last_scroll_ratio_inc - scroll_ratio) > size || size == 0) {
+    if(Math.abs(last_scroll_ratio_inc - scroll_ratio) > size || Math.abs(last_scroll_position_inc - scroll_position) > size || size == 0 ) {
         last_scroll_ratio_inc = scroll_ratio;
+        last_scroll_position_inc = scroll_position;
         ctx1_1.clearRect(0,0,ctx1_1.canvas.width,ctx1_1.canvas.height);
         ctx1_1.font = increments_font_size + "px " + increments_font_family;
         ctx1_1.fillStyle = increments_font_color;
