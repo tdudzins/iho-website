@@ -64,7 +64,7 @@ var sequenceObj = {};
 var sequenceCheckObj = {};
 
 var timespan;
-var dir = 0;
+var dir = 1;
 var viewable_time;
 var left_edge_date;
 var right_edge_date;
@@ -652,6 +652,7 @@ function addHypoAdaptation(eventID) {
 
     // Draw new things if they all fit
     temp_text = hypo_box_font_size_change;
+    dir = (dir)? 0:1;
     if(adaptObj[eventID][4] < 1) {
         createAdaptBox(eventID, adaptObj[eventID][0], adaptObj[eventID][1], function(eventID, text, width, height, date) {
             positionAdaptBox(eventID, text, width, height, date);
@@ -670,7 +671,6 @@ function addHypoAdaptation(eventID) {
         if(hypo_box_font_size_change != temp_text)
             return;
     });
-    dir = (dir)? 0:1;
     while(hypo_box_font_size_change != temp_text) {
         temp_text = hypo_box_font_size_change;
         boxLocation = [];
@@ -730,7 +730,6 @@ function positionAdaptBox(eventID, text, width, height, date) {
     else {
         date = date * 5;
     }
-
     timespan = (date_start - date_end);
     viewable_time = timespan * scroll_ratio;
     increment_per_pixel = (viewable_time/canvas_div_w);
@@ -754,6 +753,8 @@ function positionAdaptBox(eventID, text, width, height, date) {
                     dir = (dir)? 0:1;
                     l_i = i;
                 }
+                dir = (down)? 1:dir;
+                dir = (up)? 0:dir;
                 if(!down && !dir) {
                     if (boxLocation[i][1] + boxLocation[i][3] + height + box_to_box_padding_size < canvas_div_h_hypo) {
                         y_pos = boxLocation[i][1] + boxLocation[i][3] + box_to_box_padding_size;
