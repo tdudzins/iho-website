@@ -931,11 +931,13 @@ function redrawHypo(size) {
 }
 function drawLines(size) {
     if(Math.abs(last_scroll_ratio_lines - scroll_ratio) > size || size == 0) {
+        // Clearing old data
         last_scroll_ratio_lines = scroll_ratio;
         for(var i = 0; i < 12; i++) {
             hypoCanvas2[i].clearRect(0, 0, canvas_div_w, canvas_div_h_hypo);
         }
         empiricalTable.forEach(function(item){
+            // Loading data for the lines to be
             var temp = relationsObj[item[0]].slice();
             var temp_l = [];
             var temp_r = [];
@@ -954,6 +956,7 @@ function drawLines(size) {
             }
             temp_r.sort(function(a,b) {if(a[1] === b[1]) {return 0;}else {return (a[1] < b[1]) ? -1 : 1;}});
             temp_l.sort(function(a,b) {if(a[1] === b[1]) {return 0;}else {return (a[1] < b[1]) ? -1 : 1;}});
+
             // Draw lines left of item (empirical)
             for(var i = 0; i < boxLocationObj[item[0]][4]; i++){
                 var y_incr = boxLocationObj[item[0]][3]/(boxLocationObj[item[0]][4] + 1);
@@ -961,8 +964,11 @@ function drawLines(size) {
                 var end_y = boxLocationObj[item[0]][1] + y_incr * (i+1);
                 var x1 = temp_l[i][0] + (temp_l[i][2]/2);
                 var start_y = temp_l[i][1] + (temp_l[i][3]/2);
-                var x2 = x1 + (end_x - x1)/2;
-                console.log('L eid: ' + item[0] + ' ' + x1);
+                if(temp_l[i][2]) > boxLocationObj[item[0]][2])
+                    var x2 = (temp_l[i][0] + temp_l[i][2]) + (end_x - x1)/2;
+                else
+                    var x2 = (temp_l[i][0] + temp_l[i][2]) + (end_x - x1)/2;
+
                 lineCanvasWrapperDraw(x1,start_y,x2,start_y);
                 lineCanvasWrapperDraw(x2,start_y,x2,end_y);
                 lineCanvasWrapperDraw(x2,end_y,end_x,end_y);
@@ -976,7 +982,6 @@ function drawLines(size) {
                 var x1 = boxLocationObj[item[0]][0] + (boxLocationObj[item[0]][2]/2);
                 var start_y = boxLocationObj[item[0]][1] + y_incr * (i+1);
                 var x2 = x1 + (end_x - x1)/2;
-                console.log('R eid: ' + item[0] + ' ' + x1);
                 lineCanvasWrapperDraw(x1,start_y,x2,start_y);
                 lineCanvasWrapperDraw(x2,start_y,x2,end_y);
                 lineCanvasWrapperDraw(x2,end_y,end_x,end_y);
