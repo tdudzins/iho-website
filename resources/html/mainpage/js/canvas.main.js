@@ -16,7 +16,8 @@ canvas1_1, canvas2_1, canvas2_2, ctx1_1, ctx2_1, ctx2_2;
 // Global Variables
 var scroll_ratio = 1.0; // Block/Container ratio in percent
 var last_scroll_ratio = 1.0; // Used in redrawHypo
-var last_scroll_ratio_lines = 1.0; // Used in redrawHypo
+var last_scroll_ratio_lines = 1.0;
+var last_scroll_ratio_inc = 1.0;
 var scroll_position = 0.0; // Block/Container ratio in percent
 var scroll_left_handle_x_position = 0;
 var scroll_right_handle_x_position = 0;
@@ -109,9 +110,10 @@ function initCanvas(firstRun) {
     }
     // Initialize Scrollbar
     drawScrollbarContainer();
-    drawScrollbarBlock();
+    drawScrollbarBlock(0);
     last_scroll_ratio = scroll_ratio;
     last_scroll_ratio_lines = scroll_ratio;
+    last_scroll_ratio_inc = scroll_ratio;
     // handle mousedown events
     function scrollbarDown(e) {
         // tell the browser we're handling this mouse event
@@ -152,6 +154,7 @@ function initCanvas(firstRun) {
         if(bar_mouse_up) {
             redrawHypo(0);
             drawLines(0);
+            drawScrollbarBlock(0);
             bar_mouse_up = 0;
         }
 
@@ -219,9 +222,9 @@ function initCanvas(firstRun) {
             }
 
             // redraw
-            drawScrollbarBlock();
-            redrawHypo(.00001);
-            drawLines(.00001);
+            drawScrollbarBlock(.0001);
+            redrawHypo(.0001);
+            drawLines(.0001);
             // reset the starting mouse position for the next mousemove
             startX=mx;
             startY=my;
@@ -965,7 +968,6 @@ function drawLines(size) {
                 if((temp_l[i][0] >= boxLocationObj[item[0]][0] - box_to_box_padding_size && temp_l[i][0] <= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size) ||
                    (temp_l[i][0]  <= boxLocationObj[item[0]][0] + box_to_box_padding_size && temp_l[i][0] + temp_l[i][1] >= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size) ||
                    (temp_l[i][0] + temp_l[i][1] >= boxLocationObj[item[0]][0] - box_to_box_padding_size  && temp_l[i][0] + temp_l[i][1] <= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size)) {
-                       console.log("eid: " + item[0] + " i: "+ temp_l[i]);
                     var x1 = boxLocationObj[item[0]][0] + (boxLocationObj[item[0]][2]/2);
                     var y1 = boxLocationObj[item[0]][1] + y_incr * (i+1);
                     var x2 =  boxLocationObj[item[0]][0] - box_to_box_padding_size / 2;
@@ -1000,7 +1002,7 @@ function drawLines(size) {
                 if((temp_r[i][0] >= boxLocationObj[item[0]][0] - box_to_box_padding_size && temp_r[i][0] <= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size) ||
                     (temp_r[i][0]  <= boxLocationObj[item[0]][0] + box_to_box_padding_size && temp_r[i][0] + temp_r[i][1] >= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size) ||
                     (temp_r[i][0] + temp_r[i][1] >= boxLocationObj[item[0]][0] - box_to_box_padding_size  && temp_r[i][0] + temp_r[i][1] <= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size)) {
-                    console.log("eid: " + item[0] + " temp_r[i]: " +temp_r[i]);
+
                     var x1 = boxLocationObj[item[0]][0] + (boxLocationObj[item[0]][2]/2);
                     var y1 = boxLocationObj[item[0]][1] + y_incr * (i+1);
                     var x2 =  boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size / 2;
@@ -1054,7 +1056,7 @@ function drawScrollbarContainer () {
     ctx2_1.closePath();
     ctx2_1.fill();
 }
-function drawScrollbarBlock() {
+function drawScrollbarBlock(size) {
     // Defining Handles
     ctx2_2.clearRect(0, 0, ctx2_2.canvas.width, ctx2_2.canvas.height);
     var block_height = 0.2;
@@ -1164,129 +1166,132 @@ function drawScrollbarBlock() {
     right_text += 'M';
     ctx2_2.fillText(right_text, x, y);
 
-    drawTimelineIncrements();
+    drawTimelineIncrements(size);
 }
-function drawTimelineIncrements() {
-    ctx1_1.clearRect(0,0,ctx1_1.canvas.width,ctx1_1.canvas.height);
-    ctx1_1.font = increments_font_size + "px " + increments_font_family;
-    ctx1_1.fillStyle = increments_font_color;
-    ctx1_1.textAlign = "center";
-    ctx1_1.strokeStyle = "rgb(0,0,0)";
-    ctx1_1.lineWidth = 2;
-
-    timespan = (date_start - date_end);
-    viewable_time = timespan * scroll_ratio;
-    left_edge_date = timespan - (timespan * scroll_position) + date_end;
-    right_edge_date = timespan - (timespan * scroll_position) + date_end - (timespan * scroll_ratio);
-
-    var total_increments = (timespan/1000000) + 1;
-
-    var increment_per_pixel = (viewable_time/(ctx1_1.canvas.width-40));
-    var total_scale_size = timespan / increment_per_pixel;
-    var change = total_scale_size / (total_increments - 1);
-    var xpos = 20+(0 - (total_scale_size * scroll_position));
-
-    var textwidth = ctx1_1.measureText("0.2M").width;
-    var text = '';
-    for(var i = 0; i < total_increments; i++) {
+function drawTimelineIncrements(size) {
+    if(Math.abs(last_scroll_ratio_inc - scroll_ratio) > size || size == 0) {
+        last_scroll_ratio_inc = scroll_ratio;
+        ctx1_1.clearRect(0,0,ctx1_1.canvas.width,ctx1_1.canvas.height);
         ctx1_1.font = increments_font_size + "px " + increments_font_family;
         ctx1_1.fillStyle = increments_font_color;
         ctx1_1.textAlign = "center";
         ctx1_1.strokeStyle = "rgb(0,0,0)";
         ctx1_1.lineWidth = 2;
-        text = '';
-        if(((date_start - 4000000) / 1000000) - i >= 1) {
-          text += ((date_start - 4000000) / 1000000) - i;
-          text += 'M';
-        }
-        else {
-          text = ((date_start-4000000)/1000000) - i;
-          text = (.8 + (text * 0.2)).toFixed(1);
-          text = (text < 0.09)?0:text;
-          text += 'M';
-        }
-        ctx1_1.fillText(text, xpos, 20);
-        if(change/4 > textwidth*3) {
-            for(var j = 1; j < 10; j++ ) {
-                if (j == 5) {
-                    ctx1_1.font = "15px " + increments_font_family;
-                    ctx1_1.fillStyle = increments_font_color;
-                    ctx1_1.textAlign = "center";
-                    ctx1_1.strokeStyle = "rgb(0,0,0)";
-                    ctx1_1.lineWidth = 2;
-                    text = '';
-                    if(((date_start - 4000000) / 1000000) - i >= 2) {
-                      text += ((date_start - 4500000) / 1000000) - i;
-                      text += 'M';
+
+        timespan = (date_start - date_end);
+        viewable_time = timespan * scroll_ratio;
+        left_edge_date = timespan - (timespan * scroll_position) + date_end;
+        right_edge_date = timespan - (timespan * scroll_position) + date_end - (timespan * scroll_ratio);
+
+        var total_increments = (timespan/1000000) + 1;
+
+        var increment_per_pixel = (viewable_time/(ctx1_1.canvas.width-40));
+        var total_scale_size = timespan / increment_per_pixel;
+        var change = total_scale_size / (total_increments - 1);
+        var xpos = 20+(0 - (total_scale_size * scroll_position));
+
+        var textwidth = ctx1_1.measureText("0.2M").width;
+        var text = '';
+        for(var i = 0; i < total_increments; i++) {
+            ctx1_1.font = increments_font_size + "px " + increments_font_family;
+            ctx1_1.fillStyle = increments_font_color;
+            ctx1_1.textAlign = "center";
+            ctx1_1.strokeStyle = "rgb(0,0,0)";
+            ctx1_1.lineWidth = 2;
+            text = '';
+            if(((date_start - 4000000) / 1000000) - i >= 1) {
+              text += ((date_start - 4000000) / 1000000) - i;
+              text += 'M';
+            }
+            else {
+              text = ((date_start-4000000)/1000000) - i;
+              text = (.8 + (text * 0.2)).toFixed(1);
+              text = (text < 0.09)?0:text;
+              text += 'M';
+            }
+            ctx1_1.fillText(text, xpos, 20);
+            if(change/4 > textwidth*3) {
+                for(var j = 1; j < 10; j++ ) {
+                    if (j == 5) {
+                        ctx1_1.font = "15px " + increments_font_family;
+                        ctx1_1.fillStyle = increments_font_color;
+                        ctx1_1.textAlign = "center";
+                        ctx1_1.strokeStyle = "rgb(0,0,0)";
+                        ctx1_1.lineWidth = 2;
+                        text = '';
+                        if(((date_start - 4000000) / 1000000) - i >= 2) {
+                          text += ((date_start - 4500000) / 1000000) - i;
+                          text += 'M';
+                        }
+                        else {
+                          text = ((date_start-4000000)/1000000) - i;
+                          text = (.8 + (text * 0.2) - 0.1).toFixed(1);
+                          text = (text < 0.09)?0:text;
+                          text += 'M';
+                        }
+                        ctx1_1.fillText(text, xpos + j * change/10, canvas1_1.height + 2 - 2 *canvas1_1.height/4 - 3);
+                        ctx1_1.beginPath();
+                        ctx1_1.moveTo(xpos + j * change/10,canvas1_1.height + 2 - canvas1_1.height/4);
+                        ctx1_1.lineTo(xpos + j * change/10,canvas1_1.height + 2 - 2 * canvas1_1.height/4);
+                        ctx1_1.closePath();
+                        ctx1_1.stroke();
                     }
                     else {
-                      text = ((date_start-4000000)/1000000) - i;
-                      text = (.8 + (text * 0.2) - 0.1).toFixed(1);
-                      text = (text < 0.09)?0:text;
-                      text += 'M';
+                        ctx1_1.beginPath();
+                        ctx1_1.moveTo(xpos + j * change/10,canvas1_1.height + 2 - canvas1_1.height/4);
+                        ctx1_1.lineTo(xpos + j * change/10,canvas1_1.height + 2 - 1.5 * canvas1_1.height/4);
+                        ctx1_1.closePath();
+                        ctx1_1.stroke();
                     }
-                    ctx1_1.fillText(text, xpos + j * change/10, canvas1_1.height + 2 - 2 *canvas1_1.height/4 - 3);
-                    ctx1_1.beginPath();
-                    ctx1_1.moveTo(xpos + j * change/10,canvas1_1.height + 2 - canvas1_1.height/4);
-                    ctx1_1.lineTo(xpos + j * change/10,canvas1_1.height + 2 - 2 * canvas1_1.height/4);
-                    ctx1_1.closePath();
-                    ctx1_1.stroke();
-                }
-                else {
-                    ctx1_1.beginPath();
-                    ctx1_1.moveTo(xpos + j * change/10,canvas1_1.height + 2 - canvas1_1.height/4);
-                    ctx1_1.lineTo(xpos + j * change/10,canvas1_1.height + 2 - 1.5 * canvas1_1.height/4);
-                    ctx1_1.closePath();
-                    ctx1_1.stroke();
                 }
             }
-        }
-        else if(change/4 > textwidth) {
-            for(var j = 1; j < 4; j++ ) {
-                if (j == 2) {
-                    ctx1_1.font = "15px " + increments_font_family;
-                    ctx1_1.fillStyle = increments_font_color;
-                    ctx1_1.textAlign = "center";
-                    ctx1_1.strokeStyle = "rgb(0,0,0)";
-                    ctx1_1.lineWidth = 2;
-                    text = '';
-                    if(((date_start - 4000000) / 1000000) - i >= 2) {
-                      text += ((date_start - 4500000) / 1000000) - i;
-                      text += 'M';
+            else if(change/4 > textwidth) {
+                for(var j = 1; j < 4; j++ ) {
+                    if (j == 2) {
+                        ctx1_1.font = "15px " + increments_font_family;
+                        ctx1_1.fillStyle = increments_font_color;
+                        ctx1_1.textAlign = "center";
+                        ctx1_1.strokeStyle = "rgb(0,0,0)";
+                        ctx1_1.lineWidth = 2;
+                        text = '';
+                        if(((date_start - 4000000) / 1000000) - i >= 2) {
+                          text += ((date_start - 4500000) / 1000000) - i;
+                          text += 'M';
+                        }
+                        else {
+                          text = ((date_start-4000000)/1000000) - i;
+                          text = (.8 + (text * 0.2) - 0.1).toFixed(1);
+                          text = (text < 0.09)?0:text;
+                          text += 'M';
+                        }
+                        ctx1_1.fillText(text, xpos + j * change/4, canvas1_1.height + 2 - 2 *canvas1_1.height/4 - 3);
+                        ctx1_1.beginPath();
+                        ctx1_1.moveTo(xpos + j * change/4,canvas1_1.height + 2 - canvas1_1.height/4);
+                        ctx1_1.lineTo(xpos + j * change/4,canvas1_1.height + 2 - 2 * canvas1_1.height/4);
+                        ctx1_1.closePath();
+                        ctx1_1.stroke();
                     }
                     else {
-                      text = ((date_start-4000000)/1000000) - i;
-                      text = (.8 + (text * 0.2) - 0.1).toFixed(1);
-                      text = (text < 0.09)?0:text;
-                      text += 'M';
+                        ctx1_1.beginPath();
+                        ctx1_1.moveTo(xpos + j * change/4,canvas1_1.height + 2 - canvas1_1.height/4);
+                        ctx1_1.lineTo(xpos + j * change/4,canvas1_1.height + 2 - 1.5 * canvas1_1.height/4);
+                        ctx1_1.closePath();
+                        ctx1_1.stroke();
                     }
-                    ctx1_1.fillText(text, xpos + j * change/4, canvas1_1.height + 2 - 2 *canvas1_1.height/4 - 3);
-                    ctx1_1.beginPath();
-                    ctx1_1.moveTo(xpos + j * change/4,canvas1_1.height + 2 - canvas1_1.height/4);
-                    ctx1_1.lineTo(xpos + j * change/4,canvas1_1.height + 2 - 2 * canvas1_1.height/4);
-                    ctx1_1.closePath();
-                    ctx1_1.stroke();
-                }
-                else {
-                    ctx1_1.beginPath();
-                    ctx1_1.moveTo(xpos + j * change/4,canvas1_1.height + 2 - canvas1_1.height/4);
-                    ctx1_1.lineTo(xpos + j * change/4,canvas1_1.height + 2 - 1.5 * canvas1_1.height/4);
-                    ctx1_1.closePath();
-                    ctx1_1.stroke();
                 }
             }
+            else {
+                ctx1_1.beginPath();
+                ctx1_1.moveTo(xpos + change/2,canvas1_1.height + 2 - canvas1_1.height/4);
+                ctx1_1.lineTo(xpos + change/2,canvas1_1.height + 2 - 2 * canvas1_1.height/4);
+                ctx1_1.closePath();
+                ctx1_1.stroke();
+            }
+
+
+
+            xpos += change;
         }
-        else {
-            ctx1_1.beginPath();
-            ctx1_1.moveTo(xpos + change/2,canvas1_1.height + 2 - canvas1_1.height/4);
-            ctx1_1.lineTo(xpos + change/2,canvas1_1.height + 2 - 2 * canvas1_1.height/4);
-            ctx1_1.closePath();
-            ctx1_1.stroke();
-        }
-
-
-
-        xpos += change;
     }
 }
 
