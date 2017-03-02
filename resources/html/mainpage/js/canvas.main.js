@@ -272,6 +272,7 @@ function resizeCanvas() {
     minScrollbar = 1/12 * canvas_div_w;
 	
     // Resize Empirical Canvas
+    $('empirical-canvas-div').width = canvas_div_w;
     $('#canvas-wrapper-empirical-adaptations-div').width = canvas_timeline_w;
 
     // Redefine Canvas Context(s)
