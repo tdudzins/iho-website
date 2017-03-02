@@ -1,6 +1,23 @@
 // Event Listeners
 $(document).ready(function() {
     createArrays();
+    serverPost({action:'w'} ,function(data, status){
+        var obj = JSON.parse(data);
+        var currentSequence = '';
+        var sequenceObj = {};
+        var sequenceCheckObj = {};
+        $('#sequence-items').empty();
+        obj.forEach(function(item){
+            if(currentSequence != item.sequenceID){
+                currentSequence = item.sequenceID;
+                sequenceObj[item.sequenceID] = [];
+            }
+            sequenceObj[item.sequenceID].push(item.eventID);
+            sequenceCheckObj[item.eventID] = item.sequenceID;
+        });
+        sessionStorage.setItem("sequenceObj", sequenceObj);
+        sessionStorage.setItem("sequenceCheckObj", sequenceCheckObj);
+    });
     initStorage()
     initCanvas(1);
     initSlidePanels();
@@ -12,6 +29,7 @@ $(window).resize(function(){
     }
     initCanvas(1);
     redrawHypo(0);
+    redrawEmpir(0);
     drawLines(0);
 });
 $('#side-nav').ready(function(){
@@ -55,6 +73,7 @@ function setupSideNav(callback) {
                     //TODO remove empirical boxes
                     removeAdaption($(this).attr('id'), function(eid){
                         removeHypoAdaptation(eid, function(){});
+                        removeEmpirAdaptation(eid, function(){});
                     });
                 }
                 // Select
@@ -62,7 +81,7 @@ function setupSideNav(callback) {
                     $(this).children('img').attr('src', '/resources/html/mainpage/img/selected.png');
                     getAdaption($(this).attr('id'), function(eid){
                         addHypoAdaptation(eid);
-                        //TODO Add empirical boxes
+                        addEmpirAdaptation(eid);
                     });
                 }
             });
@@ -86,107 +105,119 @@ function setupSideNav(callback) {
     });
 }
 function getAdaption(eventID, callback){
-     serverPost({action:"s", eventid:eventID}, function(data, status){
-          var obj = JSON.parse(data);
-          var adaptArray = JSON.parse(sessionStorage.getItem("adaptArray"));
-          var adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
-          var relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
-          var empiricalTable = JSON.parse(sessionStorage.getItem("empiricalTable"));
-          relationsObj[eventID] = [];
-          obj.forEach(function(item){
-               if(adaptObj[item.eventID] === undefined){
-                    adaptObj[item.eventID] = [item.eventName, (item.earliestDirectEvidence > 0)?item.earliestDirectEvidence : item.earliestIndirectEvidence, item.boundaryStart, item.boundaryEnd, 0];
-                    adaptArray.push(item.eventID);
-               }
-               else{
-                    adaptObj[item.eventID][4]++;
-               }
+    serverPost({action:"s", eventid:eventID}, function(data, status){
+        var obj = JSON.parse(data);
+        var adaptArray = JSON.parse(sessionStorage.getItem("adaptArray"));
+        var adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
+        var relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
+        var empiricalTable = JSON.parse(sessionStorage.getItem("empiricalTable"));
+        relationsObj[eventID] = [];
+        obj.forEach(function(item){
+            if(adaptObj[item.eventID] === undefined){
+                adaptObj[item.eventID] = [item.eventName, (item.earliestDirectEvidence > 0)?item.earliestDirectEvidence : item.earliestIndirectEvidence, item.boundaryStart, item.boundaryEnd, 0, 0, 0];
+                adaptArray.push(item.eventID);
+            }
+            else{
+                adaptObj[item.eventID][4]++;
+            }
 
-               if(item.eventID != eventID){
-                    relationsObj[eventID].push([item.eventID, item.precondition]);
-               }
-               else{
-                    empiricalTable.push([eventID, item.eventName, (item.earliestDirectEvidence >= 0)?item.earliestDirectEvidence : item.earliestindIrectEvidence]);
-               }
-          });
-          adaptArray.sort();
-          empiricalTable.sort();
-          sessionStorage.setItem("adaptArray", JSON.stringify(adaptArray));
-          sessionStorage.setItem("adaptObj", JSON.stringify(adaptObj));
-          sessionStorage.setItem("relationsObj", JSON.stringify(relationsObj));
-          sessionStorage.setItem("empiricalTable", JSON.stringify(empiricalTable));
-          callback(eventID);
-     });
+            if(item.eventID != eventID){
+                relationsObj[eventID].push([item.eventID, item.precondition]);
+            }
+            else{
+                empiricalTable.push([eventID, item.eventName, (item.earliestDirectEvidence > 0)?item.earliestDirectEvidence : item.earliestIndirectEvidence]);
+            }
+        });
+        obj.forEach(function(item2){
+            if(relationsObj[eventID].find(function(item3){return item3[0] == item2.eventID;})){
+                if(adaptObj[item2.eventID][1] > adaptObj[eventID][1])
+                    adaptObj[eventID][5]++;
+                else
+                    adaptObj[eventID][6]++;
+            }
+        });
+        adaptArray.sort();
+        empiricalTable.sort();
+        sessionStorage.setItem("adaptArray", JSON.stringify(adaptArray));
+        sessionStorage.setItem("adaptObj", JSON.stringify(adaptObj));
+        sessionStorage.setItem("relationsObj", JSON.stringify(relationsObj));
+        sessionStorage.setItem("empiricalTable", JSON.stringify(empiricalTable));
+        callback(eventID);
+    });
 }
 function removeAdaption(eventID, callback){
-     var adaptArray = JSON.parse(sessionStorage.getItem("adaptArray"));
-     var adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
-     var relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
-     var empiricalTable = JSON.parse(sessionStorage.getItem("empiricalTable"));
-     for(var i = 0; i < empiricalTable.length; i++){
-          if(empiricalTable[i][0] === eventID){
-               empiricalTable.splice(i, 1);
-               i = empiricalTable.length;
-          }
-     }
-     relationsObj[eventID].forEach(function(item){
-          if (adaptObj[item[0]][4] === 0) {
-               delete adaptObj[item[0]];
-               for(var i = 0; i < adaptArray.length; i++){
-                    if(adaptArray[i] === item[0]){
-                         adaptArray.splice(i, 1);
-                         i = adaptArray.length;
-                    }
-               }
-          }
-          else {
-               adaptObj[item[0]][4]--;
-          }
-     });
-     delete relationsObj[eventID];
-
-     if (adaptObj[eventID][4] === 0) {
-          delete adaptObj[eventID];
-          for(var i = 0; i < adaptArray.length; i++){
-               if(adaptArray[i] == eventID){
+    var adaptArray = JSON.parse(sessionStorage.getItem("adaptArray"));
+    var adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
+    var relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
+    var empiricalTable = JSON.parse(sessionStorage.getItem("empiricalTable"));
+    for(var i = 0; i < empiricalTable.length; i++){
+        if(empiricalTable[i][0] === eventID){
+            empiricalTable.splice(i, 1);
+            i = empiricalTable.length;
+        }
+    }
+    relationsObj[eventID].forEach(function(item){
+        if (adaptObj[item[0]][4] === 0) {
+            delete adaptObj[item[0]];
+            for(var i = 0; i < adaptArray.length; i++){
+                if(adaptArray[i] === item[0]){
                     adaptArray.splice(i, 1);
                     i = adaptArray.length;
-               }
-          }
-     }
-     else {
-          adaptObj[eventID][4]--;
-     }
+                }
+            }
+        }
+        else {
+            adaptObj[item[0]][4]--;
+        }
+    });
+    delete relationsObj[eventID];
 
-     sessionStorage.setItem("adaptArray", JSON.stringify(adaptArray));
-     sessionStorage.setItem("adaptObj", JSON.stringify(adaptObj));
-     sessionStorage.setItem("relationsObj", JSON.stringify(relationsObj));
-     sessionStorage.setItem("empiricalTable", JSON.stringify(empiricalTable));
-     callback(eventID);
+    if (adaptObj[eventID][4] === 0) {
+        delete adaptObj[eventID];
+        for(var i = 0; i < adaptArray.length; i++){
+            if(adaptArray[i] == eventID){
+                adaptArray.splice(i, 1);
+                i = adaptArray.length;
+            }
+        }
+    }
+    else {
+        adaptObj[eventID][4]--;
+        adaptObj[eventID][5] = 0;
+        adaptObj[eventID][6] = 0;
+    }
+
+    sessionStorage.setItem("adaptArray", JSON.stringify(adaptArray));
+    sessionStorage.setItem("adaptObj", JSON.stringify(adaptObj));
+    sessionStorage.setItem("relationsObj", JSON.stringify(relationsObj));
+    sessionStorage.setItem("empiricalTable", JSON.stringify(empiricalTable));
+    callback(eventID);
 }
 
 // Server interaction functions
 function serverPost(object, callback) {
-     $.post('/datafromserver', object, function(data, status){callback(data, status);})
-     .fail(function(response) {
-          console.log('Error: postFromServer');
-     });
+    $.post('/datafromserver', object, function(data, status){callback(data, status);})
+    .fail(function(response) {
+        console.log('Error: postFromServer');
+    });
 }
 
 // Local storage creation
 function createArrays() {
-     if (typeof(Storage) !== "undefined"){
-          sessionStorage.setItem("adaptArray", "[]"); // [eventID, eventID, ...] sortedArray
-          sessionStorage.setItem("adaptObj", "{}"); // {eventID:[eventName, earliestDirectEvidence, start, end, count],[],[]....} obj
-          sessionStorage.setItem("relationsObj", "{}"); // {eventID:[{id:relationID,precondition:precondition}],....} obj
-          sessionStorage.setItem("empiricalTable", "[]"); // [[eventID, eventName, earliestDirectEvidence],[],[]....] array
-          sessionStorage.setItem("empiricalBox", "[]"); // [[x,y,length,height,text[],eventID], .....] array sorted
-          sessionStorage.setItem("boxLocation", "[]"); // [[x,y,length,height,text[],eventID], .....] array sorted
-     }
-     else{
-          console.log("Sorry! No Web Storage support..");
-          window.location = '/error';
-     }
+    if (typeof(Storage) !== "undefined"){
+        sessionStorage.setItem("adaptArray", "[]"); // [eventID, eventID, ...] sortedArray
+        sessionStorage.setItem("adaptObj", "{}"); // {eventID:[eventName, earliestDirectEvidence, start, end, count, Left, Right],[],[]....} obj
+        sessionStorage.setItem("relationsObj", "{}"); // {eventID:[{id:relationID,precondition:precondition}],....} obj
+        sessionStorage.setItem("empiricalTable", "[]"); // [[eventID, eventName, earliestDirectEvidence],[],[]....] array
+        sessionStorage.setItem("empiricalBox", "[]"); // [[x,y,length,height,text[],eventID], .....] array sorted
+        sessionStorage.setItem("boxLocation", "[]"); // [[x,y,length,height,text[],eventID], .....] array sorted
+        sessionStorage.setItem("sequenceObj", "{}"); // [[x,y,length,height,text[],eventID], .....] array sorted
+        sessionStorage.setItem("sequenceCheckObj", "{}"); // [[x,y,length,height,text[],eventID], .....] array sorted
+    }
+    else{
+        console.log("Sorry! No Web Storage support..");
+        window.location = '/error';
+    }
 }
 
 function initSlidePanels() {
@@ -195,12 +226,12 @@ function initSlidePanels() {
     $("#about-page-clickable").click(function(){
         if ($(this).hasClass("active")) {
             $("#about-page-clickable").html(`<span id="about-page-toggle">ABOUT IHO PROJECT</span>
-                <img src="/resources/html/mainpage/img/about_plus.png" class="about-page-pic">`);
+            <img src="/resources/html/mainpage/img/about_plus.png" class="about-page-pic">`);
             $("#about-page-panel").slideToggle("slow");
         }
         else {
             $("#about-page-clickable").html(`<span id="about-page-toggle">ABOUT IHO PROJECT</span>
-                <img src="/resources/html/mainpage/img/about_minus.png" class="about-page-pic">`);
+            <img src="/resources/html/mainpage/img/about_minus.png" class="about-page-pic">`);
             $("#about-page-panel").slideToggle("slow");
         }
         $(this).toggleClass("active");
@@ -216,5 +247,5 @@ function initSlidePanels() {
             $("#side-nav-toggle").html(`<img src="/resources/html/mainpage/img/arrow_close.png" style="height:100%;width:100%;">`);
         }
         $(this).toggleClass("active");
-     });
+    });
 }

@@ -1,8 +1,8 @@
 /************** Canvas Main **************/
 
 /* Canvas Div Dimensions */
-var canvas_div_w = canvas_div_h_hypo = canvas_div_h_scroll = canvas_div_h_emper =
-canvas1_1_h =  canvas1_234_h = canvas2_12_w =  canvas2_12_h = canvas3_1_h = canvas3_2_h = 0; // Emperical Canvas (Layer 2: Connections, Layer 3: Adaptations) height in pixels
+var canvas_div_w = canvas_div_h_hypo = canvas_div_h_scroll = canvas_div_h_empir =
+canvas1_1_h =  canvas1_234_h = canvas2_12_w =  canvas2_12_h = canvas3_1_h = canvas3_2_h = 0; // empirical Canvas (Layer 2: Connections, Layer 3: Adaptations) height in pixels
 
 // Canvas Drawing Variables
 var topcanvas1, topcanvas2, topcanvas3, topcanvas4, topcanvas5, topcanvas6, topcanvas7, topcanvas8, topcanvas9, topcanvas10, topcanvas11, topcanvas12,
@@ -11,36 +11,44 @@ botcanvas1, botcanvas2, botcanvas3, botcanvas4, botcanvas5, botcanvas6, botcanva
 ctx_top_1, ctx_top_2, ctx_top_3, ctx_top_4, ctx_top_5, ctx_top_6, ctx_top_7, ctx_top_8, ctx_top_9, ctx_top_10, ctx_top_11, ctx_top_12,
 ctx_top2_1, ctx_top2_2, ctx_top2_3, ctx_top2_4, ctx_top2_5, ctx_top2_6, ctx_top2_7, ctx_top2_8, ctx_top2_9, ctx_top2_10, ctx_top2_11, ctx_top2_12,
 ctx_bot_1, ctx_bot_2, ctx_bot_3, ctx_bot_4, ctx_bot_5, ctx_bot_6, ctx_bot_7, ctx_bot_8, ctx_bot_9, ctx_bot_10, ctx_bot_11, ctx_bot_12,
-canvas1_1, canvas2_1, canvas2_2,vctx1_1, ctx2_1, ctx2_2;
+canvas1_1, canvas2_1, canvas2_2, ctx1_1, ctx2_1, ctx2_2;
 
 // Global Variables
-var scroll_ratio = 0.0; // Block/Container ratio in percent
+var scroll_ratio = 1.0; // Block/Container ratio in percent
 var last_scroll_ratio = 1.0; // Used in redrawHypo
-var last_scroll_ratio_lines = 1.0; // Used in redrawHypo
+var last_scroll_ratio_lines = 1.0;
+var last_scroll_ratio_inc = 1.0;
+var last_empir_scroll_ratio = 1.0;
 var scroll_position = 0.0; // Block/Container ratio in percent
+var last_scroll_position_inc = 1.0;
 var scroll_left_handle_x_position = 0;
 var scroll_right_handle_x_position = 0;
 var minScrollbar = 151;
 var scrollRegions = [];
 var hypoCanvas = [];
 var hypoCanvas2 = [];
+var empirCanvas = []; //empirical canvas
 var draw_start = 0; // Redrawable Area start in pixels
 var draw_end = 0; // Redrawable Area start in pixels
 var date_start = 12000000; // Earliest date from selected adapations
 var date_end = 000000; // Latest date from selected adaptations
 var largest_timespan = 12000000; // When user is all the way scaled out, what is the largest amount of time to be viewed
 var smallest_timespan = 1000000; // When user is all the way scaled in, what is the smallest amount of time to be viewed
-var max_char_per_line = 15; // Used in positionAdaptBox
+var max_char_per_line = 20; // Used in positionBox
 var box_to_box_padding_size = 18;
-var text_in_box_padding_w = std_text_in_box_padding_w = 5;
-var text_in_box_padding_h = std_text_in_box_padding_h = 5;
-var hypo_box_font_size = temp_text = last_hypo_font_size = hypo_box_font_size_change = 25;
+var empir_box_to_box_padding_size = 5;
+var text_in_box_padding_w = std_text_in_box_padding_w = 15;
+var text_in_box_padding_h = std_text_in_box_padding_h = 10;
+var empir_text_in_box_padding_w = empir_std_text_in_box_padding_w = 15;
+var empir_text_in_box_padding_h = empir_std_text_in_box_padding_h = 10;
+var hypo_box_font_size = temp_text = last_hypo_font_size = hypo_box_font_size_change = 20;
+var empir_box_font_size = empir_temp_text = last_empir_font_size = empir_box_font_size_change = 20;
 var scrollbar_font_size = 13;
 var increments_font_size = 25;
-var hypo_box_font_family = scrollbar_font_family = increments_font_family = "Roboto";
+var hypo_box_font_family = empir_box_font_family = scrollbar_font_family = increments_font_family = "Montserrat";
 var increments_font_color = "rgba(0,0,0,1)";
 var hypo_box_fill_style_relation = "rgba(111,130,145,1.0)";
-var hypo_box_fill_style_emperical = "rgba(6,74,121,1.0)";
+var hypo_box_fill_style_empirical = "rgba(6,74,121,1.0)";
 var scrollbar_container_fill_style = "rgba(220,220,220,0.3)";
 var scrollbar_block_fill_style = "rgba(250,250,250,0.5)";
 var scrollbar_handle_fill_style = "rgba(255,255,255,1.0)";
@@ -52,29 +60,40 @@ var adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
 var relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
 var boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
 var adaptArray = JSON.parse(sessionStorage.getItem("adaptArray"));
-var lineLocation = [];
-var middleBoxObj = {};
+var empiricalBox = JSON.parse(sessionStorage.getItem("empiricalBox"));
+var empiricalTable = JSON.parse(sessionStorage.getItem("empiricalTable"));
+var boxLocationObj = {};
+var sequenceObj = {};
+var sequenceCheckObj = {};
 
 var timespan;
-var dir = 0;
+var dir = 1;
+var empir_dir = 1;
 var viewable_time;
 var left_edge_date;
 var right_edge_date;
 var bar_mouse_up = 0;
 
-var canvasAdaptation = [];
 function initStorage(){
     adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
     relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
     boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
     adaptArray = JSON.parse(sessionStorage.getItem("adaptArray"));
+    sequenceObj = JSON.parse(sessionStorage.getItem("sequenceObj"));
+    sequenceCheckObj = JSON.parse(sessionStorage.getItem("sequenceCheckObj"));
+    empiricalBox = JSON.parse(sessionStorage.getItem("empiricalBox"));
+    empiricalTable = JSON.parse(sessionStorage.getItem("empiricalTable"));
 }
 function initCanvas(firstRun) {
     scrollRegions = [];
     hypo_box_font_size_change = hypo_box_font_size;
+    empir_box_font_size_change = empir_box_font_size;
 
     // Resize Canvases
     resizeCanvas();
+
+    scroll_left_handle_x_position = canvas2_w * scroll_position;
+    scroll_right_handle_x_position = canvas2_w * scroll_ratio + canvas2_w * scroll_position - 2 * canvas2_h * .2;
 
     var BB = canvas2_2.getBoundingClientRect();
     var offsetX = BB.left;
@@ -95,10 +114,10 @@ function initCanvas(firstRun) {
     }
     // Initialize Scrollbar
     drawScrollbarContainer();
-    drawScrollbarBlock();
+    drawScrollbarBlock(0);
     last_scroll_ratio = scroll_ratio;
     last_scroll_ratio_lines = scroll_ratio;
-
+    last_scroll_ratio_inc = scroll_ratio;
     // handle mousedown events
     function scrollbarDown(e) {
         // tell the browser we're handling this mouse event
@@ -139,6 +158,8 @@ function initCanvas(firstRun) {
         if(bar_mouse_up) {
             redrawHypo(0);
             drawLines(0);
+            drawScrollbarBlock(0);
+            redrawEmpir(0);
             bar_mouse_up = 0;
         }
 
@@ -206,9 +227,10 @@ function initCanvas(firstRun) {
             }
 
             // redraw
-            drawScrollbarBlock();
-            redrawHypo(.00001);
-            drawLines(.00001);
+            drawScrollbarBlock(.0001);
+            redrawHypo(.0001);
+            redrawEmpir(.0001);
+            drawLines(.0001);
             // reset the starting mouse position for the next mousemove
             startX=mx;
             startY=my;
@@ -222,18 +244,19 @@ function initCanvas(firstRun) {
         var offset = 20+(-1 * ((12000000 - left_edge_date)/increment_per_pixel));
         $('#canvas-wrapper-lines-div').css("margin-left", offset + "px");
         $('#canvas-wrapper-adaptations-div').css("margin-left", offset + "px");
+	    $('#canvas-wrapper-empirical-adaptations-div').css("margin-left", (offset-20) + "px");
     }
 };
 function resizeCanvas() {
     $('#canvas-wrapper-lines-div').html(hypothesis_lines_canvas);
     $('#canvas-wrapper-adaptations-div').html(hypothesis_adapt_canvas);
-    $('#emperical-canvas-div').html(emperical_canvas);
+    $('#canvas-wrapper-empirical-adaptations-div').html(empirical_canvas);
 
     // Set Canvas Div Size from Browser Realtime Values
     canvas_div_w = $('#hypothesis-canvas-div').width();
     canvas_div_h_hypo = $('#canvas-wrapper-adaptations-div').height();
     canvas_div_h_scroll = $('#scrollbar-canvas-div').height();
-    canvas_div_h_emper = $('#emperical-canvas-div').height();
+    canvas_div_h_empir = $('#empirical-canvas-div').height();
     canvas_timeline_w = canvas_div_w * 12;
 
     // Calculate Hypothetical Canvas Dimensions
@@ -252,8 +275,10 @@ function resizeCanvas() {
     $('#scrollbar-canvas-container').width = canvas_div_w;
     $('#scrollbar-canvas-block').width = canvas_div_w;
     minScrollbar = 1/12 * canvas_div_w;
-    // Resize Emperical Canvas
-    // TODO set emperical canvas wrapper width to canvas_timeline_w
+
+    // Resize empirical Canvas
+    $('empirical-canvas-div').width = canvas_div_w;
+    $('#canvas-wrapper-empirical-adaptations-div').width = canvas_timeline_w;
 
     // Redefine Canvas Context(s)
     topcanvas1 = document.getElementById('hypothesis-canvas-1');
@@ -281,19 +306,6 @@ function resizeCanvas() {
     topcanvas210 = document.getElementById('hypothesis-canvas2-10');
     topcanvas211 = document.getElementById('hypothesis-canvas2-11');
     topcanvas212 = document.getElementById('hypothesis-canvas2-12');
-
-    botcanvas1 = document.getElementById('emperical-canvas-1');
-    botcanvas2 = document.getElementById('emperical-canvas-2');
-    botcanvas3 = document.getElementById('emperical-canvas-3');
-    botcanvas4 = document.getElementById('emperical-canvas-4');
-    botcanvas5 = document.getElementById('emperical-canvas-5');
-    botcanvas6 = document.getElementById('emperical-canvas-6');
-    botcanvas7 = document.getElementById('emperical-canvas-7');
-    botcanvas8 = document.getElementById('emperical-canvas-8');
-    botcanvas9 = document.getElementById('emperical-canvas-9');
-    botcanvas10 = document.getElementById('emperical-canvas-10');
-    botcanvas11 = document.getElementById('emperical-canvas-11');
-    botcanvas12 = document.getElementById('emperical-canvas-12');
 
     canvas1_1 = document.getElementById('timeline-increments');
 
@@ -400,19 +412,60 @@ function resizeCanvas() {
     hypoCanvas2[10] = ctx_top2_11;
     hypoCanvas2[11] = ctx_top2_12;
 
+    //empirical canvas
+	botcanvas1 = document.getElementById('empirical-canvas-1');
+    botcanvas2 = document.getElementById('empirical-canvas-2');
+    botcanvas3 = document.getElementById('empirical-canvas-3');
+    botcanvas4 = document.getElementById('empirical-canvas-4');
+    botcanvas5 = document.getElementById('empirical-canvas-5');
+    botcanvas6 = document.getElementById('empirical-canvas-6');
+    botcanvas7 = document.getElementById('empirical-canvas-7');
+    botcanvas8 = document.getElementById('empirical-canvas-8');
+    botcanvas9 = document.getElementById('empirical-canvas-9');
+    botcanvas10 = document.getElementById('empirical-canvas-10');
+    botcanvas11 = document.getElementById('empirical-canvas-11');
+    botcanvas12 = document.getElementById('empirical-canvas-12');
 
     ctx_bot_1 = botcanvas1.getContext("2d");
+	ctx_bot_1.canvas.width = canvas_div_w;
+    ctx_bot_1.canvas.height = canvas_div_h_empir;
     ctx_bot_2 = botcanvas2.getContext("2d");
+	ctx_bot_2.canvas.width = canvas_div_w;
+    ctx_bot_2.canvas.height = canvas_div_h_empir;
     ctx_bot_3 = botcanvas3.getContext("2d");
+	ctx_bot_3.canvas.width = canvas_div_w;
+    ctx_bot_3.canvas.height = canvas_div_h_empir;
     ctx_bot_4 = botcanvas4.getContext("2d");
+	ctx_bot_4.canvas.width = canvas_div_w;
+    ctx_bot_4.canvas.height = canvas_div_h_empir;
     ctx_bot_5 = botcanvas5.getContext("2d");
+	ctx_bot_5.canvas.width = canvas_div_w;
+    ctx_bot_5.canvas.height = canvas_div_h_empir;
     ctx_bot_6 = botcanvas6.getContext("2d");
+	ctx_bot_6.canvas.width = canvas_div_w;
+    ctx_bot_6.canvas.height = canvas_div_h_empir;
     ctx_bot_7 = botcanvas7.getContext("2d");
+	ctx_bot_7.canvas.width = canvas_div_w;
+    ctx_bot_7.canvas.height = canvas_div_h_empir;
     ctx_bot_8 = botcanvas8.getContext("2d");
+	ctx_bot_8.canvas.width = canvas_div_w;
+    ctx_bot_8.canvas.height = canvas_div_h_empir;
     ctx_bot_9 = botcanvas9.getContext("2d");
+	ctx_bot_9.canvas.width = canvas_div_w;
+    ctx_bot_9.canvas.height = canvas_div_h_empir;
     ctx_bot_10 = botcanvas10.getContext("2d");
+	ctx_bot_10.canvas.width = canvas_div_w;
+    ctx_bot_10.canvas.height = canvas_div_h_empir;
     ctx_bot_11 = botcanvas11.getContext("2d");
+	ctx_bot_11.canvas.width = canvas_div_w;
+    ctx_bot_11.canvas.height = canvas_div_h_empir;
     ctx_bot_12 = botcanvas12.getContext("2d");
+	ctx_bot_12.canvas.width = canvas_div_w;
+    ctx_bot_12.canvas.height = canvas_div_h_empir;
+
+	empirCanvas = [ctx_bot_1, ctx_bot_2, ctx_bot_3, ctx_bot_4,
+				ctx_bot_5, ctx_bot_6, ctx_bot_7, ctx_bot_8,
+				ctx_bot_9, ctx_bot_10, ctx_bot_11, ctx_bot_12];
 
     ctx1_1 = canvas1_1.getContext("2d");
     ctx1_1.canvas.width = canvas1_1_w;
@@ -432,7 +485,7 @@ function setdate (start, end) {
 }
 
 // Canvas drawing functions
-function boxCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text,emperical) {
+function boxCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text,empirical) {
     var c_value = x_pos/canvas_div_w;
     var selected_canvas = 0;
 
@@ -468,8 +521,8 @@ function boxCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text,emperi
         if(selected_canvas + i >= 0 && selected_canvas + i <= 11) {
             temp_x = x_pos - (i * canvas_div_w);
 
-            if (emperical) {
-                    hypoCanvas[selected_canvas + i].fillStyle = hypo_box_fill_style_emperical;
+            if (empirical) {
+                    hypoCanvas[selected_canvas + i].fillStyle = hypo_box_fill_style_empirical;
             }
             else {
                 hypoCanvas[selected_canvas + i].fillStyle = hypo_box_fill_style_relation;
@@ -479,8 +532,9 @@ function boxCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text,emperi
             hypoCanvas[selected_canvas + i].font = hypo_box_font_size_change + "px " + hypo_box_font_family;
             hypoCanvas[selected_canvas + i].fillStyle = hypo_box_font_color;
             hypoCanvas[selected_canvas + i].textAlign = "center";
+            hypoCanvas[selected_canvas + i].textBaseline="hanging";
             for (j = 0; j < text.length; j++) {
-                hypoCanvas[selected_canvas + i].fillText(text[j], temp_x + (0.5 * width_length), y_pos + ((hypo_box_font_size_change + ((j)?1:0)) * (j + 1)));
+                hypoCanvas[selected_canvas + i].fillText(text[j], temp_x + (0.5 * width_length), y_pos + (text_in_box_padding_h*.5) + ((hypo_box_font_size_change + ((j)?1:0)) * (j)));
             }
         }
     }
@@ -600,12 +654,19 @@ function addHypoAdaptation(eventID) {
     adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
     adaptArray = JSON.parse(sessionStorage.getItem("adaptArray"));
     relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
-    //boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
+    empiricalTable = JSON.parse(sessionStorage.getItem("empiricalTable"));
+
     // Draw new things if they all fit
+    temp_text = hypo_box_font_size_change;
+    dir = (dir)? 0:1;
     if(adaptObj[eventID][4] < 1) {
         createAdaptBox(eventID, adaptObj[eventID][0], adaptObj[eventID][1], function(eventID, text, width, height, date) {
             positionAdaptBox(eventID, text, width, height, date);
         });
+    }
+    else{
+        boxLocationObj[eventID][4] = adaptObj[eventID][5];
+        boxLocationObj[eventID][5] = adaptObj[eventID][6];
     }
     relationsObj[eventID].forEach(function(item) {
         if(adaptObj[item[0]][4] == 0) {
@@ -616,9 +677,6 @@ function addHypoAdaptation(eventID) {
         if(hypo_box_font_size_change != temp_text)
             return;
     });
-    // Shrink all the boxes untill they fit
-
-    dir = (dir)? 0:1;
     while(hypo_box_font_size_change != temp_text) {
         temp_text = hypo_box_font_size_change;
         boxLocation = [];
@@ -631,16 +689,16 @@ function addHypoAdaptation(eventID) {
         }
     }
     // Draw all the boxes when done
-    drawLines(0);
     drawAllBoxes();
+    drawLines(0);
 }
 function createAdaptBox(eventID, eventName, date, callback) {
     var textArray = [];
-    if(hypo_box_font_size_change <= 10){
+    if(hypo_box_font_size_change <= 5){
         text_in_box_padding_w = 1;
         text_in_box_padding_h = 1;
     }
-    else if(hypo_box_font_size_change > 10){
+    else if(hypo_box_font_size_change > 5){
         text_in_box_padding_w = std_text_in_box_padding_w;
         text_in_box_padding_h = std_text_in_box_padding_h;
     }
@@ -666,7 +724,7 @@ function createAdaptBox(eventID, eventName, date, callback) {
             width = parseInt((ctx_top_1.measureText(item).width + text_in_box_padding_w).toFixed(0));
         }
     });
-    var height = (hypo_box_font_size_change * textArray.length) + (text_in_box_padding_h * ((textArray.length > 1)?2:1));
+    var height = (hypo_box_font_size_change * textArray.length) + ((textArray.length > 1)?(textArray.length-1):0) + text_in_box_padding_h;
     callback(eventID, textArray, width, height, date);
 }
 function positionAdaptBox(eventID, text, width, height, date) {
@@ -678,7 +736,6 @@ function positionAdaptBox(eventID, text, width, height, date) {
     else {
         date = date * 5;
     }
-
     timespan = (date_start - date_end);
     viewable_time = timespan * scroll_ratio;
     increment_per_pixel = (viewable_time/canvas_div_w);
@@ -702,6 +759,8 @@ function positionAdaptBox(eventID, text, width, height, date) {
                     dir = (dir)? 0:1;
                     l_i = i;
                 }
+                dir = (down)? 1:dir;
+                dir = (up)? 0:dir;
                 if(!down && !dir) {
                     if (boxLocation[i][1] + boxLocation[i][3] + height + box_to_box_padding_size < canvas_div_h_hypo) {
                         y_pos = boxLocation[i][1] + boxLocation[i][3] + box_to_box_padding_size;
@@ -730,7 +789,7 @@ function positionAdaptBox(eventID, text, width, height, date) {
             i++;
         }
     }
-    middleBoxObj[eventID] = [(x_pos + (width/2)), (y_pos + (height/2))];
+    boxLocationObj[eventID] = [x_pos, y_pos, width, height, adaptObj[eventID][5], adaptObj[eventID][6]];
     boxLocation.push([x_pos,y_pos,width,height,text,eventID]);
     boxLocation.sort(function(a,b) {
         if(a[0] === b[0]) {
@@ -743,41 +802,39 @@ function positionAdaptBox(eventID, text, width, height, date) {
     //sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
 }
 function removeHypoAdaptation(eventID, callback) {
-    // Emperical undraw
+    // empirical undraw
     if(adaptObj[eventID][4] == 0) {
-        delete middleBoxObj[eventID];
+        delete boxLocationObj[eventID];
         for (var i = 0; i < boxLocation.length; i++) {
             if(boxLocation[i][5] == eventID) {
-                boxCanvasWrapperClear(boxLocation[i][0], boxLocation[i][1], boxLocation[i][2], boxLocation[i][3]);
+                //boxCanvasWrapperClear(boxLocation[i][0], boxLocation[i][1], boxLocation[i][2], boxLocation[i][3]);
                 if(boxLocation.length == 1)
                     boxLocation = [];
                 else
                     boxLocation.splice(i, 1);
-                //i = boxLocation.length;
+                i = boxLocation.length;
             }
         }
     }
     else {
         for(var i = 0; i < boxLocation.length; i++) {
             if(boxLocation[i][5] == eventID) {
-                boxCanvasWrapperClear(boxLocation[i][0], boxLocation[i][1], boxLocation[i][2], boxLocation[i][3]);
-                boxCanvasWrapperDraw(boxLocation[i][0], boxLocation[i][1], boxLocation[i][2], boxLocation[i][3], boxLocation[i][4], false);
+                //boxCanvasWrapperClear(boxLocation[i][0], boxLocation[i][1], boxLocation[i][2], boxLocation[i][3]);
+                //boxCanvasWrapperDraw(boxLocation[i][0], boxLocation[i][1], boxLocation[i][2], boxLocation[i][3], boxLocation[i][4], false);
             }
         }
     }
 
     // Relations undraw
-    relationsObj[eventID].forEach(function(item) {
+    relationsObj[eventID].forEach(function(item){
         if(adaptObj[item[0]][4] < 1) {
-            delete middleBoxObj[item[0]];
             for(var i = 0; i < boxLocation.length; i++) {
                 if(boxLocation[i][5] == item[0]) {
-                    boxCanvasWrapperClear(boxLocation[i][0], boxLocation[i][1], boxLocation[i][2], boxLocation[i][3]);
                     if(boxLocation.length == 1)
                         boxLocation = [];
                     else
                         boxLocation.splice(i, 1);
-                    //i = boxLocation.length;
+                    i = boxLocation.length;
                 }
             }
         }
@@ -787,8 +844,8 @@ function removeHypoAdaptation(eventID, callback) {
     adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
     adaptArray = JSON.parse(sessionStorage.getItem("adaptArray"));
     relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
-    //sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
-
+    empiricalTable = JSON.parse(sessionStorage.getItem("empiricalTable"));
+    redrawHypo(0);
     drawLines(0);
     callback(eventID);
 }
@@ -798,8 +855,8 @@ function drawAllBoxes() {
         hypoCanvas[i].clearRect(0, 0, canvas_div_w, canvas_div_h_hypo);
     }
     boxLocation.forEach(function(item){
-        var emperical = (relationsObj[item[5]] == undefined)? false:true;
-        boxCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4], emperical);
+        var empirical = (relationsObj[item[5]] == undefined)? false:true;
+        boxCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4], empirical);
     });
 }
 function redrawHypo(size) {
@@ -812,7 +869,7 @@ function redrawHypo(size) {
             // Move then redraw the same box
             boxLocation.forEach(function(item){
                 var date = adaptObj[item[5]][1];
-                var emperical = (relationsObj[item[5]] != undefined)? true:false;
+                var empirical = (relationsObj[item[5]] != undefined)? true:false;
                 if(date >= 1000000) {
                     date = date + 4000000;
                 }
@@ -843,8 +900,9 @@ function redrawHypo(size) {
                         }
                     }
                 }*/
-                middleBoxObj[item[5]] = [(item[0] + (item[2]/2)), (item[1] + (item[3]/2))];
-                boxCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4], emperical);
+
+                boxLocationObj[item[5]][0] = x_pos;
+                boxCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4], empirical);
             });
             last_scroll_ratio = scroll_ratio;
             //sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
@@ -880,25 +938,392 @@ function redrawHypo(size) {
 }
 function drawLines(size) {
     if(Math.abs(last_scroll_ratio_lines - scroll_ratio) > size || size == 0) {
+        // Clearing old data
         last_scroll_ratio_lines = scroll_ratio;
         for(var i = 0; i < 12; i++) {
             hypoCanvas2[i].clearRect(0, 0, canvas_div_w, canvas_div_h_hypo);
         }
-        lineLocation = [];
-        boxLocation.forEach(function(item){
-            if(relationsObj[item[5]] != undefined){
-                    relationsObj[item[5]].forEach(function(item2){
+        empiricalTable.forEach(function(item){
+            // Loading data for the lines to be
+            var temp = relationsObj[item[0]].slice();
+            var temp_l = [];
+            var temp_r = [];
+            for(var i = 0; i < temp.length; i++){
+                if(adaptObj[temp[i][0]][1] > adaptObj[item[0]][1])
+                    temp_l.push(temp[i][0]);
+                else
+                    temp_r.push(temp[i][0]);
 
-                        if(middleBoxObj[item[5]][0] < middleBoxObj[item2[0]][1])
-                            lineLocation.push([middleBoxObj[item[5]][0], middleBoxObj[item[5]][1], middleBoxObj[item2[0]][0], middleBoxObj[item2[0]][1], "black"]);
-                        else
-                            lineLocation.push([middleBoxObj[item2[0]][0], middleBoxObj[item2[0]][1], middleBoxObj[item[5]][0], middleBoxObj[item[5]][1], "black"]);
-                    });
             }
+            for (var i = 0; i < temp_l.length; i++) {
+                temp_l[i] = boxLocationObj[temp_l[i]];
+            }
+            for (var i = 0; i < temp_r.length; i++) {
+                temp_r[i] = boxLocationObj[temp_r[i]];
+            }
+            temp_r.sort(function(a,b) {if(a[1] === b[1]) {return 0;}else {return (a[1] < b[1]) ? -1 : 1;}});
+            temp_l.sort(function(a,b) {if(a[1] === b[1]) {return 0;}else {return (a[1] < b[1]) ? -1 : 1;}});
+
+            // Draw lines left of item (empirical)
+            for(var i = 0; i < boxLocationObj[item[0]][4]; i++){
+                var y_incr = boxLocationObj[item[0]][3]/(boxLocationObj[item[0]][4] + 1);
+
+                // Box overlap case
+                if((temp_l[i][0] >= boxLocationObj[item[0]][0] - box_to_box_padding_size && temp_l[i][0] <= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size) ||
+                   (temp_l[i][0]  <= boxLocationObj[item[0]][0] + box_to_box_padding_size && temp_l[i][0] + temp_l[i][1] >= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size) ||
+                   (temp_l[i][0] + temp_l[i][1] >= boxLocationObj[item[0]][0] - box_to_box_padding_size  && temp_l[i][0] + temp_l[i][1] <= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size)) {
+                    var x1 = boxLocationObj[item[0]][0] + (boxLocationObj[item[0]][2]/2);
+                    var y1 = boxLocationObj[item[0]][1] + y_incr * (i+1);
+                    var x2 =  boxLocationObj[item[0]][0] - box_to_box_padding_size / 2;
+                    var y2 = (boxLocationObj[item[0]][1] > temp_l[i][1])? boxLocationObj[item[0]][1] - ((boxLocationObj[item[0]][1] - (temp_l[i][1] + temp_l[i][3])) / 2) : boxLocationObj[item[0]][1] + boxLocationObj[item[0]][3] + ((temp_l[i][1] - (boxLocationObj[item[0]][1] + boxLocationObj[item[0]][3])) / 2);
+                    var x3 = temp_l[i][0] + temp_l[i][2] + box_to_box_padding_size / 2;
+                    var y3 = temp_l[i][1] + (temp_l[i][3]/2);
+                    var x4 = temp_l[i][0] + (temp_l[i][2]/2);
+
+                    lineCanvasWrapperDraw(x1,y1,x2,y1);
+                    lineCanvasWrapperDraw(x2,y1,x2,y2);
+                    lineCanvasWrapperDraw(x2,y2,x3,y2);
+                    lineCanvasWrapperDraw(x3,y2,x3,y3);
+                    lineCanvasWrapperDraw(x3,y3,x4,y3);
+                }
+                // Ideal case
+                else{
+                    var x1 = boxLocationObj[item[0]][0] + (boxLocationObj[item[0]][2]/2);
+                    var y1 = boxLocationObj[item[0]][1] + y_incr * (i+1);
+                    var x2 = boxLocationObj[item[0]][0] - ((boxLocationObj[item[0]][0] - (temp_l[i][0] + temp_l[i][2]))/ 2);
+                    var y2 = temp_l[i][1] + (temp_l[i][3]/2);
+                    var x3 = temp_l[i][0] + (temp_l[i][2]/2);
+                    lineCanvasWrapperDraw(x1,y1,x2,y1);
+                    lineCanvasWrapperDraw(x2,y1,x2,y2);
+                    lineCanvasWrapperDraw(x2,y2,x3,y2);
+                }
+            }
+
+            // Draw lines right of item (empirical)
+            for(var i = 0; i < boxLocationObj[item[0]][5]; i++){
+                var y_incr = boxLocationObj[item[0]][3]/(boxLocationObj[item[0]][5] + 1);
+                // Box overlap case
+                if((temp_r[i][0] >= boxLocationObj[item[0]][0] - box_to_box_padding_size && temp_r[i][0] <= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size) ||
+                    (temp_r[i][0]  <= boxLocationObj[item[0]][0] + box_to_box_padding_size && temp_r[i][0] + temp_r[i][1] >= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size) ||
+                    (temp_r[i][0] + temp_r[i][1] >= boxLocationObj[item[0]][0] - box_to_box_padding_size  && temp_r[i][0] + temp_r[i][1] <= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size)) {
+
+                    var x1 = boxLocationObj[item[0]][0] + (boxLocationObj[item[0]][2]/2);
+                    var y1 = boxLocationObj[item[0]][1] + y_incr * (i+1);
+                    var x2 =  boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size / 2;
+                    var y2 = (boxLocationObj[item[0]][1] > temp_r[i][1])? boxLocationObj[item[0]][1] - ((boxLocationObj[item[0]][1] - (temp_r[i][1] + temp_r[i][3])) / 2) : boxLocationObj[item[0]][1] + boxLocationObj[item[0]][3] + ((temp_r[i][1] - (boxLocationObj[item[0]][1] + boxLocationObj[item[0]][3])) / 2);
+                    var x3 = temp_r[i][0] - (box_to_box_padding_size / 2);
+                    var y3 = temp_r[i][1] + (temp_r[i][3]/2);
+                    var x4 = temp_r[i][0] + (temp_r[i][2]/2);
+
+                    lineCanvasWrapperDraw(x1,y1,x2,y1);
+                    lineCanvasWrapperDraw(x2,y1,x2,y2);
+                    lineCanvasWrapperDraw(x2,y2,x3,y2);
+                    lineCanvasWrapperDraw(x3,y2,x3,y3);
+                    lineCanvasWrapperDraw(x3,y3,x4,y3);
+                }
+                // Ideal case
+                else{
+                    var x1 = boxLocationObj[item[0]][0] + (boxLocationObj[item[0]][2]/2);
+                    var y1 = boxLocationObj[item[0]][1] + y_incr * (i+1);
+                    var x2 = boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + ((temp_r[i][0] -(boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2]))/ 2);
+                    var y2 = temp_r[i][1] + (temp_r[i][3]/2);
+                    var x3 = temp_r[i][0] + (temp_r[i][2]/2);
+                    lineCanvasWrapperDraw(x1,y1,x2,y1);
+                    lineCanvasWrapperDraw(x2,y1,x2,y2);
+                    lineCanvasWrapperDraw(x2,y2,x3,y2);
+                }
+            }
+
         });
-        lineLocation.forEach(function(item){
-            lineCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4]);
+    }
+}
+
+//Empirical Timeline functions
+function empiCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text) {
+    var c_value = x_pos/canvas_div_w;
+    var selected_canvas = 0;
+
+    if(c_value <= 1)
+        selected_canvas = 0;
+    else if(c_value <= 2)
+        selected_canvas = 1;
+    else if(c_value <= 3)
+        selected_canvas = 2;
+    else if(c_value <= 4)
+        selected_canvas = 3;
+    else if(c_value <= 5)
+        selected_canvas = 4;
+    else if(c_value <= 6)
+        selected_canvas = 5;
+    else if(c_value <= 7)
+        selected_canvas = 6;
+    else if(c_value <= 8)
+        selected_canvas = 7;
+    else if(c_value <= 9)
+        selected_canvas = 8;
+    else if(c_value <= 10)
+        selected_canvas = 9;
+    else if(c_value <= 11)
+        selected_canvas = 10;
+    else if(c_value <= 12)
+        selected_canvas = 11;
+
+    x_pos = x_pos%canvas_div_w;
+    var temp_x = 0;
+
+    for(var i = -1; i < 2; i++) {
+        if(selected_canvas + i >= 0 && selected_canvas + i <= 11) {
+            temp_x = x_pos - (i * canvas_div_w);
+            empirCanvas[selected_canvas + i].fillStyle = hypo_box_fill_style_empirical;
+            empirCanvas[selected_canvas + i].fillRect(temp_x, y_pos, width_length, height_length);
+            empirCanvas[selected_canvas + i].font = empir_box_font_size_change + "px " + empir_box_font_family;
+            empirCanvas[selected_canvas + i].fillStyle = hypo_box_font_color;
+            empirCanvas[selected_canvas + i].textAlign = "center";
+            empirCanvas[selected_canvas + i].textBaseline="hanging";
+
+            for (j = 0; j < text.length; j++) {
+                empirCanvas[selected_canvas + i].fillText(text[j], temp_x + (0.5 * width_length), y_pos + (empir_text_in_box_padding_h*.5) + ((empir_box_font_size_change + ((j)?1:0)) * (j)));
+            }
+        }
+    }
+}
+function empiCanvasWrapperDrawLines(x_pos,y_pos,width_length,height_length) {
+    var c_value = x_pos/canvas_div_w;
+    var selected_canvas = 0;
+
+    if(c_value <= 1)
+        selected_canvas = 0;
+    else if(c_value <= 2)
+        selected_canvas = 1;
+    else if(c_value <= 3)
+        selected_canvas = 2;
+    else if(c_value <= 4)
+        selected_canvas = 3;
+    else if(c_value <= 5)
+        selected_canvas = 4;
+    else if(c_value <= 6)
+        selected_canvas = 5;
+    else if(c_value <= 7)
+        selected_canvas = 6;
+    else if(c_value <= 8)
+        selected_canvas = 7;
+    else if(c_value <= 9)
+        selected_canvas = 8;
+    else if(c_value <= 10)
+        selected_canvas = 9;
+    else if(c_value <= 11)
+        selected_canvas = 10;
+    else if(c_value <= 12)
+        selected_canvas = 11;
+
+    x_pos = x_pos%canvas_div_w;
+    var temp_x = 0;
+
+    for(var i = -1; i < 2; i++) {
+        if(selected_canvas + i >= 0 && selected_canvas + i <= 11) {
+            temp_x = x_pos - (i * canvas_div_w);
+            empirCanvas[selected_canvas + i].strokeStyle = 'white';
+            empirCanvas[selected_canvas + i].lineWidth = 2;
+            empirCanvas[selected_canvas + i].beginPath();
+            empirCanvas[selected_canvas + i].moveTo(temp_x + (width_length / 2), y_pos + (height_length / 2));
+            empirCanvas[selected_canvas + i].lineTo(temp_x + (width_length / 2), 0);
+            empirCanvas[selected_canvas + i].closePath();
+            empirCanvas[selected_canvas + i].stroke();
+        }
+    }
+}
+function addEmpirAdaptation(eventID) {
+    // Pull in new changes
+    empiricalTable = JSON.parse(sessionStorage.getItem("empiricalTable"));
+
+    // Draw new things if they all fit
+    empir_temp_text = empir_box_font_size_change;
+    empir_dir = (empir_dir)? 0:1;
+    empiricalBox = [];
+    empiricalTable.forEach(function(item) {
+        createEmpirBox(item[0], item[1], item[2], function(eventID, text, width, height, date) {
+            positionEmpirBox(eventID, text, width, height, date);
         });
+        if(empir_box_font_size_change != temp_text)
+            return;
+    });
+    while(empir_box_font_size_change != empir_temp_text) {
+        empir_temp_text = empir_box_font_size_change;
+        empiricalBox = [];
+        for (var i = 0; i < empiricalTable.length; i++) {
+            createEmpirBox(empiricalTable[i][0], empiricalTable[i][1], empiricalTable[i][2], function(eventID, text, width, height, date) {
+                positionEmpirBox(eventID, text, width, height, date);
+            });
+            if(empir_box_font_size_change != empir_temp_text)
+                break;
+        }
+    }
+    // Draw all the boxes when done
+    drawAllEmpirBoxes();
+}
+function removeEmpirAdaptation(eventID, callback) {
+    empiricalTable.forEach(function(item){
+        if(item[0] == eventID) {
+            for(var i = 0; i < empiricalBox.length; i++) {
+                if(empiricalBox[i][5] == eventID) {
+                    if(empiricalBox.length == 1)
+                        empiricalBox = [];
+                    else
+                        empiricalBox.splice(i, 1);
+                    i = empiricalBox.length;
+                }
+            }
+        }
+    });
+    empir_box_font_size_change = empir_box_font_size; // reset font size
+    empiricalTable = JSON.parse(sessionStorage.getItem("empiricalTable"));
+    redrawEmpir(0);
+    callback(eventID);
+}
+function createEmpirBox(eventID, eventName, date, callback) {
+    var textArray = [];
+    if(empir_box_font_size_change <= 10){
+        empir_text_in_box_padding_w = 1;
+        empir_text_in_box_padding_h = 1;
+    }
+    else if(empir_box_font_size_change > 10){
+        empir_text_in_box_padding_w = empir_std_text_in_box_padding_w;
+        empir_text_in_box_padding_h = empir_std_text_in_box_padding_h;
+    }
+    ctx_top_1.font = empir_box_font_size_change + "px " + empir_box_font_family;
+    var line = "";
+    var temp_str = eventName.split(" ");
+    temp_str.forEach(function(item) {
+        if(line.length + item.length <= max_char_per_line) {
+            line += item + " ";
+        }
+        else {
+            textArray.push(line.trim());
+            line = item + " ";
+        }
+    });
+    textArray.push(line.trim());
+
+    var longest_line = 0;
+    var width = 0;
+    textArray.forEach(function(item) {
+        if(longest_line < ctx_top_1.measureText(item).width) {
+            longest_line = ctx_top_1.measureText(item).width;
+            width = parseInt((ctx_top_1.measureText(item).width + empir_text_in_box_padding_w).toFixed(0));
+        }
+    });
+    var height = (empir_box_font_size_change * textArray.length) + ((textArray.length > 1)?(textArray.length-1):0) + empir_text_in_box_padding_h;
+    callback(eventID, textArray, width, height, date);
+}
+function positionEmpirBox(eventID, text, width, height, date) {
+    var x_pos = 0;
+    var y_pos = 0;
+    if(date >= 1000000) {
+        date = date + 4000000;
+    }
+    else {
+        date = date * 5;
+    }
+    timespan = (date_start - date_end);
+    viewable_time = timespan * scroll_ratio;
+    increment_per_pixel = (viewable_time/canvas_div_w);
+    x_pos = date/increment_per_pixel;
+    x_pos = ((canvas_div_w/scroll_ratio) - x_pos) - width/2;
+    y_pos = canvas_div_h_empir/2 - height/2;
+
+    var i = 0;
+    var up = 0;
+    var down = 0;
+    var l_i = 0;
+    while (i < empiricalBox.length) {
+        // Hit x or y
+        if(((x_pos >= empiricalBox[i][0] - empir_box_to_box_padding_size && x_pos <= empiricalBox[i][0] + empiricalBox[i][2] + empir_box_to_box_padding_size) ||
+            (x_pos  <= empiricalBox[i][0] + empir_box_to_box_padding_size && x_pos + width >= empiricalBox[i][0] + empiricalBox[i][2] + empir_box_to_box_padding_size) ||
+            (x_pos + width >= empiricalBox[i][0] - empir_box_to_box_padding_size  && x_pos + width <= empiricalBox[i][0] + empiricalBox[i][2] + empir_box_to_box_padding_size)) &&
+            ((y_pos >= empiricalBox[i][1] && y_pos <= empiricalBox[i][1] + empiricalBox[i][3]) ||
+            (y_pos <= empiricalBox[i][1] && y_pos + height >= empiricalBox[i][1] + empiricalBox[i][3]) ||
+            (y_pos + height >= empiricalBox[i][1] && y_pos + height <= empiricalBox[i][1] + empiricalBox[i][3]))) {
+                if(i > l_i) {
+                    empir_dir = (empir_dir)? 0:1;
+                    l_i = i;
+                }
+                empir_dir = (down)? 1:empir_dir;
+                empir_dir = (up)? 0:empir_dir;
+                if(!down && !empir_dir) {
+                    if (empiricalBox[i][1] + empiricalBox[i][3] + height + empir_box_to_box_padding_size < canvas_div_h_empir) {
+                        y_pos = empiricalBox[i][1] + empiricalBox[i][3] + empir_box_to_box_padding_size;
+                        i = 0;
+                    }
+                    else
+                        down = 1;
+                }
+                else if(!up && empir_dir) {
+                    if (empiricalBox[i][1] - empir_box_to_box_padding_size - height > 0) {
+                        y_pos = empiricalBox[i][1] - empir_box_to_box_padding_size - height;
+                        i = 0;
+                    }
+                    else
+                        up = 1;
+                }
+                else {
+                    if(empir_temp_text == empir_box_font_size_change){
+                        empir_box_font_size_change -= 1;
+                        if(empir_box_font_size_change > 5){}// TODO dots
+                    }
+                    break;
+                }
+        }
+        else{
+            i++;
+        }
+    }
+    empiricalBox.push([x_pos,y_pos,width,height,text,eventID]);
+    empiricalBox.sort(function(a,b) {
+        if(a[0] === b[0]) {
+            return 0;
+        }
+        else {
+            return (a[0] < b[0]) ? -1 : 1;
+        }
+    });
+}
+function drawAllEmpirBoxes() {
+    // Clear boxes
+    for(var i = 0; i < 12; i++) {
+        empirCanvas[i].clearRect(0, 0, canvas_div_w, canvas_div_h_empir);
+    }
+    empiricalBox.forEach(function(item){
+        empiCanvasWrapperDrawLines(item[0], item[1], item[2], item[3]);
+    });
+    empiricalBox.forEach(function(item){
+        empiCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4]);
+    });
+}
+function redrawEmpir(size) {
+    if(Math.abs(last_empir_scroll_ratio - scroll_ratio) > size || size == 0) {
+        last_empir_scroll_ratio = scroll_ratio;
+        last_empir_font_size = empir_box_font_size_change;
+        empir_box_font_size_change = empir_box_font_size;
+        empir_temp_text = 0;
+        // Clear boxes
+        for(var i = 0; i < 12; i++) {
+            empirCanvas[i].clearRect(0, 0, canvas_div_w, canvas_div_h_empir);
+        }
+
+        empir_dir = (empir_dir)? 0:1;
+        while(empir_box_font_size_change != empir_temp_text) {
+            empir_temp_text = empir_box_font_size_change;
+            empiricalBox = [];
+            empir_temp_text = empir_box_font_size_change;
+            for (var i = 0; i < empiricalTable.length; i++) {
+                createEmpirBox(empiricalTable[i][0], empiricalTable[i][1], empiricalTable[i][2], function(eventID, text, width, height, date) {
+                    positionEmpirBox(eventID, text, width, height, date);
+                });
+                if(empir_box_font_size_change != empir_temp_text)
+                    break;
+            }
+        }
+        drawAllEmpirBoxes();
     }
 }
 
@@ -924,16 +1349,16 @@ function drawScrollbarContainer () {
     ctx2_1.closePath();
     ctx2_1.fill();
 }
-function drawScrollbarBlock() {
+function drawScrollbarBlock(size) {
     // Defining Handles
     ctx2_2.clearRect(0, 0, ctx2_2.canvas.width, ctx2_2.canvas.height);
     var block_height = 0.2;
     var block_radius = canvas2_h * block_height;
     var hndl_left_x_padding = scroll_left_handle_x_position + block_radius;
-    var hndl_right_x_padding = (-1 * scroll_right_handle_x_position) + block_radius;
+    var hndl_right_x_padding = scroll_right_handle_x_position + block_radius;
     var hndl_cnt_left_x = hndl_left_x_padding;
     var hndl_cnt_left_y = block_radius;
-    var hndl_cnt_right_x = canvas2_w - hndl_right_x_padding;
+    var hndl_cnt_right_x =  hndl_right_x_padding;
     var hndl_cnt_right_y = block_radius;
     var arc_top = 1.5 * Math.PI;
     var arc_bot = 0.5*Math.PI;
@@ -963,7 +1388,7 @@ function drawScrollbarBlock() {
     // draw block between handles
     regx = scroll_left_handle_x_position + (4 * block_radius);
     regy = hndl_cnt_left_y - block_radius;
-    regwidth = canvas2_w - (8 * block_radius);
+    regwidth = canvas2_w * scroll_ratio - (8 * block_radius);
     regheight = 2 * block_radius;
 
     ctx2_2.beginPath();
@@ -979,7 +1404,7 @@ function drawScrollbarBlock() {
 
     ctx2_2.fillStyle = scrollbar_handle_fill_style;
     // draw right handle
-    regx = canvas2_w - (4 * block_radius);
+    regx = scroll_right_handle_x_position - 2 * block_radius;
     regy = hndl_cnt_left_y - block_radius;
     regwidth = 4 * block_radius;
     regheight = 2 * block_radius;
@@ -1034,41 +1459,133 @@ function drawScrollbarBlock() {
     right_text += 'M';
     ctx2_2.fillText(right_text, x, y);
 
-    drawTimelineIncrements();
+    drawTimelineIncrements(size);
 }
-function drawTimelineIncrements() {
-    ctx1_1.clearRect(0,0,ctx1_1.canvas.width,ctx1_1.canvas.height);
-    ctx1_1.font = increments_font_size + "px " + increments_font_family;
-    ctx1_1.fillStyle = increments_font_color;
-    ctx1_1.textAlign = "center";
+function drawTimelineIncrements(size) {
+    if(Math.abs(last_scroll_ratio_inc - scroll_ratio) > size || Math.abs(last_scroll_position_inc - scroll_position) > size || size == 0 ) {
+        last_scroll_ratio_inc = scroll_ratio;
+        last_scroll_position_inc = scroll_position;
+        ctx1_1.clearRect(0,0,ctx1_1.canvas.width,ctx1_1.canvas.height);
+        ctx1_1.font = increments_font_size + "px " + increments_font_family;
+        ctx1_1.fillStyle = increments_font_color;
+        ctx1_1.textAlign = "center";
+        ctx1_1.strokeStyle = "rgb(0,0,0)";
+        ctx1_1.lineWidth = 2;
 
-    timespan = (date_start - date_end);
-    viewable_time = timespan * scroll_ratio;
-    left_edge_date = timespan - (timespan * scroll_position) + date_end;
-    right_edge_date = timespan - (timespan * scroll_position) + date_end - (timespan * scroll_ratio);
+        timespan = (date_start - date_end);
+        viewable_time = timespan * scroll_ratio;
+        left_edge_date = timespan - (timespan * scroll_position) + date_end;
+        right_edge_date = timespan - (timespan * scroll_position) + date_end - (timespan * scroll_ratio);
 
-    var total_increments = (timespan/1000000) + 1;
+        var total_increments = (timespan/1000000) + 1;
 
-    var increment_per_pixel = (viewable_time/(ctx1_1.canvas.width-40));
-    var total_scale_size = timespan / increment_per_pixel;
-    var change = total_scale_size / (total_increments - 1);
-    var xpos = 20+(0 - (total_scale_size * scroll_position));
+        var increment_per_pixel = (viewable_time/(ctx1_1.canvas.width-40));
+        var total_scale_size = timespan / increment_per_pixel;
+        var change = total_scale_size / (total_increments - 1);
+        var xpos = 20+(0 - (total_scale_size * scroll_position));
 
-    var text = '';
-    for(var i = 0; i < total_increments; i++) {
-        text = '';
-        if(((date_start - 4000000) / 1000000) - i >= 1) {
-          text += ((date_start - 4000000) / 1000000) - i;
-          text += 'M';
+        var textwidth = ctx1_1.measureText("0.2M").width;
+        var text = '';
+        for(var i = 0; i < total_increments; i++) {
+            ctx1_1.font = increments_font_size + "px " + increments_font_family;
+            ctx1_1.fillStyle = increments_font_color;
+            ctx1_1.textAlign = "center";
+            ctx1_1.strokeStyle = "rgb(0,0,0)";
+            ctx1_1.lineWidth = 2;
+            text = '';
+            if(((date_start - 4000000) / 1000000) - i >= 1) {
+              text += ((date_start - 4000000) / 1000000) - i;
+              text += 'M';
+            }
+            else {
+              text = ((date_start-4000000)/1000000) - i;
+              text = (.8 + (text * 0.2)).toFixed(1);
+              text = (text < 0.09)?0:text;
+              text += 'M';
+            }
+            ctx1_1.fillText(text, xpos, 20);
+            if(change/4 > textwidth*3) {
+                for(var j = 1; j < 10; j++ ) {
+                    if (j == 5) {
+                        ctx1_1.font = "15px " + increments_font_family;
+                        ctx1_1.fillStyle = increments_font_color;
+                        ctx1_1.textAlign = "center";
+                        ctx1_1.strokeStyle = "rgb(0,0,0)";
+                        ctx1_1.lineWidth = 2;
+                        text = '';
+                        if(((date_start - 4000000) / 1000000) - i >= 2) {
+                          text += ((date_start - 4500000) / 1000000) - i;
+                          text += 'M';
+                        }
+                        else {
+                          text = ((date_start-4000000)/1000000) - i;
+                          text = (.8 + (text * 0.2) - 0.1).toFixed(1);
+                          text = (text < 0.09)?0:text;
+                          text += 'M';
+                        }
+                        ctx1_1.fillText(text, xpos + j * change/10, canvas1_1.height + 2 - 2 *canvas1_1.height/4 - 3);
+                        ctx1_1.beginPath();
+                        ctx1_1.moveTo(xpos + j * change/10,canvas1_1.height + 2 - canvas1_1.height/4);
+                        ctx1_1.lineTo(xpos + j * change/10,canvas1_1.height + 2 - 2 * canvas1_1.height/4);
+                        ctx1_1.closePath();
+                        ctx1_1.stroke();
+                    }
+                    else {
+                        ctx1_1.beginPath();
+                        ctx1_1.moveTo(xpos + j * change/10,canvas1_1.height + 2 - canvas1_1.height/4);
+                        ctx1_1.lineTo(xpos + j * change/10,canvas1_1.height + 2 - 1.5 * canvas1_1.height/4);
+                        ctx1_1.closePath();
+                        ctx1_1.stroke();
+                    }
+                }
+            }
+            else if(change/4 > textwidth) {
+                for(var j = 1; j < 4; j++ ) {
+                    if (j == 2) {
+                        ctx1_1.font = "15px " + increments_font_family;
+                        ctx1_1.fillStyle = increments_font_color;
+                        ctx1_1.textAlign = "center";
+                        ctx1_1.strokeStyle = "rgb(0,0,0)";
+                        ctx1_1.lineWidth = 2;
+                        text = '';
+                        if(((date_start - 4000000) / 1000000) - i >= 2) {
+                          text += ((date_start - 4500000) / 1000000) - i;
+                          text += 'M';
+                        }
+                        else {
+                          text = ((date_start-4000000)/1000000) - i;
+                          text = (.8 + (text * 0.2) - 0.1).toFixed(1);
+                          text = (text < 0.09)?0:text;
+                          text += 'M';
+                        }
+                        ctx1_1.fillText(text, xpos + j * change/4, canvas1_1.height + 2 - 2 *canvas1_1.height/4 - 3);
+                        ctx1_1.beginPath();
+                        ctx1_1.moveTo(xpos + j * change/4,canvas1_1.height + 2 - canvas1_1.height/4);
+                        ctx1_1.lineTo(xpos + j * change/4,canvas1_1.height + 2 - 2 * canvas1_1.height/4);
+                        ctx1_1.closePath();
+                        ctx1_1.stroke();
+                    }
+                    else {
+                        ctx1_1.beginPath();
+                        ctx1_1.moveTo(xpos + j * change/4,canvas1_1.height + 2 - canvas1_1.height/4);
+                        ctx1_1.lineTo(xpos + j * change/4,canvas1_1.height + 2 - 1.5 * canvas1_1.height/4);
+                        ctx1_1.closePath();
+                        ctx1_1.stroke();
+                    }
+                }
+            }
+            else {
+                ctx1_1.beginPath();
+                ctx1_1.moveTo(xpos + change/2,canvas1_1.height + 2 - canvas1_1.height/4);
+                ctx1_1.lineTo(xpos + change/2,canvas1_1.height + 2 - 2 * canvas1_1.height/4);
+                ctx1_1.closePath();
+                ctx1_1.stroke();
+            }
+
+
+
+            xpos += change;
         }
-        else {
-          text = ((date_start-4000000)/1000000) - i;
-          text = (.8 + (text * 0.2)).toFixed(1);
-          text = (text < 0.09)?0:text;
-          text += 'M';
-        }
-        ctx1_1.fillText(text, xpos, 20);
-        xpos += change;
     }
 }
 
@@ -1101,17 +1618,17 @@ var hypothesis_lines_canvas = `
     <canvas id="hypothesis-canvas2-11" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
     <canvas id="hypothesis-canvas2-12" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
     `;
-var emperical_canvas = `
-    <canvas id="emperical-canvas-1" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="emperical-canvas-2" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="emperical-canvas-3" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="emperical-canvas-4" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="emperical-canvas-5" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="emperical-canvas-6" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="emperical-canvas-7" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="emperical-canvas-8" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="emperical-canvas-9" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="emperical-canvas-10" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="emperical-canvas-11" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="emperical-canvas-12" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+var empirical_canvas = `
+    <canvas id="empirical-canvas-1" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="empirical-canvas-2" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="empirical-canvas-3" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="empirical-canvas-4" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="empirical-canvas-5" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="empirical-canvas-6" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="empirical-canvas-7" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="empirical-canvas-8" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="empirical-canvas-9" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="empirical-canvas-10" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="empirical-canvas-11" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="empirical-canvas-12" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
     `;

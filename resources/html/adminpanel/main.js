@@ -1,4 +1,6 @@
 // gets all the event data and adds it to the list on the left
+var sequenceObj = {};
+var eventObj = {};
 function getEventList(listID, callback) {
     $.post('/datafromserver', {action:'t'}, function(data, status) {
         var obj = JSON.parse(data);
@@ -69,7 +71,7 @@ function deleteMedia(mediaID, mediaDis){
 }
 
 function deleteCategory(){
-    if (confirm('Are you sure you want to category: ' + $('li.category-focused').text()) == true){
+    if (confirm('Are you sure you want to delete category: ' + $('li.category-focused').text()) == true){
         $.post('/datatoserver', {action:'d', table:'category', value: $('li.category-focused').attr('id')}, function(data, status) {
             loadCategories(function(){});
 
@@ -80,6 +82,52 @@ function deleteCategory(){
         });
         $('#category').val('');
     }
+}
+
+function deleteSequence(){
+    if (confirm('Are you sure you want to delete sequence: ' + $('li.sequence-adaptations-focused').text()) == true){
+        $.post('/datatoserver', {action:'a', table:'sequence', value: $('li.sequence-adaptations-focused').text()}, function(data, status) {
+            loadSequences();
+
+        })
+        .fail(function(response) {
+            console.log('Error: deleteSequence');
+            window.location = '/error';
+        });
+    }
+}
+
+function removeSequence(){
+    $.post('/datatoserver', {action:'d', table:'sequence', value: $('#sequence-items li.sequence-adaptations-focused').text(), key: $('#sequence-contents-items li.sequence-adaptations-focused').attr('id')}, function(data, status) {
+        if(sequenceObj[$('#sequence-items li.sequence-adaptations-focused').text()].length > 1){
+            for(var i = 0; i < sequenceObj[$('#sequence-items li.sequence-adaptations-focused').text()].length; i++){
+                if($('#sequence-contents-items li.sequence-adaptations-focused').attr('id') == sequenceObj[$('#sequence-items li.sequence-adaptations-focused').text()][i]){
+                    sequenceObj[$('#sequence-items li.sequence-adaptations-focused').text()].splice(i, 1);
+                }
+            }
+        }
+        else{
+            sequenceObj[$('#sequence-items li.sequence-adaptations-focused').text()] = [];
+        }
+        loadSequence($('#sequence-items li.sequence-adaptations-focused').text());
+    })
+    .fail(function(response) {
+        console.log('Error: deleteSequence');
+        window.location = '/error';
+    });
+}
+
+function addSequence(){
+    $.post('/datatoserver', {action:'c', table:'sequence', data:[$('#sequence-items li.sequence-adaptations-focused').text(), $('#sequence-adaptations-items li.sequence-adaptations-focused').attr('id')]}, function(data, status) {
+        if(sequenceObj[$('#sequence-items li.sequence-adaptations-focused').text()] == undefined)
+            sequenceObj[$('#sequence-items li.sequence-adaptations-focused').text()] = [];
+        sequenceObj[$('#sequence-items li.sequence-adaptations-focused').text()].push( $('#sequence-adaptations-items li.sequence-adaptations-focused').attr('id'));
+        loadSequence($('#sequence-items li.sequence-adaptations-focused').text());
+    })
+    .fail(function(response) {
+        console.log('Error: deleteSequence');
+        window.location = '/error';
+    });
 }
 
 function deleteRelation(){
@@ -257,6 +305,60 @@ function loadCategories(callback) {
             }
         });
         callback();
+    });
+}
+
+function loadSequences(){
+    postFromServer({action:'w'} ,function(data, status){
+        var obj = JSON.parse(data);
+        var currentSequence = '';
+        sequenceObj = {};
+        $('#sequence-items').empty();
+        $('#sequence-adaptations-items').empty();
+        $('#sequence-contents-items').empty();
+        obj.forEach(function(item){
+            if(currentSequence != item.sequenceID){
+                $('#sequence-items').append('<li class=\'sequence-adaptations-unfocused\' >'+ item.sequenceID + '</li>');
+                currentSequence = item.sequenceID;
+                sequenceObj[item.sequenceID] = [];
+            }
+            sequenceObj[item.sequenceID].push(item.eventID);
+        });
+        $('#sequence-items li.sequence-adaptations-unfocused').click(function(){
+            if($('#editsaveButton').val() == 'Done'){
+                $('li.sequence-adaptations-focused').removeClass('sequence-adaptations-focused').addClass('sequence-adaptations-unfocused');
+                $(this).removeClass('sequence-adaptations-unfocused').addClass('sequence-adaptations-focused');
+                loadSequence($(this).text());
+            }
+        });
+    });
+}
+
+function loadSequence(text){
+    $('#sequence-adaptations-items').empty();
+    $('#sequence-contents-items').empty();
+    $.post('/datafromserver', {action:'t'}, function(data, status) {
+        var obj = JSON.parse(data);
+        obj.forEach(function(item){
+            $('#sequence-adaptations-items').append('<li id=\'' + item.eventID + '\' class=\'sequence-adaptations-unfocused\' >'+ item.eventName + '</li>');
+        });
+        $('#sequence-adaptations-items li.sequence-adaptations-unfocused').click(function(){
+            if($('#editsaveButton').val() == 'Done'){
+                $('#sequence-adaptations-items li.sequence-adaptations-focused').removeClass('sequence-adaptations-focused').addClass('sequence-adaptations-unfocused');
+                $(this).removeClass('sequence-adaptations-unfocused').addClass('sequence-adaptations-focused');
+            }
+        });
+        sequenceObj[text].forEach(function(item){
+            $('#'+ item +'.sequence-adaptations-unfocused').remove();
+            $('#sequence-contents-items').append('<li  id=\'' + item + '\' class=\'sequence-adaptations-unfocused\' >'+ eventObj[item] + '</li>');
+
+        });
+        $('#sequence-contents-items li.sequence-adaptations-unfocused').click(function(){
+            if($('#editsaveButton').val() == 'Done'){
+                $('#sequence-contents-items li.sequence-adaptations-focused').removeClass('sequence-adaptations-focused').addClass('sequence-adaptations-unfocused');
+                $(this).removeClass('sequence-adaptations-unfocused').addClass('sequence-adaptations-focused');
+            }
+        });
     });
 }
 
@@ -451,6 +553,45 @@ function tabConfig(id) {
             });
 
 
+            break;
+        case 'sequence':
+            $('#information-container').empty();
+            $('#information-container').append(sequencePane);
+            $('li.adpt-focused').removeClass('adpt-focused').addClass('adpt-unfocused');
+            $('#editsaveButton').val('Done');
+            $('#editsaveButton').click(function(){
+                tabConfig('firstLoad');
+            });
+            $('#addsequenceButton').click(function(){
+                $('#sequence-adaptations-items').empty();
+                $('#sequence-contents-items').empty();
+                $('li.sequence-focused').removeClass('sequence-focused').addClass('sequence-unfocused');
+                var name = prompt("Please enter a sequence name");
+                if (name != null) {
+                    $('#sequence-items').append('<li class=\'sequence-adaptations-focused\' >'+ name + '</li>');
+                    loadSequence(name);
+                }
+            });
+            $('#removesequenceButton').click(function(){
+                deleteSequence();
+            });
+            $('#sequence-add-to-list').click(function(){
+                addSequence();
+            });
+            $('#sequence-remove-from-list').click(function(){
+                removeSequence();
+            });
+            $('#sequence-adaptations-searchbutton').click(function(){
+                searchUI('sequence-adaptations-items', $('#sequence-adaptations-searchbar-text').val());
+            });
+            postFromServer({action:'t'} ,function(data, status){
+                var obj = JSON.parse(data);
+                eventObj = {};
+                obj.forEach(function(item){
+                    eventObj[item.eventID] = item.eventName;
+                });
+            });
+            loadSequences();
             break;
         default:
             console.log('Error: tabConfig');
@@ -929,6 +1070,13 @@ $('#category-button').ready(function(){
     $('#category-button').click(function(){
         if($('#editsaveButton').val() == 'Edit'){
             tabConfig('category');
+        }
+    });
+});
+$('#sequence-button').ready(function(){
+    $('#sequence-button').click(function(){
+        if($('#editsaveButton').val() == 'Edit'){
+            tabConfig('sequence');
         }
     });
 });

@@ -260,6 +260,66 @@ var categoryPane =
       </div>
   </div>`;
 
+var sequencePane =
+   `<div id="save-edit-container" class="save-edit-container">
+     <input id="editsaveButton" class="editsaveButton" value="Edit" type="submit">
+   </div>
+
+   <div id="sequence-pane" class="sequence-pane">
+       <div id="sequence-list" class="sequence-list">
+           <div id="sequence-list-header" class="sequence-list-header">
+               <label id="sequence-list-label" class="sequence-list-label">Sequence List</label>
+           </div>
+           <div id="sequence-collection" class="sequence-collection">
+               <ul id="sequence-items" class="sequence-items">
+               </ul>
+           </div>
+           <div id="sequence-buttons" class="sequence-buttons">
+               <div id="addsequence" class="addsequence">
+                   <input id="addsequenceButton" class="addsequenceButton" type="submit" value="Add Sequence">
+               </div>
+               <div id="removesequence" class="removesequence">
+                   <input id="removesequenceButton" class="removesequenceButton" type="submit" value="Remove Sequence">
+               </div>
+           </div>
+       </div>
+       <div id="sequence-info>" class="sequence-info">
+
+           <div id="sequence-lists-area" class="sequence-lists-area">
+           <div id="all-adapts-pane" class="sequence-all-adapts-pane">
+             <div id="adaptations-header" class="sequence-adaptations-header">
+               <label class="sequence-description-labels"> Adaptations </label>
+             </div>
+             <div id="sequence-adaptations-sorting" class="sequence-adaptations-sorting">
+               <input id="sequence-adaptations-searchbar-text" class="sequence-adaptations-searchbar-text" type="text" placeholder="Search for an adaptation..." >
+               <input id="sequence-adaptations-searchbutton" class="sequence-adaptations-searchbutton" type="submit" value="Go">
+             </div>
+             <div id="sequence-adaptations-database-collection" class="sequence-adaptations-database-collection">
+               <ul id="sequence-adaptations-items" class="sequence-adaptations-items">
+               </ul>
+             </div>
+           </div>
+           <div id="stacked-pane" class="sequence-stacked-pane">
+             <div id="sequence-buttons-pane" class="sequence-buttons-pane">
+               <input id="sequence-add-to-list" class="sequence-add-to-list" type="button" value="Add">
+               <input id="sequence-remove-from-list" class="sequence-remove-from-list" type="button" value="Remove">
+             </div>
+             <div id="sequence-contents-div-pane" class="sequence-contents-div-pane">
+               <div id="sequence-contents-div" class="sequence-contents-div">
+                   <div id="sequence-contents-header" class="sequence-contents-header">
+                     <label class="sequence-description-labels"> Contents </label>
+                   </div>
+                   <div id="sequence-contents-database-collection" class="sequence-contents-database-collection">
+                     <ul id="sequence-contents-items" class="sequence-contents-items">
+                     </ul>
+                   </div>
+                 </div>
+               </div>
+             </div>
+           </div>
+       </div>
+   </div>`;
+
 var firstLoadPane =
 	`<div id="save-edit-container" class="save-edit-container">
 		<input id="editsaveButton" class="editsaveButton" value="Edit" type="submit" hidden>
