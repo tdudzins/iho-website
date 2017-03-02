@@ -37,7 +37,7 @@ var text_in_box_padding_h = std_text_in_box_padding_h = 10;
 var hypo_box_font_size = temp_text = last_hypo_font_size = hypo_box_font_size_change = 20;
 var scrollbar_font_size = 13;
 var increments_font_size = 25;
-var hypo_box_font_family = scrollbar_font_family = increments_font_family = "Roboto";
+var hypo_box_font_family = scrollbar_font_family = increments_font_family = "Montserrat";
 var increments_font_color = "rgba(0,0,0,1)";
 var hypo_box_fill_style_relation = "rgba(111,130,145,1.0)";
 var hypo_box_fill_style_emperical = "rgba(6,74,121,1.0)";
