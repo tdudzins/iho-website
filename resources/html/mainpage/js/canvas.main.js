@@ -57,6 +57,9 @@ var relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
 var boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
 var adaptArray = JSON.parse(sessionStorage.getItem("adaptArray"));
 
+var lineLocation = [];
+var lineRelationObj = {}; // {x,y,width,heigh,left, right, lines[x,y,x,y]}
+
 var empiricalBox = JSON.parse(sessionStorage.getItem("empiricalBox"));
 var empiricalTable = JSON.parse(sessionStorage.getItem("empiricalTable"));
 
@@ -739,7 +742,6 @@ function addHypoAdaptation(eventID) {
     adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
     adaptArray = JSON.parse(sessionStorage.getItem("adaptArray"));
     relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
-    //boxLocation = JSON.parse(sessionStorage.getItem("boxLocation"));
     // Draw new things if they all fit
     if(adaptObj[eventID][4] < 1) {
         createAdaptBox(eventID, adaptObj[eventID][0], adaptObj[eventID][1], function(eventID, text, width, height, date) {
@@ -952,7 +954,6 @@ function positionAdaptBox(eventID, text, width, height, date) {
 }
 
 
-//Needs to be updated - in process
 function positionEmpirAdaptBox(eventID, text, width, height, date) {	
     var x_pos = 0;
     var y_pos = 0;
@@ -1016,7 +1017,6 @@ function positionEmpirAdaptBox(eventID, text, width, height, date) {
         }
     }
 
-	//empiricalBox = JSON.parse(sessionStorage.getItem("empiricalBox"));
 	empiricalBox.push([x_pos, y_pos, width, height, text, eventID]);
 	empiricalBox.sort(function(a,b){
 		if(a[0] === b[0]){
@@ -1026,10 +1026,7 @@ function positionEmpirAdaptBox(eventID, text, width, height, date) {
 		}
 	});
 
-	//?
 	sessionStorage.setItem("empiricalBox", JSON.stringify(empiricalBox));
-
-    //callback(x_pos, y_pos, width, height, text);
 }
 
 
@@ -1080,14 +1077,13 @@ function removeHypoAdaptation(eventID, callback) {
     relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
     //sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
 
+	redrawHypo(0);
     drawLines(0);
     callback(eventID);
 }
 
 
-//Might need to be updated
 function removeEmpirAdaptation(eventID, callback) {
-	empiricalBox = JSON.parse(sessionStorage.getItem("empiricalBox"));
 
     for(var i = 0; i < empiricalBox.length; i++) {
 		if(empiricalBox[i][5] == eventID) {
@@ -1100,7 +1096,8 @@ function removeEmpirAdaptation(eventID, callback) {
         }
     }
 
-    sessionStorage.setItem("empiricalBox", JSON.stringify(empiricalBox));
+	empir_box_font_size_change = empir_box_font_size; // reset font size
+	empiricalBox = JSON.parse(sessionStorage.getItem("empiricalBox"));
     callback(eventID);
 }
 
