@@ -1017,7 +1017,7 @@ function drawLines(size) {
                     collisionArr.forEach(function(item2){
                         if(
                             ((x3<item2[0] && item2[0]<x2) && (y2>item2[1] && y2<item2[1]+item2[3])) ||
-                            ((x2>item2[0] && x2<item2[0]+item2[2]) && ((y2<y1)?(y1<item2[1]+item2[3] && item2[1]<y2):(y1<item2[1]+item2[3] && item2[1]<y2))) || //special case of up or down
+                            ((x2>item2[0] && x2<item2[0]+item2[2]) && ((y2<y1)?(y2<item2[1]+item2[3] && item2[1]<y1):(y1<item2[1]+item2[3] && item2[1]<y2))) || //special case of up or down
                             ((item2[0]+item2[2]>x2 && item2[0]<x1) && (y1>item2[1] && y1<item2[1]+item2[3]))
                         ){
                             console.log('1: ' + ((x3<item2[0] && item2[0]<x2) && (y2>item2[1] && y2<item2[1]+item2[3])));
