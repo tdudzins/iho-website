@@ -943,31 +943,49 @@ function drawLines(size) {
         for(var i = 0; i < 12; i++) {
             hypoCanvas2[i].clearRect(0, 0, canvas_div_w, canvas_div_h_hypo);
         }
+        var seqCount = 0;
         empiricalTable.forEach(function(item){
-            // Loading data for the lines to be
+            // Loading data for the lines left and right and sorting
             var temp = relationsObj[item[0]].slice();
             var temp_l = [];
             var temp_r = [];
+            var lineArr = [];
+            var collisionArr = [];
+            var min_x = 0;
+            var max_x = 0;
+            // Sort all the relationship boxes left or right for drawing
             for(var i = 0; i < temp.length; i++){
                 if(adaptObj[temp[i][0]][1] > adaptObj[item[0]][1])
                     temp_l.push(temp[i][0]);
                 else
                     temp_r.push(temp[i][0]);
+                // The min and max pos for lines that could be drawn
+                if(boxLocationObj[temp[i][0]][0] + boxLocationObj[temp[i][0]][0] + box_to_box_padding_size > max_x)
+                    max_x = boxLocationObj[temp[i][0]][0] + boxLocationObj[temp[i][0]][0] + box_to_box_padding_size;
+                if(boxLocationObj[temp[i][0]][0] - box_to_box_padding_size < min_x)
+                    min_x = boxLocationObj[temp[i][0]][0] - box_to_box_padding_size;
 
             }
-            for (var i = 0; i < temp_l.length; i++) {
+            // Put all the location data into the left right arrays
+            for (var i = 0; i < temp_l.length; i++){
                 temp_l[i] = boxLocationObj[temp_l[i]];
             }
-            for (var i = 0; i < temp_r.length; i++) {
+            for (var i = 0; i < temp_r.length; i++){
                 temp_r[i] = boxLocationObj[temp_r[i]];
             }
             temp_r.sort(function(a,b) {if(a[1] === b[1]) {return 0;}else {return (a[1] < b[1]) ? -1 : 1;}});
             temp_l.sort(function(a,b) {if(a[1] === b[1]) {return 0;}else {return (a[1] < b[1]) ? -1 : 1;}});
+            // Get all the boxes that could colide with lines
+            for (var i = 0; i < boxLocation.length; i++) {
+                if(boxLocation[i][0] + boxLocation[i][2] >= min_x && boxLocation[i][0] <= max_x && item[0] != boxLocation[i][5])
+                    collisionArr.push(boxLocation[i]);
+            }
+
 
             // Draw lines left of item (empirical)
             for(var i = 0; i < boxLocationObj[item[0]][4]; i++){
                 var y_incr = boxLocationObj[item[0]][3]/(boxLocationObj[item[0]][4] + 1);
-
+                lineArr = [];
                 // Box overlap case
                 if((temp_l[i][0] >= boxLocationObj[item[0]][0] - box_to_box_padding_size && temp_l[i][0] <= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size) ||
                    (temp_l[i][0]  <= boxLocationObj[item[0]][0] + box_to_box_padding_size && temp_l[i][0] + temp_l[i][1] >= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size) ||
@@ -980,28 +998,50 @@ function drawLines(size) {
                     var y3 = temp_l[i][1] + (temp_l[i][3]/2);
                     var x4 = temp_l[i][0] + (temp_l[i][2]/2);
 
-                    lineCanvasWrapperDraw(x1,y1,x2,y1);
-                    lineCanvasWrapperDraw(x2,y1,x2,y2);
-                    lineCanvasWrapperDraw(x2,y2,x3,y2);
-                    lineCanvasWrapperDraw(x3,y2,x3,y3);
-                    lineCanvasWrapperDraw(x3,y3,x4,y3);
+                    lineArr.push([x1,y1,x2,y1]);
+                    lineArr.push([x2,y1,x2,y2]);
+                    lineArr.push([x2,y2,x3,y2]);
+                    lineArr.push([x3,y2,x3,y3]);
+                    lineArr.push([x3,y3,x4,y3]);
                 }
                 // Ideal case
                 else{
+                    // Find the ideal lines
                     var x1 = boxLocationObj[item[0]][0] + (boxLocationObj[item[0]][2]/2);
                     var y1 = boxLocationObj[item[0]][1] + y_incr * (i+1);
                     var x2 = boxLocationObj[item[0]][0] - ((boxLocationObj[item[0]][0] - (temp_l[i][0] + temp_l[i][2]))/ 2);
                     var y2 = temp_l[i][1] + (temp_l[i][3]/2);
                     var x3 = temp_l[i][0] + (temp_l[i][2]/2);
-                    lineCanvasWrapperDraw(x1,y1,x2,y1);
-                    lineCanvasWrapperDraw(x2,y1,x2,y2);
-                    lineCanvasWrapperDraw(x2,y2,x3,y2);
+                    var hit = 0;
+                    // Check if the lines colide
+                    collisionArr.forEach(function(item2){
+                        if(
+                            ((x3<item2[0] && item2[0]<x2) && (y2>item2[1] && y2<item2[1]+item2[3])) ||
+                            ((x2>item2[0] && x2<item2[0]+item2[2]) && ((y2<y1)?(y1<item2[1]+item2[3] && item2[1]<y2):(y1<item2[1]+item2[3] && item2[1]<y2))) || //special case of up or down
+                            ((item2[0]+item2[2]>x2 && item2[0]<x1) && (y1>item2[1] && y1<item2[1]+item2[3]))
+                        ){
+                            console.log('1: ' + ((x3<item2[0] && item2[0]<x2) && (y2>item2[1] && y2<item2[1]+item2[3])));
+                            console.log('2: ' + ((x2>item2[0] && x2<item2[0]+item2[2]) && (y1>item2[1]+item2[3] && item2[1]<y2)));
+                            console.log('3: ' + ((item2[0]+item2[2]>x2 && item2[0]<x1) && (y1>item2[1] && y1<item2[1]+item2[3])));
+                            console.log('Left hit to box: ' + adaptObj[item[0]][0]);
+                            console.log('Left hit on box: ' + adaptObj[item2[5]][0]);
+                        }
+                    });
+                    if(hit){
+                    }
+                    else{
+                        lineArr.push([x1,y1,x2,y1]);
+                        lineArr.push([x2,y1,x2,y2]);
+                        lineArr.push([x2,y2,x3,y2]);
+                    }
                 }
+                lineArr.forEach(function(item2){lineCanvasWrapperDraw(item2[0],item2[1],item2[2],item2[3]);});
             }
 
             // Draw lines right of item (empirical)
             for(var i = 0; i < boxLocationObj[item[0]][5]; i++){
                 var y_incr = boxLocationObj[item[0]][3]/(boxLocationObj[item[0]][5] + 1);
+                lineArr = [];
                 // Box overlap case
                 if((temp_r[i][0] >= boxLocationObj[item[0]][0] - box_to_box_padding_size && temp_r[i][0] <= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size) ||
                     (temp_r[i][0]  <= boxLocationObj[item[0]][0] + box_to_box_padding_size && temp_r[i][0] + temp_r[i][1] >= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size) ||
@@ -1015,11 +1055,11 @@ function drawLines(size) {
                     var y3 = temp_r[i][1] + (temp_r[i][3]/2);
                     var x4 = temp_r[i][0] + (temp_r[i][2]/2);
 
-                    lineCanvasWrapperDraw(x1,y1,x2,y1);
-                    lineCanvasWrapperDraw(x2,y1,x2,y2);
-                    lineCanvasWrapperDraw(x2,y2,x3,y2);
-                    lineCanvasWrapperDraw(x3,y2,x3,y3);
-                    lineCanvasWrapperDraw(x3,y3,x4,y3);
+                    lineArr.push([x1,y1,x2,y1]);
+                    lineArr.push([x2,y1,x2,y2]);
+                    lineArr.push([x2,y2,x3,y2]);
+                    lineArr.push([x3,y2,x3,y3]);
+                    lineArr.push([x3,y3,x4,y3]);
                 }
                 // Ideal case
                 else{
@@ -1028,10 +1068,26 @@ function drawLines(size) {
                     var x2 = boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + ((temp_r[i][0] -(boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2]))/ 2);
                     var y2 = temp_r[i][1] + (temp_r[i][3]/2);
                     var x3 = temp_r[i][0] + (temp_r[i][2]/2);
-                    lineCanvasWrapperDraw(x1,y1,x2,y1);
-                    lineCanvasWrapperDraw(x2,y1,x2,y2);
-                    lineCanvasWrapperDraw(x2,y2,x3,y2);
+                    var hit = 0;
+                    // Check if the lines colide
+                    collisionArr.forEach(function(item2){
+                        if(
+                            (x1<item2[0] && item2[0]<x2) && (y1>item2[1] && y1<item2[1]+item2[3]) ||
+                            (x2>item2[0] && x2<item2[0]+item2[2]) && (y1>item2[1]+item2[3] && item2[1]<y2) ||
+                            (item2[0]+item2[2]>x2 && item2[0]<x3) && (y1>item2[1] && y1<item2[1]+item2[3])
+                        ){
+                            console.log('1: ' + (x1<item2[0] && item2[0]<x2) && (y1>item2[1] && y1<item2[1]+item2[3]));
+                            console.log('2: ' + (x2>item2[0] && x2<item2[0]+item2[2]) && (y1>item2[1]+item2[3] && item2[1]<y2));
+                            console.log('3: ' + (item2[0]+item2[2]>x2 && item2[0]<x3) && (y1>item2[1] && y1<item2[1]+item2[3]));
+                            console.log('Right hit on box:' + adaptObj[item2[5]][0]);
+                        }
+                    });
+                    lineArr.push([x1,y1,x2,y1]);
+                    lineArr.push([x2,y1,x2,y2]);
+                    lineArr.push([x2,y2,x3,y2]);
                 }
+
+                lineArr.forEach(function(item2){lineCanvasWrapperDraw(item2[0],item2[1],item2[2],item2[3]);});
             }
 
         });
