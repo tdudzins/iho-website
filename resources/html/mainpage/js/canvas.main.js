@@ -979,7 +979,7 @@ function drawLines(size) {
             // Get all the boxes that could colide with lines
             for (var i = 0; i < boxLocation.length; i++) {
                 if(boxLocation[i][0] + boxLocation[i][2] >= min_x && boxLocation[i][0] <= max_x && item[0] != boxLocation[i][5]){
-                    if(boxLocationObj[item[0]][0] > boxLocation[i][0])
+                    if((boxLocationObj[item[0]][0] + (boxLocationObj[item[0]][2]/2)) > (boxLocation[i][0] + (boxLocation[i][2]/2)))
                         collisionArrLeft.push(boxLocation[i]);
                     else
                         collisionArrRight.push(boxLocation[i]);
@@ -1019,7 +1019,7 @@ function drawLines(size) {
                     var x3 = temp_l[i][0] + (temp_l[i][2]/2);
                     var hit = 0;
                     // Check if the lines colide
-                    for(var i = collisionArr.lenght(); i > 0; i--){
+                    for(var i = 0; i < collisionArr.lenght(); i++){
                         if(
                             ((x3<collisionArr[i][0] && collisionArr[i][0]<x2) && (y2>collisionArr[i][1] && y2<collisionArr[i][1]+collisionArr[i][3])) ||
                             ((x2>collisionArr[i][0] && x2<collisionArr[i][0]+collisionArr[i][2]) && ((y2<y1)?(y2<collisionArr[i][1]+collisionArr[i][3] && collisionArr[i][1]<y1):(y1<collisionArr[i][1]+collisionArr[i][3] && collisionArr[i][1]<y2))) || //special case of up or down
