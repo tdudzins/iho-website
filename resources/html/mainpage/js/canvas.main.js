@@ -973,8 +973,8 @@ function drawLines(size) {
             for (var i = 0; i < temp_r.length; i++){
                 temp_r[i] = boxLocationObj[temp_r[i]];
             }
-            temp_r.sort(function(a,b) {if(a[1] === b[1]) {return 0;}else {return (a[1] < b[1]) ? -1 : 1;}});
-            temp_l.sort(function(a,b) {if(a[1] === b[1]) {return 0;}else {return (a[1] < b[1]) ? -1 : 1;}});
+            temp_r.sort(function(a,b) {if(a[1] === b[1]) {if(a[0] == b[0]){return 0;}else{return (a[0] > b[0]) ? -1 : 1;}}else {return (a[1] < b[1]) ? -1 : 1;}});
+            temp_l.sort(function(a,b) {if(a[1] === b[1]) {if(a[0] == b[0]){return 0;}else{return (a[0] > b[0]) ? -1 : 1;}}else {return (a[1] < b[1]) ? -1 : 1;}});
             // Get all the boxes that could colide with lines
             for (var i = 0; i < boxLocation.length; i++) {
                 if(boxLocation[i][0] + boxLocation[i][2] >= min_x && boxLocation[i][0] <= max_x && item[0] != boxLocation[i][5]){
@@ -998,6 +998,12 @@ function drawLines(size) {
                     var x3 = temp_l[i][0] + temp_l[i][2] + box_to_box_padding_size / 2;
                     var y3 = temp_l[i][1] + (temp_l[i][3]/2);
                     var x4 = temp_l[i][0] + (temp_l[i][2]/2);
+                    console.log('1: ' + ((temp_l[i][0] >= boxLocationObj[item[0]][0] - box_to_box_padding_size &&
+                        temp_l[i][0] <= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size)));
+                    console.log('2: ' + (temp_l[i][0]  <= boxLocationObj[item[0]][0] + box_to_box_padding_size &&
+                        temp_l[i][0] + temp_l[i][1] >= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size));
+                    console.log('3: ' + ((temp_l[i][0] + temp_l[i][2] >= boxLocationObj[item[0]][0] - box_to_box_padding_size  &&
+                        temp_l[i][0] + temp_l[i][2] <= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size)));
 
                     lineArr.push([x1,y1,x2,y1]);
                     lineArr.push([x2,y1,x2,y2]);
@@ -1013,28 +1019,48 @@ function drawLines(size) {
                     var x2 = boxLocationObj[item[0]][0] - ((boxLocationObj[item[0]][0] - (temp_l[i][0] + temp_l[i][2]))/ 2);
                     var y2 = temp_l[i][1] + (temp_l[i][3]/2);
                     var x3 = temp_l[i][0] + (temp_l[i][2]/2);
-                    // Check if the lines colide
+                    var hit = 0;
+                    var direction = 0;
+                    // Check if the lines colide TODO add Y hit
                     for(var j = 0; j < collisionArr.length; j++){
-                        if(((x3<collisionArr[j][0] && collisionArr[j][0]<x2) && (y2>collisionArr[j][1] && y2<collisionArr[j][1]+collisionArr[j][3])) ||
+                        if(((x3<collisionArr[j][0] && collisionArr[j][0]<x2) && (y2>(collisionArr[j][1]-2) && y2<collisionArr[j][1]+collisionArr[j][3])) ||
                             ((x2>collisionArr[j][0] && x2<collisionArr[j][0]+collisionArr[j][2]) && ((y2<y1)?(y2<collisionArr[j][1]+collisionArr[j][3] && collisionArr[j][1]<y1):(y1<collisionArr[j][1]+collisionArr[j][3] && collisionArr[j][1]<y2))) || //special case of up or down
                             ((collisionArr[j][0]+collisionArr[j][2]>x2 && collisionArr[j][0]<x1) && (y1>collisionArr[j][1] && y1<collisionArr[j][1]+collisionArr[j][3]))){
+                                console.log("Hit");
+                            if(!hit){
+                                x1 = boxLocationObj[item[0]][0] + (boxLocationObj[item[0]][2]/2);
+                                y1 = boxLocationObj[item[0]][1] + y_incr * (i+1);
                                 x2 = boxLocationObj[item[0]][0] - ((boxLocationObj[item[0]][0] - (collisionArr[j][0] + collisionArr[j][2]))/ 2);
-                                lineArr.push([x1,y1,x2,y1]);
-
-
-
-
+                                y2 = ((collisionArr[j][1] + (collisionArr[j][3]/ 2)) <= y1)?(collisionArr[j][1] + collisionArr[j][3] + box_to_box_padding_size):(collisionArr[j][1] - box_to_box_padding_size);
+                                x3 = collisionArr[j][0];
+                                hit = 1;
+                                direction = !direction;
+                                j = 0;
+                            }
+                            else{
+                                //TODO
                                 x1 = boxLocationObj[item[0]][0] + (boxLocationObj[item[0]][2]/2);
                                 y1 = boxLocationObj[item[0]][1] + y_incr * (i+1);
                                 x2 = boxLocationObj[item[0]][0] - ((boxLocationObj[item[0]][0] - (temp_l[i][0] + temp_l[i][2]))/ 2);
                                 y2 = temp_l[i][1] + (temp_l[i][3]/2);
                                 x3 = temp_l[i][0] + (temp_l[i][2]/2);
-                                // console.log('1: ' + ((x3<collisionArr[j][0] && collisionArr[j][0]<x2) && (y2>collisionArr[j][1] && y2<collisionArr[j][1]+collisionArr[j][3])));
-                                // console.log('2: ' + ((x2>collisionArr[j][0] && x2<collisionArr[j][0]+collisionArr[j][2]) && (y1>collisionArr[j][1]+collisionArr[j][3] && collisionArr[j][1]<y2)));
-                                // console.log('3: ' + ((collisionArr[j][0]+collisionArr[j][2]>x2 && collisionArr[j][0]<x1) && (y1>collisionArr[j][1] && y1<collisionArr[j][1]+collisionArr[j][3])));
-                                // console.log('Left hit to box: ' + adaptObj[item[0]][0]);
-                                // console.log('Left hit on box: ' + adaptObj[collisionArr[j][5]][0]);
+                                hit = 1;
+                                direction = !direction;
+                                j = 0;
                             }
+                        }
+                        else if(hit && j == collisionArr.length-1){
+                            lineArr.push([x1,y1,x2,y1]);
+                            lineArr.push([x2,y1,x2,y2]);
+                            lineArr.push([x2,y2,x3,y2]);
+                            x1 = x3;
+                            y1 = y2
+                            x2 = x3 - ((x3 - (temp_l[i][0] + temp_l[i][2]))/ 2);
+                            y2 = temp_l[i][1] + (temp_l[i][3]/2);
+                            x3 = temp_l[i][0] + (temp_l[i][2]/2);
+                            j = 0;
+                            hit = 0;
+                        }
                     }
                     lineArr.push([x1,y1,x2,y1]);
                     lineArr.push([x2,y1,x2,y2]);
