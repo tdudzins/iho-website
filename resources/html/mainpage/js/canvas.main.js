@@ -1026,7 +1026,7 @@ function positionEmpirAdaptBox(eventID, text, width, height, date) {
 		}
 	});
 
-	sessionStorage.setItem("empiricalBox", JSON.stringify(empiricalBox));
+	//sessionStorage.setItem("empiricalBox", JSON.stringify(empiricalBox));
 }
 
 
@@ -1215,9 +1215,9 @@ function redrawEmpir(size) {
             }else{
 				date = date * 5;
             }
-            timespan = (date_start - date_end);
+            /*timespan = (date_start - date_end);
             viewable_time = timespan * scroll_ratio;
-            increment_per_pixel = (viewable_time/canvas_div_w);
+            increment_per_pixel = (viewable_time/canvas_div_w);*/
             x_pos = date/increment_per_pixel;
 			x_pos = ((canvas_div_w/scroll_ratio) - x_pos) - item[2]/2;
             item[0] = x_pos;
@@ -1229,7 +1229,7 @@ function redrawEmpir(size) {
     // TODO if needed medium redraw speedm, redraw and move without remaking boxes
 
     else if(Math.abs(last_scroll_ratio - scroll_ratio) > size || size == 0) {
-        last_scroll_ratio = scroll_ratio;
+        //last_scroll_ratio = scroll_ratio;
         last_empir_font_size = empir_box_font_size_change;
         empir_box_font_size_change = empir_box_font_size;
         empir_temp_text = 0;

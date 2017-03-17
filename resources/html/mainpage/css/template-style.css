@@ -24,7 +24,7 @@ footer,
 }
 
 .timeline-div {
-    height: calc(100vh - 141px);;
+    height: calc(100vh - 141px);
     width: 100%;
     float: left;
     overflow: hidden;
@@ -127,7 +127,6 @@ footer,
 }
 #about-page-clickable {
      cursor: pointer;
-
 }
 #about-page-toggle {
     text-decoration: none;
@@ -140,7 +139,6 @@ footer,
     height: 35px;
     padding: 10px;
     color: #353535;
-
 }
 #about-page-panel {
     display: none;
