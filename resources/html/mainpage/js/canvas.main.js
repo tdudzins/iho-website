@@ -956,9 +956,9 @@ function drawLines(size) {
             // Sort all the relationship boxes left or right for drawing
             for(var i = 0; i < temp.length; i++){
                 if(adaptObj[temp[i][0]][1] > adaptObj[item[0]][1])
-                temp_l.push(temp[i][0]);
+                    temp_l.push(temp[i][0]);
                 else
-                temp_r.push(temp[i][0]);
+                    temp_r.push(temp[i][0]);
                 // The min and max pos for lines that could be drawn
                 if(boxLocationObj[temp[i][0]][0] + boxLocationObj[temp[i][0]][0] + box_to_box_padding_size > max_x)
                     max_x = boxLocationObj[temp[i][0]][0] + boxLocationObj[temp[i][0]][0] + box_to_box_padding_size;
@@ -1013,6 +1013,12 @@ function drawLines(size) {
                     var x3 = temp_l[i][0] + (temp_l[i][2]/2);
                     var hit = 0;
                     for(var j = 0; j < collisionArr.length; j++){
+                        if((temp_l[i][0] == collisionArr[j][0]) && (temp_l[i][1] == collisionArr[j][1]) && (temp_l[i][2] == collisionArr[j][2]) && (temp_l[i][3] == collisionArr[j][3])){
+                            if(j < collisionArr.length)
+                                break;
+                            else
+                                j++;
+                        }
                         var eLeft = collisionArr[j][0] - (box_to_box_padding_size / 2) + 2;
                         var eRight = collisionArr[j][0] + collisionArr[j][2] + (box_to_box_padding_size / 2) - 2;
                         var eTop = collisionArr[j][1] - (box_to_box_padding_size/2) + 2;
@@ -1020,10 +1026,15 @@ function drawLines(size) {
                         var l1 = (x3 < eRight && x2 > eLeft) && (y2 > eTop && y2 < eBottom);
                         var l2 = (x2 > eLeft && x2 < eRight) && ((y2 > y1)?(y2 > eTop && y1 < eBottom):(y1 > eTop && y2 < eBottom));
                         var l3 = (x2 < eRight && x1 > eLeft)&& (y1 > eTop && y1 < eBottom);
-
-                        if((l1 || l2 || l3) && (temp_l[i][0] != collisionArr[j][0] && temp_l[i][1] != collisionArr[j][1])){
+                        console.log('l1: ' + l1 + " : " + x3 + " < " + eRight + ' && ' + x2 +" > "+ eLeft +' && ' + y2 + ' > ' + eTop  + ' && ' + y2 + ' < ' + eBottom);
+                        console.log('l2: ' + l2);
+                        console.log('l3: ' + l3);
+                        // console.log('J: ' + JSON.stringify(collisionArr[j]) + ' I: '+ JSON.stringify(temp_l[i]));
+                        if(l1 || l2 || l3){
+                            console.log(l1);
                             if(!hit){ // First check for the line
-                                if(l1){
+                                if(1){
+                                    console.log('ran');
                                     if(x3 == (temp_l[i][0] + (temp_l[i][2]/2))){ // If the line is the first one
                                         x2 = boxLocationObj[item[0]][0] - ((boxLocationObj[item[0]][0] - (collisionArr[j][0] + collisionArr[j][2]))/ 2);
                                         y2 = ((collisionArr[j][1] + (collisionArr[j][3]/ 2)) <= y1)?(collisionArr[j][1] + collisionArr[j][3] + box_to_box_padding_size):(collisionArr[j][1] - box_to_box_padding_size);
@@ -1035,12 +1046,12 @@ function drawLines(size) {
                                         x3 = collisionArr[j][0];
                                     }
                                 }
-                                else if (l3 && l2 && l3) {
-
-                                }
-                                else if (l3) {
-
-                                }
+                                // else if (l3 && l2 && l3) {
+                                //
+                                // }
+                                // else if (l3) {
+                                //
+                                // }
                                 hit = 1;
                                 j = -1;
                             } // End of first hit
