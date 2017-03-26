@@ -34,19 +34,19 @@ var date_start = 12000000; // Earliest date from selected adapations
 var date_end = 000000; // Latest date from selected adaptations
 var largest_timespan = 12000000; // When user is all the way scaled out, what is the largest amount of time to be viewed
 var smallest_timespan = 1000000; // When user is all the way scaled in, what is the smallest amount of time to be viewed
-var max_char_per_line = 20; // Used in positionBox
+var max_char_per_line = 25; // Used in positionBox
 var box_to_box_padding_size = 18;
 var empir_box_to_box_padding_size = 5;
-var text_in_box_padding_w = std_text_in_box_padding_w = 15;
-var text_in_box_padding_h = std_text_in_box_padding_h = 10;
-var empir_text_in_box_padding_w = empir_std_text_in_box_padding_w = 15;
-var empir_text_in_box_padding_h = empir_std_text_in_box_padding_h = 10;
-var hypo_box_font_size = temp_text = last_hypo_font_size = hypo_box_font_size_change = 20;
-var empir_box_font_size = empir_temp_text = last_empir_font_size = empir_box_font_size_change = 20;
+var text_in_box_padding_w = std_text_in_box_padding_w = 19;
+var text_in_box_padding_h = std_text_in_box_padding_h = 12;
+var empir_text_in_box_padding_w = empir_std_text_in_box_padding_w = 19;
+var empir_text_in_box_padding_h = empir_std_text_in_box_padding_h = 12;
+var hypo_box_font_size = temp_text = last_hypo_font_size = hypo_box_font_size_change = 15;
+var empir_box_font_size = empir_temp_text = last_empir_font_size = empir_box_font_size_change = 15;
 var scrollbar_font_size = 13;
-var increments_font_size = 25;
+var increments_font_size = 18;
 var hypo_box_font_family = empir_box_font_family = scrollbar_font_family = increments_font_family = "Montserrat";
-var increments_font_color = "rgba(0,0,0,1)";
+var increments_font_color = "rgba(68,68,68,1)";
 var hypo_box_fill_style_relation = "rgba(111,130,145,1.0)";
 var hypo_box_fill_style_empirical = "rgba(6,74,121,1.0)";
 var scrollbar_container_fill_style = "rgba(220,220,220,0.3)";
@@ -710,11 +710,11 @@ function createAdaptBox(eventID, eventName, date, callback) {
             line += item + " ";
         }
         else {
-            textArray.push(line.trim());
+            textArray.push(line.trim().toUpperCase());
             line = item + " ";
         }
     });
-    textArray.push(line.trim());
+    textArray.push(line.trim().toUpperCase());
 
     var longest_line = 0;
     var width = 0;
@@ -943,35 +943,53 @@ function drawLines(size) {
         for(var i = 0; i < 12; i++) {
             hypoCanvas2[i].clearRect(0, 0, canvas_div_w, canvas_div_h_hypo);
         }
+        var seqCount = 0;
         empiricalTable.forEach(function(item){
-            // Loading data for the lines to be
+            // Loading data for the lines left and right and sorting
             var temp = relationsObj[item[0]].slice();
             var temp_l = [];
             var temp_r = [];
+            var lineArr = [];
+            var collisionArr = [];
+            var min_x = 0;
+            var max_x = 0;
+            // Sort all the relationship boxes left or right for drawing
             for(var i = 0; i < temp.length; i++){
                 if(adaptObj[temp[i][0]][1] > adaptObj[item[0]][1])
-                    temp_l.push(temp[i][0]);
+                temp_l.push(temp[i][0]);
                 else
-                    temp_r.push(temp[i][0]);
+                temp_r.push(temp[i][0]);
+                // The min and max pos for lines that could be drawn
+                if(boxLocationObj[temp[i][0]][0] + boxLocationObj[temp[i][0]][0] + box_to_box_padding_size > max_x)
+                    max_x = boxLocationObj[temp[i][0]][0] + boxLocationObj[temp[i][0]][0] + box_to_box_padding_size;
+                if(boxLocationObj[temp[i][0]][0] - box_to_box_padding_size < min_x)
+                    min_x = boxLocationObj[temp[i][0]][0] - box_to_box_padding_size;
 
             }
-            for (var i = 0; i < temp_l.length; i++) {
+            // Put all the location data into the left right arrays
+            for (var i = 0; i < temp_l.length; i++){
                 temp_l[i] = boxLocationObj[temp_l[i]];
             }
-            for (var i = 0; i < temp_r.length; i++) {
+            for (var i = 0; i < temp_r.length; i++){
                 temp_r[i] = boxLocationObj[temp_r[i]];
             }
-            temp_r.sort(function(a,b) {if(a[1] === b[1]) {return 0;}else {return (a[1] < b[1]) ? -1 : 1;}});
-            temp_l.sort(function(a,b) {if(a[1] === b[1]) {return 0;}else {return (a[1] < b[1]) ? -1 : 1;}});
+            temp_r.sort(function(a,b) {if(a[1] === b[1]) {if(a[0] == b[0]){return 0;}else{return (a[0] > b[0]) ? -1 : 1;}}else {return (a[1] < b[1]) ? -1 : 1;}});
+            temp_l.sort(function(a,b) {if(a[1] === b[1]) {if(a[0] == b[0]){return 0;}else{return (a[0] > b[0]) ? -1 : 1;}}else {return (a[1] < b[1]) ? -1 : 1;}});
+            // Get all the boxes that could colide with lines
+            for (var i = 0; i < boxLocation.length; i++) {
+                if(boxLocation[i][0] + boxLocation[i][2] >= min_x && boxLocation[i][0] <= max_x && item[0] != boxLocation[i][5]){
+                    collisionArr.push(boxLocation[i]);
+                }
+            }
 
             // Draw lines left of item (empirical)
             for(var i = 0; i < boxLocationObj[item[0]][4]; i++){
                 var y_incr = boxLocationObj[item[0]][3]/(boxLocationObj[item[0]][4] + 1);
-
+                lineArr = [];
                 // Box overlap case
                 if((temp_l[i][0] >= boxLocationObj[item[0]][0] - box_to_box_padding_size && temp_l[i][0] <= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size) ||
-                   (temp_l[i][0]  <= boxLocationObj[item[0]][0] + box_to_box_padding_size && temp_l[i][0] + temp_l[i][1] >= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size) ||
-                   (temp_l[i][0] + temp_l[i][1] >= boxLocationObj[item[0]][0] - box_to_box_padding_size  && temp_l[i][0] + temp_l[i][1] <= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size)) {
+                (temp_l[i][0]  <= boxLocationObj[item[0]][0] + box_to_box_padding_size && temp_l[i][0] + temp_l[i][1] >= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size) ||
+                (temp_l[i][0] + temp_l[i][2] >= boxLocationObj[item[0]][0] - box_to_box_padding_size  && temp_l[i][0] + temp_l[i][2] <= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size)) {
                     var x1 = boxLocationObj[item[0]][0] + (boxLocationObj[item[0]][2]/2);
                     var y1 = boxLocationObj[item[0]][1] + y_incr * (i+1);
                     var x2 =  boxLocationObj[item[0]][0] - box_to_box_padding_size / 2;
@@ -979,33 +997,93 @@ function drawLines(size) {
                     var x3 = temp_l[i][0] + temp_l[i][2] + box_to_box_padding_size / 2;
                     var y3 = temp_l[i][1] + (temp_l[i][3]/2);
                     var x4 = temp_l[i][0] + (temp_l[i][2]/2);
-
-                    lineCanvasWrapperDraw(x1,y1,x2,y1);
-                    lineCanvasWrapperDraw(x2,y1,x2,y2);
-                    lineCanvasWrapperDraw(x2,y2,x3,y2);
-                    lineCanvasWrapperDraw(x3,y2,x3,y3);
-                    lineCanvasWrapperDraw(x3,y3,x4,y3);
+                    lineArr.push([x1,y1,x2,y1]);
+                    lineArr.push([x2,y1,x2,y2]);
+                    lineArr.push([x2,y2,x3,y2]);
+                    lineArr.push([x3,y2,x3,y3]);
+                    lineArr.push([x3,y3,x4,y3]);
                 }
                 // Ideal case
                 else{
+                    // Find the ideal lines
                     var x1 = boxLocationObj[item[0]][0] + (boxLocationObj[item[0]][2]/2);
                     var y1 = boxLocationObj[item[0]][1] + y_incr * (i+1);
                     var x2 = boxLocationObj[item[0]][0] - ((boxLocationObj[item[0]][0] - (temp_l[i][0] + temp_l[i][2]))/ 2);
                     var y2 = temp_l[i][1] + (temp_l[i][3]/2);
                     var x3 = temp_l[i][0] + (temp_l[i][2]/2);
-                    lineCanvasWrapperDraw(x1,y1,x2,y1);
-                    lineCanvasWrapperDraw(x2,y1,x2,y2);
-                    lineCanvasWrapperDraw(x2,y2,x3,y2);
+                    var hit = 0;
+                    for(var j = 0; j < collisionArr.length; j++){
+                        var eLeft = collisionArr[j][0] - (box_to_box_padding_size / 2) - 2;
+                        var eRight = collisionArr[j][0] + collisionArr[j][2] (box_to_box_padding_size / 2) - 2;
+                        var eTop = collisionArr[j][1] - (box_to_box_padding_size/2)-2;
+                        var eBottom = collisionArr[j][1] + collisionArr[j][3] + (box_to_box_padding_size / 2) - 2;
+                        var l1 = (x3 < eRight && x2 > eLeft) && (y2 > eTop && y2 < eBottom);
+                        var l2 = (x2 > eLeft && x2 < eRight) && ((y2 > y1)?(y2 > eTop && y1 < eBottom):(y1 > eTop && y2 < eBottom));
+                        var l3 = (x2 < eRight && x1 > eLeft)&& (y1 > eTop && y1 < eBottom);
+
+                        if(l1 || l2 || l3){
+                            if(!hit){ // First check for the line
+                                if((l1 || l2) && !l3){
+                                    if(x3 == (temp_l[i][0] + (temp_l[i][2]/2))){ /// If the line is the first one
+                                        x2 = boxLocationObj[item[0]][0] - ((boxLocationObj[item[0]][0] - (collisionArr[j][0] + collisionArr[j][2]))/ 2);
+                                        y2 = ((collisionArr[j][1] + (collisionArr[j][3]/ 2)) <= y1)?(collisionArr[j][1] + collisionArr[j][3] + box_to_box_padding_size):(collisionArr[j][1] - box_to_box_padding_size);
+                                        x3 = collisionArr[j][0];
+                                        hit = 1;
+                                        j = -1;
+                                    }
+                                    else{ // Line is the second pass
+                                        x2 = x3 - ((x3 - (collisionArr[j][0] + collisionArr[j][2]))/ 2);
+                                        y2 = ((collisionArr[j][1] + (collisionArr[j][3]/ 2)) <= y1)?(collisionArr[j][1] + collisionArr[j][3] + box_to_box_padding_size):(collisionArr[j][1] - box_to_box_padding_size);
+                                        x3 = collisionArr[j][0];
+                                        hit = 1;
+                                        j = -1;
+                                    }
+                                }
+                                else if (l3 && l2 && l3) {
+
+                                }
+                                else if (l3) {
+
+                                }
+                            } // End of first hit
+
+                            else{ // Redefined line has a hit
+                                y2 += (y2<y1)?(box_to_box_padding_size / 2):(-1*(box_to_box_padding_size / 2));
+                                hit = 1;
+                                j = -1;
+                            }
+                        }
+                        else if(hit && j == collisionArr.length-1){ // Line is good
+                            lineArr.push([x1,y1,x2,y1]);
+                            lineArr.push([x2,y1,x2,y2]);
+                            lineArr.push([x2,y2,x3,y2]);
+                            // Set the rest of the line to the
+                            x1 = x3;
+                            y1 = y2
+                            x2 = x3 - ((x3 - (temp_l[i][0] + temp_l[i][2]))/ 2);
+                            y2 = temp_l[i][1] + (temp_l[i][3]/2);
+                            x3 = temp_l[i][0] + (temp_l[i][2]/2);
+                            j = -1;
+                            hit = 0;
+                        }
+                    }
+                    lineArr.push([x1,y1,x2,y1]);
+                    lineArr.push([x2,y1,x2,y2]);
+                    lineArr.push([x2,y2,x3,y2]);
+                    console.log('for reset');
+
                 }
+                lineArr.forEach(function(item2){lineCanvasWrapperDraw(item2[0],item2[1],item2[2],item2[3]);});
             }
 
             // Draw lines right of item (empirical)
             for(var i = 0; i < boxLocationObj[item[0]][5]; i++){
                 var y_incr = boxLocationObj[item[0]][3]/(boxLocationObj[item[0]][5] + 1);
+                lineArr = [];
                 // Box overlap case
                 if((temp_r[i][0] >= boxLocationObj[item[0]][0] - box_to_box_padding_size && temp_r[i][0] <= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size) ||
-                    (temp_r[i][0]  <= boxLocationObj[item[0]][0] + box_to_box_padding_size && temp_r[i][0] + temp_r[i][1] >= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size) ||
-                    (temp_r[i][0] + temp_r[i][1] >= boxLocationObj[item[0]][0] - box_to_box_padding_size  && temp_r[i][0] + temp_r[i][1] <= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size)) {
+                (temp_r[i][0]  <= boxLocationObj[item[0]][0] + box_to_box_padding_size && temp_r[i][0] + temp_r[i][1] >= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size) ||
+                (temp_r[i][0] + temp_r[i][1] >= boxLocationObj[item[0]][0] - box_to_box_padding_size  && temp_r[i][0] + temp_r[i][1] <= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size)) {
 
                     var x1 = boxLocationObj[item[0]][0] + (boxLocationObj[item[0]][2]/2);
                     var y1 = boxLocationObj[item[0]][1] + y_incr * (i+1);
@@ -1015,11 +1093,11 @@ function drawLines(size) {
                     var y3 = temp_r[i][1] + (temp_r[i][3]/2);
                     var x4 = temp_r[i][0] + (temp_r[i][2]/2);
 
-                    lineCanvasWrapperDraw(x1,y1,x2,y1);
-                    lineCanvasWrapperDraw(x2,y1,x2,y2);
-                    lineCanvasWrapperDraw(x2,y2,x3,y2);
-                    lineCanvasWrapperDraw(x3,y2,x3,y3);
-                    lineCanvasWrapperDraw(x3,y3,x4,y3);
+                    lineArr.push([x1,y1,x2,y1]);
+                    lineArr.push([x2,y1,x2,y2]);
+                    lineArr.push([x2,y2,x3,y2]);
+                    lineArr.push([x3,y2,x3,y3]);
+                    lineArr.push([x3,y3,x4,y3]);
                 }
                 // Ideal case
                 else{
@@ -1028,10 +1106,29 @@ function drawLines(size) {
                     var x2 = boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + ((temp_r[i][0] -(boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2]))/ 2);
                     var y2 = temp_r[i][1] + (temp_r[i][3]/2);
                     var x3 = temp_r[i][0] + (temp_r[i][2]/2);
-                    lineCanvasWrapperDraw(x1,y1,x2,y1);
-                    lineCanvasWrapperDraw(x2,y1,x2,y2);
-                    lineCanvasWrapperDraw(x2,y2,x3,y2);
+                    var hit = 0;
+                    // Check if the lines colide
+                    for(var i = 0; i < collisionArr.length; i++){
+                        if(
+                            ((x3<collisionArr[j][0] && collisionArr[j][0]<x2) && (y2>collisionArr[j][1] && y2<collisionArr[j][1]+collisionArr[j][3])) ||
+                            ((x2>collisionArr[j][0] && x2<collisionArr[j][0]+collisionArr[j][2]) && ((y2<y1)?(y2<collisionArr[j][1]+collisionArr[j][3] && collisionArr[j][1]<y1):(y1<collisionArr[j][1]+collisionArr[j][3] && collisionArr[j][1]<y2))) || //special case of up or down
+                            ((collisionArr[j][0]+collisionArr[j][2]>x2 && collisionArr[j][0]<x1) && (y1>collisionArr[j][1] && y1<collisionArr[j][1]+collisionArr[j][3]))
+                        ){
+                            //TODO Put code here to find new path and reset colision checking
+                            console.log('1: ' + ((x3<collisionArr[j][0] && collisionArr[j][0]<x2) && (y2>collisionArr[j][1] && y2<collisionArr[j][1]+collisionArr[j][3])));
+                            console.log('2: ' + ((x2>collisionArr[j][0] && x2<collisionArr[j][0]+collisionArr[j][2]) && (y1>collisionArr[j][1]+collisionArr[j][3] && collisionArr[j][1]<y2)));
+                            console.log('3: ' + ((collisionArr[j][0]+collisionArr[j][2]>x2 && collisionArr[j][0]<x1) && (y1>collisionArr[j][1] && y1<collisionArr[j][1]+collisionArr[j][3])));
+                            console.log('Left hit to box: ' + adaptObj[item[0]][0]);
+                            console.log('Left hit on box: ' + adaptObj[collisionArr[j][5]][0]);
+                        }
+                    }
+                    if(!hit){
+                        lineArr.push([x1,y1,x2,y1]);
+                        lineArr.push([x2,y1,x2,y2]);
+                        lineArr.push([x2,y2,x3,y2]);
+                    }
                 }
+                lineArr.forEach(function(item2){lineCanvasWrapperDraw(item2[0],item2[1],item2[2],item2[3]);});
             }
 
         });
@@ -1198,11 +1295,11 @@ function createEmpirBox(eventID, eventName, date, callback) {
             line += item + " ";
         }
         else {
-            textArray.push(line.trim());
+            textArray.push(line.trim().toUpperCase());
             line = item + " ";
         }
     });
-    textArray.push(line.trim());
+    textArray.push(line.trim().toUpperCase());
 
     var longest_line = 0;
     var width = 0;
@@ -1430,7 +1527,7 @@ function drawScrollbarBlock(size) {
     right_edge_date = timespan - (timespan * scroll_position) + date_end - (timespan * scroll_ratio);
 
     // draw increment text under scrollbar handles
-    var x = 0 + (2.3 * block_radius);
+    var x = 0 + 2;
     var y = hndl_cnt_left_y + (3.5 * block_radius);
     var left_text = 0;
     if(left_edge_date > 5000000) {
@@ -1444,9 +1541,10 @@ function drawScrollbarBlock(size) {
     left_text += 'M';
     ctx2_2.font = scrollbar_font_size + "px " + scrollbar_font_family;
     ctx2_2.fillStyle = scrollbar_font_color;
-    ctx2_2.textAlign = "center";
+    ctx2_2.textAlign = "left";
     ctx2_2.fillText(left_text, x, y);
-    x = canvas_div_w - (2.3 * block_radius);
+    ctx2_2.textAlign = "right";
+    x = canvas_div_w - 2;
     y = hndl_cnt_left_y + (3.5 * block_radius);
     var right_text = 0;
     if(right_edge_date > 5000000) {
@@ -1507,7 +1605,7 @@ function drawTimelineIncrements(size) {
             if(change/4 > textwidth*3) {
                 for(var j = 1; j < 10; j++ ) {
                     if (j == 5) {
-                        ctx1_1.font = "15px " + increments_font_family;
+                        ctx1_1.font = "13px " + increments_font_family;
                         ctx1_1.fillStyle = increments_font_color;
                         ctx1_1.textAlign = "center";
                         ctx1_1.strokeStyle = "rgb(0,0,0)";
