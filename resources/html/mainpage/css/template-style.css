@@ -318,7 +318,7 @@ footer,
 
 ul.adaptation-items li {
     cursor: pointer;
-	  position: relative;
+    position: relative;
     overflow: hidden;
     width: 100%;
     letter-spacing: 2px;
@@ -516,7 +516,7 @@ ul.adaptation-items li {
     font-family: Montserrat;
 }
 
-#info-comments {
+#info-media {
     width: 100%;
     height: 35px;
     padding-top: 15px;
@@ -525,14 +525,36 @@ ul.adaptation-items li {
     line-height: 15px;
 }
 
-#adaptation-comment-data {
+#media-list-div {
     width: 100%;
     height: auto;
-    padding-top: 5px;
+}
+
+ul.media-list li {
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    width: 100px;
+    height: 100px;
+    padding: 10px;
+    float: left;
+}
+
+.media-type {
+    width: 100%;
+    height: 20px;
+    text-align: center;
     padding-bottom: 5px;
-    font-size: 15px;
+    letter-spacing: 2px;
     line-height: 15px;
     color: rgba(0, 0, 0, .7);
     font-weight: normal;
-    font-family: Montserrat;
+    font-size: 15px;
+    text-decoration: underline;
+}
+
+.media-thumbnail {
+    width: 80px;
+    height: 80px;
+    border: 2px solid rgba(0,0,0,.7);
 }

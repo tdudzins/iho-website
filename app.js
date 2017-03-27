@@ -398,7 +398,7 @@ app.post('/upload', requireLogin, function(req, res) {
         var utc_timestamp = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds(), now.getUTCMilliseconds());
         var newFilename = '/resources/uploads/' + utc_timestamp + filenameExt;
 
-        incomingFile.mv("/home/cjyoung3" + newFilename, function(err) {
+        incomingFile.mv("C:/users/travi/documents/iho_server" + newFilename, function(err) {
             if (err) {
                 res.status(400).send(err);
             }

@@ -105,12 +105,12 @@ function initCanvas(firstRun) {
 
     // listen for mouse events
     if(firstRun){
-        canvas2_2.onmousedown = scrollbarDown;
-        window.onmouseup = scrollbarUp;
-        window.onmousemove = scrollbarMove;
-        canvas2_2.ontouchstart = scrollbarDown;
-        window.ontouchend = scrollbarUp;
-        window.ontouchmove = scrollbarMove;
+      canvas2_2.ontouchstart = mouseDown;
+      window.ontouchend = scrollbarUp;
+      window.ontouchmove = scrollbarMove;
+      canvas2_2.onmousedown = mouseDown;
+      window.onmouseup = scrollbarUp;
+      window.onmousemove = scrollbarMove;
     }
     // Initialize Scrollbar
     drawScrollbarContainer();
@@ -119,7 +119,7 @@ function initCanvas(firstRun) {
     last_scroll_ratio_lines = scroll_ratio;
     last_scroll_ratio_inc = scroll_ratio;
     // handle mousedown events
-    function scrollbarDown(e) {
+    function mouseDown(e) {
         // tell the browser we're handling this mouse event
         e.preventDefault();
         e.stopPropagation();
@@ -143,6 +143,7 @@ function initCanvas(firstRun) {
                 r.isDragging=true;
             }
         }
+
         // save the current mouse position
         startX=mx;
         startY=my;
@@ -1567,7 +1568,7 @@ function drawTimelineIncrements(size) {
         ctx1_1.font = increments_font_size + "px " + increments_font_family;
         ctx1_1.fillStyle = increments_font_color;
         ctx1_1.textAlign = "center";
-        ctx1_1.strokeStyle = "rgb(0,0,0)";
+        ctx1_1.strokeStyle = increments_font_color;
         ctx1_1.lineWidth = 2;
 
         timespan = (date_start - date_end);
@@ -1588,7 +1589,7 @@ function drawTimelineIncrements(size) {
             ctx1_1.font = increments_font_size + "px " + increments_font_family;
             ctx1_1.fillStyle = increments_font_color;
             ctx1_1.textAlign = "center";
-            ctx1_1.strokeStyle = "rgb(0,0,0)";
+            ctx1_1.strokeStyle = increments_font_color;
             ctx1_1.lineWidth = 2;
             text = '';
             if(((date_start - 4000000) / 1000000) - i >= 1) {
@@ -1608,7 +1609,7 @@ function drawTimelineIncrements(size) {
                         ctx1_1.font = "13px " + increments_font_family;
                         ctx1_1.fillStyle = increments_font_color;
                         ctx1_1.textAlign = "center";
-                        ctx1_1.strokeStyle = "rgb(0,0,0)";
+                        ctx1_1.strokeStyle = increments_font_color;
                         ctx1_1.lineWidth = 2;
                         text = '';
                         if(((date_start - 4000000) / 1000000) - i >= 2) {
@@ -1643,7 +1644,7 @@ function drawTimelineIncrements(size) {
                         ctx1_1.font = "15px " + increments_font_family;
                         ctx1_1.fillStyle = increments_font_color;
                         ctx1_1.textAlign = "center";
-                        ctx1_1.strokeStyle = "rgb(0,0,0)";
+                        ctx1_1.strokeStyle = increments_font_color;
                         ctx1_1.lineWidth = 2;
                         text = '';
                         if(((date_start - 4000000) / 1000000) - i >= 2) {
@@ -1688,6 +1689,50 @@ function drawTimelineIncrements(size) {
 }
 
 // HTML injection strings
+var side_nav_info = `
+<div id="side-nav-info">
+    <div id="side-info-title">
+         FIRE
+    </div>
+    <div id="information-panel-div">
+      <div id="info-ede" class="adapt-attr">
+          <div class="title">Earliest Direct Evidence:</div>
+          <div class="data">1.8 Ma</div>
+      </div>
+      <div id="info-eie" class="adapt-attr">
+          <div class="title">Earliest Indirect Evidence:</div>
+          <div class="data">1.6 Ma</div>
+      </div>
+      <div id="info-category" class="adapt-attr">
+          <div class="title">Category:</div>
+          <div class="data">Tools</div>
+      </div>
+      <div id="info-desc">
+          <div class="title">Description:</div>
+      </div>
+      <div id="adaptation-description-data">
+
+      </div>
+      <div id="info-ref">
+          <div class="title">References:</div>
+      </div>
+      <div id="adaptation-reference-data">
+
+      </div>
+      <div id="info-media">
+          <div class="title">Media:</div>
+      </div>
+      <div id="media-list-div">
+          <div class="media-type">Pictures</div>
+          <ul id="media-list" class="media-list">
+               <li class="media-item">
+                   <img class="media-thumbnail" src="">
+               </li>
+          </ul>
+      </div>
+    </div>
+</div>`
+
 var hypothesis_adapt_canvas = `
     <canvas id="hypothesis-canvas-1" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
     <canvas id="hypothesis-canvas-2" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
