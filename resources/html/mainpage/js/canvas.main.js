@@ -982,14 +982,17 @@ function drawLines(size) {
                 }
             }
 
+            console.log("temp_l: " + JSON.stringify(temp_l));
+            console.log('collisionArr: ' + JSON.stringify(collisionArr));
             // Draw lines left of item (empirical)
             for(var i = 0; i < boxLocationObj[item[0]][4]; i++){
                 var y_incr = boxLocationObj[item[0]][3]/(boxLocationObj[item[0]][4] + 1);
                 lineArr = [];
                 // Box overlap case
                 if((temp_l[i][0] >= boxLocationObj[item[0]][0] - box_to_box_padding_size && temp_l[i][0] <= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size) ||
-                (temp_l[i][0]  <= boxLocationObj[item[0]][0] + box_to_box_padding_size && temp_l[i][0] + temp_l[i][1] >= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size) ||
-                (temp_l[i][0] + temp_l[i][2] >= boxLocationObj[item[0]][0] - box_to_box_padding_size  && temp_l[i][0] + temp_l[i][2] <= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size)) {
+                    (temp_l[i][0]  <= boxLocationObj[item[0]][0] + box_to_box_padding_size && temp_l[i][0] + temp_l[i][1] >= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size) ||
+                    (temp_l[i][0] + temp_l[i][2] >= boxLocationObj[item[0]][0] - box_to_box_padding_size  && temp_l[i][0] + temp_l[i][2] <= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size)) {
+                    console.log('Ran overlap...');
                     var x1 = boxLocationObj[item[0]][0] + (boxLocationObj[item[0]][2]/2);
                     var y1 = boxLocationObj[item[0]][1] + y_incr * (i+1);
                     var x2 =  boxLocationObj[item[0]][0] - box_to_box_padding_size / 2;
@@ -1003,6 +1006,7 @@ function drawLines(size) {
                     lineArr.push([x3,y2,x3,y3]);
                     lineArr.push([x3,y3,x4,y3]);
                 }
+
                 // Ideal case
                 else{
                     // Find the ideal lines
@@ -1012,6 +1016,7 @@ function drawLines(size) {
                     var y2 = temp_l[i][1] + (temp_l[i][3]/2);
                     var x3 = temp_l[i][0] + (temp_l[i][2]/2);
                     var hit = 0;
+
                     for(var j = 0; j < collisionArr.length; j++){
                         if((temp_l[i][0] == collisionArr[j][0]) && (temp_l[i][1] == collisionArr[j][1]) && (temp_l[i][2] == collisionArr[j][2]) && (temp_l[i][3] == collisionArr[j][3])){
                             if(j < collisionArr.length)
@@ -1019,19 +1024,22 @@ function drawLines(size) {
                             else
                                 j++;
                         }
-                        var eLeft = collisionArr[j][0] - (box_to_box_padding_size / 2) + 2;
-                        var eRight = collisionArr[j][0] + collisionArr[j][2] + (box_to_box_padding_size / 2) - 2;
-                        var eTop = collisionArr[j][1] - (box_to_box_padding_size/2) + 2;
-                        var eBottom = collisionArr[j][1] + collisionArr[j][3] + (box_to_box_padding_size / 2) - 2;
-                        var l1 = (x3 < eRight && x2 > eLeft) && (y2 > eTop && y2 < eBottom);
-                        var l2 = (x2 > eLeft && x2 < eRight) && ((y2 > y1)?(y2 > eTop && y1 < eBottom):(y1 > eTop && y2 < eBottom));
-                        var l3 = (x2 < eRight && x1 > eLeft)&& (y1 > eTop && y1 < eBottom);
-                        console.log('l1: ' + l1 + " : " + x3 + " < " + eRight + ' && ' + x2 +" > "+ eLeft +' && ' + y2 + ' > ' + eTop  + ' && ' + y2 + ' < ' + eBottom);
-                        console.log('l2: ' + l2);
-                        console.log('l3: ' + l3);
-                        // console.log('J: ' + JSON.stringify(collisionArr[j]) + ' I: '+ JSON.stringify(temp_l[i]));
+                        var eLeft = collisionArr[j][0] - (box_to_box_padding_size / 2);
+                        var eRight = collisionArr[j][0] + collisionArr[j][2] + (box_to_box_padding_size / 2);
+                        var eTop = collisionArr[j][1] - (box_to_box_padding_size/2);
+                        var eBottom = collisionArr[j][1] + collisionArr[j][3] + (box_to_box_padding_size / 2);
+                        var l1 = x3 < eRight && x2 > eLeft && y2 > eTop && y2 < eBottom;
+                        var l2 = x2 > eLeft && x2 < eRight && ((y2 > y1)?(y2 > eTop && y1 < eBottom):(y1 > eTop && y2 < eBottom));
+                        var l3 = x2 < eRight && x1 > eLeft&& y1 > eTop && y1 < eBottom;
+                        console.log('from: ' + item[1] + ' To: ' + collisionArr[collisionArr.findIndex(function(item){return item[0]==temp_l[j][0]})][4]);
+                        console.log('eLeft: ' + eLeft);
+                        console.log('eRight: ' + eRight);
+                        console.log('eTop: ' + eTop);
+                        console.log('eBottom: ' + eBottom);
+                        console.log('l1: ' + l1 + ': ' + x3 + ' < ' + eRight + ' && ' + x2 + ' > '+eLeft+' && '+y2+' > '+eTop+' && '+y2+' < '+eBottom);
+                        console.log('l2: ' + l2 + ': '+x2+' > '+eLeft+' && '+x2+' < '+eRight+' && '+ ((y2 > y1)?(y2+' > '+eTop+' && '+y1+' < '+eBottom):(y1+' > '+eTop+' && '+y2+' < '+eBottom)));
+                        console.log('l3: ' + l3 + ': '+x2+' < '+eRight+' && '+x1+' > '+eLeft+' && '+y1+' > '+eTop+' && '+y1+' < '+eBottom);
                         if(l1 || l2 || l3){
-                            console.log(l1);
                             if(!hit){ // First check for the line
                                 if(1){
                                     console.log('ran');
@@ -1046,12 +1054,6 @@ function drawLines(size) {
                                         x3 = collisionArr[j][0];
                                     }
                                 }
-                                // else if (l3 && l2 && l3) {
-                                //
-                                // }
-                                // else if (l3) {
-                                //
-                                // }
                                 hit = 1;
                                 j = -1;
                             } // End of first hit
