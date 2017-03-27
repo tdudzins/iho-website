@@ -18,7 +18,7 @@ $(document).ready(function() {
         sessionStorage.setItem("sequenceObj", sequenceObj);
         sessionStorage.setItem("sequenceCheckObj", sequenceCheckObj);
     });
-    initStorage()
+    //initStorage();
     initCanvas(1);
     initSlidePanels();
 });
