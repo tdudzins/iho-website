@@ -981,10 +981,6 @@ function drawLines(size) {
                     collisionArr.push(boxLocation[i]);
                 }
             }
-
-
-            console.log("temp_l: " + JSON.stringify(temp_l));
-            console.log('collisionArr: ' + JSON.stringify(collisionArr));
             console.log('-----START COLLISION LOOP-----');
 
             // Draw lines left of item (empirical)
@@ -1022,10 +1018,10 @@ function drawLines(size) {
 
                     for(var j = 0; j < collisionArr.length; j++){
                         if(!(temp_l[i][0] == collisionArr[j][0]) && (temp_l[i][1] == collisionArr[j][1])){
-                            var eLeft = collisionArr[j][0] - (box_to_box_padding_size / 2) - 2;
-                            var eRight = collisionArr[j][0] + collisionArr[j][2] + (box_to_box_padding_size / 2) + 2;
-                            var eTop = collisionArr[j][1] - (box_to_box_padding_size/2) - 2;
-                            var eBottom = collisionArr[j][1] + collisionArr[j][3] + (box_to_box_padding_size / 2) + 2;
+                            var eLeft = collisionArr[j][0] - (box_to_box_padding_size / 2) + 2;
+                            var eRight = collisionArr[j][0] + collisionArr[j][2] + (box_to_box_padding_size / 2) - 2;
+                            var eTop = collisionArr[j][1] - (box_to_box_padding_size/2) + 2;
+                            var eBottom = collisionArr[j][1] + collisionArr[j][3] + (box_to_box_padding_size / 2) - 2;
                             var l1 = (x3 < eRight && x2 > eLeft) && (y2 > eTop && y2 < eBottom);
                             var l2 = (x2 > eLeft && x2 < eRight) && ((y2 > y1)?(y2 > eTop && y1 < eBottom):(y1 > eTop && y2 < eBottom));
                             var l3 = (x2 < eRight && x1 > eLeft) && (y1 > eTop && y1 < eBottom);
@@ -1033,16 +1029,15 @@ function drawLines(size) {
                             // console.log('    l1: ' + l1 + ': ' + x3 + ' < ' + eRight + ' && ' + x2 + ' > '+eLeft+' && '+y2+' > '+eTop+' && '+y2+' < '+eBottom);
                             // console.log('    l2: ' + l2 + ': '+x2+' > '+eLeft+' && '+x2+' < '+eRight+' && '+ ((y2 > y1)?(y2+' > '+eTop+' && '+y1+' < '+eBottom):(y1+' > '+eTop+' && '+y2+' < '+eBottom)));
                             // console.log('    l3: ' + l3 + ': '+x2+' < '+eRight+' && '+x1+' > '+eLeft+' && '+y1+' > '+eTop+' && '+y1+' < '+eBottom);
-                            if(l1 || l2 || l3){
-                                console.log('-----RAN HIT-----');
-                                console.log('from: ' + item[1] + ' To: ' + collisionArr[collisionArr.findIndex(function(item){return item[0]==temp_l[i][0]})][4]);
-                                console.log('on: ' + collisionArr[j][4]);
-
+                            // console.log('-----RAN HIT-----');
+                            // console.log('from: ' + item[1] + ' To: ' + collisionArr[collisionArr.findIndex(function(item){return item[0]==temp_l[i][0]})][4]);
+                            // console.log('on: ' + collisionArr[j][4]);
+                            if((l1 || l2) && !l3){
                                 if(!hit){ // First check for the line
                                     if(x3 == (temp_l[i][0] + (temp_l[i][2]/2))){ // If the line is the first one
                                         x2 = boxLocationObj[item[0]][0] - ((boxLocationObj[item[0]][0] - (collisionArr[j][0] + collisionArr[j][2]))/ 2);
                                         y2 = ((collisionArr[j][1] + (collisionArr[j][3]/ 2)) <= y1)?(collisionArr[j][1] + collisionArr[j][3] + box_to_box_padding_size):(collisionArr[j][1] - box_to_box_padding_size);
-                                        x3 = collisionArr[j][0];
+                                        x3 = collisionArr[j][0] - box_to_box_padding_size / 2;
                                     }
                                     else{ // Line is the second pass
                                         x2 = x3 - ((x3 - (collisionArr[j][0] + collisionArr[j][2]))/ 2);
@@ -1050,16 +1045,31 @@ function drawLines(size) {
                                         x3 = collisionArr[j][0];
                                     }
                                     hit = 1;
-                                    j = -1;
-                                } // End of first hit
-
-                                else{ // Redefined line has a hit
-                                    if((l1 || l2)){
-                                        y2 += (y2<y1)?(box_to_box_padding_size / 2):(-1*(box_to_box_padding_size / 2));
-
-                                    }
-                                    j = -1;
                                 }
+                                else{
+                                    y2 += (y2<y1)?(box_to_box_padding_size / 2):(-1*(box_to_box_padding_size / 2));
+                                }
+                                j = -1;
+                            }
+                            else if (l3) {
+                                console.log(l3);
+                                if(!hit){ // First check for the line
+                                    if(x3 == (temp_l[i][0] + (temp_l[i][2]/2))){ // If the line is the first one
+                                        x2 = collisionArr[j][0] - ((collisionArr[j][0] - (temp_l[i][0] + temp_l[i][2]))/ 2);
+                                        y2 = ((collisionArr[j][1] + (collisionArr[j][3]/ 2)) <= y1)?(collisionArr[j][1] + collisionArr[j][3] + box_to_box_padding_size):(collisionArr[j][1] - box_to_box_padding_size);
+                                        x3 = collisionArr[j][0];
+                                    }
+                                    else{ // Line is the second pass
+                                        x2 = x3 - ((x3 - (temp_l[i][0] + temp_l[i][2]))/ 2);
+                                        y2 = ((collisionArr[j][1] + (collisionArr[j][3]/ 2)) <= y1)?(collisionArr[j][1] + collisionArr[j][3] + box_to_box_padding_size):(collisionArr[j][1] - box_to_box_padding_size);
+                                        x3 = collisionArr[j][0];
+                                    }
+                                    hit = 1;
+                                }
+                                else{
+                                    y2 += (y2<y1)?(box_to_box_padding_size / 2):(-1*(box_to_box_padding_size / 2));
+                                }
+                                j = -1;
                             }
                             else if(hit && j == collisionArr.length-1){ // Line is good
                                 lineArr.push([x1,y1,x2,y1]);
@@ -1080,7 +1090,7 @@ function drawLines(size) {
                     lineArr.push([x2,y1,x2,y2]);
                     lineArr.push([x2,y2,x3,y2]);
 
-                } // For reset
+                }
                 console.log('----- DRAWING-------');
                 lineArr.forEach(function(item2){lineCanvasWrapperDraw(item2[0],item2[1],item2[2],item2[3]);});
             }
