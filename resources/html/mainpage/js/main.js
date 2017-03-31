@@ -190,6 +190,10 @@ function removeAdaption(eventID, callback){
         adaptObj[eventID][6] = 0;
     }
 
+    if(selected_adaptation == eventID) {
+        selected_adaptation = -1;
+        dragok3 = false;
+    }
     sessionStorage.setItem("adaptArray", JSON.stringify(adaptArray));
     sessionStorage.setItem("adaptObj", JSON.stringify(adaptObj));
     sessionStorage.setItem("relationsObj", JSON.stringify(relationsObj));
@@ -330,9 +334,52 @@ function openInfoPanel(eventID) {
                     }
 
                 }
-                console.log(item.media);
-                $("#media-list-div").append(info_panel_pictures_container);
-                $("#media-list-picture").append("");
+
+                if(item.media.length > 0) {
+                    if(pictureArr.length > 0) {
+                        $("#media-list-div").append(info_panel_pictures_container);
+                        for(var i=0; i < pictureArr.length; i++) {
+                            var inj = `
+                            <li class="media-item">
+                            <img id="photo-` + i + `" class="media-thumbnail" src="` + pictureArr[i].mediaPath + `">
+                            </li>`;
+                            $("#media-list-picture").append(inj);
+                        }
+                        var count = pictureArr.length;
+                        var height = 100 + ((count/4)-(count/4%1))*100;
+                        $("#media-list-picture").css("height", height);
+                    }
+                    if(videoArr.length > 0) {
+                        $("#media-list-div").append(info_panel_videos_container);
+                        for(var i=0; i < videoArr.length; i++) {
+                            var inj = "";
+                            if(videoArr[i].mediaPath.indexOf("youtube") != -1) {
+                                inj = `
+                                <li class="media-item">
+                                <img id="video-` + i + `" class="media-thumbnail" src="http://img.youtube.com/vi/` + videoArr[i].mediaPath.substr(videoArr[i].mediaPath.indexOf("watch?v="),videoArr[i].mediaPath.length).replace("watch?v=","") + `/1.jpg">
+                                </li>`;
+                                $("#media-list-video").append(inj);
+                            }
+                            if(videoArr[i].mediaPath.indexOf("vimeo") != -1) {
+                                var vimeoVideoID = videoArr[i].mediaPath.substr(videoArr[i].mediaPath.indexOf("vimeo.com/"),videoArr[i].mediaPath.length).replace("vimeo.com/","");
+                                $.getJSON('https://vimeo.com/api/v2/video/' + vimeoVideoID + '.json', function(data) {
+                                         inj = `
+                                         <li class="media-item">
+                                         <img id="video-` + i + `" class="media-thumbnail" src="` + data[0].thumbnail_medium + `">
+                                         </li>`;
+                                         $("#media-list-video").append(inj);
+                                });
+                            }
+                        }
+                        var count = videoArr.length;
+                        var height = 100 + ((count/4)-(count/4%1))*100;
+                        $("#media-list-video").css("height", height);
+                    }
+                }
+                else {
+                    $("#info-media").empty();
+                    $("#media-list-div").empty();
+                }
             });
 
             $("#side-nav-toggle").html(`<img src="/resources/html/mainpage/img/arrow_close.png" style="height:100%;width:100%;">`);
@@ -398,27 +445,12 @@ var info_panel_pictures_container = `
 <ul id="media-list-picture" class="media-list">
 </ul>`;
 
-var info_panel_pictures_item = `
-<li class="media-item">
-    <img class="media-thumbnail" src="">
-</li>`;
-
 var info_panel_videos_container = `
 <div id="video-container" class="media-type">Videos</div>
 <ul id="media-list-video" class="media-list">
 </ul>`;
 
-var info_panel_videos_item = `
-<li class="media-item">
-    <img class="media-thumbnail" src="">
-</li>`;
-
 var info_panel_audio_container = `
 <div id="audio-container" class="media-type">Audio</div>
 <ul id="media-list-audio" class="media-list">
 </ul>`;
-
-var info_panel_audio_item = `
-<li class="media-item">
-    <img class="media-thumbnail" src="">
-</li>`;

@@ -426,10 +426,10 @@ ul.adaptation-items li {
     padding-top: 15px;
     padding-bottom: 15px;
     padding-left: 20px;
-    font-size: 20px;
+    font-size: 18px;
     background-color: rgba(111,130,145,1);
     color: white;
-    letter-spacing: 2px;
+    letter-spacing: 1px;
 }
 
 #information-panel-div {
@@ -548,8 +548,14 @@ ul.adaptation-items li {
     height: auto;
 }
 
+.media-list {
+    width: auto;
+    height: auto;
+    padding-left: 25px;
+    padding-right: 25px;
+}
+
 ul.media-list li {
-    cursor: pointer;
     position: relative;
     overflow: hidden;
     width: 100px;
@@ -572,6 +578,7 @@ ul.media-list li {
 }
 
 .media-thumbnail {
+    cursor: pointer;
     width: 80px;
     height: 80px;
     border: 2px solid rgba(0,0,0,.7);
