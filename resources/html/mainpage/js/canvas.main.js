@@ -1260,18 +1260,21 @@ function lineCanvasWrapperDraw(x_pos,y_pos,x2_pos,y2_pos,color) {
     for(var i = selected_canvas; i <= selected_canvas2; i++) {
         temp_x1 = x_pos - (i * canvas_div_w);
         temp_x2 = x2_pos - (i * canvas_div_w);
+        console.log(temp_x2);
+        console.log(temp_x1);
         hypoCanvas2[i].strokeStyle = color;
         hypoCanvas2[i].lineWidth = 2;
         hypoCanvas2[i].beginPath();
         hypoCanvas2[i].moveTo(temp_x1,y_pos);
         hypoCanvas2[i].lineTo(temp_x2,y2_pos);
-        hypoCanvas2[i].closePath();
+        // hypoCanvas2[i].closePath();
         hypoCanvas2[i].stroke();
     }
 }
 function drawGrreyBox(d_start,d_end){
     var x_pos = 0;
     var x2_pos = 0;
+    var str = String(d_start).replace(/(.)(?=(\d{3})+$)/g,'$1,') + " - " + String(d_end).replace(/(.)(?=(\d{3})+$)/g,'$1,');
     if(d_start >= 1000000) {
         d_start +=  4000000;
     }
@@ -1306,6 +1309,13 @@ function drawGrreyBox(d_start,d_end){
     }
     greyCanvas.fillStyle = 'rgba(169,169,169, .85)';
     greyCanvas.fillRect(x_pos, 0, x2_pos, canvas_div_h_hypo);
+
+    greyCanvas.font = hypo_box_font_size + "px " + hypo_box_font_family;
+    greyCanvas.fillStyle = 'rgba(7,7,7, 1.0)';
+    greyCanvas.textAlign = "center";
+    greyCanvas.textBaseline="top";
+    greyCanvas.fillText("Estimated Range",x_pos+(x2_pos/2) , 0);
+    greyCanvas.fillText(str,x_pos+(x2_pos/2) , hypo_box_font_size);
 }
 
 // Hypo Timeline function
@@ -1587,35 +1597,55 @@ function drawLines(size) {
         for(var i = 0; i < 12; i++) {
             hypoCanvas2[i].clearRect(0, 0, canvas_div_w, canvas_div_h_hypo);
         }
+        var seqCount = 0;
         empiricalTable.forEach(function(item){
-            // Loading data for the lines to be
+            // Loading data for the lines left and right and sorting
             var temp = relationsObj[item[0]].slice();
             var temp_l = [];
             var temp_r = [];
+            var lineArr = [];
+            var collisionArr = [];
+            var min_x = 0;
+            var max_x = 0;
+            // Sort all the relationship boxes left or right for drawing
             for(var i = 0; i < temp.length; i++){
                 if(adaptObj[temp[i][0]][1] > adaptObj[item[0]][1])
                     temp_l.push(temp[i][0]);
                 else
                     temp_r.push(temp[i][0]);
+                // The min and max pos for lines that could be drawn
+                if(boxLocationObj[temp[i][0]][0] + boxLocationObj[temp[i][0]][0] + box_to_box_padding_size > max_x)
+                    max_x = boxLocationObj[temp[i][0]][0] + boxLocationObj[temp[i][0]][0] + box_to_box_padding_size;
+                if(boxLocationObj[temp[i][0]][0] - box_to_box_padding_size < min_x)
+                    min_x = boxLocationObj[temp[i][0]][0] - box_to_box_padding_size;
 
             }
-            for (var i = 0; i < temp_l.length; i++) {
+            // Put all the location data into the left right arrays
+            for (var i = 0; i < temp_l.length; i++){
                 temp_l[i] = boxLocationObj[temp_l[i]];
             }
-            for (var i = 0; i < temp_r.length; i++) {
+            for (var i = 0; i < temp_r.length; i++){
                 temp_r[i] = boxLocationObj[temp_r[i]];
             }
-            temp_r.sort(function(a,b) {if(a[1] === b[1]) {return 0;}else {return (a[1] < b[1]) ? -1 : 1;}});
-            temp_l.sort(function(a,b) {if(a[1] === b[1]) {return 0;}else {return (a[1] < b[1]) ? -1 : 1;}});
+            temp_r.sort(function(a,b) {if(a[1] === b[1]) {if(a[0] == b[0]){return 0;}else{return (a[0] > b[0]) ? -1 : 1;}}else {return (a[1] < b[1]) ? -1 : 1;}});
+            temp_l.sort(function(a,b) {if(a[1] === b[1]) {if(a[0] == b[0]){return 0;}else{return (a[0] > b[0]) ? -1 : 1;}}else {return (a[1] < b[1]) ? -1 : 1;}});
+            // Get all the boxes that could colide with lines
+            for (var i = 0; i < boxLocation.length; i++) {
+                if(boxLocation[i][0] + boxLocation[i][2] >= min_x && boxLocation[i][0] <= max_x && item[0] != boxLocation[i][5]){
+                    collisionArr.push(boxLocation[i]);
+                }
+            }
 
+            console.log('-----START COLLISION LOOP-----');
             // Draw lines left of item (empirical)
-            for(var i = 0; i < boxLocationObj[item[0]][4]; i++){
+            for(var i = 0; i < temp_l.length; i++){
                 var y_incr = boxLocationObj[item[0]][3]/(boxLocationObj[item[0]][4] + 1);
-
+                lineArr = [];
                 // Box overlap case
                 if((temp_l[i][0] >= boxLocationObj[item[0]][0] - box_to_box_padding_size && temp_l[i][0] <= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size) ||
-                   (temp_l[i][0]  <= boxLocationObj[item[0]][0] + box_to_box_padding_size && temp_l[i][0] + temp_l[i][1] >= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size) ||
-                   (temp_l[i][0] + temp_l[i][1] >= boxLocationObj[item[0]][0] - box_to_box_padding_size  && temp_l[i][0] + temp_l[i][1] <= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size)) {
+                    (temp_l[i][0]  <= boxLocationObj[item[0]][0] + box_to_box_padding_size && temp_l[i][0] + temp_l[i][1] >= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size) ||
+                    (temp_l[i][0] + temp_l[i][2] >= boxLocationObj[item[0]][0] - box_to_box_padding_size  && temp_l[i][0] + temp_l[i][2] <= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size)) {
+                    console.log('Ran overlap...');
                     var x1 = boxLocationObj[item[0]][0] + (boxLocationObj[item[0]][2]/2);
                     var y1 = boxLocationObj[item[0]][1] + y_incr * (i+1);
                     var x2 =  boxLocationObj[item[0]][0] - box_to_box_padding_size / 2;
@@ -1623,29 +1653,83 @@ function drawLines(size) {
                     var x3 = temp_l[i][0] + temp_l[i][2] + box_to_box_padding_size / 2;
                     var y3 = temp_l[i][1] + (temp_l[i][3]/2);
                     var x4 = temp_l[i][0] + (temp_l[i][2]/2);
-
-                    lineCanvasWrapperDraw(x1,y1,x2,y1);
-                    lineCanvasWrapperDraw(x2,y1,x2,y2);
-                    lineCanvasWrapperDraw(x2,y2,x3,y2);
-                    lineCanvasWrapperDraw(x3,y2,x3,y3);
-                    lineCanvasWrapperDraw(x3,y3,x4,y3);
+                    lineArr.push([x1,y1,x2,y1]);
+                    lineArr.push([x2,y1,x2,y2]);
+                    lineArr.push([x2,y2,x3,y2]);
+                    lineArr.push([x3,y2,x3,y3]);
+                    lineArr.push([x3,y3,x4,y3]);
                 }
+
                 // Ideal case
                 else{
+                    // Find the ideal lines
                     var x1 = boxLocationObj[item[0]][0] + (boxLocationObj[item[0]][2]/2);
                     var y1 = boxLocationObj[item[0]][1] + y_incr * (i+1);
                     var x2 = boxLocationObj[item[0]][0] - ((boxLocationObj[item[0]][0] - (temp_l[i][0] + temp_l[i][2]))/ 2);
                     var y2 = temp_l[i][1] + (temp_l[i][3]/2);
                     var x3 = temp_l[i][0] + (temp_l[i][2]/2);
-                    lineCanvasWrapperDraw(x1,y1,x2,y1);
-                    lineCanvasWrapperDraw(x2,y1,x2,y2);
-                    lineCanvasWrapperDraw(x2,y2,x3,y2);
+                    var hit = 0;
+                    var count = 0;
+                    for(var j = 0; j < collisionArr.length; j++){
+                        if(!(temp_l[i][0] == collisionArr[j][0] && temp_l[i][1] == collisionArr[j][1]) && count < 150){
+                            var eLeft = collisionArr[j][0] - (box_to_box_padding_size / 2) + 2;
+                            var eRight = collisionArr[j][0] + collisionArr[j][2] + (box_to_box_padding_size / 2) - 2;
+                            var eTop = collisionArr[j][1] - (box_to_box_padding_size/2) + 2;
+                            var eBottom = collisionArr[j][1] + collisionArr[j][3] + (box_to_box_padding_size / 2) - 2;
+                            var l1 = (x3 < eRight && x2 > eLeft) && (y2 > eTop && y2 < eBottom);
+                            var l2 = (x2 > eLeft && x2 < eRight) && ((y2 > y1)?(y2 > eTop && y1 < eBottom):(y1 > eTop && y2 < eBottom));
+                            var l3 = (x2 < eRight && x1 > eLeft) && (y1 > eTop && y1 < eBottom);
+                            if(l1 || l2){
+                                if(!hit){ // First check for the line
+                                    if(x3 == (temp_l[i][0] + (temp_l[i][2]/2))){ // If the line is the first one
+                                        x2 = boxLocationObj[item[0]][0] - ((boxLocationObj[item[0]][0] - (collisionArr[j][0] + collisionArr[j][2]))/ 2);
+                                        y2 = ((collisionArr[j][1] + (collisionArr[j][3]/ 2)) <= y1)?(collisionArr[j][1] + collisionArr[j][3] + box_to_box_padding_size):(collisionArr[j][1] - box_to_box_padding_size);
+                                        x3 = collisionArr[j][0] - box_to_box_padding_size / 2;
+                                    }
+                                    else{ // Line is the second pass
+                                        x2 = x3 - ((x3 - (collisionArr[j][0] + collisionArr[j][2]))/ 2);
+                                        y2 = ((collisionArr[j][1] + (collisionArr[j][3]/ 2)) <= y1)?(collisionArr[j][1] + collisionArr[j][3] + box_to_box_padding_size):(collisionArr[j][1] - box_to_box_padding_size);
+                                        x3 = collisionArr[j][0];
+                                    }
+                                    hit = 1;
+                                }
+                                else{
+                                    y2 += (y2<y1)?(box_to_box_padding_size / 2):(-1*(box_to_box_padding_size / 2));
+                                }
+                                j = -1;
+                            }
+                            else if (l3) {
+                                x2 = collisionArr[j][0] - ((collisionArr[j][0] - (temp_l[i][0] + temp_l[i][2]))/ 2);
+                                j = -1;
+                            }
+                            count++;
+                        }
+                        if(hit && j == collisionArr.length-1){ // Line is good
+                            lineArr.push([x1,y1,x2,y1]);
+                            lineArr.push([x2,y1,x2,y2]);
+                            lineArr.push([x2,y2,x3,y2]);
+                            // Set the rest of the line to the
+                            x1 = x3;
+                            y1 = y2
+                            x2 = x3 - ((x3 - (temp_l[i][0] + temp_l[i][2]))/ 2);
+                            y2 = temp_l[i][1] + (temp_l[i][3]/2);
+                            x3 = temp_l[i][0] + (temp_l[i][2]/2);
+                            j = -1;
+                            hit = 0;
+                            count = 0;
+                        }
+                    }
+                    lineArr.push([x1,y1,x2,y1]);
+                    lineArr.push([x2,y1,x2,y2]);
+                    lineArr.push([x2,y2,x3,y2]);
                 }
+                lineArr.forEach(function(item2){lineCanvasWrapperDraw(item2[2],item2[1],item2[0],item2[3]);});
             }
 
             // Draw lines right of item (empirical)
-            for(var i = 0; i < boxLocationObj[item[0]][5]; i++){
+            for(var i = 0; i < temp_r.length; i++){
                 var y_incr = boxLocationObj[item[0]][3]/(boxLocationObj[item[0]][5] + 1);
+                lineArr = [];
                 // Box overlap case
                 if((temp_r[i][0] >= boxLocationObj[item[0]][0] - box_to_box_padding_size && temp_r[i][0] <= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size) ||
                     (temp_r[i][0]  <= boxLocationObj[item[0]][0] + box_to_box_padding_size && temp_r[i][0] + temp_r[i][1] >= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size) ||
@@ -1658,12 +1742,74 @@ function drawLines(size) {
                     var x3 = temp_r[i][0] - (box_to_box_padding_size / 2);
                     var y3 = temp_r[i][1] + (temp_r[i][3]/2);
                     var x4 = temp_r[i][0] + (temp_r[i][2]/2);
+                    var hit = 0;
+                    var count = 0;
 
-                    lineCanvasWrapperDraw(x1,y1,x2,y1);
-                    lineCanvasWrapperDraw(x2,y1,x2,y2);
-                    lineCanvasWrapperDraw(x2,y2,x3,y2);
-                    lineCanvasWrapperDraw(x3,y2,x3,y3);
-                    lineCanvasWrapperDraw(x3,y3,x4,y3);
+                    // for(var j = 0; j < collisionArr.length; j++){
+                    //     if(!(temp_r[i][0] == collisionArr[j][0] && temp_r[i][1] == collisionArr[j][1]) && count < 150){
+                    //         var eLeft = collisionArr[j][0] - (box_to_box_padding_size / 2) + 2;
+                    //         var eRight = collisionArr[j][0] + collisionArr[j][2] + (box_to_box_padding_size / 2) - 2;
+                    //         var eTop = collisionArr[j][1] - (box_to_box_padding_size/2) + 2;
+                    //         var eBottom = collisionArr[j][1] + collisionArr[j][3] + (box_to_box_padding_size / 2) - 2;
+                    //         var l1 = (x1 < eRight && x2 > eLeft) && (y1 > eTop && y1 < eBottom);
+                    //         var l2 = (x2 > eLeft && x2 < eRight) && ((y2 < y1)?(y2 > eTop && y1 < eBottom):(y1 > eTop && y2 < eBottom));
+                    //         var l3 = (x3 > eRight && x2 < eLeft) && (y2 > eTop && y2 < eBottom);
+                    //         var l4 = (x3 > eRight && x2 < eLeft) && (y2 > eTop && y2 < eBottom);
+                    //         var l5 = (x3 > eRight && x2 < eLeft) && (y2 > eTop && y2 < eBottom);
+                    //
+                    //         console.log('    from: ' + item[1] + ' To: ' + collisionArr[collisionArr.findIndex(function(item){return item[0]==temp_r[i][0]})][4]);
+                    //         console.log('    on: ' + collisionArr[j][4]);
+                    //         console.log('    l1: ' + l1);
+                    //         console.log('    l2: ' + l2);
+                    //         console.log('    l3: ' + l3);
+                    //         console.log('    l4: ' + l4);
+                    //         console.log('    l5: ' + l5);
+                    //
+                    //         if(l1 || l2){
+                    //             if(!hit){ // First check for the line
+                    //                 if(x3 == (temp_r[i][0] + (temp_r[i][2]/2))){ // If the line is the first one
+                    //                     x2 = collisionArr[j][0] - ((collisionArr[j][0] - (boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2]))/ 2);
+                    //                     y2 = ((collisionArr[j][1] + (collisionArr[j][3]/ 2)) <= y1)?(collisionArr[j][1] + collisionArr[j][3] + box_to_box_padding_size):(collisionArr[j][1] - box_to_box_padding_size);
+                    //                     x3 = collisionArr[j][0] + collisionArr[j][2];
+                    //                 }
+                    //                 else{ // Line is the second pass
+                    //                     x2 = x3 + ((x3 - (collisionArr[j][0] + collisionArr[j][2]))/ 2);
+                    //                     y2 = ((collisionArr[j][1] + (collisionArr[j][3]/ 2)) <= y1)?(collisionArr[j][1] + collisionArr[j][3] + box_to_box_padding_size):(collisionArr[j][1] - box_to_box_padding_size);
+                    //                     x3 = collisionArr[j][0] + collisionArr[j][2];
+                    //                 }
+                    //                 hit = 1;
+                    //             }
+                    //             else{
+                    //                 y2 += (y2<y1)?(box_to_box_padding_size / 2):(-1*(box_to_box_padding_size / 2));
+                    //             }
+                    //             j = -1;
+                    //         }
+                    //         else if (l3) {
+                    //             x2 = collisionArr[j][0] + ((collisionArr[j][0] - (temp_r[i][0] + temp_r[i][2]))/ 2);
+                    //             j = -1;
+                    //         }
+                    //     }
+                    //     if(hit && j == collisionArr.length-1){ // Line is good
+                    //         lineArr.push([x1,y1,x2,y1]);
+                    //         lineArr.push([x2,y1,x2,y2]);
+                    //         lineArr.push([x2,y2,x3,y2]);
+                    //         lineArr.push([x3,y2,x3,y3]);
+                    //         lineArr.push([x3,y3,x4,y3]);
+                    //         // Set the rest of the line to the
+                    //         x1 = x3;
+                    //         y1 = y2
+                    //         x2 = x3 + ((temp_r[i][0]-x3)/ 2);
+                    //         y2 = temp_r[i][1] + (temp_r[i][3]/2);
+                    //         x3 = temp_r[i][0] + (temp_r[i][2]/2);
+                    //         j = -1;
+                    //         hit = 0;
+                    //     }
+                    // }
+                    lineArr.push([x1,y1,x2,y1]);
+                    lineArr.push([x2,y1,x2,y2]);
+                    lineArr.push([x2,y2,x3,y2]);
+                    lineArr.push([x3,y2,x3,y3]);
+                    lineArr.push([x3,y3,x4,y3]);
                 }
                 // Ideal case
                 else{
@@ -1672,10 +1818,70 @@ function drawLines(size) {
                     var x2 = boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + ((temp_r[i][0] -(boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2]))/ 2);
                     var y2 = temp_r[i][1] + (temp_r[i][3]/2);
                     var x3 = temp_r[i][0] + (temp_r[i][2]/2);
-                    lineCanvasWrapperDraw(x1,y1,x2,y1);
-                    lineCanvasWrapperDraw(x2,y1,x2,y2);
-                    lineCanvasWrapperDraw(x2,y2,x3,y2);
+                    var hit = 0;
+                    var count = 0;
+                    for(var j = 0; j < collisionArr.length; j++){
+                        if(!(temp_r[i][0] == collisionArr[j][0] && temp_r[i][1] == collisionArr[j][1]) && count < 150){
+                            var eLeft = collisionArr[j][0] - (box_to_box_padding_size / 2) + 2;
+                            var eRight = collisionArr[j][0] + collisionArr[j][2] + (box_to_box_padding_size / 2) - 2;
+                            var eTop = collisionArr[j][1] - (box_to_box_padding_size/2) + 2;
+                            var eBottom = collisionArr[j][1] + collisionArr[j][3] + (box_to_box_padding_size / 2) - 2;
+                            var l1 = (x1 < eRight && x2 > eLeft) && (y1 > eTop && y1 < eBottom);
+                            var l2 = (x2 > eLeft && x2 < eRight) && ((y2 < y1)?(y2 > eTop && y1 < eBottom):(y1 > eTop && y2 < eBottom));
+                            var l3 = (x3 > eRight && x2 < eLeft) && (y2 > eTop && y2 < eBottom);
+                            //
+                            // console.log('    from: ' + item[1] + ' To: ' + collisionArr[collisionArr.findIndex(function(item){return item[0]==temp_r[i][0]})][4]);
+                            // console.log('    on: ' + collisionArr[j][4]);
+                            // console.log('    l1: ' + l1);
+                            // console.log('    l2: ' + l2);
+                            // console.log('    l3: ' + l3);
+                            if(l1 || l2){
+                                if(!hit){ // First check for the line
+                                    if(x3 == (temp_r[i][0] + (temp_r[i][2]/2))){ // If the line is the first one
+                                        x2 = collisionArr[j][0] - ((collisionArr[j][0] - (boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2]))/ 2);
+                                        y2 = ((collisionArr[j][1] + (collisionArr[j][3]/ 2)) <= y1)?(collisionArr[j][1] + collisionArr[j][3] + box_to_box_padding_size):(collisionArr[j][1] - box_to_box_padding_size);
+                                        x3 = collisionArr[j][0] + collisionArr[j][2];
+                                    }
+                                    else{ // Line is the second pass
+                                        x2 = x3 + ((x3 - (collisionArr[j][0] + collisionArr[j][2]))/ 2);
+                                        y2 = ((collisionArr[j][1] + (collisionArr[j][3]/ 2)) <= y1)?(collisionArr[j][1] + collisionArr[j][3] + box_to_box_padding_size):(collisionArr[j][1] - box_to_box_padding_size);
+                                        x3 = collisionArr[j][0] + collisionArr[j][2];
+                                    }
+                                    hit = 1;
+                                }
+                                else{
+                                    y2 += (y2<y1)?(box_to_box_padding_size / 2):(-1*(box_to_box_padding_size / 2));
+                                }
+                                j = -1;
+                            }
+                            else if (l3) {
+                                x2 = collisionArr[j][0] + ((collisionArr[j][0] - (temp_r[i][0] + temp_r[i][2]))/ 2);
+                                j = -1;
+                            }
+                            count ++;
+                        }
+
+                        if(hit && j == collisionArr.length-1){ // Line is good
+                            lineArr.push([x1,y1,x2,y1]);
+                            lineArr.push([x2,y1,x2,y2]);
+                            lineArr.push([x2,y2,x3,y2]);
+                            // Set the rest of the line to the
+                            x1 = x3;
+                            y1 = y2
+                            x2 = x3 + ((temp_r[i][0]-x3)/ 2);
+                            y2 = temp_r[i][1] + (temp_r[i][3]/2);
+                            x3 = temp_r[i][0] + (temp_r[i][2]/2);
+                            j = -1;
+                            hit = 0;
+                            count = 0;
+                        }
+                    }
+                    lineArr.push([x1,y1,x2,y1]);
+                    lineArr.push([x2,y1,x2,y2]);
+                    lineArr.push([x2,y2,x3,y2]);
                 }
+                console.log('----- DRAWING-------');
+                lineArr.forEach(function(item2){lineCanvasWrapperDraw(item2[2],item2[1],item2[0],item2[3]);});
             }
 
         });
