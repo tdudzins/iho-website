@@ -344,15 +344,17 @@ function openInfoPanel(eventID) {
 }
 
 function closeInfoPanel() {
-    $("#side-nav-toggle").html(`<img src="/resources/html/mainpage/img/arrow_open.png" style="height:100%;width:100%;">`);
-    side_nav_width = -1 * (25 + parseInt($("#side-nav-info").css('width')));
-    $("#side-nav-info").animate({marginLeft: side_nav_width + "px"}, 300, function(){
-        // Restore Adaptations Panel
-        $("#side-nav-info").remove();
-        $("#side-nav-toggle").css("background","linear-gradient(to right, rgba(58,92,113,1), rgba(69,106,131,1))");
-        side_nav_width = -1 * (25 + parseInt($("#side-nav-panel").css('width')));
-        $("#side-nav-panel").css("marginLeft", side_nav_width+"px");
-    });
+    if($('#side-nav-info').length){
+        $("#side-nav-toggle").html(`<img src="/resources/html/mainpage/img/arrow_open.png" style="height:100%;width:100%;">`);
+        side_nav_width = -1 * (25 + parseInt($("#side-nav-info").css('width')));
+        $("#side-nav-info").animate({marginLeft: side_nav_width + "px"}, 300, function(){
+            // Restore Adaptations Panel
+            $("#side-nav-info").remove();
+            $("#side-nav-toggle").css("background","linear-gradient(to right, rgba(58,92,113,1), rgba(69,106,131,1))");
+            side_nav_width = -1 * (25 + parseInt($("#side-nav-panel").css('width')));
+            $("#side-nav-panel").css("marginLeft", side_nav_width+"px");
+        });
+    }
 }
 
 var toggle_bar = `

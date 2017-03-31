@@ -1,16 +1,16 @@
 /************** Canvas Main **************/
 
 /* Canvas Div Dimensions */
-var canvas_div_w = canvas_div_h_hypo = canvas_div_h_scroll = canvas_div_h_empir =
+var canvas_div_w = canvas_div_h_hypo = canvas_div_h_scroll = canvas_div_h_empir = grey_canvas_width =
 canvas1_1_h =  canvas1_234_h = canvas2_12_w =  canvas2_12_h = canvas3_1_h = canvas3_2_h = 0; // empirical Canvas (Layer 2: Connections, Layer 3: Adaptations) height in pixels
 
 // Canvas Drawing Variables
 var topcanvas1, topcanvas2, topcanvas3, topcanvas4, topcanvas5, topcanvas6, topcanvas7, topcanvas8, topcanvas9, topcanvas10, topcanvas11, topcanvas12,
 topcanvas21, topcanvas22, topcanvas23, topcanvas24, topcanvas25, topcanvas26, topcanvas27, topcanvas28, topcanvas29, topcanvas210, topcanvas211, topcanvas212,
-botcanvas1, botcanvas2, botcanvas3, botcanvas4, botcanvas5, botcanvas6, botcanvas7, botcanvas8, botcanvas9, botcanvas10, botcanvas11, botcanvas12,
+botcanvas1, botcanvas2, botcanvas3, botcanvas4, botcanvas5, botcanvas6, botcanvas7, botcanvas8, botcanvas9, botcanvas10, botcanvas11, botcanvas12, greycanvas1,
 ctx_top_1, ctx_top_2, ctx_top_3, ctx_top_4, ctx_top_5, ctx_top_6, ctx_top_7, ctx_top_8, ctx_top_9, ctx_top_10, ctx_top_11, ctx_top_12,
 ctx_top2_1, ctx_top2_2, ctx_top2_3, ctx_top2_4, ctx_top2_5, ctx_top2_6, ctx_top2_7, ctx_top2_8, ctx_top2_9, ctx_top2_10, ctx_top2_11, ctx_top2_12,
-ctx_bot_1, ctx_bot_2, ctx_bot_3, ctx_bot_4, ctx_bot_5, ctx_bot_6, ctx_bot_7, ctx_bot_8, ctx_bot_9, ctx_bot_10, ctx_bot_11, ctx_bot_12,
+ctx_bot_1, ctx_bot_2, ctx_bot_3, ctx_bot_4, ctx_bot_5, ctx_bot_6, ctx_bot_7, ctx_bot_8, ctx_bot_9, ctx_bot_10, ctx_bot_11, ctx_bot_12, ctx_grey_1,
 canvas1_1, canvas2_1, canvas2_2, ctx1_1, ctx2_1, ctx2_2;
 
 // Global Variables
@@ -27,6 +27,7 @@ var minScrollbar = 151;
 var scrollRegions = [];
 var hypoCanvas = [];
 var hypoCanvas2 = [];
+var greyCanvas;
 var empirCanvas = []; //empirical canvas
 var mouseHypoCanvas = [];
 var mouse_selected_canvas = 0;
@@ -324,6 +325,7 @@ function initCanvas(firstRun) {
                 dragok2 = true;
                 found = true;
                 console.log("moving activated");
+                drawGrreyBox(adaptObj[selected_adaptation][2], adaptObj[selected_adaptation][3]);
             }
         }
         if(!found){
@@ -332,11 +334,11 @@ function initCanvas(firstRun) {
             dragok3 = false;
             found = false;
             if(selected_adaptation != -1){
+                closeInfoPanel();
                 selected_adaptation = -1;
                 redrawHypo(0);
             }
             selected_canvas=0;
-            closeInfoPanel();
             console.log("reset and return side nav to normal");
         }
         // save the current mouse position
@@ -704,6 +706,8 @@ function initCanvas(firstRun) {
             scrollRegions[i].isDragging=false;
         }
         dragok2 = false;
+        if(selected_adaptation)
+            greyCanvas.clearRect(0,0,grey_canvas_width, canvas_div_h_hypo);
     }
 
     // handle mouse moves
@@ -856,6 +860,7 @@ function initCanvas(firstRun) {
 function resizeCanvas() {
     $('#canvas-wrapper-lines-div').html(hypothesis_lines_canvas);
     $('#canvas-wrapper-adaptations-div').html(hypothesis_adapt_canvas);
+    $('#canvas-wrapper-grey-div').html(grey_canvas);
     $('#canvas-wrapper-empirical-adaptations-div').html(empirical_canvas);
 
     // Set Canvas Div Size from Browser Realtime Values
@@ -912,6 +917,8 @@ function resizeCanvas() {
     topcanvas210 = document.getElementById('hypothesis-canvas2-10');
     topcanvas211 = document.getElementById('hypothesis-canvas2-11');
     topcanvas212 = document.getElementById('hypothesis-canvas2-12');
+
+    greycanvas1 = document.getElementById('grey-canvas-1');
 
     canvas1_1 = document.getElementById('timeline-increments');
 
@@ -992,6 +999,11 @@ function resizeCanvas() {
     ctx_top2_12.canvas.width = canvas_div_w;
     ctx_top2_12.canvas.height = canvas_div_h_hypo;
 
+    ctx_grey_1 = greycanvas1.getContext("2d");
+    grey_canvas_width = $('#canvas-wrapper-grey-div').width();
+    ctx_grey_1.canvas.width = grey_canvas_width;
+    ctx_grey_1.canvas.height = canvas_div_h_hypo;
+
     hypoCanvas[0] = ctx_top_1;
     hypoCanvas[1] = ctx_top_2;
     hypoCanvas[2] = ctx_top_3;
@@ -1017,6 +1029,8 @@ function resizeCanvas() {
     hypoCanvas2[9] = ctx_top2_10;
     hypoCanvas2[10] = ctx_top2_11;
     hypoCanvas2[11] = ctx_top2_12;
+
+    greyCanvas = ctx_grey_1
 
     //empirical canvas
     botcanvas1 = document.getElementById('empirical-canvas-1');
@@ -1254,6 +1268,44 @@ function lineCanvasWrapperDraw(x_pos,y_pos,x2_pos,y2_pos,color) {
         hypoCanvas2[i].closePath();
         hypoCanvas2[i].stroke();
     }
+}
+function drawGrreyBox(d_start,d_end){
+    var x_pos = 0;
+    var x2_pos = 0;
+    if(d_start >= 1000000) {
+        d_start +=  4000000;
+    }
+    else {
+        d_start *= 5;
+    }
+    if(d_end >= 1000000) {
+        d_end += 4000000;
+    }
+    else {
+        d_end *=  5;
+    }
+    timespan = (date_start - date_end);
+    viewable_time = timespan * scroll_ratio;
+    increment_per_pixel = (viewable_time/canvas_div_w);
+    left_edge_date = timespan - (timespan * scroll_position) + date_end;
+    var offset = 20+(-1 * ((12000000 - left_edge_date)/increment_per_pixel));
+
+    x_pos = d_start/increment_per_pixel;
+    x_pos = ((canvas_div_w/scroll_ratio) - x_pos) + offset;
+    x2_pos = d_end/increment_per_pixel;
+    x2_pos = ((canvas_div_w/scroll_ratio) - x2_pos) + offset;
+    if(x_pos> x2_pos){
+        x_pos = (x_pos > grey_canvas_width)? x_pos % grey_canvas_width : x_pos;
+        x2_pos = (x2_pos > grey_canvas_width)? x2_pos % grey_canvas_width : x2_pos;
+        x2_pos -= x_pos;
+    }
+    else {
+        x_pos = (x_pos > grey_canvas_width)? x_pos % grey_canvas_width : x_pos;
+        y2_pos = grey_canvas_width;
+        x2_pos -= x_pos;
+    }
+    greyCanvas.fillStyle = 'rgba(169,169,169, .85)';
+    greyCanvas.fillRect(x_pos, 0, x2_pos, canvas_div_h_hypo);
 }
 
 // Hypo Timeline function
@@ -2225,3 +2277,5 @@ var empirical_canvas = `
 <canvas id="empirical-canvas-11" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
 <canvas id="empirical-canvas-12" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
 `;
+
+var grey_canvas = `<canvas id="grey-canvas-1" class="canvas-wrapper">Your browser doesn't support canvas</canvas>1`
