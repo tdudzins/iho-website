@@ -1092,7 +1092,7 @@ function drawLines(size) {
                     var count = 0;
 
                     for(var j = 0; j < collisionArr.length; j++){
-                        if(!(temp_r[i][0] == collisionArr[j][0] && temp_r[i][1] == collisionArr[j][1])){
+                        if(!(temp_r[i][0] == collisionArr[j][0] && temp_r[i][1] == collisionArr[j][1]) && count < 150){
                             var eLeft = collisionArr[j][0] - (box_to_box_padding_size / 2) + 2;
                             var eRight = collisionArr[j][0] + collisionArr[j][2] + (box_to_box_padding_size / 2) - 2;
                             var eTop = collisionArr[j][1] - (box_to_box_padding_size/2) + 2;
@@ -1100,12 +1100,17 @@ function drawLines(size) {
                             var l1 = (x1 < eRight && x2 > eLeft) && (y1 > eTop && y1 < eBottom);
                             var l2 = (x2 > eLeft && x2 < eRight) && ((y2 < y1)?(y2 > eTop && y1 < eBottom):(y1 > eTop && y2 < eBottom));
                             var l3 = (x3 > eRight && x2 < eLeft) && (y2 > eTop && y2 < eBottom);
+                            var l4 = (x3 > eRight && x2 < eLeft) && (y2 > eTop && y2 < eBottom);
+                            var l5 = (x3 > eRight && x2 < eLeft) && (y2 > eTop && y2 < eBottom);
 
                             console.log('    from: ' + item[1] + ' To: ' + collisionArr[collisionArr.findIndex(function(item){return item[0]==temp_r[i][0]})][4]);
                             console.log('    on: ' + collisionArr[j][4]);
                             console.log('    l1: ' + l1);
                             console.log('    l2: ' + l2);
                             console.log('    l3: ' + l3);
+                            console.log('    l4: ' + l4);
+                            console.log('    l5: ' + l5);
+
                             if(l1 || l2){
                                 if(!hit){ // First check for the line
                                     if(x3 == (temp_r[i][0] + (temp_r[i][2]/2))){ // If the line is the first one
@@ -1130,13 +1135,12 @@ function drawLines(size) {
                                 j = -1;
                             }
                         }
-                        else {
-                            console.log('!('+temp_r[i][0]+' == '+collisionArr[j][0]+') && !('+temp_r[i][1]+' == '+collisionArr[j][1]+')');
-                        }
                         if(hit && j == collisionArr.length-1){ // Line is good
                             lineArr.push([x1,y1,x2,y1]);
                             lineArr.push([x2,y1,x2,y2]);
                             lineArr.push([x2,y2,x3,y2]);
+                            lineArr.push([x3,y2,x3,y3]);
+                            lineArr.push([x3,y3,x4,y3]);
                             // Set the rest of the line to the
                             x1 = x3;
                             y1 = y2
