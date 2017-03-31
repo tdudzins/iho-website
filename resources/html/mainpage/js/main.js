@@ -18,7 +18,7 @@ $(document).ready(function() {
         sessionStorage.setItem("sequenceObj", sequenceObj);
         sessionStorage.setItem("sequenceCheckObj", sequenceCheckObj);
     });
-    //initStorage();
+    initStorage();
     initCanvas(1);
     initSlidePanels();
 });
@@ -193,7 +193,19 @@ function removeAdaption(eventID, callback){
     sessionStorage.setItem("empiricalTable", JSON.stringify(empiricalTable));
     callback(eventID);
 }
+function getAdaptionInfo(eventID){
+    var dataObj;
+    serverPost({action:"q", table:'media', eventid:eventID},function(data, status){
+        dataObj.media = data;
+        serverPost({action:"q", table:'text', type:'descript', eventid:eventID},function(data, status){
+            dataObj.description = data;
+            serverPost({action:"q", table:'text', type:'referenc', eventid:eventID},function(data, status){
+                dataObj.reference = data;    
+            });
 
+        });
+    });
+}
 // Server interaction functions
 function serverPost(object, callback) {
     $.post('/datafromserver', object, function(data, status){callback(data, status);})
