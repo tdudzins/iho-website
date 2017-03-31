@@ -1080,453 +1080,208 @@ function resizeCanvas() {
         ctx2_2 = canvas2_2.getContext("2d");
         ctx2_2.canvas.width = canvas2_w;
         ctx2_2.canvas.height = canvas2_h;
-    }
-    function setdate (start, end) {
-        date_start = start;
-        date_end = end;
-    }
+}
+function setdate (start, end) {
+    date_start = start;
+    date_end = end;
+}
 
-    // Canvas drawing functions
-    function boxCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text,empirical) {
-        var c_value = x_pos/canvas_div_w;
-        var selected_canvas = 0;
+// Canvas drawing functions
+function boxCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text,empirical) {
+    var c_value = x_pos/canvas_div_w;
+    var selected_canvas = 0;
 
-        if(c_value <= 1)
-        selected_canvas = 0;
-        else if(c_value <= 2)
-        selected_canvas = 1;
-        else if(c_value <= 3)
-        selected_canvas = 2;
-        else if(c_value <= 4)
-        selected_canvas = 3;
-        else if(c_value <= 5)
-        selected_canvas = 4;
-        else if(c_value <= 6)
-        selected_canvas = 5;
-        else if(c_value <= 7)
-        selected_canvas = 6;
-        else if(c_value <= 8)
-        selected_canvas = 7;
-        else if(c_value <= 9)
-        selected_canvas = 8;
-        else if(c_value <= 10)
-        selected_canvas = 9;
-        else if(c_value <= 11)
-        selected_canvas = 10;
-        else if(c_value <= 12)
-        selected_canvas = 11;
+    if(c_value <= 1)
+    selected_canvas = 0;
+    else if(c_value <= 2)
+    selected_canvas = 1;
+    else if(c_value <= 3)
+    selected_canvas = 2;
+    else if(c_value <= 4)
+    selected_canvas = 3;
+    else if(c_value <= 5)
+    selected_canvas = 4;
+    else if(c_value <= 6)
+    selected_canvas = 5;
+    else if(c_value <= 7)
+    selected_canvas = 6;
+    else if(c_value <= 8)
+    selected_canvas = 7;
+    else if(c_value <= 9)
+    selected_canvas = 8;
+    else if(c_value <= 10)
+    selected_canvas = 9;
+    else if(c_value <= 11)
+    selected_canvas = 10;
+    else if(c_value <= 12)
+    selected_canvas = 11;
 
-        x_pos = x_pos%canvas_div_w;
-        var temp_x = 0;
+    x_pos = x_pos%canvas_div_w;
+    var temp_x = 0;
 
-        for(var i = -1; i < 2; i++) {
-            if(selected_canvas + i >= 0 && selected_canvas + i <= 11) {
-                temp_x = x_pos - (i * canvas_div_w);
+    for(var i = -1; i < 2; i++) {
+        if(selected_canvas + i >= 0 && selected_canvas + i <= 11) {
+            temp_x = x_pos - (i * canvas_div_w);
 
-                if (empirical) {
-                    hypoCanvas[selected_canvas + i].fillStyle = hypo_box_fill_style_empirical;
-                }
-                else {
-                    hypoCanvas[selected_canvas + i].fillStyle = hypo_box_fill_style_relation;
-                }
+            if (empirical) {
+                hypoCanvas[selected_canvas + i].fillStyle = hypo_box_fill_style_empirical;
+            }
+            else {
+                hypoCanvas[selected_canvas + i].fillStyle = hypo_box_fill_style_relation;
+            }
 
-                hypoCanvas[selected_canvas + i].fillRect(temp_x, y_pos, width_length, height_length);
-                hypoCanvas[selected_canvas + i].font = hypo_box_font_size_change + "px " + hypo_box_font_family;
-                hypoCanvas[selected_canvas + i].fillStyle = hypo_box_font_color;
-                hypoCanvas[selected_canvas + i].textAlign = "center";
-                hypoCanvas[selected_canvas + i].textBaseline="hanging";
-                for (j = 0; j < text.length; j++) {
-                    hypoCanvas[selected_canvas + i].fillText(text[j], temp_x + (0.5 * width_length), y_pos + (text_in_box_padding_h*.5) + ((hypo_box_font_size_change + ((j)?1:0)) * (j)));
-                }
+            hypoCanvas[selected_canvas + i].fillRect(temp_x, y_pos, width_length, height_length);
+            hypoCanvas[selected_canvas + i].font = hypo_box_font_size_change + "px " + hypo_box_font_family;
+            hypoCanvas[selected_canvas + i].fillStyle = hypo_box_font_color;
+            hypoCanvas[selected_canvas + i].textAlign = "center";
+            hypoCanvas[selected_canvas + i].textBaseline="hanging";
+            for (j = 0; j < text.length; j++) {
+                hypoCanvas[selected_canvas + i].fillText(text[j], temp_x + (0.5 * width_length), y_pos + (text_in_box_padding_h*.5) + ((hypo_box_font_size_change + ((j)?1:0)) * (j)));
             }
         }
     }
-    function boxCanvasWrapperClear(x_pos,y_pos,width_length,height_length) {
-        var c_value = x_pos/canvas_div_w;
-        var selected_canvas = 0;
-        if(c_value <= 1)
-        selected_canvas = 0;
-        else if(c_value <= 2)
-        selected_canvas = 1;
-        else if(c_value <= 3)
-        selected_canvas = 2;
-        else if(c_value <= 4)
-        selected_canvas = 3;
-        else if(c_value <= 5)
-        selected_canvas = 4;
-        else if(c_value <= 6)
-        selected_canvas = 5;
-        else if(c_value <= 7)
-        selected_canvas = 6;
-        else if(c_value <= 8)
-        selected_canvas = 7;
-        else if(c_value <= 9)
-        selected_canvas = 8;
-        else if(c_value <= 10)
-        selected_canvas = 9;
-        else if(c_value <= 11)
-        selected_canvas = 10;
-        else if(c_value <= 12)
-        selected_canvas = 11;
-        x_pos = x_pos%canvas_div_w;
-        var temp_x = 0;
-        for(var i = -1; i < 2; i++) {
-            if(selected_canvas + i >= 0 && selected_canvas + i <= 11) {
-                temp_x = x_pos - (i * canvas_div_w);
-                hypoCanvas[selected_canvas].clearRect((temp_x - 1), (y_pos - 1), (width_length + 3), (height_length + 3));
-            }
+}
+function boxCanvasWrapperClear(x_pos,y_pos,width_length,height_length) {
+    var c_value = x_pos/canvas_div_w;
+    var selected_canvas = 0;
+    if(c_value <= 1)
+    selected_canvas = 0;
+    else if(c_value <= 2)
+    selected_canvas = 1;
+    else if(c_value <= 3)
+    selected_canvas = 2;
+    else if(c_value <= 4)
+    selected_canvas = 3;
+    else if(c_value <= 5)
+    selected_canvas = 4;
+    else if(c_value <= 6)
+    selected_canvas = 5;
+    else if(c_value <= 7)
+    selected_canvas = 6;
+    else if(c_value <= 8)
+    selected_canvas = 7;
+    else if(c_value <= 9)
+    selected_canvas = 8;
+    else if(c_value <= 10)
+    selected_canvas = 9;
+    else if(c_value <= 11)
+    selected_canvas = 10;
+    else if(c_value <= 12)
+    selected_canvas = 11;
+    x_pos = x_pos%canvas_div_w;
+    var temp_x = 0;
+    for(var i = -1; i < 2; i++) {
+        if(selected_canvas + i >= 0 && selected_canvas + i <= 11) {
+            temp_x = x_pos - (i * canvas_div_w);
+            hypoCanvas[selected_canvas].clearRect((temp_x - 1), (y_pos - 1), (width_length + 3), (height_length + 3));
         }
     }
-    function lineCanvasWrapperDraw(x_pos,y_pos,x2_pos,y2_pos,color) {
-        var c_value = x_pos/canvas_div_w;
-        var selected_canvas = 0;
+}
+function lineCanvasWrapperDraw(x_pos,y_pos,x2_pos,y2_pos,color) {
+    var c_value = x_pos/canvas_div_w;
+    var selected_canvas = 0;
 
-        if(c_value <= 1)
-        selected_canvas = 0;
-        else if(c_value <= 2)
-        selected_canvas = 1;
-        else if(c_value <= 3)
-        selected_canvas = 2;
-        else if(c_value <= 4)
-        selected_canvas = 3;
-        else if(c_value <= 5)
-        selected_canvas = 4;
-        else if(c_value <= 6)
-        selected_canvas = 5;
-        else if(c_value <= 7)
-        selected_canvas = 6;
-        else if(c_value <= 8)
-        selected_canvas = 7;
-        else if(c_value <= 9)
-        selected_canvas = 8;
-        else if(c_value <= 10)
-        selected_canvas = 9;
-        else if(c_value <= 11)
-        selected_canvas = 10;
-        else if(c_value <= 12)
-        selected_canvas = 11;
+    if(c_value <= 1)
+    selected_canvas = 0;
+    else if(c_value <= 2)
+    selected_canvas = 1;
+    else if(c_value <= 3)
+    selected_canvas = 2;
+    else if(c_value <= 4)
+    selected_canvas = 3;
+    else if(c_value <= 5)
+    selected_canvas = 4;
+    else if(c_value <= 6)
+    selected_canvas = 5;
+    else if(c_value <= 7)
+    selected_canvas = 6;
+    else if(c_value <= 8)
+    selected_canvas = 7;
+    else if(c_value <= 9)
+    selected_canvas = 8;
+    else if(c_value <= 10)
+    selected_canvas = 9;
+    else if(c_value <= 11)
+    selected_canvas = 10;
+    else if(c_value <= 12)
+    selected_canvas = 11;
 
-        var c_value2 = x2_pos/canvas_div_w;
-        var selected_canvas2 = 0;
+    var c_value2 = x2_pos/canvas_div_w;
+    var selected_canvas2 = 0;
 
-        if(c_value2 <= 1)
-        selected_canvas2 = 0;
-        else if(c_value2 <= 2)
-        selected_canvas2 = 1;
-        else if(c_value2 <= 3)
-        selected_canvas2 = 2;
-        else if(c_value2 <= 4)
-        selected_canvas2 = 3;
-        else if(c_value2 <= 5)
-        selected_canvas2 = 4;
-        else if(c_value2 <= 6)
-        selected_canvas2 = 5;
-        else if(c_value2 <= 7)
-        selected_canvas2 = 6;
-        else if(c_value2 <= 8)
-        selected_canvas2 = 7;
-        else if(c_value2 <= 9)
-        selected_canvas2 = 8;
-        else if(c_value2 <= 10)
-        selected_canvas2 = 9;
-        else if(c_value2 <= 11)
-        selected_canvas2 = 10;
-        else if(c_value2 <= 12)
-        selected_canvas2 = 11;
+    if(c_value2 <= 1)
+    selected_canvas2 = 0;
+    else if(c_value2 <= 2)
+    selected_canvas2 = 1;
+    else if(c_value2 <= 3)
+    selected_canvas2 = 2;
+    else if(c_value2 <= 4)
+    selected_canvas2 = 3;
+    else if(c_value2 <= 5)
+    selected_canvas2 = 4;
+    else if(c_value2 <= 6)
+    selected_canvas2 = 5;
+    else if(c_value2 <= 7)
+    selected_canvas2 = 6;
+    else if(c_value2 <= 8)
+    selected_canvas2 = 7;
+    else if(c_value2 <= 9)
+    selected_canvas2 = 8;
+    else if(c_value2 <= 10)
+    selected_canvas2 = 9;
+    else if(c_value2 <= 11)
+    selected_canvas2 = 10;
+    else if(c_value2 <= 12)
+    selected_canvas2 = 11;
 
-        var temp_x = 0;
-        var temp_x2 = 0;
+    var temp_x = 0;
+    var temp_x2 = 0;
 
-        for(var i = selected_canvas; i <= selected_canvas2; i++) {
-            temp_x1 = x_pos - (i * canvas_div_w);
-            temp_x2 = x2_pos - (i * canvas_div_w);
-            hypoCanvas2[i].strokeStyle = color;
-            hypoCanvas2[i].lineWidth = 2;
-            hypoCanvas2[i].beginPath();
-            hypoCanvas2[i].moveTo(temp_x1,y_pos);
-            hypoCanvas2[i].lineTo(temp_x2,y2_pos);
-            hypoCanvas2[i].closePath();
-            hypoCanvas2[i].stroke();
-        }
+    for(var i = selected_canvas; i <= selected_canvas2; i++) {
+        temp_x1 = x_pos - (i * canvas_div_w);
+        temp_x2 = x2_pos - (i * canvas_div_w);
+        hypoCanvas2[i].strokeStyle = color;
+        hypoCanvas2[i].lineWidth = 2;
+        hypoCanvas2[i].beginPath();
+        hypoCanvas2[i].moveTo(temp_x1,y_pos);
+        hypoCanvas2[i].lineTo(temp_x2,y2_pos);
+        hypoCanvas2[i].closePath();
+        hypoCanvas2[i].stroke();
     }
+}
 
-    // Hypo Timeline function
-    function addHypoAdaptation(eventID) {
-        // Pull in new changes
-        adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
-        adaptArray = JSON.parse(sessionStorage.getItem("adaptArray"));
-        relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
-        empiricalTable = JSON.parse(sessionStorage.getItem("empiricalTable"));
+// Hypo Timeline function
+function addHypoAdaptation(eventID) {
+    // Pull in new changes
+    adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
+    adaptArray = JSON.parse(sessionStorage.getItem("adaptArray"));
+    relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
+    empiricalTable = JSON.parse(sessionStorage.getItem("empiricalTable"));
 
-        // Draw new things if they all fit
-        temp_text = hypo_box_font_size_change;
-        dir = (dir)? 0:1;
-        if(adaptObj[eventID][4] < 1) {
-            createAdaptBox(eventID, adaptObj[eventID][0], adaptObj[eventID][1], function(eventID, text, width, height, date) {
+    // Draw new things if they all fit
+    temp_text = hypo_box_font_size_change;
+    dir = (dir)? 0:1;
+    if(adaptObj[eventID][4] < 1) {
+        createAdaptBox(eventID, adaptObj[eventID][0], adaptObj[eventID][1], function(eventID, text, width, height, date) {
+            positionAdaptBox(eventID, text, width, height, date);
+        });
+    }
+    else{
+        boxLocationObj[eventID][4] = adaptObj[eventID][5];
+        boxLocationObj[eventID][5] = adaptObj[eventID][6];
+    }
+    relationsObj[eventID].forEach(function(item) {
+        if(adaptObj[item[0]][4] == 0) {
+            createAdaptBox(item[0], adaptObj[item[0]][0], adaptObj[item[0]][1], function(eventID, text, width, height, date) {
                 positionAdaptBox(eventID, text, width, height, date);
             });
         }
-        else{
-            boxLocationObj[eventID][4] = adaptObj[eventID][5];
-            boxLocationObj[eventID][5] = adaptObj[eventID][6];
-        }
-        relationsObj[eventID].forEach(function(item) {
-            if(adaptObj[item[0]][4] == 0) {
-                createAdaptBox(item[0], adaptObj[item[0]][0], adaptObj[item[0]][1], function(eventID, text, width, height, date) {
-                    positionAdaptBox(eventID, text, width, height, date);
-                });
-            }
-            if(hypo_box_font_size_change != temp_text)
-            return;
-        });
-        while(hypo_box_font_size_change != temp_text) {
-            temp_text = hypo_box_font_size_change;
-            boxLocation = [];
-            for (var i = 0; i < adaptArray.length; i++) {
-                createAdaptBox(adaptArray[i], adaptObj[adaptArray[i]][0], adaptObj[adaptArray[i]][1], function(eventID, text, width, height, date) {
-                    positionAdaptBox(eventID, text, width, height, date);
-                });
-                if(hypo_box_font_size_change != temp_text)
-                break;
-            }
-        }
-        // Draw all the boxes when done
-        drawAllBoxes();
-        drawLines(0);
-    }
-    function createAdaptBox(eventID, eventName, date, callback) {
-        var textArray = [];
-        if(hypo_box_font_size_change <= 5){
-            text_in_box_padding_w = 1;
-            text_in_box_padding_h = 1;
-        }
-        else if(hypo_box_font_size_change > 5){
-            text_in_box_padding_w = std_text_in_box_padding_w;
-            text_in_box_padding_h = std_text_in_box_padding_h;
-        }
-        ctx_top_1.font = hypo_box_font_size_change + "px " + hypo_box_font_family;
-        var line = "";
-        var temp_str = eventName.split(" ");
-        temp_str.forEach(function(item) {
-            if(line.length + item.length <= max_char_per_line) {
-                line += item + " ";
-            }
-            else {
-                textArray.push(line.trim().toUpperCase());
-                line = item + " ";
-            }
-        });
-        textArray.push(line.trim().toUpperCase());
-
-        var longest_line = 0;
-        var width = 0;
-        textArray.forEach(function(item) {
-            if(longest_line < ctx_top_1.measureText(item).width) {
-                longest_line = ctx_top_1.measureText(item).width;
-                width = parseInt((ctx_top_1.measureText(item).width + text_in_box_padding_w).toFixed(0));
-            }
-        });
-        var height = (hypo_box_font_size_change * textArray.length) + ((textArray.length > 1)?(textArray.length-1):0) + text_in_box_padding_h;
-        callback(eventID, textArray, width, height, date);
-    }
-    function positionAdaptBox(eventID, text, width, height, date) {
-        var x_pos = 0;
-        var y_pos = 0;
-        if(date >= 1000000) {
-            date = date + 4000000;
-        }
-        else {
-            date = date * 5;
-        }
-        timespan = (date_start - date_end);
-        viewable_time = timespan * scroll_ratio;
-        increment_per_pixel = (viewable_time/canvas_div_w);
-        x_pos = date/increment_per_pixel;
-        x_pos = ((canvas_div_w/scroll_ratio) - x_pos) - width/2;
-        y_pos = canvas_div_h_hypo/2 - height/2;
-
-        var i = 0;
-        var up = 0;
-        var down = 0;
-        var l_i = 0;
-        while (i < boxLocation.length) {
-            // Hit x or y
-            if(((x_pos >= boxLocation[i][0] - box_to_box_padding_size && x_pos <= boxLocation[i][0] + boxLocation[i][2] + box_to_box_padding_size) ||
-            (x_pos  <= boxLocation[i][0] + box_to_box_padding_size && x_pos + width >= boxLocation[i][0] + boxLocation[i][2] + box_to_box_padding_size) ||
-            (x_pos + width >= boxLocation[i][0] - box_to_box_padding_size  && x_pos + width <= boxLocation[i][0] + boxLocation[i][2] + box_to_box_padding_size)) &&
-            ((y_pos >= boxLocation[i][1] && y_pos <= boxLocation[i][1] + boxLocation[i][3]) ||
-            (y_pos <= boxLocation[i][1] && y_pos + height >= boxLocation[i][1] + boxLocation[i][3]) ||
-            (y_pos + height >= boxLocation[i][1] && y_pos + height <= boxLocation[i][1] + boxLocation[i][3]))) {
-                if(i > l_i) {
-                    dir = (dir)? 0:1;
-                    l_i = i;
-                }
-                dir = (down)? 1:dir;
-                dir = (up)? 0:dir;
-                if(!down && !dir) {
-                    if (boxLocation[i][1] + boxLocation[i][3] + height + box_to_box_padding_size < canvas_div_h_hypo) {
-                        y_pos = boxLocation[i][1] + boxLocation[i][3] + box_to_box_padding_size;
-                        i = 0;
-                    }
-                    else
-                    down = 1;
-                }
-                else if(!up && dir) {
-                    if (boxLocation[i][1] - box_to_box_padding_size - height > 0) {
-                        y_pos = boxLocation[i][1] - box_to_box_padding_size - height;
-                        i = 0;
-                    }
-                    else
-                    up = 1;
-                }
-                else {
-                    if(temp_text == hypo_box_font_size_change){
-                        hypo_box_font_size_change -= 1;
-                        if(hypo_box_font_size_change > 5){}// TODO dots
-                    }
-                    break;
-                }
-            }
-            else{
-                i++;
-            }
-        }
-        boxLocationObj[eventID] = [x_pos, y_pos, width, height, adaptObj[eventID][5], adaptObj[eventID][6]];
-        boxLocation.push([x_pos,y_pos,width,height,text,eventID]);
-        boxLocation.sort(function(a,b) {
-            if(a[0] === b[0]) {
-                return 0;
-            }
-            else {
-                return (a[0] < b[0]) ? -1 : 1;
-            }
-        });
-        //sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
-    }
-    function removeHypoAdaptation(eventID, callback) {
-        // empirical undraw
-        if(adaptObj[eventID][4] == 0) {
-            delete boxLocationObj[eventID];
-            for (var i = 0; i < boxLocation.length; i++) {
-                if(boxLocation[i][5] == eventID) {
-                    //boxCanvasWrapperClear(boxLocation[i][0], boxLocation[i][1], boxLocation[i][2], boxLocation[i][3]);
-                    if(boxLocation.length == 1)
-                    boxLocation = [];
-                    else
-                    boxLocation.splice(i, 1);
-                    i = boxLocation.length;
-                }
-            }
-        }
-        else {
-            for(var i = 0; i < boxLocation.length; i++) {
-                if(boxLocation[i][5] == eventID) {
-                    //boxCanvasWrapperClear(boxLocation[i][0], boxLocation[i][1], boxLocation[i][2], boxLocation[i][3]);
-                    //boxCanvasWrapperDraw(boxLocation[i][0], boxLocation[i][1], boxLocation[i][2], boxLocation[i][3], boxLocation[i][4], false);
-                }
-            }
-        }
-
-        // Relations undraw
-        relationsObj[eventID].forEach(function(item){
-            if(adaptObj[item[0]][4] < 1) {
-                for(var i = 0; i < boxLocation.length; i++) {
-                    if(boxLocation[i][5] == item[0]) {
-                        if(boxLocation.length == 1)
-                        boxLocation = [];
-                        else
-                        boxLocation.splice(i, 1);
-                        i = boxLocation.length;
-                    }
-                }
-            }
-        });
-        //delete relationsObj[eventID];
-        hypo_box_font_size_change = hypo_box_font_size; // reset font size
-        adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
-        adaptArray = JSON.parse(sessionStorage.getItem("adaptArray"));
-        relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
-        empiricalTable = JSON.parse(sessionStorage.getItem("empiricalTable"));
-        redrawHypo(0);
-        drawLines(0);
-        callback(eventID);
-    }
-    function drawAllBoxes() {
-        // Clear boxes
-        for(var i = 0; i < 12; i++) {
-            hypoCanvas[i].clearRect(0, 0, canvas_div_w, canvas_div_h_hypo);
-        }
-        boxLocation.forEach(function(item){
-            var empirical = (relationsObj[item[5]] == undefined)? false:true;
-            boxCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4], empirical);
-        });
-    }
-    function redrawHypo(size) {
-        // Reposition boxes only
-        if(Math.abs(last_scroll_ratio - scroll_ratio) > size && (last_hypo_font_size == hypo_box_font_size_change) && size != 0) {
-            // Clear boxes
-            for(var i = 0; i < 12; i++) {
-                hypoCanvas[i].clearRect(0, 0, canvas_div_w, canvas_div_h_hypo);
-            }
-            // Move then redraw the same box
-            boxLocation.forEach(function(item){
-                var date = adaptObj[item[5]][1];
-                var empirical = (relationsObj[item[5]] != undefined)? true:false;
-                if(date >= 1000000) {
-                    date = date + 4000000;
-                }
-                else {
-                    date = date * 5;
-                }
-                timespan = (date_start - date_end);
-                viewable_time = timespan * scroll_ratio;
-                increment_per_pixel = (viewable_time/canvas_div_w);
-                x_pos = date/increment_per_pixel;
-                x_pos = ((canvas_div_w/scroll_ratio) - x_pos) - item[2]/2;
-                item[0] = x_pos;
-                /*
-                if(last_scroll_ratio < scroll_ratio){
-                var i = 0;
-                while (i < boxLocation.length) {
-                // Hit x or y
-                if(((x_pos >= boxLocation[i][0] - box_to_box_padding_size && x_pos <= boxLocation[i][0] + boxLocation[i][2] + box_to_box_padding_size) ||
-                (x_pos  <= boxLocation[i][0] + box_to_box_padding_size && x_pos + item[2] >= boxLocation[i][0] + boxLocation[i][2] + box_to_box_padding_size) ||
-                (x_pos + item[2] >= boxLocation[i][0] - box_to_box_padding_size  && x_pos + item[2] <= boxLocation[i][0] + boxLocation[i][2] + box_to_box_padding_size)) &&
-                ((item[2] >= boxLocation[i][1] && item[2] <= boxLocation[i][1] + boxLocation[i][3]) ||
-                (item[2] <= boxLocation[i][1] && item[2] + item[3] >= boxLocation[i][1] + boxLocation[i][3]) ||
-                (item[2] + item[3] >= boxLocation[i][1] && item[2] + item[3] <= boxLocation[i][1] + boxLocation[i][3]))) {
-                last_hypo_font_size = 0;
-            }
-            else{
-            i++;
-        }
-    }
-}*/
-
-boxLocationObj[item[5]][0] = x_pos;
-boxCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4], empirical);
-});
-last_scroll_ratio = scroll_ratio;
-//sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
-}
-
-// TODO if needed medium redraw speedm, redraw and move without remaking boxes
-
-else if(Math.abs(last_scroll_ratio - scroll_ratio) > size || size == 0) {
-    last_scroll_ratio = scroll_ratio;
-    last_hypo_font_size = hypo_box_font_size_change;
-    hypo_box_font_size_change = hypo_box_font_size;
-    temp_text = 0;
-    // Clear boxes
-    for(var i = 0; i < 12; i++) {
-        hypoCanvas[i].clearRect(0, 0, canvas_div_w, canvas_div_h_hypo);
-    }
-
-    dir = (dir)? 0:1;
+        if(hypo_box_font_size_change != temp_text)
+        return;
+    });
     while(hypo_box_font_size_change != temp_text) {
         temp_text = hypo_box_font_size_change;
         boxLocation = [];
-        temp_text = hypo_box_font_size_change;
         for (var i = 0; i < adaptArray.length; i++) {
             createAdaptBox(adaptArray[i], adaptObj[adaptArray[i]][0], adaptObj[adaptArray[i]][1], function(eventID, text, width, height, date) {
                 positionAdaptBox(eventID, text, width, height, date);
@@ -1535,8 +1290,236 @@ else if(Math.abs(last_scroll_ratio - scroll_ratio) > size || size == 0) {
             break;
         }
     }
+    // Draw all the boxes when done
     drawAllBoxes();
+    drawLines(0);
 }
+function createAdaptBox(eventID, eventName, date, callback) {
+    var textArray = [];
+    if(hypo_box_font_size_change <= 5){
+        text_in_box_padding_w = 1;
+        text_in_box_padding_h = 1;
+    }
+    else if(hypo_box_font_size_change > 5){
+        text_in_box_padding_w = std_text_in_box_padding_w;
+        text_in_box_padding_h = std_text_in_box_padding_h;
+    }
+    ctx_top_1.font = hypo_box_font_size_change + "px " + hypo_box_font_family;
+    var line = "";
+    var temp_str = eventName.split(" ");
+    temp_str.forEach(function(item) {
+        if(line.length + item.length <= max_char_per_line) {
+            line += item + " ";
+        }
+        else {
+            textArray.push(line.trim().toUpperCase());
+            line = item + " ";
+        }
+    });
+    textArray.push(line.trim().toUpperCase());
+
+    var longest_line = 0;
+    var width = 0;
+    textArray.forEach(function(item) {
+        if(longest_line < ctx_top_1.measureText(item).width) {
+            longest_line = ctx_top_1.measureText(item).width;
+            width = parseInt((ctx_top_1.measureText(item).width + text_in_box_padding_w).toFixed(0));
+        }
+    });
+    var height = (hypo_box_font_size_change * textArray.length) + ((textArray.length > 1)?(textArray.length-1):0) + text_in_box_padding_h;
+    callback(eventID, textArray, width, height, date);
+}
+function positionAdaptBox(eventID, text, width, height, date) {
+    var x_pos = 0;
+    var y_pos = 0;
+    if(date >= 1000000) {
+        date = date + 4000000;
+    }
+    else {
+        date = date * 5;
+    }
+    timespan = (date_start - date_end);
+    viewable_time = timespan * scroll_ratio;
+    increment_per_pixel = (viewable_time/canvas_div_w);
+    x_pos = date/increment_per_pixel;
+    x_pos = ((canvas_div_w/scroll_ratio) - x_pos) - width/2;
+    y_pos = canvas_div_h_hypo/2 - height/2;
+
+    var i = 0;
+    var up = 0;
+    var down = 0;
+    var l_i = 0;
+    while (i < boxLocation.length) {
+        // Hit x or y
+        if(((x_pos >= boxLocation[i][0] - box_to_box_padding_size && x_pos <= boxLocation[i][0] + boxLocation[i][2] + box_to_box_padding_size) ||
+        (x_pos  <= boxLocation[i][0] + box_to_box_padding_size && x_pos + width >= boxLocation[i][0] + boxLocation[i][2] + box_to_box_padding_size) ||
+        (x_pos + width >= boxLocation[i][0] - box_to_box_padding_size  && x_pos + width <= boxLocation[i][0] + boxLocation[i][2] + box_to_box_padding_size)) &&
+        ((y_pos >= boxLocation[i][1] && y_pos <= boxLocation[i][1] + boxLocation[i][3]) ||
+        (y_pos <= boxLocation[i][1] && y_pos + height >= boxLocation[i][1] + boxLocation[i][3]) ||
+        (y_pos + height >= boxLocation[i][1] && y_pos + height <= boxLocation[i][1] + boxLocation[i][3]))) {
+            if(i > l_i) {
+                dir = (dir)? 0:1;
+                l_i = i;
+            }
+            dir = (down)? 1:dir;
+            dir = (up)? 0:dir;
+            if(!down && !dir) {
+                if (boxLocation[i][1] + boxLocation[i][3] + height + box_to_box_padding_size < canvas_div_h_hypo) {
+                    y_pos = boxLocation[i][1] + boxLocation[i][3] + box_to_box_padding_size;
+                    i = 0;
+                }
+                else
+                down = 1;
+            }
+            else if(!up && dir) {
+                if (boxLocation[i][1] - box_to_box_padding_size - height > 0) {
+                    y_pos = boxLocation[i][1] - box_to_box_padding_size - height;
+                    i = 0;
+                }
+                else
+                up = 1;
+            }
+            else {
+                if(temp_text == hypo_box_font_size_change){
+                    hypo_box_font_size_change -= 1;
+                    if(hypo_box_font_size_change > 5){}// TODO dots
+                }
+                break;
+            }
+        }
+        else{
+            i++;
+        }
+    }
+    boxLocationObj[eventID] = [x_pos, y_pos, width, height, adaptObj[eventID][5], adaptObj[eventID][6]];
+    boxLocation.push([x_pos,y_pos,width,height,text,eventID]);
+    boxLocation.sort(function(a,b) {
+        if(a[0] === b[0]) {
+            return 0;
+        }
+        else {
+            return (a[0] < b[0]) ? -1 : 1;
+        }
+    });
+    //sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
+}
+function removeHypoAdaptation(eventID, callback) {
+    // empirical undraw
+    if(adaptObj[eventID][4] == 0) {
+        delete boxLocationObj[eventID];
+        for (var i = 0; i < boxLocation.length; i++) {
+            if(boxLocation[i][5] == eventID) {
+                //boxCanvasWrapperClear(boxLocation[i][0], boxLocation[i][1], boxLocation[i][2], boxLocation[i][3]);
+                if(boxLocation.length == 1)
+                boxLocation = [];
+                else
+                boxLocation.splice(i, 1);
+                i = boxLocation.length;
+            }
+        }
+    }
+    else {
+        for(var i = 0; i < boxLocation.length; i++) {
+            if(boxLocation[i][5] == eventID) {
+                //boxCanvasWrapperClear(boxLocation[i][0], boxLocation[i][1], boxLocation[i][2], boxLocation[i][3]);
+                //boxCanvasWrapperDraw(boxLocation[i][0], boxLocation[i][1], boxLocation[i][2], boxLocation[i][3], boxLocation[i][4], false);
+            }
+        }
+    }
+
+    // Relations undraw
+    relationsObj[eventID].forEach(function(item){
+        if(adaptObj[item[0]][4] < 1) {
+            for(var i = 0; i < boxLocation.length; i++) {
+                if(boxLocation[i][5] == item[0]) {
+                    if(boxLocation.length == 1)
+                    boxLocation = [];
+                    else
+                    boxLocation.splice(i, 1);
+                    i = boxLocation.length;
+                }
+            }
+        }
+    });
+    //delete relationsObj[eventID];
+    hypo_box_font_size_change = hypo_box_font_size; // reset font size
+    adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
+    adaptArray = JSON.parse(sessionStorage.getItem("adaptArray"));
+    relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
+    empiricalTable = JSON.parse(sessionStorage.getItem("empiricalTable"));
+    redrawHypo(0);
+    drawLines(0);
+    callback(eventID);
+}
+function drawAllBoxes() {
+    // Clear boxes
+    for(var i = 0; i < 12; i++) {
+        hypoCanvas[i].clearRect(0, 0, canvas_div_w, canvas_div_h_hypo);
+    }
+    boxLocation.forEach(function(item){
+        var empirical = (relationsObj[item[5]] == undefined)? false:true;
+        boxCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4], empirical);
+    });
+}
+function redrawHypo(size) {
+    // Reposition boxes only
+    if(Math.abs(last_scroll_ratio - scroll_ratio) > size && (last_hypo_font_size == hypo_box_font_size_change) && size != 0) {
+        // Clear boxes
+        for(var i = 0; i < 12; i++) {
+            hypoCanvas[i].clearRect(0, 0, canvas_div_w, canvas_div_h_hypo);
+        }
+        // Move then redraw the same box
+        boxLocation.forEach(function(item){
+            var date = adaptObj[item[5]][1];
+            var empirical = (relationsObj[item[5]] != undefined)? true:false;
+            if(date >= 1000000) {
+                date = date + 4000000;
+            }
+            else {
+                date = date * 5;
+            }
+            timespan = (date_start - date_end);
+            viewable_time = timespan * scroll_ratio;
+            increment_per_pixel = (viewable_time/canvas_div_w);
+            x_pos = date/increment_per_pixel;
+            x_pos = ((canvas_div_w/scroll_ratio) - x_pos) - item[2]/2;
+            item[0] = x_pos;
+
+
+    boxLocationObj[item[5]][0] = x_pos;
+    boxCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4], empirical);
+    });
+    last_scroll_ratio = scroll_ratio;
+    //sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
+    }
+
+    // TODO if needed medium redraw speedm, redraw and move without remaking boxes
+
+    else if(Math.abs(last_scroll_ratio - scroll_ratio) > size || size == 0) {
+        last_scroll_ratio = scroll_ratio;
+        last_hypo_font_size = hypo_box_font_size_change;
+        hypo_box_font_size_change = hypo_box_font_size;
+        temp_text = 0;
+        // Clear boxes
+        for(var i = 0; i < 12; i++) {
+            hypoCanvas[i].clearRect(0, 0, canvas_div_w, canvas_div_h_hypo);
+        }
+
+        dir = (dir)? 0:1;
+        while(hypo_box_font_size_change != temp_text) {
+            temp_text = hypo_box_font_size_change;
+            boxLocation = [];
+            temp_text = hypo_box_font_size_change;
+            for (var i = 0; i < adaptArray.length; i++) {
+                createAdaptBox(adaptArray[i], adaptObj[adaptArray[i]][0], adaptObj[adaptArray[i]][1], function(eventID, text, width, height, date) {
+                    positionAdaptBox(eventID, text, width, height, date);
+                });
+                if(hypo_box_font_size_change != temp_text)
+                break;
+            }
+        }
+        drawAllBoxes();
+    }
 }
 function drawLines(size) {
     if(Math.abs(last_scroll_ratio_lines - scroll_ratio) > size || size == 0) {
