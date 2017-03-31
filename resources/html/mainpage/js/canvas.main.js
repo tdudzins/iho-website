@@ -1260,7 +1260,7 @@ function addHypoAdaptation(eventID) {
 
     // Draw new things if they all fit
     temp_text = hypo_box_font_size_change;
-    dir = (dir)? 0:1;
+    // dir = (dir)? 0:1;
     if(adaptObj[eventID][4] < 1) {
         createAdaptBox(eventID, adaptObj[eventID][0], adaptObj[eventID][1], function(eventID, text, width, height, date) {
             positionAdaptBox(eventID, text, width, height, date);
