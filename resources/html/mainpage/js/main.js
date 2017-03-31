@@ -258,29 +258,29 @@ function initSlidePanels() {
     });
 
     $("#side-nav-toggle").click(function () {
-        if ($(this).hasClass("active")) {
-            $("#side-nav-toggle").html(`<img src="/resources/html/mainpage/img/arrow_open.png" style="height:100%;width:100%;">`);
-            side_nav_width = -1 * (25 + parseInt($("#side-nav-panel").css('width')));
-            $("#side-nav-panel").animate({marginLeft: side_nav_width + "px"}, 300);
+        if(!$('#side-nav-info').length){
+            if ($(this).hasClass("active")) {
+                $("#side-nav-toggle").html(`<img src="/resources/html/mainpage/img/arrow_open.png" style="height:100%;width:100%;">`);
+                side_nav_width = -1 * (25 + parseInt($("#side-nav-panel").css('width')));
+                $("#side-nav-panel").animate({marginLeft: side_nav_width + "px"}, 300);
+            }
+            else {
+                $("#side-nav-toggle").html(`<img src="/resources/html/mainpage/img/arrow_close.png" style="height:100%;width:100%;">`);
+                $("#side-nav-panel").animate({marginLeft: "0px"}, 300);
+            }
+            $(this).toggleClass("active");
         }
         else {
-            $("#side-nav-toggle").html(`<img src="/resources/html/mainpage/img/arrow_close.png" style="height:100%;width:100%;">`);
-            $("#side-nav-panel").animate({marginLeft: "0px"}, 300);
+            closeInfoPanel();
         }
-        $(this).toggleClass("active");
     });
 }
 
 function openInfoPanel(eventID) {
-    console.log(eventID);
-    if ($("#side-nav-toggle").hasClass("active")) {
-        $("#side-nav-toggle").html(`<img src="/resources/html/mainpage/img/arrow_open.png" style="height:100%;width:100%;">`);
+    if (!$('#side-nav-info').length){
         side_nav_width = -1 * (25 + parseInt($("#side-nav-panel").css('width')));
         $("#side-nav-panel").animate({marginLeft: side_nav_width + "px"}, 300, function(){
-            side_nav_stored = $("#side-nav").get()[0].innerHTML;
-            $("#side-nav").empty();
             // Create the Info Panel
-            $("#side-nav").append(toggle_bar);
             $("#side-nav-toggle").css("background","linear-gradient(to right, rgba(78,92,104,1), rgba(111,130,145,1))");
             $("#side-nav").append(info_panel_main);
             $("#side-info-title").html(adaptObj[eventID][0].trim().toUpperCase());
@@ -337,9 +337,9 @@ function openInfoPanel(eventID) {
 
             $("#side-nav-toggle").html(`<img src="/resources/html/mainpage/img/arrow_close.png" style="height:100%;width:100%;">`);
             $("#side-nav-info").animate({marginLeft: "0px"}, 300);
+            $("#side-nav-toggle").toggleClass("active");
 
         });
-        console.log("closes");
     }
 }
 
@@ -348,10 +348,10 @@ function closeInfoPanel() {
     side_nav_width = -1 * (25 + parseInt($("#side-nav-info").css('width')));
     $("#side-nav-info").animate({marginLeft: side_nav_width + "px"}, 300, function(){
         // Restore Adaptations Panel
-        console.log(side_nav_stored);
-        $("#side-nav").html(side_nav_stored);
+        $("#side-nav-info").remove();
         $("#side-nav-toggle").css("background","linear-gradient(to right, rgba(58,92,113,1), rgba(69,106,131,1))");
-        $("#side-nav-panel").animate({marginLeft: "0px"}, 300);
+        side_nav_width = -1 * (25 + parseInt($("#side-nav-panel").css('width')));
+        $("#side-nav-panel").css("marginLeft", side_nav_width+"px");
     });
 }
 
