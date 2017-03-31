@@ -70,7 +70,7 @@ var sequenceObj = {};
 var sequenceCheckObj = {};
 
 var timespan;
-var dir = 1;
+var balance = 0;
 var empir_dir = 1;
 var viewable_time;
 var left_edge_date;
@@ -1260,7 +1260,7 @@ function addHypoAdaptation(eventID) {
 
     // Draw new things if they all fit
     temp_text = hypo_box_font_size_change;
-    dir = (dir)? 0:1;
+    //dir = (dir)? 0:1;
     if(adaptObj[eventID][4] < 1) {
         createAdaptBox(eventID, adaptObj[eventID][0], adaptObj[eventID][1], function(eventID, text, width, height, date) {
             positionAdaptBox(eventID, text, width, height, date);
@@ -1345,10 +1345,11 @@ function positionAdaptBox(eventID, text, width, height, date) {
     x_pos = ((canvas_div_w/scroll_ratio) - x_pos) - width/2;
     y_pos = canvas_div_h_hypo/2 - height/2;
 
-    var i = 0;
-    var up = 0;
-    var down = 0;
-    var l_i = 0;
+    var i = 0; // loop count
+    var dir = (balance > 0 )?0:1; // direction that the value is placed
+    var up = 0; // 1 if all up possibilities have ben tried
+    var down = 0; // 1 if all down possibilities have ben tried
+    var l_i = 0; // the last i position that the loop achived
     while (i < boxLocation.length) {
         // Hit x or y
         if(((x_pos >= boxLocation[i][0] - box_to_box_padding_size && x_pos <= boxLocation[i][0] + boxLocation[i][2] + box_to_box_padding_size) ||
@@ -1358,22 +1359,24 @@ function positionAdaptBox(eventID, text, width, height, date) {
         (y_pos <= boxLocation[i][1] && y_pos + height >= boxLocation[i][1] + boxLocation[i][3]) ||
         (y_pos + height >= boxLocation[i][1] && y_pos + height <= boxLocation[i][1] + boxLocation[i][3]))) {
             if(i > l_i) {
-                dir = (dir)? 0:1;
                 l_i = i;
+                
             }
             dir = (down)? 1:dir;
             dir = (up)? 0:dir;
-            if(!down && !dir) {
+            if(!down && !dir) { // if there is a box hit try to put it below the box it hit
                 if (boxLocation[i][1] + boxLocation[i][3] + height + box_to_box_padding_size < canvas_div_h_hypo) {
                     y_pos = boxLocation[i][1] + boxLocation[i][3] + box_to_box_padding_size;
                     i = 0;
+                    dir = 1;
                 }
                 else
                 down = 1;
             }
-            else if(!up && dir) {
+            else if(!up && dir) { // if there is a box hit try to put it above the box it hit
                 if (boxLocation[i][1] - box_to_box_padding_size - height > 0) {
                     y_pos = boxLocation[i][1] - box_to_box_padding_size - height;
+                    dir = 0;
                     i = 0;
                 }
                 else
@@ -1382,7 +1385,7 @@ function positionAdaptBox(eventID, text, width, height, date) {
             else {
                 if(temp_text == hypo_box_font_size_change){
                     hypo_box_font_size_change -= 1;
-                    if(hypo_box_font_size_change > 5){}// TODO dots
+                    //if(hypo_box_font_size_change > 5){}// TODO dots
                 }
                 break;
             }
@@ -1391,6 +1394,10 @@ function positionAdaptBox(eventID, text, width, height, date) {
             i++;
         }
     }
+    if(temp_text == hypo_box_font_size_change)
+        balance += (dir)?1:-1;
+    else
+        balance = 0;
     boxLocationObj[eventID] = [x_pos, y_pos, width, height, adaptObj[eventID][5], adaptObj[eventID][6]];
     boxLocation.push([x_pos,y_pos,width,height,text,eventID]);
     boxLocation.sort(function(a,b) {
@@ -1505,7 +1512,7 @@ function redrawHypo(size) {
             hypoCanvas[i].clearRect(0, 0, canvas_div_w, canvas_div_h_hypo);
         }
 
-        dir = (dir)? 0:1;
+        // dir = (dir)? 0:1;
         while(hypo_box_font_size_change != temp_text) {
             temp_text = hypo_box_font_size_change;
             boxLocation = [];
