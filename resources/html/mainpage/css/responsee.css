@@ -101,7 +101,7 @@ h6 {
 	font-size: 13px;
 }
 
-p, li, dl, blockquote, table, kbd {
+li, dl, blockquote, table, kbd {
 	font-size: 16px;
 	line-height: 1.6;
 }

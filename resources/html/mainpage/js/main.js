@@ -117,7 +117,7 @@ function getAdaption(eventID, callback){
         relationsObj[eventID] = [];
         obj.forEach(function(item){
             if(adaptObj[item.eventID] === undefined){
-                adaptObj[item.eventID] = [item.eventName, (item.earliestDirectEvidence > 0)?item.earliestDirectEvidence : item.earliestIndirectEvidence, item.boundaryStart, item.boundaryEnd, 0, 0, 0];
+                adaptObj[item.eventID] = [item.eventName, (item.earliestDirectEvidence > 0)?item.earliestDirectEvidence : item.earliestIndirectEvidence, item.boundaryStart, item.boundaryEnd, 0, 0, 0, item.earliestDirectEvidence, item.earliestIndirectEvidence];
                 adaptArray.push(item.eventID);
             }
             else{
@@ -196,15 +196,19 @@ function removeAdaption(eventID, callback){
     sessionStorage.setItem("empiricalTable", JSON.stringify(empiricalTable));
     callback(eventID);
 }
-function getAdaptionInfo(eventID){
-    var dataObj;
+function getAdaptionInfo(eventID, callback){
+    var dataObj = {};
+    var obj;
     serverPost({action:"q", table:'media', eventid:eventID},function(data, status){
-        dataObj.media = data;
+        obj = JSON.parse(data);
+        dataObj.media = obj;
         serverPost({action:"q", table:'text', type:'descript', eventid:eventID},function(data, status){
-            dataObj.description = data;
+            obj = JSON.parse(data);
+            dataObj.description = obj;
             serverPost({action:"q", table:'text', type:'referenc', eventid:eventID},function(data, status){
-                dataObj.reference = data;
-                return dataObj;
+                obj = JSON.parse(data);
+                dataObj.reference = obj;
+                callback(dataObj);
             });
 
         });
@@ -222,7 +226,7 @@ function serverPost(object, callback) {
 function createArrays() {
     if (typeof(Storage) !== "undefined"){
         sessionStorage.setItem("adaptArray", "[]"); // [eventID, eventID, ...] sortedArray
-        sessionStorage.setItem("adaptObj", "{}"); // {eventID:[eventName, earliestDirectEvidence, start, end, count, Left, Right],[],[]....} obj
+        sessionStorage.setItem("adaptObj", "{}"); // {eventID:[eventName, earliestDirectEvidence, start, end, count, Left, Right, ],[],[]....} obj
         sessionStorage.setItem("relationsObj", "{}"); // {eventID:[{id:relationID,precondition:precondition}],....} obj
         sessionStorage.setItem("empiricalTable", "[]"); // [[eventID, eventName, earliestDirectEvidence],[],[]....] array
         sessionStorage.setItem("empiricalBox", "[]"); // [[x,y,length,height,text[],eventID], .....] array sorted
@@ -279,6 +283,58 @@ function openInfoPanel(eventID) {
             $("#side-nav").append(toggle_bar);
             $("#side-nav-toggle").css("background","linear-gradient(to right, rgba(78,92,104,1), rgba(111,130,145,1))");
             $("#side-nav").append(info_panel_main);
+            $("#side-info-title").html(adaptObj[eventID][0].trim().toUpperCase());
+
+            var ede = adaptObj[eventID][7];
+            var eie = adaptObj[eventID][8];
+            if (ede == -1) {
+                ede = "N/A";
+            }
+            else if (ede >= 1000000) {
+                ede = ede / 1000000;
+                ede = ede + " Ma"
+            }
+            else {
+                ede = ede / 1000;
+                ede = ede + " Ka"
+            }
+            if (eie == -1) {
+                eie = "N/A";
+            }
+            else if (eie >= 1000000) {
+                eie = eie / 1000000;
+                eie = eie + " Ma"
+            }
+            else {
+                eie = eie / 1000;
+                eie = eie + " Ka"
+            }
+            $("#ede-data").html(ede);
+            $("#eie-data").html(eie);
+
+            getAdaptionInfo(eventID,function(item){
+                $("#adaptation-description-data").append(item.description.substr(item.description.indexOf("<body>"),item.description.lastIndexOf("</body>")));
+                $("#adaptation-reference-data").append(item.reference.substr(item.reference.indexOf("<body>"),item.reference.lastIndexOf("</body>")));
+                var pictureArr = [];
+                var videoArr = [];
+                var otherArr = [];
+                for(var i=0; i < item.media.length; i++) {
+                    if(item.media[i].type == 1 || item.media[i].type == 2) {
+                        pictureArr.push(item.media[i]);
+                    }
+                    else if(item.media[i].type == 3) {
+                        videoArr.push(item.media[i]);
+                    }
+                    else if(item.media[i].type == 4) {
+                        otherArr.push(item.media[i]);
+                    }
+
+                }
+                console.log(item.media);
+                $("#media-list-div").append(info_panel_pictures_container);
+                $("#media-list-picture").append("");
+            });
+
             $("#side-nav-toggle").html(`<img src="/resources/html/mainpage/img/arrow_close.png" style="height:100%;width:100%;">`);
             $("#side-nav-info").animate({marginLeft: "0px"}, 300);
 
@@ -288,8 +344,15 @@ function openInfoPanel(eventID) {
 }
 
 function closeInfoPanel() {
-    //background: linear-gradient(to right, rgba(58,92,113,1), rgba(69,106,131,1));
-
+    $("#side-nav-toggle").html(`<img src="/resources/html/mainpage/img/arrow_open.png" style="height:100%;width:100%;">`);
+    side_nav_width = -1 * (25 + parseInt($("#side-nav-info").css('width')));
+    $("#side-nav-info").animate({marginLeft: side_nav_width + "px"}, 300, function(){
+        // Restore Adaptations Panel
+        console.log(side_nav_stored);
+        $("#side-nav").html(side_nav_stored);
+        $("#side-nav-toggle").css("background","linear-gradient(to right, rgba(58,92,113,1), rgba(69,106,131,1))");
+        $("#side-nav-panel").animate({marginLeft: "0px"}, 300);
+    });
 }
 
 var toggle_bar = `
@@ -304,11 +367,11 @@ var info_panel_main = `
 <div id="information-panel-div">
 <div id="info-ede" class="adapt-attr">
 <div class="title">Earliest Direct Evidence:</div>
-<div class="data"></div>
+<div id="ede-data" class="data"></div>
 </div>
 <div id="info-eie" class="adapt-attr">
 <div class="title">Earliest Indirect Evidence:</div>
-<div class="data"></div>
+<div id="eie-data" class="data"></div>
 </div>
 <div id="info-desc">
 <div class="title">Description:</div>

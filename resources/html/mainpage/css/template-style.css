@@ -402,11 +402,11 @@ ul.adaptation-items li {
 #side-nav-info {
     all: unset;
     height: 100%;
-    width: 475px;
+    width: 500px;
     background-color: rgba(255,255,255,1);
     color: black;
     float: left;
-    margin-left: -500px;
+    margin-left: -525px;
     transition: max-width 0.2s ease-out;
     font-family: Montserrat;
 }
@@ -420,6 +420,7 @@ ul.adaptation-items li {
     font-size: 20px;
     background-color: rgba(111,130,145,1);
     color: white;
+    letter-spacing: 2px;
 }
 
 #information-panel-div {
@@ -466,6 +467,7 @@ ul.adaptation-items li {
     font-weight: bold;
     position: relative;
     float: left;
+    letter-spacing: 1px;
 }
 
 .data {
@@ -473,6 +475,7 @@ ul.adaptation-items li {
     font-weight: normal;
     position: relative;
     float: right;
+    letter-spacing: 1px;
 }
 
 #info-desc {
@@ -482,6 +485,7 @@ ul.adaptation-items li {
     padding-bottom: 5px;
     font-size: 15px;
     line-height: 15px;
+    letter-spacing: 1px;
 }
 
 #adaptation-description-data {
@@ -494,6 +498,7 @@ ul.adaptation-items li {
     color: rgba(0, 0, 0, .7);
     font-weight: normal;
     font-family: Montserrat;
+    letter-spacing: 1px;
 }
 
 #info-ref {
@@ -503,6 +508,7 @@ ul.adaptation-items li {
     padding-bottom: 5px;
     font-size: 15px;
     line-height: 15px;
+    letter-spacing: 1px;
 }
 
 #adaptation-reference-data {
@@ -515,6 +521,7 @@ ul.adaptation-items li {
     color: rgba(0, 0, 0, .7);
     font-weight: normal;
     font-family: Montserrat;
+    letter-spacing: 1px;
 }
 
 #info-media {
@@ -524,6 +531,7 @@ ul.adaptation-items li {
     padding-bottom: 5px;
     font-size: 15px;
     line-height: 15px;
+    letter-spacing: 1px;
 }
 
 #media-list-div {
