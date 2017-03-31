@@ -100,109 +100,85 @@ function initCanvas(firstRun) {
     scroll_left_handle_x_position = canvas2_w * scroll_position;
     scroll_right_handle_x_position = canvas2_w * scroll_ratio + canvas2_w * scroll_position - 2 * canvas2_h * .2;
 
+    var dragok = false;
+    var dragok2 = false;
+    var dragok3 = false;
+
     var BB = canvas2_2.getBoundingClientRect();
     var offsetX = BB.left;
     var offsetY = BB.top;
-    // drag related variables
-    var dragok = false;
     var startX;
     var startY;
 
-    // Setup Hypo Canvas' Mouse Listeners
-    var dragok3 = false;
     var BB21 = topcanvas1.getBoundingClientRect();
     var offsetX21 = BB21.left;
     var offsetY21 = BB21.top;
-    // drag related variables
-    var dragok2 = false;
     var startX21;
     var startY21;
 
     var BB22 = topcanvas2.getBoundingClientRect();
     var offsetX22 = BB22.left;
     var offsetY22 = BB22.top;
-    // drag related variables
-    var dragok2 = false;
     var startX22;
     var startY22;
 
     var BB23 = topcanvas3.getBoundingClientRect();
     var offsetX23 = BB23.left;
     var offsetY23 = BB23.top;
-    // drag related variables
-    var dragok2 = false;
     var startX23;
     var startY23;
 
     var BB24 = topcanvas4.getBoundingClientRect();
     var offsetX24 = BB24.left;
     var offsetY24 = BB24.top;
-    // drag related variables
-    var dragok2 = false;
     var startX24;
     var startY24;
 
     var BB25 = topcanvas5.getBoundingClientRect();
     var offsetX25 = BB25.left;
     var offsetY25 = BB25.top;
-    // drag related variables
-    var dragok2 = false;
     var startX25;
     var startY25;
 
     var BB26 = topcanvas6.getBoundingClientRect();
     var offsetX26 = BB26.left;
     var offsetY26 = BB26.top;
-    // drag related variables
-    var dragok2 = false;
     var startX26;
     var startY26;
 
     var BB27 = topcanvas7.getBoundingClientRect();
     var offsetX27 = BB27.left;
     var offsetY27 = BB27.top;
-    // drag related variables
-    var dragok2 = false;
     var startX27;
     var startY27;
 
     var BB28 = topcanvas8.getBoundingClientRect();
     var offsetX28 = BB28.left;
     var offsetY28 = BB28.top;
-    // drag related variables
-    var dragok2 = false;
     var startX28;
     var startY28;
 
     var BB29 = topcanvas9.getBoundingClientRect();
     var offsetX29 = BB29.left;
     var offsetY29 = BB29.top;
-    // drag related variables
-    var dragok2 = false;
     var startX29;
     var startY29;
 
     var BB210 = topcanvas10.getBoundingClientRect();
     var offsetX210 = BB210.left;
     var offsetY210 = BB210.top;
-    // drag related variables
-    var dragok2 = false;
     var startX210;
     var startY210;
 
     var BB211 = topcanvas11.getBoundingClientRect();
     var offsetX211 = BB211.left;
     var offsetY211 = BB211.top;
-    // drag related variables
-    var dragok2 = false;
     var startX211;
     var startY211;
 
     var BB212 = topcanvas12.getBoundingClientRect();
     var offsetX212 = BB212.left;
     var offsetY212 = BB212.top;
-    // drag related variables
-    var dragok2 = false;
     var startX212;
     var startY212;
 
@@ -238,9 +214,6 @@ function initCanvas(firstRun) {
         topcanvas11.onmousedown = hypoMouseDown11;
         topcanvas12.ontouchstart = hypoMouseDown12;
         topcanvas12.onmousedown = hypoMouseDown12;
-        mouseHypoCanvas = [topcanvas1,topcanvas2,topcanvas3,topcanvas4,
-            topcanvas5,topcanvas6,topcanvas7,topcanvas8,topcanvas9,
-            topcanvas10,topcanvas11,topcanvas12];
     }
 
     // Initialize Scrollbar
@@ -304,7 +277,7 @@ function initCanvas(firstRun) {
         var found = false;
         for(var i=0;i<adaptArray.length;i++){
             if(mx + canvas_offset>boxLocationObj[adaptArray[i]][0] && mx + canvas_offset<boxLocationObj[adaptArray[i]][0]+boxLocationObj[adaptArray[i]][2] && my>boxLocationObj[adaptArray[i]][1] &&
-                my<boxLocationObj[adaptArray[i]][1]+boxLocationObj[adaptArray[i]][3] && dragok3 == false && selected_adaptation == -1) {
+                my<boxLocationObj[adaptArray[i]][1]+boxLocationObj[adaptArray[i]][3] && dragok3 == false) {
                 dragok3 = true;
                 selected_adaptation = adaptArray[i];
                 found = true;
@@ -314,14 +287,12 @@ function initCanvas(firstRun) {
             }
             else if(dragok3 == true && mx + canvas_offset>boxLocationObj[adaptArray[i]][0]+(boxLocationObj[adaptArray[i]][2]-boxLocationObj[adaptArray[i]][3]) && mx + canvas_offset<boxLocationObj[adaptArray[i]][0]+(boxLocationObj[adaptArray[i]][2]) &&
                 my>boxLocationObj[adaptArray[i]][1] && my<boxLocationObj[adaptArray[i]][1]+boxLocationObj[adaptArray[i]][3] && selected_adaptation == adaptArray[i]) {
-                //clicked on information button
                 found = true;
                 openInfoPanel(selected_adaptation);
                 console.log("information button click");
             }
             else if(dragok3 == true && mx + canvas_offset>boxLocationObj[adaptArray[i]][0] && mx + canvas_offset<boxLocationObj[adaptArray[i]][0]+(boxLocationObj[adaptArray[i]][2]-boxLocationObj[adaptArray[i]][3]) &&
                 my>boxLocationObj[adaptArray[i]][1] && my<boxLocationObj[adaptArray[i]][1]+boxLocationObj[adaptArray[i]][3] && selected_adaptation == adaptArray[i]) {
-                //clicked on adaptation and is able to be moved
                 dragok2 = true;
                 found = true;
                 console.log("moving activated");
@@ -339,7 +310,6 @@ function initCanvas(firstRun) {
                 redrawHypo(0);
             }
             selected_canvas=0;
-            console.log("reset and return side nav to normal");
         }
         // save the current mouse position
         startX21=mx;
@@ -797,20 +767,32 @@ function initCanvas(firstRun) {
             var dy=my-startY21;
 
             var date = adaptObj[selected_adaptation][1];
+
             if(date >= 1000000) {
                 date = date + 4000000;
             }
             else {
                 date = date * 5;
             }
+
             date = (date - (increment_per_pixel * dx));
+
             if(date >= 5000000) {
                 date = date - 4000000;
             }
             else {
                 date = date/5;
             }
-            adaptObj[selected_adaptation][1] = date;
+
+            if(date <= adaptObj[selected_adaptation][2] && date >= adaptObj[selected_adaptation][3]) {
+                adaptObj[selected_adaptation][1] = date;
+            }
+            else if (date > adaptObj[selected_adaptation][2]) {
+                adaptObj[selected_adaptation][1] = adaptObj[selected_adaptation][2];
+            }
+            else if (date < adaptObj[selected_adaptation][3]) {
+                adaptObj[selected_adaptation][1] = adaptObj[selected_adaptation][3];
+            }
 
             // redraw
             redrawHypo(0);
@@ -1260,14 +1242,12 @@ function lineCanvasWrapperDraw(x_pos,y_pos,x2_pos,y2_pos,color) {
     for(var i = selected_canvas; i <= selected_canvas2; i++) {
         temp_x1 = x_pos - (i * canvas_div_w);
         temp_x2 = x2_pos - (i * canvas_div_w);
-        console.log(temp_x2);
-        console.log(temp_x1);
         hypoCanvas2[i].strokeStyle = color;
         hypoCanvas2[i].lineWidth = 2;
         hypoCanvas2[i].beginPath();
         hypoCanvas2[i].moveTo(temp_x1,y_pos);
         hypoCanvas2[i].lineTo(temp_x2,y2_pos);
-        // hypoCanvas2[i].closePath();
+        hypoCanvas2[i].closePath();
         hypoCanvas2[i].stroke();
     }
 }
