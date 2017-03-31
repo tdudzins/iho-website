@@ -1282,6 +1282,7 @@ function addHypoAdaptation(eventID) {
     while(hypo_box_font_size_change != temp_text) {
         temp_text = hypo_box_font_size_change;
         boxLocation = [];
+        dir = 1;
         for (var i = 0; i < adaptArray.length; i++) {
             createAdaptBox(adaptArray[i], adaptObj[adaptArray[i]][0], adaptObj[adaptArray[i]][1], function(eventID, text, width, height, date) {
                 positionAdaptBox(eventID, text, width, height, date);
@@ -1505,11 +1506,11 @@ function redrawHypo(size) {
             hypoCanvas[i].clearRect(0, 0, canvas_div_w, canvas_div_h_hypo);
         }
 
-        dir = (dir)? 0:1;
         while(hypo_box_font_size_change != temp_text) {
             temp_text = hypo_box_font_size_change;
             boxLocation = [];
             temp_text = hypo_box_font_size_change;
+            dir = 1;
             for (var i = 0; i < adaptArray.length; i++) {
                 createAdaptBox(adaptArray[i], adaptObj[adaptArray[i]][0], adaptObj[adaptArray[i]][1], function(eventID, text, width, height, date) {
                     positionAdaptBox(eventID, text, width, height, date);
