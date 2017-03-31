@@ -150,7 +150,8 @@ footer,
 }
 
 .canvas-wrapper {
-  float:left; display:inline;
+  float:left;
+  display:inline;
 }
 
 .canvas-wrapper-div {
@@ -201,8 +202,7 @@ footer,
 #about-page-bar {
     height: 35px;
     padding: 10px;
-    color: #353535;
-
+    color: #353535;\
 }
 #about-page-panel {
     display: none;
@@ -211,7 +211,7 @@ footer,
     color:#323232;
     padding: 10px;
     transition: max-height 0.2s ease-out;
-	  overflow-y: auto;
+    overflow-y: auto;
 }
 
 #about-page-panel img{
@@ -387,6 +387,7 @@ ul.adaptation-items li {
     width: 15px;
     margin-top: 2px;
 }
+
 .adaptation-span {
     width: calc(100% - 20px);
     font-size: 13px;
@@ -405,7 +406,7 @@ ul.adaptation-items li {
     background-color: rgba(255,255,255,1);
     color: black;
     float: left;
-    margin-left: -475px;
+    margin-left: -500px;
     transition: max-width 0.2s ease-out;
     font-family: Montserrat;
 }

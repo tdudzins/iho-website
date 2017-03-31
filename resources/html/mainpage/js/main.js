@@ -1,3 +1,6 @@
+// Global Variables
+var side_nav_stored = "";
+
 // Event Listeners
 $(document).ready(function() {
     createArrays();
@@ -200,7 +203,8 @@ function getAdaptionInfo(eventID){
         serverPost({action:"q", table:'text', type:'descript', eventid:eventID},function(data, status){
             dataObj.description = data;
             serverPost({action:"q", table:'text', type:'referenc', eventid:eventID},function(data, status){
-                dataObj.reference = data;    
+                dataObj.reference = data;
+                return dataObj;
             });
 
         });
@@ -248,16 +252,108 @@ function initSlidePanels() {
         }
         $(this).toggleClass("active");
     });
+
     $("#side-nav-toggle").click(function () {
         if ($(this).hasClass("active")) {
-            side_nav_width = -1 * ( 25 + parseInt($("#side-nav-panel").css('width')));
-            $("#side-nav-panel").animate({marginLeft: side_nav_width + "px"}, 300);
             $("#side-nav-toggle").html(`<img src="/resources/html/mainpage/img/arrow_open.png" style="height:100%;width:100%;">`);
+            side_nav_width = -1 * (25 + parseInt($("#side-nav-panel").css('width')));
+            $("#side-nav-panel").animate({marginLeft: side_nav_width + "px"}, 300);
         }
         else {
-            $("#side-nav-panel").animate({marginLeft: "0px"}, 300);
             $("#side-nav-toggle").html(`<img src="/resources/html/mainpage/img/arrow_close.png" style="height:100%;width:100%;">`);
+            $("#side-nav-panel").animate({marginLeft: "0px"}, 300);
         }
         $(this).toggleClass("active");
     });
 }
+
+function openInfoPanel(eventID) {
+    console.log(eventID);
+    if ($("#side-nav-toggle").hasClass("active")) {
+        $("#side-nav-toggle").html(`<img src="/resources/html/mainpage/img/arrow_open.png" style="height:100%;width:100%;">`);
+        side_nav_width = -1 * (25 + parseInt($("#side-nav-panel").css('width')));
+        $("#side-nav-panel").animate({marginLeft: side_nav_width + "px"}, 300, function(){
+            side_nav_stored = $("#side-nav").get()[0].innerHTML;
+            $("#side-nav").empty();
+            // Create the Info Panel
+            $("#side-nav").append(toggle_bar);
+            $("#side-nav-toggle").css("background","linear-gradient(to right, rgba(78,92,104,1), rgba(111,130,145,1))");
+            $("#side-nav").append(info_panel_main);
+            $("#side-nav-toggle").html(`<img src="/resources/html/mainpage/img/arrow_close.png" style="height:100%;width:100%;">`);
+            $("#side-nav-info").animate({marginLeft: "0px"}, 300);
+
+        });
+        console.log("closes");
+    }
+}
+
+function closeInfoPanel() {
+    //background: linear-gradient(to right, rgba(58,92,113,1), rgba(69,106,131,1));
+
+}
+
+var toggle_bar = `
+<div id="side-nav-bar">
+    <div id="side-nav-toggle" class=""><img src="/resources/html/mainpage/img/arrow_open.png" style="height:100%;width:100%;"></div>
+</div>`;
+
+var info_panel_main = `
+<div id="side-nav-info">
+<div id="side-info-title">
+</div>
+<div id="information-panel-div">
+<div id="info-ede" class="adapt-attr">
+<div class="title">Earliest Direct Evidence:</div>
+<div class="data"></div>
+</div>
+<div id="info-eie" class="adapt-attr">
+<div class="title">Earliest Indirect Evidence:</div>
+<div class="data"></div>
+</div>
+<div id="info-desc">
+<div class="title">Description:</div>
+</div>
+<div id="adaptation-description-data">
+</div>
+<div id="info-ref">
+<div class="title">References:</div>
+</div>
+<div id="adaptation-reference-data">
+</div>
+<div id="info-media">
+<div class="title">Media:</div>
+</div>
+<div id="media-list-div">
+</div>
+</div>
+</div>`;
+
+var info_panel_pictures_container = `
+<div id="picture-container" class="media-type">Pictures</div>
+<ul id="media-list-picture" class="media-list">
+</ul>`;
+
+var info_panel_pictures_item = `
+<li class="media-item">
+    <img class="media-thumbnail" src="">
+</li>`;
+
+var info_panel_videos_container = `
+<div id="video-container" class="media-type">Videos</div>
+<ul id="media-list-video" class="media-list">
+</ul>`;
+
+var info_panel_videos_item = `
+<li class="media-item">
+    <img class="media-thumbnail" src="">
+</li>`;
+
+var info_panel_audio_container = `
+<div id="audio-container" class="media-type">Audio</div>
+<ul id="media-list-audio" class="media-list">
+</ul>`;
+
+var info_panel_audio_item = `
+<li class="media-item">
+    <img class="media-thumbnail" src="">
+</li>`;

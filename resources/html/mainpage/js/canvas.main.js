@@ -30,6 +30,7 @@ var hypoCanvas2 = [];
 var empirCanvas = []; //empirical canvas
 var mouseHypoCanvas = [];
 var mouse_selected_canvas = 0;
+var selected_adaptation = 0;
 var draw_start = 0; // Redrawable Area start in pixels
 var draw_end = 0; // Redrawable Area start in pixels
 var date_start = 12000000; // Earliest date from selected adapations
@@ -106,6 +107,7 @@ function initCanvas(firstRun) {
     var startY;
 
     // Setup Hypo Canvas' Mouse Listeners
+    var dragok3 = false;
     var BB21 = topcanvas1.getBoundingClientRect();
     var offsetX21 = BB21.left;
     var offsetY21 = BB21.top;
@@ -297,17 +299,45 @@ function initCanvas(firstRun) {
         // test each rect to see if mouse is inside
         dragok2=false;
         var canvas_offset = 0 * canvas_div_w;
+        var found = false;
         for(var i=0;i<adaptArray.length;i++){
-            if(mx + canvas_offset>boxLocationObj[adaptArray[i]][0] && mx + canvas_offset<boxLocationObj[adaptArray[i]][0]+boxLocationObj[adaptArray[i]][2] && my>boxLocationObj[adaptArray[i]][1] && my<boxLocationObj[adaptArray[i]][1]+boxLocationObj[adaptArray[i]][3]) {
-                dragok2=true;
+            if(mx + canvas_offset>boxLocationObj[adaptArray[i]][0] && mx + canvas_offset<boxLocationObj[adaptArray[i]][0]+boxLocationObj[adaptArray[i]][2] && my>boxLocationObj[adaptArray[i]][1] &&
+                my<boxLocationObj[adaptArray[i]][1]+boxLocationObj[adaptArray[i]][3] && dragok3 == false && selected_adaptation == 0) {
+                dragok3 = true;
                 selected_adaptation = adaptArray[i];
+                found = true;
+                redrawHypo(0);
+                drawLines(0);
+                console.log("selected a adaptation");
+            }
+            else if(dragok3 == true && mx + canvas_offset>boxLocationObj[adaptArray[i]][0]+(boxLocationObj[adaptArray[i]][2]-boxLocationObj[adaptArray[i]][3]) && mx + canvas_offset<boxLocationObj[adaptArray[i]][0]+(boxLocationObj[adaptArray[i]][2]) &&
+                my>boxLocationObj[adaptArray[i]][1] && my<boxLocationObj[adaptArray[i]][1]+boxLocationObj[adaptArray[i]][3] && selected_adaptation == adaptArray[i]) {
+                //clicked on information button
+                found = true;
+                openInfoPanel(selected_adaptation);
+                console.log("information button click");
+            }
+            else if(dragok3 == true && mx + canvas_offset>boxLocationObj[adaptArray[i]][0] && mx + canvas_offset<boxLocationObj[adaptArray[i]][0]+(boxLocationObj[adaptArray[i]][2]-boxLocationObj[adaptArray[i]][3]) &&
+                my>boxLocationObj[adaptArray[i]][1] && my<boxLocationObj[adaptArray[i]][1]+boxLocationObj[adaptArray[i]][3] && selected_adaptation == adaptArray[i]) {
+                //clicked on adaptation and is able to be moved
+                dragok2 = true;
+                found = true;
+                console.log("moving activated");
             }
         }
-
+        if(!found){
+            //canvas clicked but no adaptation was clicked
+            dragok2 = false;
+            dragok3 = false;
+            found = false;
+            selected_canvas=0;
+            selected_adaptation=0;
+            closeInfoPanel();
+            console.log("reset and return side nav to normal");
+        }
         // save the current mouse position
         startX21=mx;
         startY21=my;
-        mouse_selected_canvas = 1;
     }
 
     function hypoMouseDown2(e) {
@@ -670,8 +700,6 @@ function initCanvas(firstRun) {
             scrollRegions[i].isDragging=false;
         }
         dragok2 = false;
-        selected_canvas=0;
-        selected_adaptation=0;
     }
 
     // handle mouse moves
@@ -740,7 +768,7 @@ function initCanvas(firstRun) {
             startY=my;
         }
 
-        if(dragok2) {
+        else if(dragok2) {
             // tell the browser we're handling this mouse event
             e.preventDefault();
             e.stopPropagation();
@@ -761,15 +789,12 @@ function initCanvas(firstRun) {
             var dy=my-startY21;
 
             var date = adaptObj[selected_adaptation][1];
-            console.log(dx);
-            console.log(date);
             if(date >= 1000000) {
                 date = date + 4000000;
             }
             else {
                 date = date * 5;
             }
-            console.log((date - (increment_per_pixel * dx)));
             date = (date - (increment_per_pixel * dx));
             if(date >= 5000000) {
                 date = date - 4000000;
@@ -777,12 +802,11 @@ function initCanvas(firstRun) {
             else {
                 date = date/5;
             }
-            console.log(date);
             adaptObj[selected_adaptation][1] = date;
 
             // redraw
-            redrawHypo(-10);
-            drawLines(-10);
+            redrawHypo(0);
+            drawLines(0);
 
             startX21=mx;
             startY21=my;
@@ -808,6 +832,9 @@ function initCanvas(firstRun) {
             startY211=my;
             startX212=mx;
             startY212=my;
+        }
+        else if (dragok3) {
+
         }
 
         // Move main canvas on mouseMove
@@ -1436,7 +1463,7 @@ function resizeCanvas() {
     }
     function redrawHypo(size) {
         // Reposition boxes only
-        if((Math.abs(last_scroll_ratio - scroll_ratio) > size && (last_hypo_font_size == hypo_box_font_size_change) && size != 0) || size == -10) {
+        if(Math.abs(last_scroll_ratio - scroll_ratio) > size && (last_hypo_font_size == hypo_box_font_size_change) && size != 0) {
             // Clear boxes
             for(var i = 0; i < 12; i++) {
                 hypoCanvas[i].clearRect(0, 0, canvas_div_w, canvas_div_h_hypo);
@@ -1619,29 +1646,29 @@ function empiCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text) {
     var selected_canvas = 0;
 
     if(c_value <= 1)
-    selected_canvas = 0;
+        selected_canvas = 0;
     else if(c_value <= 2)
-    selected_canvas = 1;
+        selected_canvas = 1;
     else if(c_value <= 3)
-    selected_canvas = 2;
+        selected_canvas = 2;
     else if(c_value <= 4)
-    selected_canvas = 3;
+        selected_canvas = 3;
     else if(c_value <= 5)
-    selected_canvas = 4;
+        selected_canvas = 4;
     else if(c_value <= 6)
-    selected_canvas = 5;
+        selected_canvas = 5;
     else if(c_value <= 7)
-    selected_canvas = 6;
+        selected_canvas = 6;
     else if(c_value <= 8)
-    selected_canvas = 7;
+        selected_canvas = 7;
     else if(c_value <= 9)
-    selected_canvas = 8;
+        selected_canvas = 8;
     else if(c_value <= 10)
-    selected_canvas = 9;
+        selected_canvas = 9;
     else if(c_value <= 11)
-    selected_canvas = 10;
+        selected_canvas = 10;
     else if(c_value <= 12)
-    selected_canvas = 11;
+        selected_canvas = 11;
 
     x_pos = x_pos%canvas_div_w;
     var temp_x = 0;
