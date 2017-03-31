@@ -1096,29 +1096,29 @@ function boxCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text,eventI
     var selected_canvas = 0;
 
     if(c_value <= 1)
-    selected_canvas = 0;
+        selected_canvas = 0;
     else if(c_value <= 2)
-    selected_canvas = 1;
+        selected_canvas = 1;
     else if(c_value <= 3)
-    selected_canvas = 2;
+        selected_canvas = 2;
     else if(c_value <= 4)
-    selected_canvas = 3;
+        selected_canvas = 3;
     else if(c_value <= 5)
-    selected_canvas = 4;
+        selected_canvas = 4;
     else if(c_value <= 6)
-    selected_canvas = 5;
+        selected_canvas = 5;
     else if(c_value <= 7)
-    selected_canvas = 6;
+        selected_canvas = 6;
     else if(c_value <= 8)
-    selected_canvas = 7;
+        selected_canvas = 7;
     else if(c_value <= 9)
-    selected_canvas = 8;
+        selected_canvas = 8;
     else if(c_value <= 10)
-    selected_canvas = 9;
+        selected_canvas = 9;
     else if(c_value <= 11)
-    selected_canvas = 10;
+        selected_canvas = 10;
     else if(c_value <= 12)
-    selected_canvas = 11;
+        selected_canvas = 11;
 
     x_pos = x_pos%canvas_div_w;
     var temp_x = 0;
@@ -1138,7 +1138,8 @@ function boxCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text,eventI
             hypoCanvas[selected_canvas + i].textAlign = "center";
             hypoCanvas[selected_canvas + i].textBaseline="hanging";
             if(eventID == selected_adaptation){
-                hypoCanvas[selected_canvas + i].drawImage(img, temp_x + width_length - hypo_box_font_size_change - empir_text_in_box_padding_w/4, y_pos + ((height_length-hypo_box_font_size_change)/2), hypo_box_font_size_change, hypo_box_font_size_change);
+                var img_size = hypo_box_font_size_change + (text_in_box_padding_h/3)
+                hypoCanvas[selected_canvas + i].drawImage(img, temp_x + width_length - img_size - empir_text_in_box_padding_w/5, y_pos + ((height_length-img_size)/2), img_size, img_size);
             }
             for (j = 0; j < text.length; j++) {
                 hypoCanvas[selected_canvas + i].fillText(text[j], temp_x + (0.5 * (width_length - ((selected_adaptation==eventID) ? hypo_box_font_size_change : 0))) , y_pos + (text_in_box_padding_h*.5) + ((hypo_box_font_size_change + ((j)?1:0)) * (j)));
@@ -1187,57 +1188,57 @@ function lineCanvasWrapperDraw(x_pos,y_pos,x2_pos,y2_pos,color) {
     var selected_canvas = 0;
 
     if(c_value <= 1)
-    selected_canvas = 0;
+        selected_canvas = 0;
     else if(c_value <= 2)
-    selected_canvas = 1;
+        selected_canvas = 1;
     else if(c_value <= 3)
-    selected_canvas = 2;
+        selected_canvas = 2;
     else if(c_value <= 4)
-    selected_canvas = 3;
+        selected_canvas = 3;
     else if(c_value <= 5)
-    selected_canvas = 4;
+        selected_canvas = 4;
     else if(c_value <= 6)
-    selected_canvas = 5;
+        selected_canvas = 5;
     else if(c_value <= 7)
-    selected_canvas = 6;
+        selected_canvas = 6;
     else if(c_value <= 8)
-    selected_canvas = 7;
+        selected_canvas = 7;
     else if(c_value <= 9)
-    selected_canvas = 8;
+        selected_canvas = 8;
     else if(c_value <= 10)
-    selected_canvas = 9;
+        selected_canvas = 9;
     else if(c_value <= 11)
-    selected_canvas = 10;
+        selected_canvas = 10;
     else if(c_value <= 12)
-    selected_canvas = 11;
+        selected_canvas = 11;
 
     var c_value2 = x2_pos/canvas_div_w;
     var selected_canvas2 = 0;
 
     if(c_value2 <= 1)
-    selected_canvas2 = 0;
+        selected_canvas2 = 0;
     else if(c_value2 <= 2)
-    selected_canvas2 = 1;
+        selected_canvas2 = 1;
     else if(c_value2 <= 3)
-    selected_canvas2 = 2;
+        selected_canvas2 = 2;
     else if(c_value2 <= 4)
-    selected_canvas2 = 3;
+        selected_canvas2 = 3;
     else if(c_value2 <= 5)
-    selected_canvas2 = 4;
+        selected_canvas2 = 4;
     else if(c_value2 <= 6)
-    selected_canvas2 = 5;
+        selected_canvas2 = 5;
     else if(c_value2 <= 7)
-    selected_canvas2 = 6;
+        selected_canvas2 = 6;
     else if(c_value2 <= 8)
-    selected_canvas2 = 7;
+        selected_canvas2 = 7;
     else if(c_value2 <= 9)
-    selected_canvas2 = 8;
+        selected_canvas2 = 8;
     else if(c_value2 <= 10)
-    selected_canvas2 = 9;
+        selected_canvas2 = 9;
     else if(c_value2 <= 11)
-    selected_canvas2 = 10;
+        selected_canvas2 = 10;
     else if(c_value2 <= 12)
-    selected_canvas2 = 11;
+        selected_canvas2 = 11;
 
     var temp_x = 0;
     var temp_x2 = 0;
@@ -1496,7 +1497,7 @@ function redrawHypo(size) {
 
 
             boxLocationObj[item[5]][0] = x_pos;
-            boxCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4], empirical);
+            boxCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4], item[5], empirical);
         });
         last_scroll_ratio = scroll_ratio;
     }
