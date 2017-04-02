@@ -1,5 +1,6 @@
 // Global Variables
 var side_nav_stored = "";
+var vidEmbed = [];
 
 // Event Listeners
 $(document).ready(function() {
@@ -341,9 +342,30 @@ function openInfoPanel(eventID) {
                         for(var i=0; i < pictureArr.length; i++) {
                             var inj = `
                             <li class="media-item">
-                            <img id="photo-` + i + `" class="media-thumbnail" src="` + pictureArr[i].mediaPath + `">
+                            <img id="photo-` + i + `" class="media-thumbnail" src="` + pictureArr[i].mediaPath + `" alt="` + pictureArr[i].mediaDescription + `">
                             </li>`;
                             $("#media-list-picture").append(inj);
+                            // Get the modal
+                            var pic_modal = document.getElementById('picture-modal-div');
+
+                            // Get the image and insert it inside the modal - use its "alt" text as a caption
+                            var pic_name = "photo-" + i;
+                            var pic_img = document.getElementById(pic_name);
+                            var pic_modalImg = document.getElementById("picture-modal-content");
+                            var pic_captionText = document.getElementById("picture-caption");
+                            pic_img.onclick = function(){
+                                pic_modal.style.display = "block";
+                                pic_modalImg.src = this.src;
+                                pic_captionText.innerHTML = this.alt;
+                            }
+
+                            // Get the <span> element that closes the modal
+                            var span = document.getElementById("picture-modal-close");
+
+                            // When the user clicks on <span> (x), close the modal
+                            span.onclick = function() {
+                              pic_modal.style.display = "none";
+                            }
                         }
                         var count = pictureArr.length;
                         var height = 100 + ((count/4)-(count/4%1))*100;
@@ -351,16 +373,39 @@ function openInfoPanel(eventID) {
                     }
                     if(videoArr.length > 0) {
                         $("#media-list-div").append(info_panel_videos_container);
+                        vidEmbed = [];
                         for(var i=0; i < videoArr.length; i++) {
                             var inj = "";
                             if(videoArr[i].mediaPath.indexOf("youtube") != -1) {
                                 inj = `
                                 <li class="media-item">
-                                <img id="video-` + i + `" class="media-thumbnail" src="http://img.youtube.com/vi/` + videoArr[i].mediaPath.substr(videoArr[i].mediaPath.indexOf("watch?v="),videoArr[i].mediaPath.length).replace("watch?v=","") + `/1.jpg">
-                                </li>`;
+                                <img id="video-` + i + `" class="media-thumbnail" src="http://img.youtube.com/vi/` + videoArr[i].mediaPath.substr(videoArr[i].mediaPath.indexOf("www.youtube.com/embed/"),videoArr[i].mediaPath.length).replace("www.youtube.com/embed/","").substr(0,11) + `/1.jpg" mediaPath="` + `" alt="` + videoArr[i].mediaDescription + `" vidEmbedNum="` + i +  `"></li>`;
+                                vidEmbed.push(videoArr[i].mediaPath);
                                 $("#media-list-video").append(inj);
+
+                                // Get the modal
+                                var vid_modal = document.getElementById('video-modal-div');
+
+                                // Get the image and insert it inside the modal - use its "alt" text as a caption
+                                var vid_img = document.getElementById("video-" + i);
+
+                                var vid_modalVid = document.getElementById("video-modal-content");
+                                var vid_captionText = document.getElementById("video-caption");
+                                vid_img.onclick = function(){
+                                    vid_modal.style.display = "block";
+                                    vid_modalVid.append(vidEmbed[parseInt(this.vidEmbedNum)]);
+                                    vid_captionText.innerHTML = this.alt;
+                                }
+
+                                // Get the <span> element that closes the modal
+                                var span = document.getElementById("video-modal-close");
+
+                                // When the user clicks on <span> (x), close the modal
+                                span.onclick = function() {
+                                    vid_modal.style.display = "none";
+                                }
                             }
-                            if(videoArr[i].mediaPath.indexOf("vimeo") != -1) {
+                            else if(videoArr[i].mediaPath.indexOf("vimeo") != -1) {
                                 var vimeoVideoID = videoArr[i].mediaPath.substr(videoArr[i].mediaPath.indexOf("vimeo.com/"),videoArr[i].mediaPath.length).replace("vimeo.com/","");
                                 $.getJSON('https://vimeo.com/api/v2/video/' + vimeoVideoID + '.json', function(data) {
                                          inj = `
@@ -381,6 +426,7 @@ function openInfoPanel(eventID) {
                     $("#media-list-div").empty();
                 }
             });
+            $
 
             $("#side-nav-toggle").html(`<img src="/resources/html/mainpage/img/arrow_close.png" style="height:100%;width:100%;">`);
             $("#side-nav-info").animate({marginLeft: "0px"}, 300);

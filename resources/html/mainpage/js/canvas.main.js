@@ -261,6 +261,7 @@ function initCanvas(firstRun) {
         e.preventDefault();
         e.stopPropagation();
         var margin_value = parseInt(document.getElementById("canvas-wrapper-adaptations-div").style.marginLeft);
+        console.log(margin_value);
 
         // get the current mouse position
         if(e.clientX == undefined){
@@ -273,7 +274,7 @@ function initCanvas(firstRun) {
         }
         // test each rect to see if mouse is inside
         dragok2=false;
-        var canvas_offset = 0 * canvas_div_w;
+        var canvas_offset = (0 * canvas_div_w);
         var found = false;
         for(var i=0;i<adaptArray.length;i++){
             if(mx + canvas_offset>boxLocationObj[adaptArray[i]][0] && mx + canvas_offset<boxLocationObj[adaptArray[i]][0]+boxLocationObj[adaptArray[i]][2] && my>boxLocationObj[adaptArray[i]][1] &&
@@ -1494,6 +1495,7 @@ function removeHypoAdaptation(eventID, callback) {
         }
     });
     //delete relationsObj[eventID];
+    selected_adaptation = -1;
     hypo_box_font_size_change = hypo_box_font_size; // reset font size
     adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
     adaptArray = JSON.parse(sessionStorage.getItem("adaptArray"));
