@@ -80,8 +80,6 @@ html {
 
 
 h1, h2, h3, h4, h5, h6 {
-	color: #fff;
-	font-weight: normal;
 }
 
 h1 {
@@ -103,7 +101,7 @@ h6 {
 	font-size: 13px;
 }
 
-p, li, dl, blockquote, table, kbd {
+li, dl, blockquote, table, kbd {
 	font-size: 16px;
 	line-height: 1.6;
 }
