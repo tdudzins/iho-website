@@ -377,9 +377,11 @@ function openInfoPanel(eventID) {
                         for(var i=0; i < videoArr.length; i++) {
                             var inj = "";
                             if(videoArr[i].mediaPath.indexOf("youtube") != -1) {
+                                var video_id =  videoArr[i].mediaPath.substr(videoArr[i].mediaPath.indexOf("www.youtube.com/embed/"),videoArr[i].mediaPath.length).replace("www.youtube.com/embed/","").substr(0,11);
                                 inj = `
                                 <li class="media-item">
-                                <img id="video-` + i + `" class="media-thumbnail" src="http://img.youtube.com/vi/` + videoArr[i].mediaPath.substr(videoArr[i].mediaPath.indexOf("www.youtube.com/embed/"),videoArr[i].mediaPath.length).replace("www.youtube.com/embed/","").substr(0,11) + `/1.jpg" mediaPath="` + `" alt="` + videoArr[i].mediaDescription + `" vidEmbedNum="` + i +  `"></li>`;
+
+                                <img id="` + video_id + `" class="media-thumbnail" src="http://img.youtube.com/vi/` +video_id + `/1.jpg" mediaPath="` + `" alt="` + videoArr[i].mediaDescription + `" vidEmbedNum="` + i +  `"></li>`;
                                 vidEmbed.push(videoArr[i].mediaPath);
                                 $("#media-list-video").append(inj);
 
@@ -387,13 +389,14 @@ function openInfoPanel(eventID) {
                                 var vid_modal = document.getElementById('video-modal-div');
 
                                 // Get the image and insert it inside the modal - use its "alt" text as a caption
-                                var vid_img = document.getElementById("video-" + i);
+                                var vid_img = document.getElementById(video_id);
 
                                 var vid_modalVid = document.getElementById("video-modal-content");
                                 var vid_captionText = document.getElementById("video-caption");
                                 vid_img.onclick = function(){
                                     vid_modal.style.display = "block";
-                                    vid_modalVid.append(vidEmbed[parseInt(this.vidEmbedNum)]);
+                                    var iframe = $('<iframe width="50%" height="50%" src="https://www.youtube.com/embed/'+ this.id+ '" frameborder="0" allowfullscreen></iframe>');
+                                    iframe.appendTo(vid_modalVid);
                                     vid_captionText.innerHTML = this.alt;
                                 }
 
