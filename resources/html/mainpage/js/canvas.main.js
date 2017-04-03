@@ -1,16 +1,16 @@
 /************** Canvas Main **************/
 
 /* Canvas Div Dimensions */
-var canvas_div_w = canvas_div_h_hypo = canvas_div_h_scroll = canvas_div_h_empir =
+var canvas_div_w = canvas_div_h_hypo = canvas_div_h_scroll = canvas_div_h_empir = grey_canvas_width =
 canvas1_1_h =  canvas1_234_h = canvas2_12_w =  canvas2_12_h = canvas3_1_h = canvas3_2_h = 0; // empirical Canvas (Layer 2: Connections, Layer 3: Adaptations) height in pixels
 
 // Canvas Drawing Variables
 var topcanvas1, topcanvas2, topcanvas3, topcanvas4, topcanvas5, topcanvas6, topcanvas7, topcanvas8, topcanvas9, topcanvas10, topcanvas11, topcanvas12,
 topcanvas21, topcanvas22, topcanvas23, topcanvas24, topcanvas25, topcanvas26, topcanvas27, topcanvas28, topcanvas29, topcanvas210, topcanvas211, topcanvas212,
-botcanvas1, botcanvas2, botcanvas3, botcanvas4, botcanvas5, botcanvas6, botcanvas7, botcanvas8, botcanvas9, botcanvas10, botcanvas11, botcanvas12,
+botcanvas1, botcanvas2, botcanvas3, botcanvas4, botcanvas5, botcanvas6, botcanvas7, botcanvas8, botcanvas9, botcanvas10, botcanvas11, botcanvas12, greycanvas1,
 ctx_top_1, ctx_top_2, ctx_top_3, ctx_top_4, ctx_top_5, ctx_top_6, ctx_top_7, ctx_top_8, ctx_top_9, ctx_top_10, ctx_top_11, ctx_top_12,
 ctx_top2_1, ctx_top2_2, ctx_top2_3, ctx_top2_4, ctx_top2_5, ctx_top2_6, ctx_top2_7, ctx_top2_8, ctx_top2_9, ctx_top2_10, ctx_top2_11, ctx_top2_12,
-ctx_bot_1, ctx_bot_2, ctx_bot_3, ctx_bot_4, ctx_bot_5, ctx_bot_6, ctx_bot_7, ctx_bot_8, ctx_bot_9, ctx_bot_10, ctx_bot_11, ctx_bot_12,
+ctx_bot_1, ctx_bot_2, ctx_bot_3, ctx_bot_4, ctx_bot_5, ctx_bot_6, ctx_bot_7, ctx_bot_8, ctx_bot_9, ctx_bot_10, ctx_bot_11, ctx_bot_12, ctx_grey_1,
 canvas1_1, canvas2_1, canvas2_2, ctx1_1, ctx2_1, ctx2_2;
 
 // Global Variables
@@ -27,26 +27,30 @@ var minScrollbar = 151;
 var scrollRegions = [];
 var hypoCanvas = [];
 var hypoCanvas2 = [];
+var greyCanvas;
 var empirCanvas = []; //empirical canvas
+var mouseHypoCanvas = [];
+var mouse_selected_canvas = 0;
+var selected_adaptation = -1;
 var draw_start = 0; // Redrawable Area start in pixels
 var draw_end = 0; // Redrawable Area start in pixels
 var date_start = 12000000; // Earliest date from selected adapations
 var date_end = 000000; // Latest date from selected adaptations
 var largest_timespan = 12000000; // When user is all the way scaled out, what is the largest amount of time to be viewed
 var smallest_timespan = 1000000; // When user is all the way scaled in, what is the smallest amount of time to be viewed
-var max_char_per_line = 20; // Used in positionBox
+var max_char_per_line = 25; // Used in positionBox
 var box_to_box_padding_size = 18;
 var empir_box_to_box_padding_size = 5;
-var text_in_box_padding_w = std_text_in_box_padding_w = 15;
-var text_in_box_padding_h = std_text_in_box_padding_h = 10;
-var empir_text_in_box_padding_w = empir_std_text_in_box_padding_w = 15;
-var empir_text_in_box_padding_h = empir_std_text_in_box_padding_h = 10;
-var hypo_box_font_size = temp_text = last_hypo_font_size = hypo_box_font_size_change = 20;
-var empir_box_font_size = empir_temp_text = last_empir_font_size = empir_box_font_size_change = 20;
+var text_in_box_padding_w = std_text_in_box_padding_w = 19;
+var text_in_box_padding_h = std_text_in_box_padding_h = 12;
+var empir_text_in_box_padding_w = empir_std_text_in_box_padding_w = 19;
+var empir_text_in_box_padding_h = empir_std_text_in_box_padding_h = 12;
+var hypo_box_font_size = temp_text = last_hypo_font_size = hypo_box_font_size_change = 15;
+var empir_box_font_size = empir_temp_text = last_empir_font_size = empir_box_font_size_change = 15;
 var scrollbar_font_size = 13;
-var increments_font_size = 25;
+var increments_font_size = 18;
 var hypo_box_font_family = empir_box_font_family = scrollbar_font_family = increments_font_family = "Montserrat";
-var increments_font_color = "rgba(0,0,0,1)";
+var increments_font_color = "rgba(68,68,68,1)";
 var hypo_box_fill_style_relation = "rgba(111,130,145,1.0)";
 var hypo_box_fill_style_empirical = "rgba(6,74,121,1.0)";
 var scrollbar_container_fill_style = "rgba(220,220,220,0.3)";
@@ -65,7 +69,8 @@ var empiricalTable = JSON.parse(sessionStorage.getItem("empiricalTable"));
 var boxLocationObj = {};
 var sequenceObj = {};
 var sequenceCheckObj = {};
-
+var img = new Image();
+img.src = '/resources/html/mainpage/img/information.png';
 var timespan;
 var dir = 1;
 var empir_dir = 1;
@@ -95,30 +100,130 @@ function initCanvas(firstRun) {
     scroll_left_handle_x_position = canvas2_w * scroll_position;
     scroll_right_handle_x_position = canvas2_w * scroll_ratio + canvas2_w * scroll_position - 2 * canvas2_h * .2;
 
+    var dragok = false;
+    var dragok2 = false;
+    var dragok3 = false;
+
     var BB = canvas2_2.getBoundingClientRect();
     var offsetX = BB.left;
     var offsetY = BB.top;
-    // drag related variables
-    var dragok = false;
     var startX;
     var startY;
 
+    var BB21 = topcanvas1.getBoundingClientRect();
+    var offsetX21 = BB21.left;
+    var offsetY21 = BB21.top;
+    var startX21;
+    var startY21;
+
+    var BB22 = topcanvas2.getBoundingClientRect();
+    var offsetX22 = BB22.left;
+    var offsetY22 = BB22.top;
+    var startX22;
+    var startY22;
+
+    var BB23 = topcanvas3.getBoundingClientRect();
+    var offsetX23 = BB23.left;
+    var offsetY23 = BB23.top;
+    var startX23;
+    var startY23;
+
+    var BB24 = topcanvas4.getBoundingClientRect();
+    var offsetX24 = BB24.left;
+    var offsetY24 = BB24.top;
+    var startX24;
+    var startY24;
+
+    var BB25 = topcanvas5.getBoundingClientRect();
+    var offsetX25 = BB25.left;
+    var offsetY25 = BB25.top;
+    var startX25;
+    var startY25;
+
+    var BB26 = topcanvas6.getBoundingClientRect();
+    var offsetX26 = BB26.left;
+    var offsetY26 = BB26.top;
+    var startX26;
+    var startY26;
+
+    var BB27 = topcanvas7.getBoundingClientRect();
+    var offsetX27 = BB27.left;
+    var offsetY27 = BB27.top;
+    var startX27;
+    var startY27;
+
+    var BB28 = topcanvas8.getBoundingClientRect();
+    var offsetX28 = BB28.left;
+    var offsetY28 = BB28.top;
+    var startX28;
+    var startY28;
+
+    var BB29 = topcanvas9.getBoundingClientRect();
+    var offsetX29 = BB29.left;
+    var offsetY29 = BB29.top;
+    var startX29;
+    var startY29;
+
+    var BB210 = topcanvas10.getBoundingClientRect();
+    var offsetX210 = BB210.left;
+    var offsetY210 = BB210.top;
+    var startX210;
+    var startY210;
+
+    var BB211 = topcanvas11.getBoundingClientRect();
+    var offsetX211 = BB211.left;
+    var offsetY211 = BB211.top;
+    var startX211;
+    var startY211;
+
+    var BB212 = topcanvas12.getBoundingClientRect();
+    var offsetX212 = BB212.left;
+    var offsetY212 = BB212.top;
+    var startX212;
+    var startY212;
+
     // listen for mouse events
     if(firstRun){
-        canvas2_2.onmousedown = scrollbarDown;
-        window.onmouseup = scrollbarUp;
-        window.onmousemove = scrollbarMove;
+        window.onmouseup = mouseUp;
+        window.onmousemove = mouseMove;
+        window.ontouchend = mouseUp;
+        window.ontouchmove = mouseMove;
         canvas2_2.ontouchstart = scrollbarDown;
-        window.ontouchend = scrollbarUp;
-        window.ontouchmove = scrollbarMove;
+        canvas2_2.onmousedown = scrollbarDown;
+        topcanvas1.ontouchstart = hypoMouseDown1;
+        topcanvas1.onmousedown = hypoMouseDown1;
+        topcanvas2.ontouchstart = hypoMouseDown2;
+        topcanvas2.onmousedown = hypoMouseDown2;
+        topcanvas3.ontouchstart = hypoMouseDown3;
+        topcanvas3.onmousedown = hypoMouseDown3;
+        topcanvas4.ontouchstart = hypoMouseDown4;
+        topcanvas4.onmousedown = hypoMouseDown4;
+        topcanvas5.ontouchstart = hypoMouseDown5;
+        topcanvas5.onmousedown = hypoMouseDown5;
+        topcanvas6.ontouchstart = hypoMouseDown6;
+        topcanvas6.onmousedown = hypoMouseDown6;
+        topcanvas7.ontouchstart = hypoMouseDown7;
+        topcanvas7.onmousedown = hypoMouseDown7;
+        topcanvas8.ontouchstart = hypoMouseDown8;
+        topcanvas8.onmousedown = hypoMouseDown8;
+        topcanvas9.ontouchstart = hypoMouseDown9;
+        topcanvas9.onmousedown = hypoMouseDown9;
+        topcanvas10.ontouchstart = hypoMouseDown10;
+        topcanvas10.onmousedown = hypoMouseDown10;
+        topcanvas11.ontouchstart = hypoMouseDown11;
+        topcanvas11.onmousedown = hypoMouseDown11;
+        topcanvas12.ontouchstart = hypoMouseDown12;
+        topcanvas12.onmousedown = hypoMouseDown12;
     }
+
     // Initialize Scrollbar
     drawScrollbarContainer();
     drawScrollbarBlock(0);
     last_scroll_ratio = scroll_ratio;
     last_scroll_ratio_lines = scroll_ratio;
     last_scroll_ratio_inc = scroll_ratio;
-    // handle mousedown events
+
+    // handle scrollbar mousedown events
     function scrollbarDown(e) {
         // tell the browser we're handling this mouse event
         e.preventDefault();
@@ -135,6 +240,7 @@ function initCanvas(firstRun) {
         }
         // test each rect to see if mouse is inside
         dragok=false;
+
         for (var i=0;i<scrollRegions.length;i++) {
             var r=scrollRegions[i];
             if(mx>r.x && mx<r.x+r.width && my>r.y && my<r.y+r.height) {
@@ -143,13 +249,415 @@ function initCanvas(firstRun) {
                 r.isDragging=true;
             }
         }
+
         // save the current mouse position
         startX=mx;
         startY=my;
     }
 
+    // handle hypo canvas mousedown events
+    function hypoMouseDown1(e) {
+        // tell the browser we're handling this mouse event
+        e.preventDefault();
+        e.stopPropagation();
+        var margin_value = parseInt(document.getElementById("canvas-wrapper-adaptations-div").style.marginLeft);
+        console.log(margin_value);
+
+        // get the current mouse position
+        if(e.clientX == undefined){
+            var mx=parseInt(e.changedTouches[0].clientX-offsetX21-margin_value);
+            var my=parseInt(e.changedTouches[0].clientY-offsetY21);
+        }
+        else{
+            var mx=parseInt(e.clientX-offsetX21-margin_value);
+            var my=parseInt(e.clientY-offsetY21);
+        }
+        // test each rect to see if mouse is inside
+        dragok2=false;
+        var canvas_offset = (0 * canvas_div_w);
+        var found = false;
+        for(var i=0;i<adaptArray.length;i++){
+            if(mx + canvas_offset>boxLocationObj[adaptArray[i]][0] && mx + canvas_offset<boxLocationObj[adaptArray[i]][0]+boxLocationObj[adaptArray[i]][2] && my>boxLocationObj[adaptArray[i]][1] &&
+                my<boxLocationObj[adaptArray[i]][1]+boxLocationObj[adaptArray[i]][3] && dragok3 == false) {
+                dragok3 = true;
+                selected_adaptation = adaptArray[i];
+                found = true;
+                redrawHypo(0);
+                drawLines(0);
+                console.log("selected a adaptation");
+            }
+            else if(dragok3 == true && mx + canvas_offset>boxLocationObj[adaptArray[i]][0]+(boxLocationObj[adaptArray[i]][2]-boxLocationObj[adaptArray[i]][3]) && mx + canvas_offset<boxLocationObj[adaptArray[i]][0]+(boxLocationObj[adaptArray[i]][2]) &&
+                my>boxLocationObj[adaptArray[i]][1] && my<boxLocationObj[adaptArray[i]][1]+boxLocationObj[adaptArray[i]][3] && selected_adaptation == adaptArray[i]) {
+                found = true;
+                openInfoPanel(selected_adaptation);
+                console.log("information button click");
+            }
+            else if(dragok3 == true && mx + canvas_offset>boxLocationObj[adaptArray[i]][0] && mx + canvas_offset<boxLocationObj[adaptArray[i]][0]+(boxLocationObj[adaptArray[i]][2]-boxLocationObj[adaptArray[i]][3]) &&
+                my>boxLocationObj[adaptArray[i]][1] && my<boxLocationObj[adaptArray[i]][1]+boxLocationObj[adaptArray[i]][3] && selected_adaptation == adaptArray[i]) {
+                dragok2 = true;
+                found = true;
+                console.log("moving activated");
+                drawGrreyBox(adaptObj[selected_adaptation][2], adaptObj[selected_adaptation][3]);
+            }
+        }
+        if(!found){
+            //canvas clicked but no adaptation was clicked
+            dragok2 = false;
+            dragok3 = false;
+            found = false;
+            if(selected_adaptation != -1){
+                closeInfoPanel();
+                selected_adaptation = -1;
+                redrawHypo(0);
+            }
+            selected_canvas=0;
+        }
+        // save the current mouse position
+        startX21=mx;
+        startY21=my;
+    }
+
+    function hypoMouseDown2(e) {
+        // tell the browser we're handling this mouse event
+        e.preventDefault();
+        e.stopPropagation();
+        var margin_value = parseInt(document.getElementById("canvas-wrapper-adaptations-div").style.marginLeft);
+
+        // get the current mouse position
+        if(e.clientX == undefined){
+            var mx=parseInt(e.changedTouches[0].clientX-offsetX22-margin_value);
+            var my=parseInt(e.changedTouches[0].clientY-offsetY22);
+        }
+        else{
+            var mx=parseInt(e.clientX-offsetX22-margin_value);
+            var my=parseInt(e.clientY-offsetY22);
+        }
+        // test each rect to see if mouse is inside
+        dragok2=false;
+        var canvas_offset = 1 * canvas_div_w;
+        for(var i=0;i<adaptArray.length;i++){
+            if(mx + canvas_offset>boxLocationObj[adaptArray[i]][0] && mx + canvas_offset<boxLocationObj[adaptArray[i]][0]+boxLocationObj[adaptArray[i]][2] && my>boxLocationObj[adaptArray[i]][1] && my<boxLocationObj[adaptArray[i]][1]+boxLocationObj[adaptArray[i]][3]) {
+                dragok2=true;
+                selected_adaptation = adaptArray[i];
+            }
+        }
+
+        // save the current mouse position
+        startX22=mx;
+        startY22=my;
+        mouse_selected_canvas = 2;
+    }
+
+    function hypoMouseDown3(e) {
+        // tell the browser we're handling this mouse event
+        e.preventDefault();
+        e.stopPropagation();
+        var margin_value = parseInt(document.getElementById("canvas-wrapper-adaptations-div").style.marginLeft);
+
+        // get the current mouse position
+        if(e.clientX == undefined){
+            var mx=parseInt(e.changedTouches[0].clientX-offsetX23-margin_value);
+            var my=parseInt(e.changedTouches[0].clientY-offsetY23);
+        }
+        else{
+            var mx=parseInt(e.clientX-offsetX23-margin_value);
+            var my=parseInt(e.clientY-offsetY23);
+        }
+        // test each rect to see if mouse is inside
+        dragok2=false;
+        var canvas_offset = 2 * canvas_div_w;
+        for(var i=0;i<adaptArray.length;i++){
+            if(mx + canvas_offset>boxLocationObj[adaptArray[i]][0] && mx + canvas_offset<boxLocationObj[adaptArray[i]][0]+boxLocationObj[adaptArray[i]][2] && my>boxLocationObj[adaptArray[i]][1] && my<boxLocationObj[adaptArray[i]][1]+boxLocationObj[adaptArray[i]][3]) {
+                dragok2=true;
+                selected_adaptation = adaptArray[i];
+            }
+        }
+
+        // save the current mouse position
+        startX23=mx;
+        startY23=my;
+        mouse_selected_canvas = 3;
+    }
+
+    function hypoMouseDown4(e) {
+        // tell the browser we're handling this mouse event
+        e.preventDefault();
+        e.stopPropagation();
+        var margin_value = parseInt(document.getElementById("canvas-wrapper-adaptations-div").style.marginLeft);
+
+        // get the current mouse position
+        if(e.clientX == undefined){
+            var mx=parseInt(e.changedTouches[0].clientX-offsetX24-margin_value);
+            var my=parseInt(e.changedTouches[0].clientY-offsetY24);
+        }
+        else{
+            var mx=parseInt(e.clientX-offsetX24-margin_value);
+            var my=parseInt(e.clientY-offsetY24);
+        }
+        // test each rect to see if mouse is inside
+        dragok2=false;
+        var canvas_offset = 3 * canvas_div_w;
+        for(var i=0;i<adaptArray.length;i++){
+            if(mx + canvas_offset>boxLocationObj[adaptArray[i]][0] && mx + canvas_offset<boxLocationObj[adaptArray[i]][0]+boxLocationObj[adaptArray[i]][2] && my>boxLocationObj[adaptArray[i]][1] && my<boxLocationObj[adaptArray[i]][1]+boxLocationObj[adaptArray[i]][3]) {
+                dragok2=true;
+                selected_adaptation = adaptArray[i];
+            }
+        }
+
+        // save the current mouse position
+        startX24=mx;
+        startY24=my;
+        mouse_selected_canvas = 4;
+    }
+
+    function hypoMouseDown5(e) {
+        // tell the browser we're handling this mouse event
+        e.preventDefault();
+        e.stopPropagation();
+        var margin_value = parseInt(document.getElementById("canvas-wrapper-adaptations-div").style.marginLeft);
+
+        // get the current mouse position
+        if(e.clientX == undefined){
+            var mx=parseInt(e.changedTouches[0].clientX-offsetX25-margin_value);
+            var my=parseInt(e.changedTouches[0].clientY-offsetY25);
+        }
+        else{
+            var mx=parseInt(e.clientX-offsetX25-margin_value);
+            var my=parseInt(e.clientY-offsetY25);
+        }
+        // test each rect to see if mouse is inside
+        dragok2=false;
+        var canvas_offset = 4 * canvas_div_w;
+        for(var i=0;i<adaptArray.length;i++){
+            if(mx + canvas_offset>boxLocationObj[adaptArray[i]][0] && mx + canvas_offset<boxLocationObj[adaptArray[i]][0]+boxLocationObj[adaptArray[i]][2] && my>boxLocationObj[adaptArray[i]][1] && my<boxLocationObj[adaptArray[i]][1]+boxLocationObj[adaptArray[i]][3]) {
+                dragok2=true;
+                selected_adaptation = adaptArray[i];
+            }
+        }
+
+        // save the current mouse position
+        startX25=mx;
+        startY25=my;
+        mouse_selected_canvas = 5;
+    }
+
+    function hypoMouseDown6(e) {
+        // tell the browser we're handling this mouse event
+        e.preventDefault();
+        e.stopPropagation();
+        var margin_value = parseInt(document.getElementById("canvas-wrapper-adaptations-div").style.marginLeft);
+
+        // get the current mouse position
+        if(e.clientX == undefined){
+            var mx=parseInt(e.changedTouches[0].clientX-offsetX26-margin_value);
+            var my=parseInt(e.changedTouches[0].clientY-offsetY26);
+        }
+        else{
+            var mx=parseInt(e.clientX-offsetX26-margin_value);
+            var my=parseInt(e.clientY-offsetY26);
+        }
+        // test each rect to see if mouse is inside
+        dragok2=false;
+        var canvas_offset = 5 * canvas_div_w;
+        for(var i=0;i<adaptArray.length;i++){
+            if(mx + canvas_offset>boxLocationObj[adaptArray[i]][0] && mx + canvas_offset<boxLocationObj[adaptArray[i]][0]+boxLocationObj[adaptArray[i]][2] && my>boxLocationObj[adaptArray[i]][1] && my<boxLocationObj[adaptArray[i]][1]+boxLocationObj[adaptArray[i]][3]) {
+                dragok2=true;
+                selected_adaptation = adaptArray[i];
+            }
+        }
+
+        // save the current mouse position
+        startX26=mx;
+        startY26=my;
+        mouse_selected_canvas = 6;
+    }
+
+    function hypoMouseDown7(e) {
+        // tell the browser we're handling this mouse event
+        e.preventDefault();
+        e.stopPropagation();
+        var margin_value = parseInt(document.getElementById("canvas-wrapper-adaptations-div").style.marginLeft);
+
+        // get the current mouse position
+        if(e.clientX == undefined){
+            var mx=parseInt(e.changedTouches[0].clientX-offsetX27-margin_value);
+            var my=parseInt(e.changedTouches[0].clientY-offsetY27);
+        }
+        else{
+            var mx=parseInt(e.clientX-offsetX27-margin_value);
+            var my=parseInt(e.clientY-offsetY27);
+        }
+        // test each rect to see if mouse is inside
+        dragok2=false;
+        var canvas_offset = 6 * canvas_div_w;
+        for(var i=0;i<adaptArray.length;i++){
+            if(mx + canvas_offset>boxLocationObj[adaptArray[i]][0] && mx + canvas_offset<boxLocationObj[adaptArray[i]][0]+boxLocationObj[adaptArray[i]][2] && my>boxLocationObj[adaptArray[i]][1] && my<boxLocationObj[adaptArray[i]][1]+boxLocationObj[adaptArray[i]][3]) {
+                dragok2=true;
+                selected_adaptation = adaptArray[i];
+            }
+        }
+
+        // save the current mouse position
+        startX27=mx;
+        startY27=my;
+        mouse_selected_canvas = 7;
+    }
+
+    function hypoMouseDown8(e) {
+        // tell the browser we're handling this mouse event
+        e.preventDefault();
+        e.stopPropagation();
+        var margin_value = parseInt(document.getElementById("canvas-wrapper-adaptations-div").style.marginLeft);
+
+        // get the current mouse position
+        if(e.clientX == undefined){
+            var mx=parseInt(e.changedTouches[0].clientX-offsetX28-margin_value);
+            var my=parseInt(e.changedTouches[0].clientY-offsetY28);
+        }
+        else{
+            var mx=parseInt(e.clientX-offsetX28-margin_value);
+            var my=parseInt(e.clientY-offsetY28);
+        }
+        // test each rect to see if mouse is inside
+        dragok2=false;
+        var canvas_offset = 7 * canvas_div_w;
+        for(var i=0;i<adaptArray.length;i++){
+            if(mx + canvas_offset>boxLocationObj[adaptArray[i]][0] && mx + canvas_offset<boxLocationObj[adaptArray[i]][0]+boxLocationObj[adaptArray[i]][2] && my>boxLocationObj[adaptArray[i]][1] && my<boxLocationObj[adaptArray[i]][1]+boxLocationObj[adaptArray[i]][3]) {
+                dragok2=true;
+                selected_adaptation = adaptArray[i];
+            }
+        }
+
+        // save the current mouse position
+        startX28=mx;
+        startY28=my;
+        mouse_selected_canvas = 8;
+    }
+
+    function hypoMouseDown9(e) {
+        // tell the browser we're handling this mouse event
+        e.preventDefault();
+        e.stopPropagation();
+        var margin_value = parseInt(document.getElementById("canvas-wrapper-adaptations-div").style.marginLeft);
+
+        // get the current mouse position
+        if(e.clientX == undefined){
+            var mx=parseInt(e.changedTouches[0].clientX-offsetX29-margin_value);
+            var my=parseInt(e.changedTouches[0].clientY-offsetY29);
+        }
+        else{
+            var mx=parseInt(e.clientX-offsetX29-margin_value);
+            var my=parseInt(e.clientY-offsetY29);
+        }
+        // test each rect to see if mouse is inside
+        dragok2=false;
+        var canvas_offset = 8 * canvas_div_w;
+        for(var i=0;i<adaptArray.length;i++){
+            if(mx + canvas_offset>boxLocationObj[adaptArray[i]][0] && mx + canvas_offset<boxLocationObj[adaptArray[i]][0]+boxLocationObj[adaptArray[i]][2] && my>boxLocationObj[adaptArray[i]][1] && my<boxLocationObj[adaptArray[i]][1]+boxLocationObj[adaptArray[i]][3]) {
+                dragok2=true;
+                selected_adaptation = adaptArray[i];
+            }
+        }
+
+        // save the current mouse position
+        startX29=mx;
+        startY29=my;
+        mouse_selected_canvas = 9;
+    }
+
+    function hypoMouseDown10(e) {
+        // tell the browser we're handling this mouse event
+        e.preventDefault();
+        e.stopPropagation();
+        var margin_value = parseInt(document.getElementById("canvas-wrapper-adaptations-div").style.marginLeft);
+
+        // get the current mouse position
+        if(e.clientX == undefined){
+            var mx=parseInt(e.changedTouches[0].clientX-offsetX210-margin_value);
+            var my=parseInt(e.changedTouches[0].clientY-offsetY210);
+        }
+        else{
+            var mx=parseInt(e.clientX-offsetX210-margin_value);
+            var my=parseInt(e.clientY-offsetY210);
+        }
+        // test each rect to see if mouse is inside
+        dragok2=false;
+        var canvas_offset = 9 * canvas_div_w;
+        for(var i=0;i<adaptArray.length;i++){
+            if(mx + canvas_offset>boxLocationObj[adaptArray[i]][0] && mx + canvas_offset<boxLocationObj[adaptArray[i]][0]+boxLocationObj[adaptArray[i]][2] && my>boxLocationObj[adaptArray[i]][1] && my<boxLocationObj[adaptArray[i]][1]+boxLocationObj[adaptArray[i]][3]) {
+                dragok2=true;
+                selected_adaptation = adaptArray[i];
+            }
+        }
+        // save the current mouse position
+        startX210=mx;
+        startY210=my;
+        mouse_selected_canvas = 10;
+    }
+
+    function hypoMouseDown11(e) {
+        // tell the browser we're handling this mouse event
+        e.preventDefault();
+        e.stopPropagation();
+        var margin_value = parseInt(document.getElementById("canvas-wrapper-adaptations-div").style.marginLeft);
+
+        // get the current mouse position
+        if(e.clientX == undefined){
+            var mx=parseInt(e.changedTouches[0].clientX-offsetX211-margin_value);
+            var my=parseInt(e.changedTouches[0].clientY-offsetY211);
+        }
+        else{
+            var mx=parseInt(e.clientX-offsetX211-margin_value);
+            var my=parseInt(e.clientY-offsetY211);
+        }
+        // test each rect to see if mouse is inside
+        dragok2=false;
+        var canvas_offset = 10 * canvas_div_w;
+        for(var i=0;i<adaptArray.length;i++){
+            if(mx + canvas_offset>boxLocationObj[adaptArray[i]][0] && mx + canvas_offset<boxLocationObj[adaptArray[i]][0]+boxLocationObj[adaptArray[i]][2] && my>boxLocationObj[adaptArray[i]][1] && my<boxLocationObj[adaptArray[i]][1]+boxLocationObj[adaptArray[i]][3]) {
+                dragok2=true;
+                selected_adaptation = adaptArray[i];
+            }
+        }
+        // save the current mouse position
+        startX211=mx;
+        startY211=my;
+        mouse_selected_canvas = 11;
+    }
+
+    function hypoMouseDown12(e) {
+        // tell the browser we're handling this mouse event
+        e.preventDefault();
+        e.stopPropagation();
+        var margin_value = parseInt(document.getElementById("canvas-wrapper-adaptations-div").style.marginLeft);
+
+        // get the current mouse position
+        if(e.clientX == undefined){
+            var mx=parseInt(e.changedTouches[0].clientX-offsetX212-margin_value);
+            var my=parseInt(e.changedTouches[0].clientY-offsetY212);
+        }
+        else{
+            var mx=parseInt(e.clientX-offsetX212-margin_value);
+            var my=parseInt(e.clientY-offsetY212);
+        }
+        // test each rect to see if mouse is inside
+        dragok2=false;
+        var canvas_offset = 11 * canvas_div_w;
+        for(var i=0;i<adaptArray.length;i++){
+            if(mx + canvas_offset>boxLocationObj[adaptArray[i]][0] && mx + canvas_offset<boxLocationObj[adaptArray[i]][0]+boxLocationObj[adaptArray[i]][2] && my>boxLocationObj[adaptArray[i]][1] && my<boxLocationObj[adaptArray[i]][1]+boxLocationObj[adaptArray[i]][3]) {
+                dragok2=true;
+                selected_adaptation = adaptArray[i];
+            }
+        }
+
+        // save the current mouse position
+        startX212=mx;
+        startY212=my;
+        mouse_selected_canvas = 12;
+    }
+
     // handle mouseup events
-    function scrollbarUp(e) {
+    function mouseUp(e) {
         // tell the browser we're handling this mouse event
 
         e.preventDefault();
@@ -168,10 +676,13 @@ function initCanvas(firstRun) {
         for (var i=0;i<scrollRegions.length;i++) {
             scrollRegions[i].isDragging=false;
         }
+        dragok2 = false;
+        if(selected_adaptation)
+            greyCanvas.clearRect(0,0,grey_canvas_width, canvas_div_h_hypo);
     }
 
     // handle mouse moves
-    function scrollbarMove(e) {
+    function mouseMove(e) {
 
         // if we're dragging anything...
         if(dragok) {
@@ -204,17 +715,17 @@ function initCanvas(firstRun) {
                 var r3 = scrollRegions[2];
                 if(r.isDragging) {
                     if(r.id == 'left' && r.x + dx > 0 && ((r1.width+r2.width+r3.width-dx)>minScrollbar||(r2.width - dx)>minScrollbar)) {
-                            r1.x += dx;
-                            scroll_left_handle_x_position += dx;
-                            r2.x += dx;
-                            r2.width -= dx;
-                            bar_mouse_up = 1;
+                        r1.x += dx;
+                        scroll_left_handle_x_position += dx;
+                        r2.x += dx;
+                        r2.width -= dx;
+                        bar_mouse_up = 1;
                     }
                     else if(r.id == 'right' && r.x+r3.width+dx<canvas_div_w&&((r1.width+r2.width+r3.width+dx)>minScrollbar||(r2.width + dx)>minScrollbar)) {
-                            r3.x += dx;
-                            scroll_right_handle_x_position += dx;
-                            r2.width += dx;
-                            bar_mouse_up = 1;
+                        r3.x += dx;
+                        scroll_right_handle_x_position += dx;
+                        r2.width += dx;
+                        bar_mouse_up = 1;
                     }
                     else if(r.id == 'middle' && r1.x + dx > 0 && r3.x + r3.width + dx  < canvas_div_w) {
                         r1.x += dx;
@@ -236,7 +747,88 @@ function initCanvas(firstRun) {
             startY=my;
         }
 
-        // Move main canvas on scrollbarMove
+        else if(dragok2) {
+            // tell the browser we're handling this mouse event
+            e.preventDefault();
+            e.stopPropagation();
+            var margin_value = parseInt(document.getElementById("canvas-wrapper-adaptations-div").style.marginLeft);
+
+            // get the current mouse position
+            if(e.clientX == undefined){
+                var mx=parseInt(e.changedTouches[0].clientX-offsetX21-margin_value);
+                var my=parseInt(e.changedTouches[0].clientY-offsetY21);
+            }
+            else{
+                var mx=parseInt(e.clientX-offsetX21-margin_value);
+                var my=parseInt(e.clientY-offsetY21);
+            }
+            // calculate the distance the mouse has moved
+            // since the last mousemove
+            var dx=mx-startX21;
+            var dy=my-startY21;
+
+            var date = adaptObj[selected_adaptation][1];
+
+            if(date >= 1000000) {
+                date = date + 4000000;
+            }
+            else {
+                date = date * 5;
+            }
+
+            date = (date - (increment_per_pixel * dx));
+
+            if(date >= 5000000) {
+                date = date - 4000000;
+            }
+            else {
+                date = date/5;
+            }
+
+            if(date <= adaptObj[selected_adaptation][2] && date >= adaptObj[selected_adaptation][3]) {
+                adaptObj[selected_adaptation][1] = date;
+            }
+            else if (date > adaptObj[selected_adaptation][2]) {
+                adaptObj[selected_adaptation][1] = adaptObj[selected_adaptation][2];
+            }
+            else if (date < adaptObj[selected_adaptation][3]) {
+                adaptObj[selected_adaptation][1] = adaptObj[selected_adaptation][3];
+            }
+
+            // redraw
+            redrawHypo(0);
+            drawLines(0);
+
+            startX21=mx;
+            startY21=my;
+            startX22=mx;
+            startY22=my;
+            startX23=mx;
+            startY23=my;
+            startX24=mx;
+            startY24=my;
+            startX25=mx;
+            startY25=my;
+            startX26=mx;
+            startY26=my;
+            startX27=mx;
+            startY27=my;
+            startX28=mx;
+            startY28=my;
+            startX29=mx;
+            startY29=my;
+            startX210=mx;
+            startY210=my;
+            startX211=mx;
+            startY211=my;
+            startX212=mx;
+            startY212=my;
+        }
+        else if (dragok3) {
+
+        }
+
+        // Move main canvas on mouseMove
         timespan = (date_start - date_end);
         viewable_time = timespan * scroll_ratio;
         increment_per_pixel = (viewable_time/canvas_div_w);
@@ -244,12 +836,14 @@ function initCanvas(firstRun) {
         var offset = 20+(-1 * ((12000000 - left_edge_date)/increment_per_pixel));
         $('#canvas-wrapper-lines-div').css("margin-left", offset + "px");
         $('#canvas-wrapper-adaptations-div').css("margin-left", offset + "px");
-	    $('#canvas-wrapper-empirical-adaptations-div').css("margin-left", (offset-20) + "px");
+        $('#canvas-wrapper-empirical-adaptations-div').css("margin-left", (offset-20) + "px");
     }
 };
+
 function resizeCanvas() {
     $('#canvas-wrapper-lines-div').html(hypothesis_lines_canvas);
     $('#canvas-wrapper-adaptations-div').html(hypothesis_adapt_canvas);
+    $('#canvas-wrapper-grey-div').html(grey_canvas);
     $('#canvas-wrapper-empirical-adaptations-div').html(empirical_canvas);
 
     // Set Canvas Div Size from Browser Realtime Values
@@ -306,6 +900,8 @@ function resizeCanvas() {
     topcanvas210 = document.getElementById('hypothesis-canvas2-10');
     topcanvas211 = document.getElementById('hypothesis-canvas2-11');
     topcanvas212 = document.getElementById('hypothesis-canvas2-12');
+
+    greycanvas1 = document.getElementById('grey-canvas-1');
 
     canvas1_1 = document.getElementById('timeline-increments');
 
@@ -386,6 +982,11 @@ function resizeCanvas() {
     ctx_top2_12.canvas.width = canvas_div_w;
     ctx_top2_12.canvas.height = canvas_div_h_hypo;
 
+    ctx_grey_1 = greycanvas1.getContext("2d");
+    grey_canvas_width = $('#canvas-wrapper-grey-div').width();
+    ctx_grey_1.canvas.width = grey_canvas_width;
+    ctx_grey_1.canvas.height = canvas_div_h_hypo;
+
     hypoCanvas[0] = ctx_top_1;
     hypoCanvas[1] = ctx_top_2;
     hypoCanvas[2] = ctx_top_3;
@@ -412,8 +1013,10 @@ function resizeCanvas() {
     hypoCanvas2[10] = ctx_top2_11;
     hypoCanvas2[11] = ctx_top2_12;
 
+    greyCanvas = ctx_grey_1
+
     //empirical canvas
-	botcanvas1 = document.getElementById('empirical-canvas-1');
+    botcanvas1 = document.getElementById('empirical-canvas-1');
     botcanvas2 = document.getElementById('empirical-canvas-2');
     botcanvas3 = document.getElementById('empirical-canvas-3');
     botcanvas4 = document.getElementById('empirical-canvas-4');
@@ -427,57 +1030,57 @@ function resizeCanvas() {
     botcanvas12 = document.getElementById('empirical-canvas-12');
 
     ctx_bot_1 = botcanvas1.getContext("2d");
-	ctx_bot_1.canvas.width = canvas_div_w;
+    ctx_bot_1.canvas.width = canvas_div_w;
     ctx_bot_1.canvas.height = canvas_div_h_empir;
     ctx_bot_2 = botcanvas2.getContext("2d");
-	ctx_bot_2.canvas.width = canvas_div_w;
+    ctx_bot_2.canvas.width = canvas_div_w;
     ctx_bot_2.canvas.height = canvas_div_h_empir;
     ctx_bot_3 = botcanvas3.getContext("2d");
-	ctx_bot_3.canvas.width = canvas_div_w;
+    ctx_bot_3.canvas.width = canvas_div_w;
     ctx_bot_3.canvas.height = canvas_div_h_empir;
     ctx_bot_4 = botcanvas4.getContext("2d");
-	ctx_bot_4.canvas.width = canvas_div_w;
+    ctx_bot_4.canvas.width = canvas_div_w;
     ctx_bot_4.canvas.height = canvas_div_h_empir;
     ctx_bot_5 = botcanvas5.getContext("2d");
-	ctx_bot_5.canvas.width = canvas_div_w;
+    ctx_bot_5.canvas.width = canvas_div_w;
     ctx_bot_5.canvas.height = canvas_div_h_empir;
     ctx_bot_6 = botcanvas6.getContext("2d");
-	ctx_bot_6.canvas.width = canvas_div_w;
+    ctx_bot_6.canvas.width = canvas_div_w;
     ctx_bot_6.canvas.height = canvas_div_h_empir;
     ctx_bot_7 = botcanvas7.getContext("2d");
-	ctx_bot_7.canvas.width = canvas_div_w;
+    ctx_bot_7.canvas.width = canvas_div_w;
     ctx_bot_7.canvas.height = canvas_div_h_empir;
     ctx_bot_8 = botcanvas8.getContext("2d");
-	ctx_bot_8.canvas.width = canvas_div_w;
+    ctx_bot_8.canvas.width = canvas_div_w;
     ctx_bot_8.canvas.height = canvas_div_h_empir;
     ctx_bot_9 = botcanvas9.getContext("2d");
-	ctx_bot_9.canvas.width = canvas_div_w;
+    ctx_bot_9.canvas.width = canvas_div_w;
     ctx_bot_9.canvas.height = canvas_div_h_empir;
     ctx_bot_10 = botcanvas10.getContext("2d");
-	ctx_bot_10.canvas.width = canvas_div_w;
+    ctx_bot_10.canvas.width = canvas_div_w;
     ctx_bot_10.canvas.height = canvas_div_h_empir;
     ctx_bot_11 = botcanvas11.getContext("2d");
-	ctx_bot_11.canvas.width = canvas_div_w;
+    ctx_bot_11.canvas.width = canvas_div_w;
     ctx_bot_11.canvas.height = canvas_div_h_empir;
     ctx_bot_12 = botcanvas12.getContext("2d");
-	ctx_bot_12.canvas.width = canvas_div_w;
+    ctx_bot_12.canvas.width = canvas_div_w;
     ctx_bot_12.canvas.height = canvas_div_h_empir;
 
-	empirCanvas = [ctx_bot_1, ctx_bot_2, ctx_bot_3, ctx_bot_4,
-				ctx_bot_5, ctx_bot_6, ctx_bot_7, ctx_bot_8,
-				ctx_bot_9, ctx_bot_10, ctx_bot_11, ctx_bot_12];
+    empirCanvas = [ctx_bot_1, ctx_bot_2, ctx_bot_3, ctx_bot_4,
+        ctx_bot_5, ctx_bot_6, ctx_bot_7, ctx_bot_8,
+        ctx_bot_9, ctx_bot_10, ctx_bot_11, ctx_bot_12];
 
-    ctx1_1 = canvas1_1.getContext("2d");
-    ctx1_1.canvas.width = canvas1_1_w;
-    ctx1_1.canvas.height = canvas1_1_h;
+        ctx1_1 = canvas1_1.getContext("2d");
+        ctx1_1.canvas.width = canvas1_1_w;
+        ctx1_1.canvas.height = canvas1_1_h;
 
-    ctx2_1 = canvas2_1.getContext("2d");
-    ctx2_1.canvas.width = canvas2_w;
-    ctx2_1.canvas.height = canvas2_h;
+        ctx2_1 = canvas2_1.getContext("2d");
+        ctx2_1.canvas.width = canvas2_w;
+        ctx2_1.canvas.height = canvas2_h;
 
-    ctx2_2 = canvas2_2.getContext("2d");
-    ctx2_2.canvas.width = canvas2_w;
-    ctx2_2.canvas.height = canvas2_h;
+        ctx2_2 = canvas2_2.getContext("2d");
+        ctx2_2.canvas.width = canvas2_w;
+        ctx2_2.canvas.height = canvas2_h;
 }
 function setdate (start, end) {
     date_start = start;
@@ -485,7 +1088,7 @@ function setdate (start, end) {
 }
 
 // Canvas drawing functions
-function boxCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text,empirical) {
+function boxCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text,eventID,empirical) {
     var c_value = x_pos/canvas_div_w;
     var selected_canvas = 0;
 
@@ -516,25 +1119,27 @@ function boxCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text,empiri
 
     x_pos = x_pos%canvas_div_w;
     var temp_x = 0;
-
     for(var i = -1; i < 2; i++) {
         if(selected_canvas + i >= 0 && selected_canvas + i <= 11) {
             temp_x = x_pos - (i * canvas_div_w);
 
             if (empirical) {
-                    hypoCanvas[selected_canvas + i].fillStyle = hypo_box_fill_style_empirical;
+                hypoCanvas[selected_canvas + i].fillStyle = hypo_box_fill_style_empirical;
             }
             else {
                 hypoCanvas[selected_canvas + i].fillStyle = hypo_box_fill_style_relation;
             }
-
             hypoCanvas[selected_canvas + i].fillRect(temp_x, y_pos, width_length, height_length);
             hypoCanvas[selected_canvas + i].font = hypo_box_font_size_change + "px " + hypo_box_font_family;
             hypoCanvas[selected_canvas + i].fillStyle = hypo_box_font_color;
             hypoCanvas[selected_canvas + i].textAlign = "center";
             hypoCanvas[selected_canvas + i].textBaseline="hanging";
+            if(eventID == selected_adaptation){
+                var img_size = hypo_box_font_size_change + (text_in_box_padding_h/3)
+                hypoCanvas[selected_canvas + i].drawImage(img, temp_x + width_length - img_size - empir_text_in_box_padding_w/5, y_pos + ((height_length-img_size)/2), img_size, img_size);
+            }
             for (j = 0; j < text.length; j++) {
-                hypoCanvas[selected_canvas + i].fillText(text[j], temp_x + (0.5 * width_length), y_pos + (text_in_box_padding_h*.5) + ((hypo_box_font_size_change + ((j)?1:0)) * (j)));
+                hypoCanvas[selected_canvas + i].fillText(text[j], temp_x + (0.5 * (width_length - ((selected_adaptation==eventID) ? hypo_box_font_size_change : 0))) , y_pos + (text_in_box_padding_h*.5) + ((hypo_box_font_size_change + ((j)?1:0)) * (j)));
             }
         }
     }
@@ -543,36 +1148,36 @@ function boxCanvasWrapperClear(x_pos,y_pos,width_length,height_length) {
     var c_value = x_pos/canvas_div_w;
     var selected_canvas = 0;
     if(c_value <= 1)
-        selected_canvas = 0;
+    selected_canvas = 0;
     else if(c_value <= 2)
-        selected_canvas = 1;
+    selected_canvas = 1;
     else if(c_value <= 3)
-        selected_canvas = 2;
+    selected_canvas = 2;
     else if(c_value <= 4)
-        selected_canvas = 3;
+    selected_canvas = 3;
     else if(c_value <= 5)
-        selected_canvas = 4;
+    selected_canvas = 4;
     else if(c_value <= 6)
-        selected_canvas = 5;
+    selected_canvas = 5;
     else if(c_value <= 7)
-        selected_canvas = 6;
+    selected_canvas = 6;
     else if(c_value <= 8)
-        selected_canvas = 7;
+    selected_canvas = 7;
     else if(c_value <= 9)
-        selected_canvas = 8;
+    selected_canvas = 8;
     else if(c_value <= 10)
-        selected_canvas = 9;
+    selected_canvas = 9;
     else if(c_value <= 11)
-        selected_canvas = 10;
+    selected_canvas = 10;
     else if(c_value <= 12)
-        selected_canvas = 11;
+    selected_canvas = 11;
     x_pos = x_pos%canvas_div_w;
     var temp_x = 0;
     for(var i = -1; i < 2; i++) {
         if(selected_canvas + i >= 0 && selected_canvas + i <= 11) {
             temp_x = x_pos - (i * canvas_div_w);
             hypoCanvas[selected_canvas].clearRect((temp_x - 1), (y_pos - 1), (width_length + 3), (height_length + 3));
-       }
+        }
     }
 }
 function lineCanvasWrapperDraw(x_pos,y_pos,x2_pos,y2_pos,color) {
@@ -647,6 +1252,52 @@ function lineCanvasWrapperDraw(x_pos,y_pos,x2_pos,y2_pos,color) {
         hypoCanvas2[i].stroke();
     }
 }
+function drawGrreyBox(d_start,d_end){
+    var x_pos = 0;
+    var x2_pos = 0;
+    var str = String(d_start).replace(/(.)(?=(\d{3})+$)/g,'$1,') + " - " + String(d_end).replace(/(.)(?=(\d{3})+$)/g,'$1,');
+    if(d_start >= 1000000) {
+        d_start +=  4000000;
+    }
+    else {
+        d_start *= 5;
+    }
+    if(d_end >= 1000000) {
+        d_end += 4000000;
+    }
+    else {
+        d_end *=  5;
+    }
+    timespan = (date_start - date_end);
+    viewable_time = timespan * scroll_ratio;
+    increment_per_pixel = (viewable_time/canvas_div_w);
+    left_edge_date = timespan - (timespan * scroll_position) + date_end;
+    var offset = 20+(-1 * ((12000000 - left_edge_date)/increment_per_pixel));
+
+    x_pos = d_start/increment_per_pixel;
+    x_pos = ((canvas_div_w/scroll_ratio) - x_pos) + offset;
+    x2_pos = d_end/increment_per_pixel;
+    x2_pos = ((canvas_div_w/scroll_ratio) - x2_pos) + offset;
+    if(x_pos> x2_pos){
+        x_pos = (x_pos > grey_canvas_width)? x_pos % grey_canvas_width : x_pos;
+        x2_pos = (x2_pos > grey_canvas_width)? x2_pos % grey_canvas_width : x2_pos;
+        x2_pos -= x_pos;
+    }
+    else {
+        x_pos = (x_pos > grey_canvas_width)? x_pos % grey_canvas_width : x_pos;
+        y2_pos = grey_canvas_width;
+        x2_pos -= x_pos;
+    }
+    greyCanvas.fillStyle = 'rgba(169,169,169, .85)';
+    greyCanvas.fillRect(x_pos, 0, x2_pos, canvas_div_h_hypo);
+
+    greyCanvas.font = hypo_box_font_size + "px " + hypo_box_font_family;
+    greyCanvas.fillStyle = 'rgba(7,7,7, 1.0)';
+    greyCanvas.textAlign = "center";
+    greyCanvas.textBaseline="top";
+    greyCanvas.fillText("Estimated Range",x_pos+(x2_pos/2) , 0);
+    greyCanvas.fillText(str,x_pos+(x2_pos/2) , hypo_box_font_size);
+}
 
 // Hypo Timeline function
 function addHypoAdaptation(eventID) {
@@ -658,7 +1309,7 @@ function addHypoAdaptation(eventID) {
 
     // Draw new things if they all fit
     temp_text = hypo_box_font_size_change;
-    dir = (dir)? 0:1;
+    // dir = (dir)? 0:1;
     if(adaptObj[eventID][4] < 1) {
         createAdaptBox(eventID, adaptObj[eventID][0], adaptObj[eventID][1], function(eventID, text, width, height, date) {
             positionAdaptBox(eventID, text, width, height, date);
@@ -675,17 +1326,18 @@ function addHypoAdaptation(eventID) {
             });
         }
         if(hypo_box_font_size_change != temp_text)
-            return;
+        return;
     });
     while(hypo_box_font_size_change != temp_text) {
         temp_text = hypo_box_font_size_change;
         boxLocation = [];
+        dir = 1;
         for (var i = 0; i < adaptArray.length; i++) {
             createAdaptBox(adaptArray[i], adaptObj[adaptArray[i]][0], adaptObj[adaptArray[i]][1], function(eventID, text, width, height, date) {
                 positionAdaptBox(eventID, text, width, height, date);
             });
             if(hypo_box_font_size_change != temp_text)
-                break;
+            break;
         }
     }
     // Draw all the boxes when done
@@ -710,11 +1362,11 @@ function createAdaptBox(eventID, eventName, date, callback) {
             line += item + " ";
         }
         else {
-            textArray.push(line.trim());
+            textArray.push(line.trim().toUpperCase());
             line = item + " ";
         }
     });
-    textArray.push(line.trim());
+    textArray.push(line.trim().toUpperCase());
 
     var longest_line = 0;
     var width = 0;
@@ -724,6 +1376,9 @@ function createAdaptBox(eventID, eventName, date, callback) {
             width = parseInt((ctx_top_1.measureText(item).width + text_in_box_padding_w).toFixed(0));
         }
     });
+    if (eventID == selected_adaptation) {
+        width += hypo_box_font_size_change;
+    }
     var height = (hypo_box_font_size_change * textArray.length) + ((textArray.length > 1)?(textArray.length-1):0) + text_in_box_padding_h;
     callback(eventID, textArray, width, height, date);
 }
@@ -750,40 +1405,40 @@ function positionAdaptBox(eventID, text, width, height, date) {
     while (i < boxLocation.length) {
         // Hit x or y
         if(((x_pos >= boxLocation[i][0] - box_to_box_padding_size && x_pos <= boxLocation[i][0] + boxLocation[i][2] + box_to_box_padding_size) ||
-            (x_pos  <= boxLocation[i][0] + box_to_box_padding_size && x_pos + width >= boxLocation[i][0] + boxLocation[i][2] + box_to_box_padding_size) ||
-            (x_pos + width >= boxLocation[i][0] - box_to_box_padding_size  && x_pos + width <= boxLocation[i][0] + boxLocation[i][2] + box_to_box_padding_size)) &&
-            ((y_pos >= boxLocation[i][1] && y_pos <= boxLocation[i][1] + boxLocation[i][3]) ||
-            (y_pos <= boxLocation[i][1] && y_pos + height >= boxLocation[i][1] + boxLocation[i][3]) ||
-            (y_pos + height >= boxLocation[i][1] && y_pos + height <= boxLocation[i][1] + boxLocation[i][3]))) {
-                if(i > l_i) {
-                    dir = (dir)? 0:1;
-                    l_i = i;
+        (x_pos  <= boxLocation[i][0] + box_to_box_padding_size && x_pos + width >= boxLocation[i][0] + boxLocation[i][2] + box_to_box_padding_size) ||
+        (x_pos + width >= boxLocation[i][0] - box_to_box_padding_size  && x_pos + width <= boxLocation[i][0] + boxLocation[i][2] + box_to_box_padding_size)) &&
+        ((y_pos >= boxLocation[i][1] && y_pos <= boxLocation[i][1] + boxLocation[i][3]) ||
+        (y_pos <= boxLocation[i][1] && y_pos + height >= boxLocation[i][1] + boxLocation[i][3]) ||
+        (y_pos + height >= boxLocation[i][1] && y_pos + height <= boxLocation[i][1] + boxLocation[i][3]))) {
+            if(i > l_i) {
+                dir = (dir)? 0:1;
+                l_i = i;
+            }
+            dir = (down)? 1:dir;
+            dir = (up)? 0:dir;
+            if(!down && !dir) {
+                if (boxLocation[i][1] + boxLocation[i][3] + height + box_to_box_padding_size < canvas_div_h_hypo) {
+                    y_pos = boxLocation[i][1] + boxLocation[i][3] + box_to_box_padding_size;
+                    i = 0;
                 }
-                dir = (down)? 1:dir;
-                dir = (up)? 0:dir;
-                if(!down && !dir) {
-                    if (boxLocation[i][1] + boxLocation[i][3] + height + box_to_box_padding_size < canvas_div_h_hypo) {
-                        y_pos = boxLocation[i][1] + boxLocation[i][3] + box_to_box_padding_size;
-                        i = 0;
-                    }
-                    else
-                        down = 1;
+                else
+                down = 1;
+            }
+            else if(!up && dir) {
+                if (boxLocation[i][1] - box_to_box_padding_size - height > 0) {
+                    y_pos = boxLocation[i][1] - box_to_box_padding_size - height;
+                    i = 0;
                 }
-                else if(!up && dir) {
-                    if (boxLocation[i][1] - box_to_box_padding_size - height > 0) {
-                        y_pos = boxLocation[i][1] - box_to_box_padding_size - height;
-                        i = 0;
-                    }
-                    else
-                        up = 1;
+                else
+                up = 1;
+            }
+            else {
+                if(temp_text == hypo_box_font_size_change){
+                    hypo_box_font_size_change -= 1;
+                    if(hypo_box_font_size_change > 5){}// TODO dots
                 }
-                else {
-                    if(temp_text == hypo_box_font_size_change){
-                        hypo_box_font_size_change -= 1;
-                        if(hypo_box_font_size_change > 5){}// TODO dots
-                    }
-                    break;
-                }
+                break;
+            }
         }
         else{
             i++;
@@ -809,9 +1464,9 @@ function removeHypoAdaptation(eventID, callback) {
             if(boxLocation[i][5] == eventID) {
                 //boxCanvasWrapperClear(boxLocation[i][0], boxLocation[i][1], boxLocation[i][2], boxLocation[i][3]);
                 if(boxLocation.length == 1)
-                    boxLocation = [];
+                boxLocation = [];
                 else
-                    boxLocation.splice(i, 1);
+                boxLocation.splice(i, 1);
                 i = boxLocation.length;
             }
         }
@@ -831,15 +1486,16 @@ function removeHypoAdaptation(eventID, callback) {
             for(var i = 0; i < boxLocation.length; i++) {
                 if(boxLocation[i][5] == item[0]) {
                     if(boxLocation.length == 1)
-                        boxLocation = [];
+                    boxLocation = [];
                     else
-                        boxLocation.splice(i, 1);
+                    boxLocation.splice(i, 1);
                     i = boxLocation.length;
                 }
             }
         }
     });
     //delete relationsObj[eventID];
+    selected_adaptation = -1;
     hypo_box_font_size_change = hypo_box_font_size; // reset font size
     adaptObj = JSON.parse(sessionStorage.getItem("adaptObj"));
     adaptArray = JSON.parse(sessionStorage.getItem("adaptArray"));
@@ -856,85 +1512,65 @@ function drawAllBoxes() {
     }
     boxLocation.forEach(function(item){
         var empirical = (relationsObj[item[5]] == undefined)? false:true;
-        boxCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4], empirical);
+        boxCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4], item[5], empirical);
     });
 }
 function redrawHypo(size) {
-        // Reposition boxes only
-        if(Math.abs(last_scroll_ratio - scroll_ratio) > size && (last_hypo_font_size == hypo_box_font_size_change) && size != 0) {
-            // Clear boxes
-            for(var i = 0; i < 12; i++) {
-                hypoCanvas[i].clearRect(0, 0, canvas_div_w, canvas_div_h_hypo);
+    // Reposition boxes only
+    if(Math.abs(last_scroll_ratio - scroll_ratio) > size && (last_hypo_font_size == hypo_box_font_size_change) && size != 0) {
+        // Clear boxes
+        for(var i = 0; i < 12; i++) {
+            hypoCanvas[i].clearRect(0, 0, canvas_div_w, canvas_div_h_hypo);
+        }
+        // Move then redraw the same box
+        boxLocation.forEach(function(item){
+            var date = adaptObj[item[5]][1];
+            var empirical = (relationsObj[item[5]] != undefined)? true:false;
+            if(date >= 1000000) {
+                date = date + 4000000;
             }
-            // Move then redraw the same box
-            boxLocation.forEach(function(item){
-                var date = adaptObj[item[5]][1];
-                var empirical = (relationsObj[item[5]] != undefined)? true:false;
-                if(date >= 1000000) {
-                    date = date + 4000000;
-                }
-                else {
-                    date = date * 5;
-                }
-                timespan = (date_start - date_end);
-                viewable_time = timespan * scroll_ratio;
-                increment_per_pixel = (viewable_time/canvas_div_w);
-                x_pos = date/increment_per_pixel;
-                x_pos = ((canvas_div_w/scroll_ratio) - x_pos) - item[2]/2;
-                item[0] = x_pos;
-                /*
-                if(last_scroll_ratio < scroll_ratio){
-                    var i = 0;
-                    while (i < boxLocation.length) {
-                        // Hit x or y
-                        if(((x_pos >= boxLocation[i][0] - box_to_box_padding_size && x_pos <= boxLocation[i][0] + boxLocation[i][2] + box_to_box_padding_size) ||
-                            (x_pos  <= boxLocation[i][0] + box_to_box_padding_size && x_pos + item[2] >= boxLocation[i][0] + boxLocation[i][2] + box_to_box_padding_size) ||
-                            (x_pos + item[2] >= boxLocation[i][0] - box_to_box_padding_size  && x_pos + item[2] <= boxLocation[i][0] + boxLocation[i][2] + box_to_box_padding_size)) &&
-                            ((item[2] >= boxLocation[i][1] && item[2] <= boxLocation[i][1] + boxLocation[i][3]) ||
-                            (item[2] <= boxLocation[i][1] && item[2] + item[3] >= boxLocation[i][1] + boxLocation[i][3]) ||
-                            (item[2] + item[3] >= boxLocation[i][1] && item[2] + item[3] <= boxLocation[i][1] + boxLocation[i][3]))) {
-                                last_hypo_font_size = 0;
-                        }
-                        else{
-                            i++;
-                        }
-                    }
-                }*/
+            else {
+                date = date * 5;
+            }
+            timespan = (date_start - date_end);
+            viewable_time = timespan * scroll_ratio;
+            increment_per_pixel = (viewable_time/canvas_div_w);
+            x_pos = date/increment_per_pixel;
+            x_pos = ((canvas_div_w/scroll_ratio) - x_pos) - item[2]/2;
+            item[0] = x_pos;
 
-                boxLocationObj[item[5]][0] = x_pos;
-                boxCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4], empirical);
-            });
-            last_scroll_ratio = scroll_ratio;
-            //sessionStorage.setItem("boxLocation", JSON.stringify(boxLocation));
+
+            boxLocationObj[item[5]][0] = x_pos;
+            boxCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4], item[5], empirical);
+        });
+        last_scroll_ratio = scroll_ratio;
+    }
+
+    else if(Math.abs(last_scroll_ratio - scroll_ratio) > size || size == 0) {
+        last_scroll_ratio = scroll_ratio;
+        last_hypo_font_size = hypo_box_font_size_change;
+        hypo_box_font_size_change = hypo_box_font_size;
+        temp_text = 0;
+        // Clear boxes
+        for(var i = 0; i < 12; i++) {
+            hypoCanvas[i].clearRect(0, 0, canvas_div_w, canvas_div_h_hypo);
         }
 
-        // TODO if needed medium redraw speedm, redraw and move without remaking boxes
-
-        else if(Math.abs(last_scroll_ratio - scroll_ratio) > size || size == 0) {
-            last_scroll_ratio = scroll_ratio;
-            last_hypo_font_size = hypo_box_font_size_change;
-            hypo_box_font_size_change = hypo_box_font_size;
-            temp_text = 0;
-            // Clear boxes
-            for(var i = 0; i < 12; i++) {
-                hypoCanvas[i].clearRect(0, 0, canvas_div_w, canvas_div_h_hypo);
+        while(hypo_box_font_size_change != temp_text) {
+            temp_text = hypo_box_font_size_change;
+            boxLocation = [];
+            temp_text = hypo_box_font_size_change;
+            dir = 1;
+            for (var i = 0; i < adaptArray.length; i++) {
+                createAdaptBox(adaptArray[i], adaptObj[adaptArray[i]][0], adaptObj[adaptArray[i]][1], function(eventID, text, width, height, date) {
+                    positionAdaptBox(eventID, text, width, height, date);
+                });
+                if(hypo_box_font_size_change != temp_text)
+                break;
             }
-
-            dir = (dir)? 0:1;
-            while(hypo_box_font_size_change != temp_text) {
-                temp_text = hypo_box_font_size_change;
-                boxLocation = [];
-                temp_text = hypo_box_font_size_change;
-                for (var i = 0; i < adaptArray.length; i++) {
-                    createAdaptBox(adaptArray[i], adaptObj[adaptArray[i]][0], adaptObj[adaptArray[i]][1], function(eventID, text, width, height, date) {
-                        positionAdaptBox(eventID, text, width, height, date);
-                    });
-                    if(hypo_box_font_size_change != temp_text)
-                        break;
-                }
-            }
-            drawAllBoxes();
         }
+        drawAllBoxes();
+    }
 }
 function drawLines(size) {
     if(Math.abs(last_scroll_ratio_lines - scroll_ratio) > size || size == 0) {
@@ -1069,7 +1705,7 @@ function drawLines(size) {
                     lineArr.push([x2,y1,x2,y2]);
                     lineArr.push([x2,y2,x3,y2]);
                 }
-                lineArr.forEach(function(item2){lineCanvasWrapperDraw(item2[0],item2[1],item2[2],item2[3]);});
+                lineArr.forEach(function(item2){lineCanvasWrapperDraw(item2[2],item2[1],item2[0],item2[3]);});
             }
 
             // Draw lines right of item (empirical)
@@ -1091,66 +1727,66 @@ function drawLines(size) {
                     var hit = 0;
                     var count = 0;
 
-                    for(var j = 0; j < collisionArr.length; j++){
-                        if(!(temp_r[i][0] == collisionArr[j][0] && temp_r[i][1] == collisionArr[j][1]) && count < 150){
-                            var eLeft = collisionArr[j][0] - (box_to_box_padding_size / 2) + 2;
-                            var eRight = collisionArr[j][0] + collisionArr[j][2] + (box_to_box_padding_size / 2) - 2;
-                            var eTop = collisionArr[j][1] - (box_to_box_padding_size/2) + 2;
-                            var eBottom = collisionArr[j][1] + collisionArr[j][3] + (box_to_box_padding_size / 2) - 2;
-                            var l1 = (x1 < eRight && x2 > eLeft) && (y1 > eTop && y1 < eBottom);
-                            var l2 = (x2 > eLeft && x2 < eRight) && ((y2 < y1)?(y2 > eTop && y1 < eBottom):(y1 > eTop && y2 < eBottom));
-                            var l3 = (x3 > eRight && x2 < eLeft) && (y2 > eTop && y2 < eBottom);
-                            var l4 = (x3 > eRight && x2 < eLeft) && (y2 > eTop && y2 < eBottom);
-                            var l5 = (x3 > eRight && x2 < eLeft) && (y2 > eTop && y2 < eBottom);
-
-                            console.log('    from: ' + item[1] + ' To: ' + collisionArr[collisionArr.findIndex(function(item){return item[0]==temp_r[i][0]})][4]);
-                            console.log('    on: ' + collisionArr[j][4]);
-                            console.log('    l1: ' + l1);
-                            console.log('    l2: ' + l2);
-                            console.log('    l3: ' + l3);
-                            console.log('    l4: ' + l4);
-                            console.log('    l5: ' + l5);
-
-                            if(l1 || l2){
-                                if(!hit){ // First check for the line
-                                    if(x3 == (temp_r[i][0] + (temp_r[i][2]/2))){ // If the line is the first one
-                                        x2 = collisionArr[j][0] - ((collisionArr[j][0] - (boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2]))/ 2);
-                                        y2 = ((collisionArr[j][1] + (collisionArr[j][3]/ 2)) <= y1)?(collisionArr[j][1] + collisionArr[j][3] + box_to_box_padding_size):(collisionArr[j][1] - box_to_box_padding_size);
-                                        x3 = collisionArr[j][0] + collisionArr[j][2];
-                                    }
-                                    else{ // Line is the second pass
-                                        x2 = x3 + ((x3 - (collisionArr[j][0] + collisionArr[j][2]))/ 2);
-                                        y2 = ((collisionArr[j][1] + (collisionArr[j][3]/ 2)) <= y1)?(collisionArr[j][1] + collisionArr[j][3] + box_to_box_padding_size):(collisionArr[j][1] - box_to_box_padding_size);
-                                        x3 = collisionArr[j][0] + collisionArr[j][2];
-                                    }
-                                    hit = 1;
-                                }
-                                else{
-                                    y2 += (y2<y1)?(box_to_box_padding_size / 2):(-1*(box_to_box_padding_size / 2));
-                                }
-                                j = -1;
-                            }
-                            else if (l3) {
-                                x2 = collisionArr[j][0] + ((collisionArr[j][0] - (temp_r[i][0] + temp_r[i][2]))/ 2);
-                                j = -1;
-                            }
-                        }
-                        if(hit && j == collisionArr.length-1){ // Line is good
-                            lineArr.push([x1,y1,x2,y1]);
-                            lineArr.push([x2,y1,x2,y2]);
-                            lineArr.push([x2,y2,x3,y2]);
-                            lineArr.push([x3,y2,x3,y3]);
-                            lineArr.push([x3,y3,x4,y3]);
-                            // Set the rest of the line to the
-                            x1 = x3;
-                            y1 = y2
-                            x2 = x3 + ((temp_r[i][0]-x3)/ 2);
-                            y2 = temp_r[i][1] + (temp_r[i][3]/2);
-                            x3 = temp_r[i][0] + (temp_r[i][2]/2);
-                            j = -1;
-                            hit = 0;
-                        }
-                    }
+                    // for(var j = 0; j < collisionArr.length; j++){
+                    //     if(!(temp_r[i][0] == collisionArr[j][0] && temp_r[i][1] == collisionArr[j][1]) && count < 150){
+                    //         var eLeft = collisionArr[j][0] - (box_to_box_padding_size / 2) + 2;
+                    //         var eRight = collisionArr[j][0] + collisionArr[j][2] + (box_to_box_padding_size / 2) - 2;
+                    //         var eTop = collisionArr[j][1] - (box_to_box_padding_size/2) + 2;
+                    //         var eBottom = collisionArr[j][1] + collisionArr[j][3] + (box_to_box_padding_size / 2) - 2;
+                    //         var l1 = (x1 < eRight && x2 > eLeft) && (y1 > eTop && y1 < eBottom);
+                    //         var l2 = (x2 > eLeft && x2 < eRight) && ((y2 < y1)?(y2 > eTop && y1 < eBottom):(y1 > eTop && y2 < eBottom));
+                    //         var l3 = (x3 > eRight && x2 < eLeft) && (y2 > eTop && y2 < eBottom);
+                    //         var l4 = (x3 > eRight && x2 < eLeft) && (y2 > eTop && y2 < eBottom);
+                    //         var l5 = (x3 > eRight && x2 < eLeft) && (y2 > eTop && y2 < eBottom);
+                    //
+                    //         console.log('    from: ' + item[1] + ' To: ' + collisionArr[collisionArr.findIndex(function(item){return item[0]==temp_r[i][0]})][4]);
+                    //         console.log('    on: ' + collisionArr[j][4]);
+                    //         console.log('    l1: ' + l1);
+                    //         console.log('    l2: ' + l2);
+                    //         console.log('    l3: ' + l3);
+                    //         console.log('    l4: ' + l4);
+                    //         console.log('    l5: ' + l5);
+                    //
+                    //         if(l1 || l2){
+                    //             if(!hit){ // First check for the line
+                    //                 if(x3 == (temp_r[i][0] + (temp_r[i][2]/2))){ // If the line is the first one
+                    //                     x2 = collisionArr[j][0] - ((collisionArr[j][0] - (boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2]))/ 2);
+                    //                     y2 = ((collisionArr[j][1] + (collisionArr[j][3]/ 2)) <= y1)?(collisionArr[j][1] + collisionArr[j][3] + box_to_box_padding_size):(collisionArr[j][1] - box_to_box_padding_size);
+                    //                     x3 = collisionArr[j][0] + collisionArr[j][2];
+                    //                 }
+                    //                 else{ // Line is the second pass
+                    //                     x2 = x3 + ((x3 - (collisionArr[j][0] + collisionArr[j][2]))/ 2);
+                    //                     y2 = ((collisionArr[j][1] + (collisionArr[j][3]/ 2)) <= y1)?(collisionArr[j][1] + collisionArr[j][3] + box_to_box_padding_size):(collisionArr[j][1] - box_to_box_padding_size);
+                    //                     x3 = collisionArr[j][0] + collisionArr[j][2];
+                    //                 }
+                    //                 hit = 1;
+                    //             }
+                    //             else{
+                    //                 y2 += (y2<y1)?(box_to_box_padding_size / 2):(-1*(box_to_box_padding_size / 2));
+                    //             }
+                    //             j = -1;
+                    //         }
+                    //         else if (l3) {
+                    //             x2 = collisionArr[j][0] + ((collisionArr[j][0] - (temp_r[i][0] + temp_r[i][2]))/ 2);
+                    //             j = -1;
+                    //         }
+                    //     }
+                    //     if(hit && j == collisionArr.length-1){ // Line is good
+                    //         lineArr.push([x1,y1,x2,y1]);
+                    //         lineArr.push([x2,y1,x2,y2]);
+                    //         lineArr.push([x2,y2,x3,y2]);
+                    //         lineArr.push([x3,y2,x3,y3]);
+                    //         lineArr.push([x3,y3,x4,y3]);
+                    //         // Set the rest of the line to the
+                    //         x1 = x3;
+                    //         y1 = y2
+                    //         x2 = x3 + ((temp_r[i][0]-x3)/ 2);
+                    //         y2 = temp_r[i][1] + (temp_r[i][3]/2);
+                    //         x3 = temp_r[i][0] + (temp_r[i][2]/2);
+                    //         j = -1;
+                    //         hit = 0;
+                    //     }
+                    // }
                     lineArr.push([x1,y1,x2,y1]);
                     lineArr.push([x2,y1,x2,y2]);
                     lineArr.push([x2,y2,x3,y2]);
@@ -1227,7 +1863,7 @@ function drawLines(size) {
                     lineArr.push([x2,y2,x3,y2]);
                 }
                 console.log('----- DRAWING-------');
-                lineArr.forEach(function(item2){lineCanvasWrapperDraw(item2[0],item2[1],item2[2],item2[3]);});
+                lineArr.forEach(function(item2){lineCanvasWrapperDraw(item2[2],item2[1],item2[0],item2[3]);});
             }
 
         });
@@ -1288,29 +1924,29 @@ function empiCanvasWrapperDrawLines(x_pos,y_pos,width_length,height_length) {
     var selected_canvas = 0;
 
     if(c_value <= 1)
-        selected_canvas = 0;
+    selected_canvas = 0;
     else if(c_value <= 2)
-        selected_canvas = 1;
+    selected_canvas = 1;
     else if(c_value <= 3)
-        selected_canvas = 2;
+    selected_canvas = 2;
     else if(c_value <= 4)
-        selected_canvas = 3;
+    selected_canvas = 3;
     else if(c_value <= 5)
-        selected_canvas = 4;
+    selected_canvas = 4;
     else if(c_value <= 6)
-        selected_canvas = 5;
+    selected_canvas = 5;
     else if(c_value <= 7)
-        selected_canvas = 6;
+    selected_canvas = 6;
     else if(c_value <= 8)
-        selected_canvas = 7;
+    selected_canvas = 7;
     else if(c_value <= 9)
-        selected_canvas = 8;
+    selected_canvas = 8;
     else if(c_value <= 10)
-        selected_canvas = 9;
+    selected_canvas = 9;
     else if(c_value <= 11)
-        selected_canvas = 10;
+    selected_canvas = 10;
     else if(c_value <= 12)
-        selected_canvas = 11;
+    selected_canvas = 11;
 
     x_pos = x_pos%canvas_div_w;
     var temp_x = 0;
@@ -1341,7 +1977,7 @@ function addEmpirAdaptation(eventID) {
             positionEmpirBox(eventID, text, width, height, date);
         });
         if(empir_box_font_size_change != temp_text)
-            return;
+        return;
     });
     while(empir_box_font_size_change != empir_temp_text) {
         empir_temp_text = empir_box_font_size_change;
@@ -1351,7 +1987,7 @@ function addEmpirAdaptation(eventID) {
                 positionEmpirBox(eventID, text, width, height, date);
             });
             if(empir_box_font_size_change != empir_temp_text)
-                break;
+            break;
         }
     }
     // Draw all the boxes when done
@@ -1363,9 +1999,9 @@ function removeEmpirAdaptation(eventID, callback) {
             for(var i = 0; i < empiricalBox.length; i++) {
                 if(empiricalBox[i][5] == eventID) {
                     if(empiricalBox.length == 1)
-                        empiricalBox = [];
+                    empiricalBox = [];
                     else
-                        empiricalBox.splice(i, 1);
+                    empiricalBox.splice(i, 1);
                     i = empiricalBox.length;
                 }
             }
@@ -1394,11 +2030,11 @@ function createEmpirBox(eventID, eventName, date, callback) {
             line += item + " ";
         }
         else {
-            textArray.push(line.trim());
+            textArray.push(line.trim().toUpperCase());
             line = item + " ";
         }
     });
-    textArray.push(line.trim());
+    textArray.push(line.trim().toUpperCase());
 
     var longest_line = 0;
     var width = 0;
@@ -1434,40 +2070,40 @@ function positionEmpirBox(eventID, text, width, height, date) {
     while (i < empiricalBox.length) {
         // Hit x or y
         if(((x_pos >= empiricalBox[i][0] - empir_box_to_box_padding_size && x_pos <= empiricalBox[i][0] + empiricalBox[i][2] + empir_box_to_box_padding_size) ||
-            (x_pos  <= empiricalBox[i][0] + empir_box_to_box_padding_size && x_pos + width >= empiricalBox[i][0] + empiricalBox[i][2] + empir_box_to_box_padding_size) ||
-            (x_pos + width >= empiricalBox[i][0] - empir_box_to_box_padding_size  && x_pos + width <= empiricalBox[i][0] + empiricalBox[i][2] + empir_box_to_box_padding_size)) &&
-            ((y_pos >= empiricalBox[i][1] && y_pos <= empiricalBox[i][1] + empiricalBox[i][3]) ||
-            (y_pos <= empiricalBox[i][1] && y_pos + height >= empiricalBox[i][1] + empiricalBox[i][3]) ||
-            (y_pos + height >= empiricalBox[i][1] && y_pos + height <= empiricalBox[i][1] + empiricalBox[i][3]))) {
-                if(i > l_i) {
-                    empir_dir = (empir_dir)? 0:1;
-                    l_i = i;
+        (x_pos  <= empiricalBox[i][0] + empir_box_to_box_padding_size && x_pos + width >= empiricalBox[i][0] + empiricalBox[i][2] + empir_box_to_box_padding_size) ||
+        (x_pos + width >= empiricalBox[i][0] - empir_box_to_box_padding_size  && x_pos + width <= empiricalBox[i][0] + empiricalBox[i][2] + empir_box_to_box_padding_size)) &&
+        ((y_pos >= empiricalBox[i][1] && y_pos <= empiricalBox[i][1] + empiricalBox[i][3]) ||
+        (y_pos <= empiricalBox[i][1] && y_pos + height >= empiricalBox[i][1] + empiricalBox[i][3]) ||
+        (y_pos + height >= empiricalBox[i][1] && y_pos + height <= empiricalBox[i][1] + empiricalBox[i][3]))) {
+            if(i > l_i) {
+                empir_dir = (empir_dir)? 0:1;
+                l_i = i;
+            }
+            empir_dir = (down)? 1:empir_dir;
+            empir_dir = (up)? 0:empir_dir;
+            if(!down && !empir_dir) {
+                if (empiricalBox[i][1] + empiricalBox[i][3] + height + empir_box_to_box_padding_size < canvas_div_h_empir) {
+                    y_pos = empiricalBox[i][1] + empiricalBox[i][3] + empir_box_to_box_padding_size;
+                    i = 0;
                 }
-                empir_dir = (down)? 1:empir_dir;
-                empir_dir = (up)? 0:empir_dir;
-                if(!down && !empir_dir) {
-                    if (empiricalBox[i][1] + empiricalBox[i][3] + height + empir_box_to_box_padding_size < canvas_div_h_empir) {
-                        y_pos = empiricalBox[i][1] + empiricalBox[i][3] + empir_box_to_box_padding_size;
-                        i = 0;
-                    }
-                    else
-                        down = 1;
+                else
+                down = 1;
+            }
+            else if(!up && empir_dir) {
+                if (empiricalBox[i][1] - empir_box_to_box_padding_size - height > 0) {
+                    y_pos = empiricalBox[i][1] - empir_box_to_box_padding_size - height;
+                    i = 0;
                 }
-                else if(!up && empir_dir) {
-                    if (empiricalBox[i][1] - empir_box_to_box_padding_size - height > 0) {
-                        y_pos = empiricalBox[i][1] - empir_box_to_box_padding_size - height;
-                        i = 0;
-                    }
-                    else
-                        up = 1;
+                else
+                up = 1;
+            }
+            else {
+                if(empir_temp_text == empir_box_font_size_change){
+                    empir_box_font_size_change -= 1;
+                    if(empir_box_font_size_change > 5){}// TODO dots
                 }
-                else {
-                    if(empir_temp_text == empir_box_font_size_change){
-                        empir_box_font_size_change -= 1;
-                        if(empir_box_font_size_change > 5){}// TODO dots
-                    }
-                    break;
-                }
+                break;
+            }
         }
         else{
             i++;
@@ -1516,7 +2152,7 @@ function redrawEmpir(size) {
                     positionEmpirBox(eventID, text, width, height, date);
                 });
                 if(empir_box_font_size_change != empir_temp_text)
-                    break;
+                break;
             }
         }
         drawAllEmpirBoxes();
@@ -1626,30 +2262,31 @@ function drawScrollbarBlock(size) {
     right_edge_date = timespan - (timespan * scroll_position) + date_end - (timespan * scroll_ratio);
 
     // draw increment text under scrollbar handles
-    var x = 0 + (2.3 * block_radius);
+    var x = 0 + 2;
     var y = hndl_cnt_left_y + (3.5 * block_radius);
     var left_text = 0;
     if(left_edge_date > 5000000) {
-      left_text = ((left_edge_date - 4000000) / 1000000).toFixed(1);
+        left_text = ((left_edge_date - 4000000) / 1000000).toFixed(1);
     }
     else {
-      left_text = (left_edge_date / 5000000).toFixed(2);
+        left_text = (left_edge_date / 5000000).toFixed(2);
     }
 
     draw_start = left_text;
     left_text += 'M';
     ctx2_2.font = scrollbar_font_size + "px " + scrollbar_font_family;
     ctx2_2.fillStyle = scrollbar_font_color;
-    ctx2_2.textAlign = "center";
+    ctx2_2.textAlign = "left";
     ctx2_2.fillText(left_text, x, y);
-    x = canvas_div_w - (2.3 * block_radius);
+    ctx2_2.textAlign = "right";
+    x = canvas_div_w - 2;
     y = hndl_cnt_left_y + (3.5 * block_radius);
     var right_text = 0;
     if(right_edge_date > 5000000) {
-      right_text = ((right_edge_date - 4000000) / 1000000).toFixed(1);
+        right_text = ((right_edge_date - 4000000) / 1000000).toFixed(1);
     }
     else {
-      right_text = Math.abs(right_edge_date / 5000000).toFixed(2);
+        right_text = Math.abs(right_edge_date / 5000000).toFixed(2);
     }
     draw_end = right_text;
     right_text += 'M';
@@ -1665,7 +2302,7 @@ function drawTimelineIncrements(size) {
         ctx1_1.font = increments_font_size + "px " + increments_font_family;
         ctx1_1.fillStyle = increments_font_color;
         ctx1_1.textAlign = "center";
-        ctx1_1.strokeStyle = "rgb(0,0,0)";
+        ctx1_1.strokeStyle = increments_font_color;
         ctx1_1.lineWidth = 2;
 
         timespan = (date_start - date_end);
@@ -1686,38 +2323,38 @@ function drawTimelineIncrements(size) {
             ctx1_1.font = increments_font_size + "px " + increments_font_family;
             ctx1_1.fillStyle = increments_font_color;
             ctx1_1.textAlign = "center";
-            ctx1_1.strokeStyle = "rgb(0,0,0)";
+            ctx1_1.strokeStyle = increments_font_color;
             ctx1_1.lineWidth = 2;
             text = '';
             if(((date_start - 4000000) / 1000000) - i >= 1) {
-              text += ((date_start - 4000000) / 1000000) - i;
-              text += 'M';
+                text += ((date_start - 4000000) / 1000000) - i;
+                text += 'M';
             }
             else {
-              text = ((date_start-4000000)/1000000) - i;
-              text = (.8 + (text * 0.2)).toFixed(1);
-              text = (text < 0.09)?0:text;
-              text += 'M';
+                text = ((date_start-4000000)/1000000) - i;
+                text = (.8 + (text * 0.2)).toFixed(1);
+                text = (text < 0.09)?0:text;
+                text += 'M';
             }
             ctx1_1.fillText(text, xpos, 20);
             if(change/4 > textwidth*3) {
                 for(var j = 1; j < 10; j++ ) {
                     if (j == 5) {
-                        ctx1_1.font = "15px " + increments_font_family;
+                        ctx1_1.font = "13px " + increments_font_family;
                         ctx1_1.fillStyle = increments_font_color;
                         ctx1_1.textAlign = "center";
-                        ctx1_1.strokeStyle = "rgb(0,0,0)";
+                        ctx1_1.strokeStyle = increments_font_color;
                         ctx1_1.lineWidth = 2;
                         text = '';
                         if(((date_start - 4000000) / 1000000) - i >= 2) {
-                          text += ((date_start - 4500000) / 1000000) - i;
-                          text += 'M';
+                            text += ((date_start - 4500000) / 1000000) - i;
+                            text += 'M';
                         }
                         else {
-                          text = ((date_start-4000000)/1000000) - i;
-                          text = (.8 + (text * 0.2) - 0.1).toFixed(1);
-                          text = (text < 0.09)?0:text;
-                          text += 'M';
+                            text = ((date_start-4000000)/1000000) - i;
+                            text = (.8 + (text * 0.2) - 0.1).toFixed(1);
+                            text = (text < 0.09)?0:text;
+                            text += 'M';
                         }
                         ctx1_1.fillText(text, xpos + j * change/10, canvas1_1.height + 2 - 2 *canvas1_1.height/4 - 3);
                         ctx1_1.beginPath();
@@ -1741,18 +2378,18 @@ function drawTimelineIncrements(size) {
                         ctx1_1.font = "15px " + increments_font_family;
                         ctx1_1.fillStyle = increments_font_color;
                         ctx1_1.textAlign = "center";
-                        ctx1_1.strokeStyle = "rgb(0,0,0)";
+                        ctx1_1.strokeStyle = increments_font_color;
                         ctx1_1.lineWidth = 2;
                         text = '';
                         if(((date_start - 4000000) / 1000000) - i >= 2) {
-                          text += ((date_start - 4500000) / 1000000) - i;
-                          text += 'M';
+                            text += ((date_start - 4500000) / 1000000) - i;
+                            text += 'M';
                         }
                         else {
-                          text = ((date_start-4000000)/1000000) - i;
-                          text = (.8 + (text * 0.2) - 0.1).toFixed(1);
-                          text = (text < 0.09)?0:text;
-                          text += 'M';
+                            text = ((date_start-4000000)/1000000) - i;
+                            text = (.8 + (text * 0.2) - 0.1).toFixed(1);
+                            text = (text < 0.09)?0:text;
+                            text += 'M';
                         }
                         ctx1_1.fillText(text, xpos + j * change/4, canvas1_1.height + 2 - 2 *canvas1_1.height/4 - 3);
                         ctx1_1.beginPath();
@@ -1787,44 +2424,46 @@ function drawTimelineIncrements(size) {
 
 // HTML injection strings
 var hypothesis_adapt_canvas = `
-    <canvas id="hypothesis-canvas-1" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="hypothesis-canvas-2" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="hypothesis-canvas-3" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="hypothesis-canvas-4" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="hypothesis-canvas-5" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="hypothesis-canvas-6" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="hypothesis-canvas-7" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="hypothesis-canvas-8" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="hypothesis-canvas-9" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="hypothesis-canvas-10" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="hypothesis-canvas-11" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="hypothesis-canvas-12" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    `;
+<canvas id="hypothesis-canvas-1" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas-2" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas-3" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas-4" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas-5" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas-6" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas-7" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas-8" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas-9" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas-10" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas-11" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas-12" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+`;
 var hypothesis_lines_canvas = `
-    <canvas id="hypothesis-canvas2-1" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="hypothesis-canvas2-2" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="hypothesis-canvas2-3" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="hypothesis-canvas2-4" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="hypothesis-canvas2-5" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="hypothesis-canvas2-6" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="hypothesis-canvas2-7" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="hypothesis-canvas2-8" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="hypothesis-canvas2-9" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="hypothesis-canvas2-10" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="hypothesis-canvas2-11" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="hypothesis-canvas2-12" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    `;
+<canvas id="hypothesis-canvas2-1" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas2-2" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas2-3" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas2-4" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas2-5" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas2-6" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas2-7" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas2-8" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas2-9" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas2-10" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas2-11" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="hypothesis-canvas2-12" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+`;
 var empirical_canvas = `
-    <canvas id="empirical-canvas-1" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="empirical-canvas-2" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="empirical-canvas-3" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="empirical-canvas-4" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="empirical-canvas-5" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="empirical-canvas-6" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="empirical-canvas-7" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="empirical-canvas-8" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="empirical-canvas-9" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="empirical-canvas-10" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="empirical-canvas-11" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    <canvas id="empirical-canvas-12" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-    `;
+<canvas id="empirical-canvas-1" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="empirical-canvas-2" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="empirical-canvas-3" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="empirical-canvas-4" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="empirical-canvas-5" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="empirical-canvas-6" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="empirical-canvas-7" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="empirical-canvas-8" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="empirical-canvas-9" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="empirical-canvas-10" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="empirical-canvas-11" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+<canvas id="empirical-canvas-12" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+`;
+
+var grey_canvas = `<canvas id="grey-canvas-1" class="canvas-wrapper">Your browser doesn't support canvas</canvas>1`
