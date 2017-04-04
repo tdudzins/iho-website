@@ -261,7 +261,7 @@ function initCanvas(firstRun) {
         e.preventDefault();
         e.stopPropagation();
         var margin_value = parseInt(document.getElementById("canvas-wrapper-adaptations-div").style.marginLeft);
-        console.log(margin_value);
+        // console.log(margin_value);
 
         // get the current mouse position
         if(e.clientX == undefined){
@@ -286,19 +286,19 @@ function initCanvas(firstRun) {
                 found = true;
                 redrawHypo(0);
                 drawLines(0);
-                console.log("selected a adaptation");
+                // console.log("selected a adaptation");
             }
             else if(dragok3 == true && mx + canvas_offset>left_info_edge && mx + canvas_offset<right_info_edge &&
                 my>boxLocationObj[adaptArray[i]][1] && my<boxLocationObj[adaptArray[i]][1]+boxLocationObj[adaptArray[i]][3] && selected_adaptation == adaptArray[i]) {
                 found = true;
                 openInfoPanel(selected_adaptation);
-                console.log("information button click");
+                // console.log("information button click");
             }
             else if(dragok3 == true && mx + canvas_offset>boxLocationObj[adaptArray[i]][0] && mx + canvas_offset<left_info_edge &&
                 my>boxLocationObj[adaptArray[i]][1] && my<boxLocationObj[adaptArray[i]][1]+boxLocationObj[adaptArray[i]][3] && selected_adaptation == adaptArray[i]) {
                 dragok2 = true;
                 found = true;
-                console.log("moving activated");
+                // console.log("moving activated");
                 drawGreyBox(adaptObj[selected_adaptation][2], adaptObj[selected_adaptation][3]);
             }
         }
@@ -1611,8 +1611,33 @@ function drawLines(size) {
             for (var i = 0; i < temp_r.length; i++){
                 temp_r[i] = boxLocationObj[temp_r[i]];
             }
-            temp_r.sort(function(a,b) {if(a[1] === b[1]) {if(a[0] == b[0]){return 0;}else{return (a[0] > b[0]) ? -1 : 1;}}else {return (a[1] < b[1]) ? -1 : 1;}});
-            temp_l.sort(function(a,b) {if(a[1] === b[1]) {if(a[0] == b[0]){return 0;}else{return (a[0] > b[0]) ? -1 : 1;}}else {return (a[1] < b[1]) ? -1 : 1;}});
+            temp_r.sort(function(a,b) {
+                if(a[1] == b[1]) {
+                    if(a[0] == b[0]){
+                        return 0;
+                    }
+                    else{
+                        return (a[0] < b[0]) ? -1 : 1;
+                    }
+                }
+                else {
+                    return (a[1] < b[1]) ? -1 : 1;
+                }
+            });
+            temp_l.sort(function(a,b) {
+                if(a[1] == b[1]) {
+                    if(a[0] == b[0]){
+                        return 0;
+                    }
+                    else
+                    {
+                        return (a[0] < b[0]) ? -1 : 1;
+                    }
+                }
+                else {
+                    return (a[1] < b[1]) ? -1 : 1;
+                }
+            });
             // Get all the boxes that could colide with lines
             for (var i = 0; i < boxLocation.length; i++) {
                 if(boxLocation[i][0] + boxLocation[i][2] >= min_x && boxLocation[i][0] <= max_x && item[0] != boxLocation[i][5]){
@@ -1620,9 +1645,10 @@ function drawLines(size) {
                 }
             }
 
-            console.log('-----START COLLISION LOOP-----');
+            console.log('-----START COLLISION LOOP-----' + item[0]);
             // Draw lines left of item (empirical)
             for(var i = 0; i < temp_l.length; i++){
+            console.log('-----STARTING ON NEW PRECONDITION-----');
                 var y_incr = boxLocationObj[item[0]][3]/(temp_l.length + 1);
                 lineArr = [];
                 // Box overlap case
@@ -1644,7 +1670,7 @@ function drawLines(size) {
                     lineArr.push([x3,y3,x4,y3]);
                 }
 
-                // Ideal case
+            // Ideal case
                 else{
                     // Find the ideal lines
                     var x1 = boxLocationObj[item[0]][0] + (boxLocationObj[item[0]][2]/2);
@@ -1655,17 +1681,22 @@ function drawLines(size) {
                     var hit = 0;
                     var count = 0;
                     for(var j = collisionArr.length -1; j >= 0 ; j--){
-                        if(!(temp_l[i][0] == collisionArr[j][0] && temp_l[i][1] == collisionArr[j][1]) && count < 150){
-                            var eLeft = collisionArr[j][0] - (box_to_box_padding_size / 2) + 2;
-                            var eRight = collisionArr[j][0] + collisionArr[j][2] + (box_to_box_padding_size / 2) - 2;
-                            var eTop = collisionArr[j][1] - (box_to_box_padding_size/2) + 2;
-                            var eBottom = collisionArr[j][1] + collisionArr[j][3] + (box_to_box_padding_size / 2) - 2;
+                        if(!(temp_l[i][0] == collisionArr[j][0] && temp_l[i][1] == collisionArr[j][1])){
+                            var eLeft = collisionArr[j][0] - (box_to_box_padding_size / 2) + 4;
+                            var eRight = collisionArr[j][0] + collisionArr[j][2] + (box_to_box_padding_size / 2) - 4;
+                            var eTop = collisionArr[j][1] - (box_to_box_padding_size/2) + 4;
+                            var eBottom = collisionArr[j][1] + collisionArr[j][3] + (box_to_box_padding_size / 2) - 4;
                             var l1 = (x3 < eRight && x2 > eLeft) && (y2 > eTop && y2 < eBottom);
                             var l2 = (x2 > eLeft && x2 < eRight) && ((y2 > y1)?(y2 > eTop && y1 < eBottom):(y1 > eTop && y2 < eBottom));
                             var l3 = (x2 < eRight && x1 > eLeft) && (y1 > eTop && y1 < eBottom);
-                            if(l1 || l2){
+                            console.log('    from: ' + item[1] + ' To: ' + collisionArr[collisionArr.findIndex(function(item){return item[0]==temp_l[i][0]})][4]);
+                            console.log('    on: ' + collisionArr[j][4]);
+                            console.log('    l1: ' + l1);
+                            console.log('    l2: ' + l2);
+                            console.log('    l3: ' + l3);
+                            if(l3 || (l2 && !l1)){
                                 if(!hit){ // First check for the line
-                                    if(collisionArr[j][0] <= temp_l[i][0] + temp_l[i][2]){
+                                    if(collisionArr[j][0] <= temp_l[i][0] + temp_l[i][2]){ // for repositioning the up line when there is not a lot of room.
                                         if(x3 == (temp_l[i][0] + (temp_l[i][2]/2))){ // If the line is the first one
                                             x2 = boxLocationObj[item[0]][0] - ((boxLocationObj[item[0]][0] - (collisionArr[j][0] + collisionArr[j][2]))/ 2);
                                         }
@@ -1676,30 +1707,37 @@ function drawLines(size) {
                                     else{
                                         if(x3 == (temp_l[i][0] + (temp_l[i][2]/2))){ // If the line is the first one
                                             x2 = boxLocationObj[item[0]][0] - ((boxLocationObj[item[0]][0] - (collisionArr[j][0] + collisionArr[j][2]))/ 2);
-                                            y2 = ((collisionArr[j][1] + (collisionArr[j][3]/ 2)) <= y1)?(collisionArr[j][1] + collisionArr[j][3] + box_to_box_padding_size):(collisionArr[j][1] - box_to_box_padding_size);
+                                            y2 = ((collisionArr[j][1] + (collisionArr[j][3]/ 2)) < y1)?(collisionArr[j][1] + collisionArr[j][3] + box_to_box_padding_size):(collisionArr[j][1] - box_to_box_padding_size);
                                             x3 = collisionArr[j][0];
+                                            console.log("pass 1 X1: "+ x1 +" X2: "+ x2 +" X3: "+ x3 +" Y1: "+ y1 + " Y2: "+ y2);
                                         }
                                         else{ // Line is the second pass
                                             x2 = x3 - ((x3 - (collisionArr[j][0] + collisionArr[j][2]))/ 2);
                                             y2 = ((collisionArr[j][1] + (collisionArr[j][3]/ 2)) <= y1)?(collisionArr[j][1] + collisionArr[j][3] + box_to_box_padding_size):(collisionArr[j][1] - box_to_box_padding_size);
                                             x3 = collisionArr[j][0];
+                                            console.log("pass 1.1 X1: "+ x1 +" X2: "+ x2 +" X3: "+ x3 +" Y1: "+ y1 + " Y2: "+ y2);
                                         }
                                     }
                                     hit = 1;
                                 }
                                 else{
                                     y2 += (y2<y1)?(box_to_box_padding_size / 2):(-1*(box_to_box_padding_size / 2));
+                                    x3 = collisionArr[j][0];
+                                    console.log("pass 2 X1: "+ x1 +" X2: "+ x2 +" X3: "+ x3 +" Y1: "+ y1 + " Y2: "+ y2);
+
                                 }
                                 j = collisionArr.length;
+                                count++;
                             }
-                            else if (l3) {
+                            else if (l1) {
                                 x2 = collisionArr[j][0] - ((collisionArr[j][0] - (temp_l[i][0] + temp_l[i][2]))/ 2);
                                 j = collisionArr.length;
+                                count++;
                                 hit = 1;
                             }
-                            count++;
                         }
-                        if(hit && j == 0){ // Line is good
+                        if(hit && j == 0  && (x3 != temp_l[i][0] + (temp_l[i][2]/2))){ // Line is good
+                            console.log('----LINE FOUND-----');
                             lineArr.push([x1,y1,x2,y1]);
                             lineArr.push([x2,y1,x2,y2]);
                             lineArr.push([x2,y2,x3,y2]);
@@ -1713,12 +1751,21 @@ function drawLines(size) {
                             hit = 0;
                             count = 0;
                         }
+                        if(x3 == temp_l[i][0] + (temp_l[i][2]/2) && j == 0){
+                            console.log('-----LINE FOUND EXIT TO PUSH-----');
+                        }
+                        if (count > 15) {
+                            console.log('-----COUNT-----');
+                            break;
+                        }
                     }
                     lineArr.push([x1,y1,x2,y1]);
                     lineArr.push([x2,y1,x2,y2]);
                     lineArr.push([x2,y2,x3,y2]);
                 }
-                lineArr.forEach(function(item2){lineCanvasWrapperDraw(item2[2],item2[1],item2[0],item2[3]);});
+                console.log('-----DRAWING-----');
+                var colors = ['red','blue','green', 'black', 'orange', 'yellow', 'white','light-blue'];
+                lineArr.forEach(function(item2){lineCanvasWrapperDraw(item2[2],item2[1],item2[0],item2[3], colors[i%7]);});
             }
 
             // Draw lines right of item (empirical)
@@ -1875,7 +1922,7 @@ function drawLines(size) {
                     lineArr.push([x2,y1,x2,y2]);
                     lineArr.push([x2,y2,x3,y2]);
                 }
-                console.log('----- DRAWING-------');
+                // console.log('----- DRAWING-------');
                 lineArr.forEach(function(item2){lineCanvasWrapperDraw(item2[2],item2[1],item2[0],item2[3]);});
             }
 
@@ -2437,46 +2484,46 @@ function drawTimelineIncrements(size) {
 
 // HTML injection strings
 var hypothesis_adapt_canvas = `
-<canvas id="hypothesis-canvas-1" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas-2" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas-3" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas-4" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas-5" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas-6" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas-7" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas-8" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas-9" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas-10" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas-11" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas-12" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-`;
+    <canvas id="hypothesis-canvas-1" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas-2" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas-3" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas-4" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas-5" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas-6" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas-7" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas-8" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas-9" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas-10" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas-11" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas-12" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    `;
 var hypothesis_lines_canvas = `
-<canvas id="hypothesis-canvas2-1" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas2-2" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas2-3" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas2-4" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas2-5" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas2-6" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas2-7" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas2-8" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas2-9" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas2-10" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas2-11" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="hypothesis-canvas2-12" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-`;
+    <canvas id="hypothesis-canvas2-1" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas2-2" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas2-3" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas2-4" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas2-5" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas2-6" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas2-7" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas2-8" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas2-9" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas2-10" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas2-11" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="hypothesis-canvas2-12" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    `;
 var empirical_canvas = `
-<canvas id="empirical-canvas-1" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="empirical-canvas-2" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="empirical-canvas-3" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="empirical-canvas-4" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="empirical-canvas-5" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="empirical-canvas-6" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="empirical-canvas-7" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="empirical-canvas-8" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="empirical-canvas-9" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="empirical-canvas-10" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="empirical-canvas-11" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-<canvas id="empirical-canvas-12" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
-`;
+    <canvas id="empirical-canvas-1" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="empirical-canvas-2" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="empirical-canvas-3" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="empirical-canvas-4" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="empirical-canvas-5" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="empirical-canvas-6" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="empirical-canvas-7" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="empirical-canvas-8" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="empirical-canvas-9" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="empirical-canvas-10" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="empirical-canvas-11" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    <canvas id="empirical-canvas-12" class="canvas-wrapper">Your browser doesn't support canvas</canvas>
+    `;
 
 var grey_canvas = `<canvas id="grey-canvas-1" class="canvas-wrapper">Your browser doesn't support canvas</canvas>1`
