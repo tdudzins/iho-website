@@ -668,8 +668,8 @@ ul.media-list li {
 .video-modal-content {
     margin: auto;
     display: block;
-    width: 840px;
-    height: 630px;
+    width: 60%;
+    height: 60%;
     max-width: 85%;
     max-height: 75%;
 }
