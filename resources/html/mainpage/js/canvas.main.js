@@ -1645,7 +1645,7 @@ function drawLines(size) {
                 }
             }
 
-            console.log('-----START COLLISION LOOP-----' + item[0]);
+            console.log('-----START COLLISION LOOP----- id: ' + item[0]);
             // Draw lines left of item (empirical)
             for(var i = 0; i < temp_l.length; i++){
             console.log('-----STARTING ON NEW PRECONDITION-----');
@@ -1694,7 +1694,7 @@ function drawLines(size) {
                             console.log('    l1: ' + l1);
                             console.log('    l2: ' + l2);
                             console.log('    l3: ' + l3);
-                            if(l3 || (l2 && !l1)){
+                            if(l3){
                                 if(!hit){ // First check for the line
                                     if(collisionArr[j][0] <= temp_l[i][0] + temp_l[i][2]){ // for repositioning the up line when there is not a lot of room.
                                         if(x3 == (temp_l[i][0] + (temp_l[i][2]/2))){ // If the line is the first one
@@ -1730,10 +1730,14 @@ function drawLines(size) {
                                 count++;
                             }
                             else if (l1) {
-                                x2 = collisionArr[j][0] - ((collisionArr[j][0] - (temp_l[i][0] + temp_l[i][2]))/ 2);
+
                                 j = collisionArr.length;
                                 count++;
-                                hit = 1;
+                            }
+                            else if (l2) {
+
+                                j = collisionArr.length;
+                                count++;
                             }
                         }
                         if(hit && j == 0  && (x3 != temp_l[i][0] + (temp_l[i][2]/2))){ // Line is good
