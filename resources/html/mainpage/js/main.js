@@ -395,8 +395,7 @@ function openInfoPanel(eventID) {
                                 var vid_captionText = document.getElementById("video-caption");
                                 vid_img.onclick = function(){
                                     vid_modal.style.display = "block";
-                                    var iframe = $('<iframe width="100%" height="100%" src="https://www.youtube.com/embed/'+ this.id+ '" frameborder="0" allowfullscreen></iframe>');
-                                    $("#video-modal-content").empty();
+                                    var iframe = $('<iframe width="50%" height="50%" src="https://www.youtube.com/embed/'+ this.id+ '" frameborder="0" allowfullscreen></iframe>');
                                     iframe.appendTo(vid_modalVid);
                                     vid_captionText.innerHTML = this.alt;
                                 }

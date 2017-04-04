@@ -277,8 +277,6 @@ function initCanvas(firstRun) {
         var canvas_offset = (0 * canvas_div_w);
         var found = false;
         for(var i=0;i<adaptArray.length;i++){
-            var left_info_edge = (boxLocationObj[adaptArray[i]][0] + boxLocationObj[adaptArray[i]][2]) - (hypo_box_font_size_change + text_in_box_padding_h/3) - (text_in_box_padding_w/5);
-            var right_info_edge = boxLocationObj[adaptArray[i]][0] + boxLocationObj[adaptArray[i]][2];
             if(mx + canvas_offset>boxLocationObj[adaptArray[i]][0] && mx + canvas_offset<boxLocationObj[adaptArray[i]][0]+boxLocationObj[adaptArray[i]][2] && my>boxLocationObj[adaptArray[i]][1] &&
                 my<boxLocationObj[adaptArray[i]][1]+boxLocationObj[adaptArray[i]][3] && dragok3 == false) {
                 dragok3 = true;
@@ -288,18 +286,18 @@ function initCanvas(firstRun) {
                 drawLines(0);
                 console.log("selected a adaptation");
             }
-            else if(dragok3 == true && mx + canvas_offset>left_info_edge && mx + canvas_offset<right_info_edge &&
+            else if(dragok3 == true && mx + canvas_offset>boxLocationObj[adaptArray[i]][0]+(boxLocationObj[adaptArray[i]][2]-boxLocationObj[adaptArray[i]][3]) && mx + canvas_offset<boxLocationObj[adaptArray[i]][0]+(boxLocationObj[adaptArray[i]][2]) &&
                 my>boxLocationObj[adaptArray[i]][1] && my<boxLocationObj[adaptArray[i]][1]+boxLocationObj[adaptArray[i]][3] && selected_adaptation == adaptArray[i]) {
                 found = true;
                 openInfoPanel(selected_adaptation);
                 console.log("information button click");
             }
-            else if(dragok3 == true && mx + canvas_offset>boxLocationObj[adaptArray[i]][0] && mx + canvas_offset<left_info_edge &&
+            else if(dragok3 == true && mx + canvas_offset>boxLocationObj[adaptArray[i]][0] && mx + canvas_offset<boxLocationObj[adaptArray[i]][0]+(boxLocationObj[adaptArray[i]][2]-boxLocationObj[adaptArray[i]][3]) &&
                 my>boxLocationObj[adaptArray[i]][1] && my<boxLocationObj[adaptArray[i]][1]+boxLocationObj[adaptArray[i]][3] && selected_adaptation == adaptArray[i]) {
                 dragok2 = true;
                 found = true;
                 console.log("moving activated");
-                drawGreyBox(adaptObj[selected_adaptation][2], adaptObj[selected_adaptation][3]);
+                drawGrreyBox(adaptObj[selected_adaptation][2], adaptObj[selected_adaptation][3]);
             }
         }
         if(!found){
@@ -1137,8 +1135,8 @@ function boxCanvasWrapperDraw(x_pos,y_pos,width_length,height_length,text,eventI
             hypoCanvas[selected_canvas + i].textAlign = "center";
             hypoCanvas[selected_canvas + i].textBaseline="hanging";
             if(eventID == selected_adaptation){
-                var img_size = hypo_box_font_size_change + (text_in_box_padding_h/3);
-                hypoCanvas[selected_canvas + i].drawImage(img, temp_x + width_length - img_size - text_in_box_padding_w/5, y_pos + ((height_length-img_size)/2), img_size, img_size);
+                var img_size = hypo_box_font_size_change + (text_in_box_padding_h/3)
+                hypoCanvas[selected_canvas + i].drawImage(img, temp_x + width_length - img_size - empir_text_in_box_padding_w/5, y_pos + ((height_length-img_size)/2), img_size, img_size);
             }
             for (j = 0; j < text.length; j++) {
                 hypoCanvas[selected_canvas + i].fillText(text[j], temp_x + (0.5 * (width_length - ((selected_adaptation==eventID) ? hypo_box_font_size_change : 0))) , y_pos + (text_in_box_padding_h*.5) + ((hypo_box_font_size_change + ((j)?1:0)) * (j)));
