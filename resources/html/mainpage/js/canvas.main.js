@@ -1663,23 +1663,19 @@ function drawLines(size) {
                             var l3 = (x2 < eRight && x1 > eLeft) && (y1 > eTop && y1 < eBottom);
                             if(l1 || l2){
                                 if(!hit){ // First check for the line
-                                    if(collisionArr[j][0] > x3){
+                                    if(collisionArr[j][0] <= temp_l[i][0] + temp_l[i][2]){
                                         if(x3 == (temp_l[i][0] + (temp_l[i][2]/2))){ // If the line is the first one
                                             x2 = boxLocationObj[item[0]][0] - ((boxLocationObj[item[0]][0] - (collisionArr[j][0] + collisionArr[j][2]))/ 2);
-                                            //y2 = ((collisionArr[j][1] + (collisionArr[j][3]/ 2)) <= y1)?(collisionArr[j][1] + collisionArr[j][3] + box_to_box_padding_size):(collisionArr[j][1] - box_to_box_padding_size);
-                                            //x3 = collisionArr[j][0] - box_to_box_padding_size / 2;
                                         }
                                         else{ // Line is the second pass
                                             x2 = x3 - ((x3 - (collisionArr[j][0] + collisionArr[j][2]))/ 2);
-                                            // y2 = ((collisionArr[j][1] + (collisionArr[j][3]/ 2)) <= y1)?(collisionArr[j][1] + collisionArr[j][3] + box_to_box_padding_size):(collisionArr[j][1] - box_to_box_padding_size);
-                                            // x3 = collisionArr[j][0];
                                         }
                                     }
                                     else{
                                         if(x3 == (temp_l[i][0] + (temp_l[i][2]/2))){ // If the line is the first one
                                             x2 = boxLocationObj[item[0]][0] - ((boxLocationObj[item[0]][0] - (collisionArr[j][0] + collisionArr[j][2]))/ 2);
                                             y2 = ((collisionArr[j][1] + (collisionArr[j][3]/ 2)) <= y1)?(collisionArr[j][1] + collisionArr[j][3] + box_to_box_padding_size):(collisionArr[j][1] - box_to_box_padding_size);
-                                            x3 = collisionArr[j][0] - box_to_box_padding_size / 2;
+                                            x3 = collisionArr[j][0];
                                         }
                                         else{ // Line is the second pass
                                             x2 = x3 - ((x3 - (collisionArr[j][0] + collisionArr[j][2]))/ 2);
