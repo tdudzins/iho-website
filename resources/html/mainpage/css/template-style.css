@@ -32,7 +32,7 @@ footer,
 }
 
 .timeline-div {
-    height: calc(100vh - 141px);;
+    height: calc(100vh - 141px);
     width: 100%;
     float: left;
     overflow: hidden;
@@ -211,7 +211,7 @@ footer,
 #about-page-bar {
     height: 35px;
     padding: 10px;
-    color: #353535;\
+    color: #353535;
 }
 #about-page-panel {
     display: none;

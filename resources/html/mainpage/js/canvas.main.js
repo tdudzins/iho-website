@@ -109,78 +109,8 @@ function initCanvas(firstRun) {
     var offsetY = BB.top;
     var startX;
     var startY;
-
-    var BB21 = topcanvas1.getBoundingClientRect();
-    var offsetX21 = BB21.left;
-    var offsetY21 = BB21.top;
-    var startX21;
-    var startY21;
-
-    var BB22 = topcanvas2.getBoundingClientRect();
-    var offsetX22 = BB22.left;
-    var offsetY22 = BB22.top;
-    var startX22;
-    var startY22;
-
-    var BB23 = topcanvas3.getBoundingClientRect();
-    var offsetX23 = BB23.left;
-    var offsetY23 = BB23.top;
-    var startX23;
-    var startY23;
-
-    var BB24 = topcanvas4.getBoundingClientRect();
-    var offsetX24 = BB24.left;
-    var offsetY24 = BB24.top;
-    var startX24;
-    var startY24;
-
-    var BB25 = topcanvas5.getBoundingClientRect();
-    var offsetX25 = BB25.left;
-    var offsetY25 = BB25.top;
-    var startX25;
-    var startY25;
-
-    var BB26 = topcanvas6.getBoundingClientRect();
-    var offsetX26 = BB26.left;
-    var offsetY26 = BB26.top;
-    var startX26;
-    var startY26;
-
-    var BB27 = topcanvas7.getBoundingClientRect();
-    var offsetX27 = BB27.left;
-    var offsetY27 = BB27.top;
-    var startX27;
-    var startY27;
-
-    var BB28 = topcanvas8.getBoundingClientRect();
-    var offsetX28 = BB28.left;
-    var offsetY28 = BB28.top;
-    var startX28;
-    var startY28;
-
-    var BB29 = topcanvas9.getBoundingClientRect();
-    var offsetX29 = BB29.left;
-    var offsetY29 = BB29.top;
-    var startX29;
-    var startY29;
-
-    var BB210 = topcanvas10.getBoundingClientRect();
-    var offsetX210 = BB210.left;
-    var offsetY210 = BB210.top;
-    var startX210;
-    var startY210;
-
-    var BB211 = topcanvas11.getBoundingClientRect();
-    var offsetX211 = BB211.left;
-    var offsetY211 = BB211.top;
-    var startX211;
-    var startY211;
-
-    var BB212 = topcanvas12.getBoundingClientRect();
-    var offsetX212 = BB212.left;
-    var offsetY212 = BB212.top;
-    var startX212;
-    var startY212;
+    var startX2;
+    var startY2;
 
     // listen for mouse events
     if(firstRun){
@@ -190,30 +120,30 @@ function initCanvas(firstRun) {
         window.ontouchmove = mouseMove;
         canvas2_2.ontouchstart = scrollbarDown;
         canvas2_2.onmousedown = scrollbarDown;
-        topcanvas1.ontouchstart = hypoMouseDown1;
-        topcanvas1.onmousedown = hypoMouseDown1;
-        topcanvas2.ontouchstart = hypoMouseDown2;
-        topcanvas2.onmousedown = hypoMouseDown2;
-        topcanvas3.ontouchstart = hypoMouseDown3;
-        topcanvas3.onmousedown = hypoMouseDown3;
-        topcanvas4.ontouchstart = hypoMouseDown4;
-        topcanvas4.onmousedown = hypoMouseDown4;
-        topcanvas5.ontouchstart = hypoMouseDown5;
-        topcanvas5.onmousedown = hypoMouseDown5;
-        topcanvas6.ontouchstart = hypoMouseDown6;
-        topcanvas6.onmousedown = hypoMouseDown6;
-        topcanvas7.ontouchstart = hypoMouseDown7;
-        topcanvas7.onmousedown = hypoMouseDown7;
-        topcanvas8.ontouchstart = hypoMouseDown8;
-        topcanvas8.onmousedown = hypoMouseDown8;
-        topcanvas9.ontouchstart = hypoMouseDown9;
-        topcanvas9.onmousedown = hypoMouseDown9;
-        topcanvas10.ontouchstart = hypoMouseDown10;
-        topcanvas10.onmousedown = hypoMouseDown10;
-        topcanvas11.ontouchstart = hypoMouseDown11;
-        topcanvas11.onmousedown = hypoMouseDown11;
-        topcanvas12.ontouchstart = hypoMouseDown12;
-        topcanvas12.onmousedown = hypoMouseDown12;
+        topcanvas1.ontouchstart = hypoMouseDown;
+        topcanvas1.onmousedown = hypoMouseDown;
+        topcanvas2.ontouchstart = hypoMouseDown;
+        topcanvas2.onmousedown = hypoMouseDown;
+        topcanvas3.ontouchstart = hypoMouseDown;
+        topcanvas3.onmousedown = hypoMouseDown;
+        topcanvas4.ontouchstart = hypoMouseDown;
+        topcanvas4.onmousedown = hypoMouseDown;
+        topcanvas5.ontouchstart = hypoMouseDown;
+        topcanvas5.onmousedown = hypoMouseDown;
+        topcanvas6.ontouchstart = hypoMouseDown;
+        topcanvas6.onmousedown = hypoMouseDown;
+        topcanvas7.ontouchstart = hypoMouseDown;
+        topcanvas7.onmousedown = hypoMouseDown;
+        topcanvas8.ontouchstart = hypoMouseDown;
+        topcanvas8.onmousedown = hypoMouseDown;
+        topcanvas9.ontouchstart = hypoMouseDown;
+        topcanvas9.onmousedown = hypoMouseDown;
+        topcanvas10.ontouchstart = hypoMouseDown;
+        topcanvas10.onmousedown = hypoMouseDown;
+        topcanvas11.ontouchstart = hypoMouseDown;
+        topcanvas11.onmousedown = hypoMouseDown;
+        topcanvas12.ontouchstart = hypoMouseDown;
+        topcanvas12.onmousedown = hypoMouseDown;
     }
 
     // Initialize Scrollbar
@@ -256,30 +186,32 @@ function initCanvas(firstRun) {
     }
 
     // handle hypo canvas mousedown events
-    function hypoMouseDown1(e) {
+    function hypoMouseDown(e) {
         // tell the browser we're handling this mouse event
         e.preventDefault();
         e.stopPropagation();
         var margin_value = parseInt(document.getElementById("canvas-wrapper-adaptations-div").style.marginLeft);
-        // console.log(margin_value);
 
         // get the current mouse position
         if(e.clientX == undefined){
-            var mx=parseInt(e.changedTouches[0].clientX-offsetX21-margin_value);
-            var my=parseInt(e.changedTouches[0].clientY-offsetY21);
+            var mx=parseInt(e.changedTouches[0].clientX-margin_value);
+            var my=parseInt(e.changedTouches[0].clientY);
         }
         else{
-            var mx=parseInt(e.clientX-offsetX21-margin_value);
-            var my=parseInt(e.clientY-offsetY21);
+            var mx=parseInt(e.clientX-margin_value);
+            var my=parseInt(e.clientY);
         }
+        selected_canvas=(mx/canvas_div_w) - (mx/canvas_div_w)%1;
+        console.log("mx" + mx);
+        console.log("my" + my);
+        console.log("selected canvas" + selected_canvas);
         // test each rect to see if mouse is inside
         dragok2=false;
-        var canvas_offset = (0 * canvas_div_w);
         var found = false;
         for(var i=0;i<adaptArray.length;i++){
             var left_info_edge = (boxLocationObj[adaptArray[i]][0] + boxLocationObj[adaptArray[i]][2]) - (hypo_box_font_size_change + text_in_box_padding_h/3) - (text_in_box_padding_w/5);
             var right_info_edge = boxLocationObj[adaptArray[i]][0] + boxLocationObj[adaptArray[i]][2];
-            if(mx + canvas_offset>boxLocationObj[adaptArray[i]][0] && mx + canvas_offset<boxLocationObj[adaptArray[i]][0]+boxLocationObj[adaptArray[i]][2] && my>boxLocationObj[adaptArray[i]][1] &&
+            if(mx>boxLocationObj[adaptArray[i]][0] && mx<boxLocationObj[adaptArray[i]][0]+boxLocationObj[adaptArray[i]][2] && my>boxLocationObj[adaptArray[i]][1] &&
                 my<boxLocationObj[adaptArray[i]][1]+boxLocationObj[adaptArray[i]][3] && dragok3 == false) {
                 dragok3 = true;
                 selected_adaptation = adaptArray[i];
@@ -288,13 +220,13 @@ function initCanvas(firstRun) {
                 drawLines(0);
                 // console.log("selected a adaptation");
             }
-            else if(dragok3 == true && mx + canvas_offset>left_info_edge && mx + canvas_offset<right_info_edge &&
+            else if(dragok3 == true && mx>left_info_edge && mx<right_info_edge &&
                 my>boxLocationObj[adaptArray[i]][1] && my<boxLocationObj[adaptArray[i]][1]+boxLocationObj[adaptArray[i]][3] && selected_adaptation == adaptArray[i]) {
                 found = true;
                 openInfoPanel(selected_adaptation);
                 // console.log("information button click");
             }
-            else if(dragok3 == true && mx + canvas_offset>boxLocationObj[adaptArray[i]][0] && mx + canvas_offset<left_info_edge &&
+            else if(dragok3 == true && mx>boxLocationObj[adaptArray[i]][0] && mx<left_info_edge &&
                 my>boxLocationObj[adaptArray[i]][1] && my<boxLocationObj[adaptArray[i]][1]+boxLocationObj[adaptArray[i]][3] && selected_adaptation == adaptArray[i]) {
                 dragok2 = true;
                 found = true;
@@ -312,350 +244,9 @@ function initCanvas(firstRun) {
                 selected_adaptation = -1;
                 redrawHypo(0);
             }
-            selected_canvas=0;
         }
-        // save the current mouse position
-        startX21=mx;
-        startY21=my;
-    }
-
-    function hypoMouseDown2(e) {
-        // tell the browser we're handling this mouse event
-        e.preventDefault();
-        e.stopPropagation();
-        var margin_value = parseInt(document.getElementById("canvas-wrapper-adaptations-div").style.marginLeft);
-
-        // get the current mouse position
-        if(e.clientX == undefined){
-            var mx=parseInt(e.changedTouches[0].clientX-offsetX22-margin_value);
-            var my=parseInt(e.changedTouches[0].clientY-offsetY22);
-        }
-        else{
-            var mx=parseInt(e.clientX-offsetX22-margin_value);
-            var my=parseInt(e.clientY-offsetY22);
-        }
-        // test each rect to see if mouse is inside
-        dragok2=false;
-        var canvas_offset = 1 * canvas_div_w;
-        for(var i=0;i<adaptArray.length;i++){
-            if(mx + canvas_offset>boxLocationObj[adaptArray[i]][0] && mx + canvas_offset<boxLocationObj[adaptArray[i]][0]+boxLocationObj[adaptArray[i]][2] && my>boxLocationObj[adaptArray[i]][1] && my<boxLocationObj[adaptArray[i]][1]+boxLocationObj[adaptArray[i]][3]) {
-                dragok2=true;
-                selected_adaptation = adaptArray[i];
-            }
-        }
-
-        // save the current mouse position
-        startX22=mx;
-        startY22=my;
-        mouse_selected_canvas = 2;
-    }
-
-    function hypoMouseDown3(e) {
-        // tell the browser we're handling this mouse event
-        e.preventDefault();
-        e.stopPropagation();
-        var margin_value = parseInt(document.getElementById("canvas-wrapper-adaptations-div").style.marginLeft);
-
-        // get the current mouse position
-        if(e.clientX == undefined){
-            var mx=parseInt(e.changedTouches[0].clientX-offsetX23-margin_value);
-            var my=parseInt(e.changedTouches[0].clientY-offsetY23);
-        }
-        else{
-            var mx=parseInt(e.clientX-offsetX23-margin_value);
-            var my=parseInt(e.clientY-offsetY23);
-        }
-        // test each rect to see if mouse is inside
-        dragok2=false;
-        var canvas_offset = 2 * canvas_div_w;
-        for(var i=0;i<adaptArray.length;i++){
-            if(mx + canvas_offset>boxLocationObj[adaptArray[i]][0] && mx + canvas_offset<boxLocationObj[adaptArray[i]][0]+boxLocationObj[adaptArray[i]][2] && my>boxLocationObj[adaptArray[i]][1] && my<boxLocationObj[adaptArray[i]][1]+boxLocationObj[adaptArray[i]][3]) {
-                dragok2=true;
-                selected_adaptation = adaptArray[i];
-            }
-        }
-
-        // save the current mouse position
-        startX23=mx;
-        startY23=my;
-        mouse_selected_canvas = 3;
-    }
-
-    function hypoMouseDown4(e) {
-        // tell the browser we're handling this mouse event
-        e.preventDefault();
-        e.stopPropagation();
-        var margin_value = parseInt(document.getElementById("canvas-wrapper-adaptations-div").style.marginLeft);
-
-        // get the current mouse position
-        if(e.clientX == undefined){
-            var mx=parseInt(e.changedTouches[0].clientX-offsetX24-margin_value);
-            var my=parseInt(e.changedTouches[0].clientY-offsetY24);
-        }
-        else{
-            var mx=parseInt(e.clientX-offsetX24-margin_value);
-            var my=parseInt(e.clientY-offsetY24);
-        }
-        // test each rect to see if mouse is inside
-        dragok2=false;
-        var canvas_offset = 3 * canvas_div_w;
-        for(var i=0;i<adaptArray.length;i++){
-            if(mx + canvas_offset>boxLocationObj[adaptArray[i]][0] && mx + canvas_offset<boxLocationObj[adaptArray[i]][0]+boxLocationObj[adaptArray[i]][2] && my>boxLocationObj[adaptArray[i]][1] && my<boxLocationObj[adaptArray[i]][1]+boxLocationObj[adaptArray[i]][3]) {
-                dragok2=true;
-                selected_adaptation = adaptArray[i];
-            }
-        }
-
-        // save the current mouse position
-        startX24=mx;
-        startY24=my;
-        mouse_selected_canvas = 4;
-    }
-
-    function hypoMouseDown5(e) {
-        // tell the browser we're handling this mouse event
-        e.preventDefault();
-        e.stopPropagation();
-        var margin_value = parseInt(document.getElementById("canvas-wrapper-adaptations-div").style.marginLeft);
-
-        // get the current mouse position
-        if(e.clientX == undefined){
-            var mx=parseInt(e.changedTouches[0].clientX-offsetX25-margin_value);
-            var my=parseInt(e.changedTouches[0].clientY-offsetY25);
-        }
-        else{
-            var mx=parseInt(e.clientX-offsetX25-margin_value);
-            var my=parseInt(e.clientY-offsetY25);
-        }
-        // test each rect to see if mouse is inside
-        dragok2=false;
-        var canvas_offset = 4 * canvas_div_w;
-        for(var i=0;i<adaptArray.length;i++){
-            if(mx + canvas_offset>boxLocationObj[adaptArray[i]][0] && mx + canvas_offset<boxLocationObj[adaptArray[i]][0]+boxLocationObj[adaptArray[i]][2] && my>boxLocationObj[adaptArray[i]][1] && my<boxLocationObj[adaptArray[i]][1]+boxLocationObj[adaptArray[i]][3]) {
-                dragok2=true;
-                selected_adaptation = adaptArray[i];
-            }
-        }
-
-        // save the current mouse position
-        startX25=mx;
-        startY25=my;
-        mouse_selected_canvas = 5;
-    }
-
-    function hypoMouseDown6(e) {
-        // tell the browser we're handling this mouse event
-        e.preventDefault();
-        e.stopPropagation();
-        var margin_value = parseInt(document.getElementById("canvas-wrapper-adaptations-div").style.marginLeft);
-
-        // get the current mouse position
-        if(e.clientX == undefined){
-            var mx=parseInt(e.changedTouches[0].clientX-offsetX26-margin_value);
-            var my=parseInt(e.changedTouches[0].clientY-offsetY26);
-        }
-        else{
-            var mx=parseInt(e.clientX-offsetX26-margin_value);
-            var my=parseInt(e.clientY-offsetY26);
-        }
-        // test each rect to see if mouse is inside
-        dragok2=false;
-        var canvas_offset = 5 * canvas_div_w;
-        for(var i=0;i<adaptArray.length;i++){
-            if(mx + canvas_offset>boxLocationObj[adaptArray[i]][0] && mx + canvas_offset<boxLocationObj[adaptArray[i]][0]+boxLocationObj[adaptArray[i]][2] && my>boxLocationObj[adaptArray[i]][1] && my<boxLocationObj[adaptArray[i]][1]+boxLocationObj[adaptArray[i]][3]) {
-                dragok2=true;
-                selected_adaptation = adaptArray[i];
-            }
-        }
-
-        // save the current mouse position
-        startX26=mx;
-        startY26=my;
-        mouse_selected_canvas = 6;
-    }
-
-    function hypoMouseDown7(e) {
-        // tell the browser we're handling this mouse event
-        e.preventDefault();
-        e.stopPropagation();
-        var margin_value = parseInt(document.getElementById("canvas-wrapper-adaptations-div").style.marginLeft);
-
-        // get the current mouse position
-        if(e.clientX == undefined){
-            var mx=parseInt(e.changedTouches[0].clientX-offsetX27-margin_value);
-            var my=parseInt(e.changedTouches[0].clientY-offsetY27);
-        }
-        else{
-            var mx=parseInt(e.clientX-offsetX27-margin_value);
-            var my=parseInt(e.clientY-offsetY27);
-        }
-        // test each rect to see if mouse is inside
-        dragok2=false;
-        var canvas_offset = 6 * canvas_div_w;
-        for(var i=0;i<adaptArray.length;i++){
-            if(mx + canvas_offset>boxLocationObj[adaptArray[i]][0] && mx + canvas_offset<boxLocationObj[adaptArray[i]][0]+boxLocationObj[adaptArray[i]][2] && my>boxLocationObj[adaptArray[i]][1] && my<boxLocationObj[adaptArray[i]][1]+boxLocationObj[adaptArray[i]][3]) {
-                dragok2=true;
-                selected_adaptation = adaptArray[i];
-            }
-        }
-
-        // save the current mouse position
-        startX27=mx;
-        startY27=my;
-        mouse_selected_canvas = 7;
-    }
-
-    function hypoMouseDown8(e) {
-        // tell the browser we're handling this mouse event
-        e.preventDefault();
-        e.stopPropagation();
-        var margin_value = parseInt(document.getElementById("canvas-wrapper-adaptations-div").style.marginLeft);
-
-        // get the current mouse position
-        if(e.clientX == undefined){
-            var mx=parseInt(e.changedTouches[0].clientX-offsetX28-margin_value);
-            var my=parseInt(e.changedTouches[0].clientY-offsetY28);
-        }
-        else{
-            var mx=parseInt(e.clientX-offsetX28-margin_value);
-            var my=parseInt(e.clientY-offsetY28);
-        }
-        // test each rect to see if mouse is inside
-        dragok2=false;
-        var canvas_offset = 7 * canvas_div_w;
-        for(var i=0;i<adaptArray.length;i++){
-            if(mx + canvas_offset>boxLocationObj[adaptArray[i]][0] && mx + canvas_offset<boxLocationObj[adaptArray[i]][0]+boxLocationObj[adaptArray[i]][2] && my>boxLocationObj[adaptArray[i]][1] && my<boxLocationObj[adaptArray[i]][1]+boxLocationObj[adaptArray[i]][3]) {
-                dragok2=true;
-                selected_adaptation = adaptArray[i];
-            }
-        }
-
-        // save the current mouse position
-        startX28=mx;
-        startY28=my;
-        mouse_selected_canvas = 8;
-    }
-
-    function hypoMouseDown9(e) {
-        // tell the browser we're handling this mouse event
-        e.preventDefault();
-        e.stopPropagation();
-        var margin_value = parseInt(document.getElementById("canvas-wrapper-adaptations-div").style.marginLeft);
-
-        // get the current mouse position
-        if(e.clientX == undefined){
-            var mx=parseInt(e.changedTouches[0].clientX-offsetX29-margin_value);
-            var my=parseInt(e.changedTouches[0].clientY-offsetY29);
-        }
-        else{
-            var mx=parseInt(e.clientX-offsetX29-margin_value);
-            var my=parseInt(e.clientY-offsetY29);
-        }
-        // test each rect to see if mouse is inside
-        dragok2=false;
-        var canvas_offset = 8 * canvas_div_w;
-        for(var i=0;i<adaptArray.length;i++){
-            if(mx + canvas_offset>boxLocationObj[adaptArray[i]][0] && mx + canvas_offset<boxLocationObj[adaptArray[i]][0]+boxLocationObj[adaptArray[i]][2] && my>boxLocationObj[adaptArray[i]][1] && my<boxLocationObj[adaptArray[i]][1]+boxLocationObj[adaptArray[i]][3]) {
-                dragok2=true;
-                selected_adaptation = adaptArray[i];
-            }
-        }
-
-        // save the current mouse position
-        startX29=mx;
-        startY29=my;
-        mouse_selected_canvas = 9;
-    }
-
-    function hypoMouseDown10(e) {
-        // tell the browser we're handling this mouse event
-        e.preventDefault();
-        e.stopPropagation();
-        var margin_value = parseInt(document.getElementById("canvas-wrapper-adaptations-div").style.marginLeft);
-
-        // get the current mouse position
-        if(e.clientX == undefined){
-            var mx=parseInt(e.changedTouches[0].clientX-offsetX210-margin_value);
-            var my=parseInt(e.changedTouches[0].clientY-offsetY210);
-        }
-        else{
-            var mx=parseInt(e.clientX-offsetX210-margin_value);
-            var my=parseInt(e.clientY-offsetY210);
-        }
-        // test each rect to see if mouse is inside
-        dragok2=false;
-        var canvas_offset = 9 * canvas_div_w;
-        for(var i=0;i<adaptArray.length;i++){
-            if(mx + canvas_offset>boxLocationObj[adaptArray[i]][0] && mx + canvas_offset<boxLocationObj[adaptArray[i]][0]+boxLocationObj[adaptArray[i]][2] && my>boxLocationObj[adaptArray[i]][1] && my<boxLocationObj[adaptArray[i]][1]+boxLocationObj[adaptArray[i]][3]) {
-                dragok2=true;
-                selected_adaptation = adaptArray[i];
-            }
-        }
-        // save the current mouse position
-        startX210=mx;
-        startY210=my;
-        mouse_selected_canvas = 10;
-    }
-
-    function hypoMouseDown11(e) {
-        // tell the browser we're handling this mouse event
-        e.preventDefault();
-        e.stopPropagation();
-        var margin_value = parseInt(document.getElementById("canvas-wrapper-adaptations-div").style.marginLeft);
-
-        // get the current mouse position
-        if(e.clientX == undefined){
-            var mx=parseInt(e.changedTouches[0].clientX-offsetX211-margin_value);
-            var my=parseInt(e.changedTouches[0].clientY-offsetY211);
-        }
-        else{
-            var mx=parseInt(e.clientX-offsetX211-margin_value);
-            var my=parseInt(e.clientY-offsetY211);
-        }
-        // test each rect to see if mouse is inside
-        dragok2=false;
-        var canvas_offset = 10 * canvas_div_w;
-        for(var i=0;i<adaptArray.length;i++){
-            if(mx + canvas_offset>boxLocationObj[adaptArray[i]][0] && mx + canvas_offset<boxLocationObj[adaptArray[i]][0]+boxLocationObj[adaptArray[i]][2] && my>boxLocationObj[adaptArray[i]][1] && my<boxLocationObj[adaptArray[i]][1]+boxLocationObj[adaptArray[i]][3]) {
-                dragok2=true;
-                selected_adaptation = adaptArray[i];
-            }
-        }
-        // save the current mouse position
-        startX211=mx;
-        startY211=my;
-        mouse_selected_canvas = 11;
-    }
-
-    function hypoMouseDown12(e) {
-        // tell the browser we're handling this mouse event
-        e.preventDefault();
-        e.stopPropagation();
-        var margin_value = parseInt(document.getElementById("canvas-wrapper-adaptations-div").style.marginLeft);
-
-        // get the current mouse position
-        if(e.clientX == undefined){
-            var mx=parseInt(e.changedTouches[0].clientX-offsetX212-margin_value);
-            var my=parseInt(e.changedTouches[0].clientY-offsetY212);
-        }
-        else{
-            var mx=parseInt(e.clientX-offsetX212-margin_value);
-            var my=parseInt(e.clientY-offsetY212);
-        }
-        // test each rect to see if mouse is inside
-        dragok2=false;
-        var canvas_offset = 11 * canvas_div_w;
-        for(var i=0;i<adaptArray.length;i++){
-            if(mx + canvas_offset>boxLocationObj[adaptArray[i]][0] && mx + canvas_offset<boxLocationObj[adaptArray[i]][0]+boxLocationObj[adaptArray[i]][2] && my>boxLocationObj[adaptArray[i]][1] && my<boxLocationObj[adaptArray[i]][1]+boxLocationObj[adaptArray[i]][3]) {
-                dragok2=true;
-                selected_adaptation = adaptArray[i];
-            }
-        }
-
-        // save the current mouse position
-        startX212=mx;
-        startY212=my;
-        mouse_selected_canvas = 12;
+        startX2=mx;
+        startY2=my;
     }
 
     // handle mouseup events
@@ -757,17 +348,17 @@ function initCanvas(firstRun) {
 
             // get the current mouse position
             if(e.clientX == undefined){
-                var mx=parseInt(e.changedTouches[0].clientX-offsetX21-margin_value);
-                var my=parseInt(e.changedTouches[0].clientY-offsetY21);
+                var mx=parseInt(e.changedTouches[0].clientX-margin_value);
+                var my=parseInt(e.changedTouches[0].clientY);
             }
             else{
-                var mx=parseInt(e.clientX-offsetX21-margin_value);
-                var my=parseInt(e.clientY-offsetY21);
+                var mx=parseInt(e.clientX-margin_value);
+                var my=parseInt(e.clientY);
             }
             // calculate the distance the mouse has moved
             // since the last mousemove
-            var dx=mx-startX21;
-            var dy=my-startY21;
+            var dx=mx-startX2;
+            var dy=my-startY2;
 
             var date = adaptObj[selected_adaptation][1];
 
@@ -800,34 +391,8 @@ function initCanvas(firstRun) {
             // redraw
             redrawHypo(0);
             drawLines(0);
-
-            startX21=mx;
-            startY21=my;
-            startX22=mx;
-            startY22=my;
-            startX23=mx;
-            startY23=my;
-            startX24=mx;
-            startY24=my;
-            startX25=mx;
-            startY25=my;
-            startX26=mx;
-            startY26=my;
-            startX27=mx;
-            startY27=my;
-            startX28=mx;
-            startY28=my;
-            startX29=mx;
-            startY29=my;
-            startX210=mx;
-            startY210=my;
-            startX211=mx;
-            startY211=my;
-            startX212=mx;
-            startY212=my;
-        }
-        else if (dragok3) {
-
+            startX2=mx;
+            startY2=my;
         }
 
         // Move main canvas on mouseMove
@@ -1645,17 +1210,17 @@ function drawLines(size) {
                 }
             }
 
-            console.log('-----START COLLISION LOOP----- id: ' + item[0]);
+            //console.log('-----START COLLISION LOOP----- id: ' + item[0]);
             // Draw lines left of item (empirical)
             for(var i = 0; i < temp_l.length; i++){
-            console.log('-----STARTING ON NEW PRECONDITION-----');
+            //console.log('-----STARTING ON NEW PRECONDITION-----');
                 var y_incr = boxLocationObj[item[0]][3]/(temp_l.length + 1);
                 lineArr = [];
                 // Box overlap case
                 if((temp_l[i][0] >= boxLocationObj[item[0]][0] - box_to_box_padding_size && temp_l[i][0] <= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size) ||
                     (temp_l[i][0]  <= boxLocationObj[item[0]][0] + box_to_box_padding_size && temp_l[i][0] + temp_l[i][1] >= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size) ||
                     (temp_l[i][0] + temp_l[i][2] >= boxLocationObj[item[0]][0] - box_to_box_padding_size  && temp_l[i][0] + temp_l[i][2] <= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size)) {
-                    console.log('Ran overlap...');
+                    //console.log('Ran overlap...');
                     var x1 = boxLocationObj[item[0]][0] + (boxLocationObj[item[0]][2]/2);
                     var y1 = boxLocationObj[item[0]][1] + y_incr * (i+1);
                     var x2 =  boxLocationObj[item[0]][0] - box_to_box_padding_size / 2;
@@ -1689,11 +1254,11 @@ function drawLines(size) {
                             var l1 = (x3 < eRight && x2 > eLeft) && (y2 > eTop && y2 < eBottom);
                             var l2 = (x2 > eLeft && x2 < eRight) && ((y2 > y1)?(y2 > eTop && y1 < eBottom):(y1 > eTop && y2 < eBottom));
                             var l3 = (x2 < eRight && x1 > eLeft) && (y1 > eTop && y1 < eBottom);
-                            console.log('    from: ' + item[1] + ' To: ' + collisionArr[collisionArr.findIndex(function(item){return item[0]==temp_l[i][0]})][4]);
-                            console.log('    on: ' + collisionArr[j][4]);
-                            console.log('    l1: ' + l1);
-                            console.log('    l2: ' + l2);
-                            console.log('    l3: ' + l3);
+                            // console.log('    from: ' + item[1] + ' To: ' + collisionArr[collisionArr.findIndex(function(item){return item[0]==temp_l[i][0]})][4]);
+                            // console.log('    on: ' + collisionArr[j][4]);
+                            // console.log('    l1: ' + l1);
+                            // console.log('    l2: ' + l2);
+                            // console.log('    l3: ' + l3);
                             if(l3){
                                 if(!hit){ // First check for the line
                                     if(collisionArr[j][0] <= temp_l[i][0] + temp_l[i][2]){ // for repositioning the up line when there is not a lot of room.
@@ -1709,13 +1274,13 @@ function drawLines(size) {
                                             x2 = boxLocationObj[item[0]][0] - ((boxLocationObj[item[0]][0] - (collisionArr[j][0] + collisionArr[j][2]))/ 2);
                                             y2 = ((collisionArr[j][1] + (collisionArr[j][3]/ 2)) < y1)?(collisionArr[j][1] + collisionArr[j][3] + box_to_box_padding_size):(collisionArr[j][1] - box_to_box_padding_size);
                                             x3 = collisionArr[j][0];
-                                            console.log("pass 1 X1: "+ x1 +" X2: "+ x2 +" X3: "+ x3 +" Y1: "+ y1 + " Y2: "+ y2);
+                                            // console.log("pass 1 X1: "+ x1 +" X2: "+ x2 +" X3: "+ x3 +" Y1: "+ y1 + " Y2: "+ y2);
                                         }
                                         else{ // Line is the second pass
                                             x2 = x3 - ((x3 - (collisionArr[j][0] + collisionArr[j][2]))/ 2);
                                             y2 = ((collisionArr[j][1] + (collisionArr[j][3]/ 2)) <= y1)?(collisionArr[j][1] + collisionArr[j][3] + box_to_box_padding_size):(collisionArr[j][1] - box_to_box_padding_size);
                                             x3 = collisionArr[j][0];
-                                            console.log("pass 1.1 X1: "+ x1 +" X2: "+ x2 +" X3: "+ x3 +" Y1: "+ y1 + " Y2: "+ y2);
+                                            // console.log("pass 1.1 X1: "+ x1 +" X2: "+ x2 +" X3: "+ x3 +" Y1: "+ y1 + " Y2: "+ y2);
                                         }
                                     }
                                     hit = 1;
@@ -1723,7 +1288,7 @@ function drawLines(size) {
                                 else{
                                     y2 += (y2<y1)?(box_to_box_padding_size / 2):(-1*(box_to_box_padding_size / 2));
                                     x3 = collisionArr[j][0];
-                                    console.log("pass 2 X1: "+ x1 +" X2: "+ x2 +" X3: "+ x3 +" Y1: "+ y1 + " Y2: "+ y2);
+                                    // console.log("pass 2 X1: "+ x1 +" X2: "+ x2 +" X3: "+ x3 +" Y1: "+ y1 + " Y2: "+ y2);
 
                                 }
                                 j = collisionArr.length;
@@ -1741,7 +1306,7 @@ function drawLines(size) {
                             }
                         }
                         if(hit && j == 0  && (x3 != temp_l[i][0] + (temp_l[i][2]/2))){ // Line is good
-                            console.log('----LINE FOUND-----');
+                            // console.log('----LINE FOUND-----');
                             lineArr.push([x1,y1,x2,y1]);
                             lineArr.push([x2,y1,x2,y2]);
                             lineArr.push([x2,y2,x3,y2]);
@@ -1756,10 +1321,10 @@ function drawLines(size) {
                             count = 0;
                         }
                         if(x3 == temp_l[i][0] + (temp_l[i][2]/2) && j == 0){
-                            console.log('-----LINE FOUND EXIT TO PUSH-----');
+                            // console.log('-----LINE FOUND EXIT TO PUSH-----');
                         }
                         if (count > 15) {
-                            console.log('-----COUNT-----');
+                            // console.log('-----COUNT-----');
                             break;
                         }
                     }
@@ -1767,7 +1332,7 @@ function drawLines(size) {
                     lineArr.push([x2,y1,x2,y2]);
                     lineArr.push([x2,y2,x3,y2]);
                 }
-                console.log('-----DRAWING-----');
+                // console.log('-----DRAWING-----');
                 var colors = ['red','blue','green', 'black', 'orange', 'yellow', 'white','light-blue'];
                 lineArr.forEach(function(item2){lineCanvasWrapperDraw(item2[2],item2[1],item2[0],item2[3], colors[i%7]);});
             }
