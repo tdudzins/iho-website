@@ -1,6 +1,8 @@
 // Global Variables
 var side_nav_stored = "";
 var vidEmbed = [];
+var aboutflag = false;
+var sideflag = false;
 
 // Event Listeners
 $(document).ready(function() {
@@ -68,8 +70,9 @@ function setupSideNav(callback) {
                 sideHTML = '';
             });
 
+            $('li.adaptation-item-selected').bind('touchstart click', function(){
+                setTimeout(function(){ flag = false; }, 100);
 
-            $('li.adaptation-item-selected').click(function(){
                 var relationsObj = JSON.parse(sessionStorage.getItem("relationsObj"));
                 // Unselect
                 if($(this).hasClass('adaptation-item-selected') && relationsObj[$(this).attr('id')] !== undefined){
@@ -90,7 +93,8 @@ function setupSideNav(callback) {
                 }
             });
 
-            $('div.category').click(function(){
+            $('div.category').bind('touchstart click', function(){
+                setTimeout(function(){ flag = false; }, 100);
                 if($(this).find('img').attr('src') == '/resources/html/mainpage/img/list_plus.png'){
                     $(this).find('img').attr('src', '/resources/html/mainpage/img/list_minus.png');
                     $('#' + $(this).attr('id') + '-adaptation-container').slideDown(200);
@@ -248,36 +252,46 @@ function createArrays() {
 function initSlidePanels() {
     var side_nav_width = -1 * ( 25 + parseInt($("#side-nav-panel").css('width')));
     $("#side-nav-toggle").html(`<img src="/resources/html/mainpage/img/arrow_open.png" style="height:100%;width:100%;">`);
-    $("#about-page-clickable").click(function(){
-        if ($(this).hasClass("active")) {
-            $("#about-page-clickable").html(`<span id="about-page-toggle">ABOUT IHO PROJECT</span>
-            <img src="/resources/html/mainpage/img/about_plus.png" class="about-page-pic">`);
-            $("#about-page-panel").slideToggle("slow");
-        }
-        else {
-            $("#about-page-clickable").html(`<span id="about-page-toggle">ABOUT IHO PROJECT</span>
-            <img src="/resources/html/mainpage/img/about_minus.png" class="about-page-pic">`);
-            $("#about-page-panel").slideToggle("slow");
-        }
-        $(this).toggleClass("active");
-    });
-
-    $("#side-nav-toggle").click(function () {
-        if(!$('#side-nav-info').length){
+    $("#about-page-clickable").bind('touchstart click', function(){
+        if (!aboutflag) {
+            aboutflag = true;
+            setTimeout(function(){ aboutflag = false; }, 100);
             if ($(this).hasClass("active")) {
-                $("#side-nav-toggle").html(`<img src="/resources/html/mainpage/img/arrow_open.png" style="height:100%;width:100%;">`);
-                side_nav_width = -1 * (25 + parseInt($("#side-nav-panel").css('width')));
-                $("#side-nav-panel").animate({marginLeft: side_nav_width + "px"}, 300);
+                $("#about-page-clickable").html(`<span id="about-page-toggle">ABOUT IHO PROJECT</span>
+                <img src="/resources/html/mainpage/img/about_plus.png" class="about-page-pic">`);
+                $("#about-page-panel").slideToggle("slow");
             }
             else {
-                $("#side-nav-toggle").html(`<img src="/resources/html/mainpage/img/arrow_close.png" style="height:100%;width:100%;">`);
-                $("#side-nav-panel").animate({marginLeft: "0px"}, 300);
+                $("#about-page-clickable").html(`<span id="about-page-toggle">ABOUT IHO PROJECT</span>
+                <img src="/resources/html/mainpage/img/about_minus.png" class="about-page-pic">`);
+                $("#about-page-panel").slideToggle("slow");
             }
             $(this).toggleClass("active");
         }
-        else {
-            closeInfoPanel();
+        return false
+    });
+
+    $("#side-nav-toggle").bind('touchstart click', function(){
+        if (!sideflag) {
+            sideflag = true;
+            setTimeout(function(){ sideflag = false; }, 100);
+            if(!$('#side-nav-info').length){
+                if ($(this).hasClass("active")) {
+                    $("#side-nav-toggle").html(`<img src="/resources/html/mainpage/img/arrow_open.png" style="height:100%;width:100%;">`);
+                    side_nav_width = -1 * (25 + parseInt($("#side-nav-panel").css('width')));
+                    $("#side-nav-panel").animate({marginLeft: side_nav_width + "px"}, 300);
+                }
+                else {
+                    $("#side-nav-toggle").html(`<img src="/resources/html/mainpage/img/arrow_close.png" style="height:100%;width:100%;">`);
+                    $("#side-nav-panel").animate({marginLeft: "0px"}, 300);
+                }
+                $(this).toggleClass("active");
+            }
+            else {
+                closeInfoPanel();
+            }
         }
+        return false
     });
 }
 
@@ -353,19 +367,20 @@ function openInfoPanel(eventID) {
                             var pic_img = document.getElementById(pic_name);
                             var pic_modalImg = document.getElementById("picture-modal-content");
                             var pic_captionText = document.getElementById("picture-caption");
-                            pic_img.onclick = function(){
+                            $("#"+pic_name).bind('touchstart click', function(){
+                                setTimeout(function(){ }, 100);
                                 pic_modal.style.display = "block";
                                 pic_modalImg.src = this.src;
                                 pic_captionText.innerHTML = this.alt;
-                            }
+                                return false
+                            });
 
                             // Get the <span> element that closes the modal
-                            var span = document.getElementById("picture-modal-close");
-
-                            // When the user clicks on <span> (x), close the modal
-                            span.onclick = function() {
-                              pic_modal.style.display = "none";
-                            }
+                            $("#picture-modal-close").bind('touchstart click', function(){
+                                setTimeout(function(){ }, 100);
+                                pic_modal.style.display = "none";
+                                return false
+                            });
                         }
                         var count = pictureArr.length;
                         var height = 100 + ((count/4)-(count/4%1))*100;
@@ -393,30 +408,19 @@ function openInfoPanel(eventID) {
 
                                 var vid_modalVid = document.getElementById("video-modal-content");
                                 var vid_captionText = document.getElementById("video-caption");
-                                vid_img.onclick = function(){
+                                $("#"+video_id).bind('touchstart click', function(){
+                                    setTimeout(function(){ }, 100);
                                     vid_modal.style.display = "block";
                                     var iframe = $('<iframe width="100%" height="100%" src="https://www.youtube.com/embed/'+ this.id+ '" frameborder="0" allowfullscreen></iframe>');
                                     iframe.appendTo(vid_modalVid);
                                     vid_captionText.innerHTML = this.alt;
-                                }
+                                    return false
+                                });
 
-                                // Get the <span> element that closes the modal
-                                var span = document.getElementById("video-modal-close");
-
-                                // When the user clicks on <span> (x), close the modal
-                                span.onclick = function() {
+                                $("#video-modal-close").bind('touchstart click', function(){
+                                    setTimeout(function(){ }, 100);
                                     vid_modal.style.display = "none";
                                     $("#video-modal-content").empty();
-                                }
-                            }
-                            else if(videoArr[i].mediaPath.indexOf("vimeo") != -1) {
-                                var vimeoVideoID = videoArr[i].mediaPath.substr(videoArr[i].mediaPath.indexOf("vimeo.com/"),videoArr[i].mediaPath.length).replace("vimeo.com/","");
-                                $.getJSON('https://vimeo.com/api/v2/video/' + vimeoVideoID + '.json', function(data) {
-                                         inj = `
-                                         <li class="media-item">
-                                         <img id="video-` + i + `" class="media-thumbnail" src="` + data[0].thumbnail_medium + `">
-                                         </li>`;
-                                         $("#media-list-video").append(inj);
                                 });
                             }
                         }
@@ -430,7 +434,6 @@ function openInfoPanel(eventID) {
                     $("#media-list-div").empty();
                 }
             });
-            $
 
             $("#side-nav-toggle").html(`<img src="/resources/html/mainpage/img/arrow_close.png" style="height:100%;width:100%;">`);
             $("#side-nav-info").animate({marginLeft: "0px"}, 300);
