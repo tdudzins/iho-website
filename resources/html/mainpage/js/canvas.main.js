@@ -254,15 +254,16 @@ function initCanvas(firstRun) {
             redrawEmpir(0);
             bar_mouse_up = 0;
         }
-
+        
         // clear all the dragging flags
         dragok = false;
+        dragok2 = false;
         for (var i=0;i<scrollRegions.length;i++) {
             scrollRegions[i].isDragging=false;
         }
-        dragok2 = false;
         if(selected_adaptation)
             greyCanvas.clearRect(0,0,grey_canvas_width, canvas_div_h_hypo);
+        drawLines(0);
     }
 
     // handle mouse moves
@@ -739,6 +740,22 @@ function boxCanvasWrapperClear(x_pos,y_pos,width_length,height_length) {
     }
 }
 function lineCanvasWrapperDraw(x_pos,y_pos,x2_pos,y2_pos,color) {
+    var switch_var = 0;
+    if(x_pos%canvas_div_w == 0) {
+        x_pos ++;
+    }
+    if(x2_pos%canvas_div_w == 0) {
+        x2_pos ++;
+    }
+    if(x_pos > x2_pos) {
+        switch_var = x_pos;
+        x_pos = x2_pos;
+        x2_pos = switch_var;
+        switch_var = y_pos;
+        y_pos = y2_pos;
+        y2_pos = y_pos;
+    }
+
     var c_value = x_pos/canvas_div_w;
     var selected_canvas = 0;
 
@@ -795,7 +812,7 @@ function lineCanvasWrapperDraw(x_pos,y_pos,x2_pos,y2_pos,color) {
     else if(c_value2 <= 12)
         selected_canvas2 = 11;
 
-    var temp_x = 0;
+    var temp_x1 = 0;
     var temp_x2 = 0;
 
     for(var i = selected_canvas; i <= selected_canvas2; i++) {
@@ -1075,36 +1092,36 @@ function drawAllBoxes() {
 }
 function redrawHypo(size) {
     // Reposition boxes only
-    if(Math.abs(last_scroll_ratio - scroll_ratio) > size && (last_hypo_font_size == hypo_box_font_size_change) && size != 0) {
-        // Clear boxes
-        for(var i = 0; i < 12; i++) {
-            hypoCanvas[i].clearRect(0, 0, canvas_div_w, canvas_div_h_hypo);
-        }
-        // Move then redraw the same box
-        boxLocation.forEach(function(item){
-            var date = adaptObj[item[5]][1];
-            var empirical = (relationsObj[item[5]] != undefined)? true:false;
-            if(date >= 1000000) {
-                date = date + 4000000;
-            }
-            else {
-                date = date * 5;
-            }
-            timespan = (date_start - date_end);
-            viewable_time = timespan * scroll_ratio;
-            increment_per_pixel = (viewable_time/canvas_div_w);
-            x_pos = date/increment_per_pixel;
-            x_pos = ((canvas_div_w/scroll_ratio) - x_pos) - item[2]/2;
-            item[0] = x_pos;
+    // if(Math.abs(last_scroll_ratio - scroll_ratio) > size && (last_hypo_font_size == hypo_box_font_size_change) && size != 0) {
+    //     // Clear boxes
+    //     for(var i = 0; i < 12; i++) {
+    //         hypoCanvas[i].clearRect(0, 0, canvas_div_w, canvas_div_h_hypo);
+    //     }
+    //     // Move then redraw the same box
+    //     boxLocation.forEach(function(item){
+    //         var date = adaptObj[item[5]][1];
+    //         var empirical = (relationsObj[item[5]] != undefined)? true:false;
+    //         if(date >= 1000000) {
+    //             date = date + 4000000;
+    //         }
+    //         else {
+    //             date = date * 5;
+    //         }
+    //         timespan = (date_start - date_end);
+    //         viewable_time = timespan * scroll_ratio;
+    //         increment_per_pixel = (viewable_time/canvas_div_w);
+    //         x_pos = date/increment_per_pixel;
+    //         x_pos = ((canvas_div_w/scroll_ratio) - x_pos) - item[2]/2;
+    //         item[0] = x_pos;
+    //
+    //
+    //         boxLocationObj[item[5]][0] = x_pos;
+    //         boxCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4], item[5], empirical);
+    //     });
+    //     last_scroll_ratio = scroll_ratio;
+    // }
 
-
-            boxLocationObj[item[5]][0] = x_pos;
-            boxCanvasWrapperDraw(item[0], item[1], item[2], item[3], item[4], item[5], empirical);
-        });
-        last_scroll_ratio = scroll_ratio;
-    }
-
-    else if(Math.abs(last_scroll_ratio - scroll_ratio) > size || size == 0) {
+    if(Math.abs(last_scroll_ratio - scroll_ratio) > size || size == 0) {
         last_scroll_ratio = scroll_ratio;
         last_hypo_font_size = hypo_box_font_size_change;
         hypo_box_font_size_change = hypo_box_font_size;
