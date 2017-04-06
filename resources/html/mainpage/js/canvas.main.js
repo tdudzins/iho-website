@@ -29,8 +29,6 @@ var hypoCanvas = [];
 var hypoCanvas2 = [];
 var greyCanvas;
 var empirCanvas = []; //empirical canvas
-var mouseHypoCanvas = [];
-var mouse_selected_canvas = 0;
 var selected_adaptation = -1;
 var draw_start = 0; // Redrawable Area start in pixels
 var draw_end = 0; // Redrawable Area start in pixels
@@ -201,10 +199,6 @@ function initCanvas(firstRun) {
             var mx=parseInt(e.clientX-margin_value);
             var my=parseInt(e.clientY);
         }
-        selected_canvas=(mx/canvas_div_w) - (mx/canvas_div_w)%1;
-        console.log("mx" + mx);
-        console.log("my" + my);
-        console.log("selected canvas" + selected_canvas);
         // test each rect to see if mouse is inside
         dragok2=false;
         var found = false;
@@ -218,19 +212,16 @@ function initCanvas(firstRun) {
                 found = true;
                 redrawHypo(0);
                 drawLines(0);
-                // console.log("selected a adaptation");
             }
             else if(dragok3 == true && mx>left_info_edge && mx<right_info_edge &&
                 my>boxLocationObj[adaptArray[i]][1] && my<boxLocationObj[adaptArray[i]][1]+boxLocationObj[adaptArray[i]][3] && selected_adaptation == adaptArray[i]) {
                 found = true;
                 openInfoPanel(selected_adaptation);
-                // console.log("information button click");
             }
             else if(dragok3 == true && mx>boxLocationObj[adaptArray[i]][0] && mx<left_info_edge &&
                 my>boxLocationObj[adaptArray[i]][1] && my<boxLocationObj[adaptArray[i]][1]+boxLocationObj[adaptArray[i]][3] && selected_adaptation == adaptArray[i]) {
                 dragok2 = true;
                 found = true;
-                // console.log("moving activated");
                 drawGreyBox(adaptObj[selected_adaptation][2], adaptObj[selected_adaptation][3]);
             }
         }
