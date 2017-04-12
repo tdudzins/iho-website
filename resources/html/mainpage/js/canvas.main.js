@@ -1206,45 +1206,21 @@ function drawLines(size) {
             for (var i = 0; i < temp_r.length; i++){
                 temp_r[i] = boxLocationObj[temp_r[i]];
             }
-            temp_r.sort(function(a,b) {
-                if(a[1] == b[1]) {
-                    if(a[0] == b[0]){
-                        return 0;
-                    }
-                    else{
-                        return (a[0] < b[0]) ? -1 : 1;
-                    }
-                }
-                else {
-                    return (a[1] < b[1]) ? -1 : 1;
-                }
-            });
-            temp_l.sort(function(a,b) {
-                if(a[1] == b[1]) {
-                    if(a[0] == b[0]){
-                        return 0;
-                    }
-                    else
-                    {
-                        return (a[0] < b[0]) ? -1 : 1;
-                    }
-                }
-                else {
-                    return (a[1] < b[1]) ? -1 : 1;
-                }
-            });
+            temp_r.sort(function(a,b){if(a[1] == b[1]) {if(a[0] == b[0]) return 0; else return (a[0] < b[0]) ? -1 : 1;} else return (a[1] < b[1]) ? -1 : 1;});
+            temp_l.sort(function(a,b){if(a[1] == b[1]){ if(a[0] == b[0]) return 0; else return (a[0] < b[0]) ? -1 : 1; } else return (a[1] < b[1]) ? -1 : 1;});
+
             // Get all the boxes that could colide with lines
             for (var i = 0; i < boxLocation.length; i++) {
                 if(boxLocation[i][0] + boxLocation[i][2] >= min_x && boxLocation[i][0] <= max_x && item[0] != boxLocation[i][5]){
                     collisionArr.push(boxLocation[i]);
                 }
             }
-
             console.log('-----START COLLISION LOOP----- id: ' + item[0]);
             // Draw lines left of item (empirical)
             for(var i = 0; i < temp_l.length; i++){
                 console.log('-----STARTING ON NEW PRECONDITION-----');
                 var y_incr = boxLocationObj[item[0]][3]/(temp_l.length + 1);
+                // var spacing_offset = (i + 1) * 2;
                 lineArr = [];
                 // Box overlap case
                 if((temp_l[i][0] >= boxLocationObj[item[0]][0] - box_to_box_padding_size && temp_l[i][0] <= boxLocationObj[item[0]][0] + boxLocationObj[item[0]][2] + box_to_box_padding_size) ||
@@ -1273,44 +1249,72 @@ function drawLines(size) {
                     var x2 = boxLocationObj[item[0]][0] - ((boxLocationObj[item[0]][0] - (temp_l[i][0] + temp_l[i][2]))/ 2);
                     var y2 = temp_l[i][1] + (temp_l[i][3]/2);
                     var x3 = temp_l[i][0] + (temp_l[i][2]/2);
-                    var hit = 0;
-                    var count = 0;
+
+                    var hit1 = 0; // to keep track if the line is starting from the empirical or if it is routing around another hit
+                    var hit2 = 0; // to keep track if the line is starting from the empirical or if it is routing around another hit
+                    var hit3 = 0; // to keep track if the line is starting from the empirical or if it is routing around another hit
+                    var count = 0; // Keep it from looping and hanging the browser
                     for(var j = collisionArr.length -1; j >= 0 ; j--){
                         if(!(temp_l[i][0] == collisionArr[j][0] && temp_l[i][1] == collisionArr[j][1])){
+                            // Box
                             var eLeft = collisionArr[j][0] - (box_to_box_padding_size / 2) + 4;
                             var eRight = collisionArr[j][0] + collisionArr[j][2] + (box_to_box_padding_size / 2) - 4;
                             var eTop = collisionArr[j][1] - (box_to_box_padding_size/2) + 4;
                             var eBottom = collisionArr[j][1] + collisionArr[j][3] + (box_to_box_padding_size / 2) - 4;
+                            // Line hit checks
                             var l1 = (x3 < eRight && x2 > eLeft) && (y2 > eTop && y2 < eBottom);
                             var l2 = (x2 > eLeft && x2 < eRight) && ((y2 > y1)?(y2 > eTop && y1 < eBottom):(y1 > eTop && y2 < eBottom));
                             var l3 = (x2 < eRight && x1 > eLeft) && (y1 > eTop && y1 < eBottom);
-                            console.log('    from: ' + item[1] + ' To: ' + collisionArr[collisionArr.findIndex(function(item){return item[0]==temp_l[i][0]})][4]);
-                            console.log('    on: ' + collisionArr[j][4]);
-                            console.log('    l1: ' + l1);
-                            console.log('    l2: ' + l2);
-                            console.log('    l3: ' + l3);
+                            // Debugging
+                            if((l1 || l2 || l3) &&1){
+                                console.log('    from: ' + item[1] );
+                                console.log('        To: ' + collisionArr[collisionArr.findIndex(function(item){return item[0]==temp_l[i][0]})][4]);
+                                console.log('        on: ' + collisionArr[j][4]);
+                                console.log('        l1: ' + l1);
+                                console.log('        l2: ' + l2);
+                                console.log('        l3: ' + l3);
+                            }
                             if(l3){
-                                if(!hit){ // First check for the line
+                                if(!hit3 && !hit2 && !hit1){ // First check for the line
                                     if(x3 == (temp_l[i][0] + (temp_l[i][2]/2))){
                                         // The line is the first line coming out of the first box
-                                        // x1 = ;
-                                        // y1 = ;
                                         x2 = boxLocationObj[item[0]][0] - ((boxLocationObj[item[0]][0] - (collisionArr[j][0] + collisionArr[j][2]))/ 2);
-                                        y2 = ((collisionArr[j][1] + (collisionArr[j][3]/ 2)) < y1)?(collisionArr[j][1] + collisionArr[j][3] + box_to_box_padding_size):(collisionArr[j][1] - box_to_box_padding_size);
-                                        x3 = collisionArr[j][0];
+                                        x3 = (collisionArr[j][0] - box_to_box_padding_size/2 >= temp_l[i][0] + temp_l[i][2])? collisionArr[j][0] - box_to_box_padding_size / 2 : x3;
+                                        console.log(x3 != temp_l[i][0] + (temp_l[i][2]/2));
+                                        if((y2 > collisionArr[j][1] - box_to_box_padding_size/2 && y2 < collisionArr[j][1] + collisionArr[j][3] + box_to_box_padding_size/2) && x3 != temp_l[i][0] + (temp_l[i][2]/2))
+                                            y2 = (y1 < (collisionArr[j][1] + collisionArr[j][3] / 2))?(collisionArr[j][1] - box_to_box_padding_size / 2):(collisionArr[j][1] + collisionArr[j][3] + (box_to_box_padding_size / 2));
+                                            // TODO if there is a problem with the lines going up or down from the end point deal with it. I don't think where will be. 2 locations.
+                                            console.log('x1: ' + x1 + ' y1: ' + y1 + ' x2: ' + x2 + ' y2: ' + y2 + ' x3: ' + x3);
                                     }
                                     else{
+                                        console.log('    Ran on second start');
                                         // The line has a hit after ten first redirect was successful
-                                        // x1 = ;
-                                        // y1 = ;
                                         x2 = x1 - ((x1 - (collisionArr[j][0] + collisionArr[j][2]))/ 2);
-                                        y2 = ((collisionArr[j][1] + (collisionArr[j][3]/ 2)) <= y1)?(collisionArr[j][1] + collisionArr[j][3] + box_to_box_padding_size):(collisionArr[j][1] - box_to_box_padding_size);
-                                        x3 = collisionArr[j][0];
+                                        x3 = (collisionArr[j][0] - box_to_box_padding_size/2 >= temp_l[i][0] + temp_l[i][2])? collisionArr[j][0] - box_to_box_padding_size / 2 : x3;
+                                        if((y2 > collisionArr[j][1] - box_to_box_padding_size/2 && y2 > collisionArr[j][1] + collisionArr[j][3] + box_to_box_padding_size/2) && x3 != temp_l[i][0] + (temp_l[i][2]/2))
+                                            y2 = (y1 < (collisionArr[j][1] + collisionArr[j][3] / 2))?(collisionArr[j][1] - box_to_box_padding_size / 2):(collisionArr[j][1] + collisionArr[j][3] + (box_to_box_padding_size / 2));
                                     }
-                                    hit = 1;
+                                    hit3 = 1;
+                                }
+                                // TODO if needed handle after other hits but not this hit yet
+                                else{
+                                    // TODO if there is a hit on this line but there has already been a hit on another box
+                                    // Look at where the line is going to go and move it around the current box without changing the whole line? but check colissions?
+                                    console.log("-----l3 should not see this");
+                                }
+                                j = collisionArr.length;
+                                count++;
+                            }
+                            else if (l2) {
+                                if(!hit2){ // First check for the line
+                                    // The line is the first line coming out of the first box
+                                    console.log('-----I ran like I should');
+                                    y2 = (y2 > y1)? collisionArr[j][1] - box_to_box_padding_size/2 : collisionArr[j][1] + collisionArr[j][3] + box_to_box_padding_size/2;
+                                    x3 = collisionArr[j][0] - box_to_box_padding_size / 2;
+                                    hit2 = 1;
                                 }
                                 else{
-                                    console.log("-----l3 should not see this");
+                                    console.log('     Content not handled yet');
                                 }
                                 j = collisionArr.length;
                                 count++;
@@ -1320,58 +1324,8 @@ function drawLines(size) {
                                 j = collisionArr.length;
                                 count++;
                             }
-                            else if (l2) {
-                                if(!hit){ // First check for the line
-                                    // if(collisionArr[j][0] <= temp_l[i][0] + temp_l[i][2]){ // for repositioning the up line when there is not a lot of room.
-                                    //     if(x3 == (temp_l[i][0] + (temp_l[i][2]/2))){ // If the line is the first one
-                                    //         // x1 = ;
-                                    //         // y1 = ;
-                                    //         // x2 = boxLocationObj[item[0]][0] - ((boxLocationObj[item[0]][0] - (collisionArr[j][0] + collisionArr[j][2]))/ 2);
-                                    //         // y2 = ;
-                                    //         // x3 = ;
-                                    //     }
-                                    //     else{ // Line is the second pass
-                                    //         // x1 = ;
-                                    //         // y1 = ;
-                                    //         // x2 = x3 - ((x3 - (collisionArr[j][0] + collisionArr[j][2]))/ 2);
-                                    //     }
-                                    // }
-                                    // else{
-                                        if(x3 == (temp_l[i][0] + (temp_l[i][2]/2))){
-                                            // The line is the first line coming out of the first box
-                                            // x1 = ;
-                                            // y1 = ;
-                                            x2 = boxLocationObj[item[0]][0] - ((boxLocationObj[item[0]][0] - (collisionArr[j][0] + collisionArr[j][2]))/ 2);
-                                            y2 = ((collisionArr[j][1] + (collisionArr[j][3]/ 2)) < y1)?(collisionArr[j][1] + collisionArr[j][3] + box_to_box_padding_size):(collisionArr[j][1] - box_to_box_padding_size);
-                                            x3 = collisionArr[j][0];
-                                        }
-                                        else{
-                                            // The line has a hit after ten first redirect was successful
-                                            // x1 = ;
-                                            // y1 = ;
-                                            x2 = x1 - ((x1 - (collisionArr[j][0] + collisionArr[j][2]))/ 2);
-                                            y2 = ((collisionArr[j][1] + (collisionArr[j][3]/ 2)) <= y1)?(collisionArr[j][1] + collisionArr[j][3] + box_to_box_padding_size):(collisionArr[j][1] - box_to_box_padding_size);
-                                            x3 = collisionArr[j][0];
-                                        }
-                                    // }
-                                    hit = 1;
-                                }
-                                else{
-                                    // The redifined line has a hit
-                                    // x1 = ;
-                                    // y1 = ;
-                                    y2 += (y2<y1)?(box_to_box_padding_size / 2):(-1*(box_to_box_padding_size / 2));
-                                    x3 = collisionArr[j][0];
-                                    // console.log("pass 2 X1: "+ x1 +" X2: "+ x2 +" X3: "+ x3 +" Y1: "+ y1 + " Y2: "+ y2);
-
-                                }
-                                j = collisionArr.length;
-                                count++;
-                                j = collisionArr.length;
-                                count++;
-                            }
                         }
-                        if(hit && j == 0  && (x3 != temp_l[i][0] + (temp_l[i][2]/2))){ // Line is good
+                        if((hit1 || hit2 || hit3) && j == 0  && (x3 != temp_l[i][0] + (temp_l[i][2]/2))){ // Line is good
                             console.log('----LINE FOUND-----');
                             lineArr.push([x1,y1,x2,y1]);
                             lineArr.push([x2,y1,x2,y2]);
@@ -1383,7 +1337,7 @@ function drawLines(size) {
                             y2 = temp_l[i][1] + (temp_l[i][3]/2);
                             x3 = temp_l[i][0] + (temp_l[i][2]/2);
                             j = collisionArr.length;
-                            hit = 0;
+                            hit1 = hit2 = hit3 = 0;
                             count = 0;
                         }
                         if(x3 == temp_l[i][0] + (temp_l[i][2]/2) && j == 0){
