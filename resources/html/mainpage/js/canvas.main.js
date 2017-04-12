@@ -1221,7 +1221,7 @@ function drawLines(size) {
             console.log('-----START COLLISION LOOP----- id: ' + item[0]);
             // Draw lines left of item (empirical)
             for(var i = 0; i < temp_l.length; i++){
-            console.log('-----STARTING ON NEW PRECONDITION-----');
+                console.log('-----STARTING ON NEW PRECONDITION-----');
                 var y_incr = boxLocationObj[item[0]][3]/(temp_l.length + 1);
                 lineArr = [];
                 // Box overlap case
@@ -1243,7 +1243,7 @@ function drawLines(size) {
                     lineArr.push([x3,y3,x4,y3]);
                 }
 
-            // Ideal case
+                // Ideal case
                 else{
                     // Find the ideal lines
                     var x1 = boxLocationObj[item[0]][0] + (boxLocationObj[item[0]][2]/2);
