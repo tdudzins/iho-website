@@ -37,7 +37,7 @@ var date_end = 000000; // Latest date from selected adaptations
 var largest_timespan = 12000000; // When user is all the way scaled out, what is the largest amount of time to be viewed
 var smallest_timespan = 1000000; // When user is all the way scaled in, what is the smallest amount of time to be viewed
 var max_char_per_line = 25; // Used in positionBox
-var box_to_box_padding_size = 18;
+var box_to_box_padding_size = 25;
 var empir_box_to_box_padding_size = 5;
 var text_in_box_padding_w = std_text_in_box_padding_w = 19;
 var text_in_box_padding_h = std_text_in_box_padding_h = 12;
@@ -381,6 +381,7 @@ function initCanvas(firstRun) {
             }
 
             // redraw
+            drawGreyBox(adaptObj[selected_adaptation][2], adaptObj[selected_adaptation][3]);
             redrawHypo(0);
             drawLines(0);
             startX2=mx;
@@ -828,8 +829,11 @@ function lineCanvasWrapperDraw(x_pos,y_pos,x2_pos,y2_pos,color) {
     }
 }
 function drawGreyBox(d_start,d_end){
+    greyCanvas.clearRect(0,0,grey_canvas_width, canvas_div_h_hypo);
     var x_pos = 0;
     var x2_pos = 0;
+    var adapt_date = Math.round(adaptObj[selected_adaptation][1]);
+    var adapt_str = String(adapt_date).replace(/(.)(?=(\d{3})+$)/g,'$1,');
     var str = String(d_start).replace(/(.)(?=(\d{3})+$)/g,'$1,') + " - " + String(d_end).replace(/(.)(?=(\d{3})+$)/g,'$1,');
     if(d_start >= 1000000) {
         d_start +=  4000000;
@@ -843,6 +847,12 @@ function drawGreyBox(d_start,d_end){
     else {
         d_end *=  5;
     }
+    if(adapt_date >= 1000000) {
+        adapt_date += 4000000;
+    }
+    else {
+        adapt_date *=  5;
+    }
     timespan = (date_start - date_end);
     viewable_time = timespan * scroll_ratio;
     increment_per_pixel = (viewable_time/canvas_div_w);
@@ -853,6 +863,8 @@ function drawGreyBox(d_start,d_end){
     x_pos = ((canvas_div_w/scroll_ratio) - x_pos) + offset;
     x2_pos = d_end/increment_per_pixel;
     x2_pos = ((canvas_div_w/scroll_ratio) - x2_pos) + offset;
+    text_x_pos = adapt_date/increment_per_pixel;
+    text_x_pos = ((canvas_div_w/scroll_ratio) - text_x_pos) + offset;
     if(x_pos> x2_pos){
         x_pos = (x_pos > grey_canvas_width)? x_pos % grey_canvas_width : x_pos;
         x2_pos = (x2_pos > grey_canvas_width)? x2_pos % grey_canvas_width : x2_pos;
@@ -872,6 +884,16 @@ function drawGreyBox(d_start,d_end){
     greyCanvas.textBaseline="top";
     greyCanvas.fillText("Estimated Range",x_pos+(x2_pos/2) , 0);
     greyCanvas.fillText(str,x_pos+(x2_pos/2) , hypo_box_font_size);
+    var temp_size = hypo_box_font_size + 1;
+    greyCanvas.font = temp_size + "px " + hypo_box_font_family;
+    greyCanvas.fillText(adapt_str, text_x_pos,2 * hypo_box_font_size + 5)
+    greyCanvas.fillStyle = 'rgba(90,90,90, 1)';
+    greyCanvas.lineWidth = 1;
+    greyCanvas.beginPath();
+    greyCanvas.moveTo(text_x_pos, 3 * hypo_box_font_size + 10);
+    greyCanvas.lineTo(text_x_pos, canvas_div_h_hypo);
+    greyCanvas.closePath();
+    greyCanvas.stroke();
 }
 
 // Hypo Timeline function
