@@ -468,25 +468,25 @@ var info_panel_main = `
 </div>
 <div id="information-panel-div">
 <div id="info-ede" class="adapt-attr">
-<div class="title">Earliest Direct Evidence:</div>
+<div class="title">Earliest Direct Evidence</div>
 <div id="ede-data" class="data"></div>
 </div>
 <div id="info-eie" class="adapt-attr">
-<div class="title">Earliest Indirect Evidence:</div>
+<div class="title">Earliest Indirect Evidence</div>
 <div id="eie-data" class="data"></div>
 </div>
 <div id="info-desc">
-<div class="title">Description:</div>
+<div class="title">Description</div>
 </div>
 <div id="adaptation-description-data">
 </div>
 <div id="info-ref">
-<div class="title">References:</div>
+<div class="title">References</div>
 </div>
 <div id="adaptation-reference-data">
 </div>
 <div id="info-media">
-<div class="title">Media:</div>
+<div class="title">Media</div>
 </div>
 <div id="media-list-div">
 </div>
@@ -494,16 +494,16 @@ var info_panel_main = `
 </div>`;
 
 var info_panel_pictures_container = `
-<div id="picture-container" class="media-type">Pictures</div>
+<div id="picture-container" class="media-type">PICTURES</div>
 <ul id="media-list-picture" class="media-list">
 </ul>`;
 
 var info_panel_videos_container = `
-<div id="video-container" class="media-type">Videos</div>
+<div id="video-container" class="media-type">VIDEOS</div>
 <ul id="media-list-video" class="media-list">
 </ul>`;
 
 var info_panel_audio_container = `
-<div id="audio-container" class="media-type">Audio</div>
+<div id="audio-container" class="media-type">AUDIO</div>
 <ul id="media-list-audio" class="media-list">
 </ul>`;
