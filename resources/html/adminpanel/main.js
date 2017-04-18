@@ -871,34 +871,66 @@ function dataCheck(id) {
     switch (id) {
         case 'tab-description':
             if(!$('#adaptationName').val()){
-                alert('You need to add an Adaptation Name.');
+                alert('Adaptation Name may not be blank.');
                 return false;
-            }
-            else if(!$('#earliestDirectEvidence').val() && !$('#earliestIndirectEvidence').val()){
-                alert('You need to add Earliest Direct Evidence or Earliest Indirect Evidence.');
+            }else if(!$('#earliestDirectEvidence').val() && !$('#earliestIndirectEvidence').val()){
+                alert('You must provide Earliest Direct Evidence or Earliest Indirect Evidence.');
                 return false;
-            }
-            else if(isNaN(Number( $('#earliestDirectEvidence').val())) || isNaN(Number($('#earliestIndirectEvidence').val()))){
-                alert('Earliest Direct Evidence or Earliest Indirect Evidence must be a number.');
+            }else if(isNaN(Number( $('#earliestDirectEvidence').val()))){
+                alert('Earliest Direct Evidence must be a number.');
                 return false;
-            }
-            else if(!$('#ageBoundaryStart').val()){
-                alert('You need to add Age Boundary Start.');
+			}else if(isNaN(Number($('#earliestIndirectEvidence').val()))){
+                alert('Earliest Indirect Evidence must be a number.');
                 return false;
-            }
-            else if(isNaN(Number($('#ageBoundaryStart').val()))){
+            }else if($('#earliestDirectEvidence').val() < 0){
+				alert('Earliest Direct Evidence may not be less than zero.');
+				return false;
+			}else if($('#earliestIndirectEvidence').val() < 0){
+				alert('Earliest Indirect Evidence may not be less than zero.');
+				return false;
+			}else if($('#earliestDirectEvidence-units').val() == 'Ma' && $('#earliestDirectEvidence').val() * 1000000 > 8000000){
+				alert('Earliest Direct Evidence may not be greater than 8 million years.');
+				return false;
+			}else if($('#earliestIndirectEvidence-units').val() == 'Ma' && $('#earliestIndirectEvidence').val() * 1000000 > 8000000){
+				alert('Earliest Indirect Evidence may not be greater than 8 million years.');
+				return false;
+			}else if($('#earliestDirectEvidence-units').val() == 'Ka' && $('#earliestDirectEvidence').val() * 1000 > 8000000){
+				alert('Earliest Direct Evidence may not be greater than 8 million years.');
+				return false
+			}else if($('#earliestIndirectEvidence-units').val() == 'Ka' && $('#earliestIndirectEvidence').val() * 1000 > 8000000){
+				alert('Earliest Indirect Evidence may not be greater than 8 million years.');
+				return false;
+			}else if(!$('#ageBoundaryStart').val()){
+                alert('Age Boundary Start may not be blank.');
+                return false;
+            }else if(isNaN(Number($('#ageBoundaryStart').val()))){
                 alert('Age Boundary Start must be a number.');
                 return false;
-            }
-            else if(!$('#ageBoundaryEnd').val()){
-                alert('You need to add Age Boundary End.');
+            }else if($('#ageBoundaryStart').val() < 0){
+				alert('Age Boundary Start may not be less than zero.');
+				return false;
+			}else if($('#ageBoundaryStart-units').val() == 'Ma' && $('#ageBoundaryStart').val() * 1000000 > 8000000){
+				alert('Age Bundary Start may not be greater than 8 million years.');
+				return false;
+			}else if($('#ageBoundaryStart-units').val() == 'Ka' && $('#ageBoundaryStart').val() * 1000 > 8000000){
+				alert('Age Boounary Start may not be greater than 8 million years.');
+				return false;
+			}else if(!$('#ageBoundaryEnd').val()){
+                alert('Age Boundary End may not be blank.');
                 return false;
-            }
-            else if(isNaN(Number($('#ageBoundaryEnd').val()))){
+            }else if(isNaN(Number($('#ageBoundaryEnd').val()))){
                 alert('Age Boundary End must be a number.');
                 return false;
-            }
-            else
+            }else if($('#ageBoundaryEnd').val() < 0){
+				alert('Age Boundary End may not be less than zero.');
+				return false;
+			}else if($('#ageBoundaryEnd-units').val() == 'Ma' && $('#ageBoundaryEnd').val() * 1000000 > 8000000){
+				alert('Age Boundary End may not be greater than 8 million years.');
+				return false;
+			}else if($('#ageBoundaryEnd-units').val() == 'Ka' && $('#ageBoundaryEnd').val() * 1000 > 8000000){
+				alert('Age Boundary End may not be greater than 8 million years.');
+				return false;
+			}else
                 return true;
             break;
         case 'tab-media':
