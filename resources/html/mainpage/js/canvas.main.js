@@ -834,7 +834,7 @@ function drawGreyBox(d_start,d_end){
     var x2_pos = 0;
     var adapt_date = Math.round(adaptObj[selected_adaptation][1]);
     var adapt_str = String(adapt_date).replace(/(.)(?=(\d{3})+$)/g,'$1,');
-    var str = String(d_start).replace(/(.)(?=(\d{3})+$)/g,'$1,') + " - " + String(d_end).replace(/(.)(?=(\d{3})+$)/g,'$1,');
+    var str = String(d_start).replace(/(.)(?=(\d{3})+$)/g,'$1,') + " to " + String(d_end).replace(/(.)(?=(\d{3})+$)/g,'$1,') + " Years";
     if(d_start >= 1000000) {
         d_start +=  4000000;
     }

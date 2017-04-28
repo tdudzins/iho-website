@@ -216,8 +216,8 @@ footer,
 #about-page-panel {
     display: none;
     height: calc(100vh - 141px);
-    background-color: white;
-    color:#323232;
+    background-color: rgba(104,104,104,1);
+    color: white;
     padding: 10px;
     transition: max-height 0.2s ease-out;
     overflow-y: auto;
@@ -225,6 +225,16 @@ footer,
 
 #about-page-panel img{
 	float: left;
+}
+
+#about-page-wrapper {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    line-height: 1.25rem;
+}
+
+#about-page-wrapper li{
+    margin-left: 1rem;
 }
 
 .about-page-pic {
