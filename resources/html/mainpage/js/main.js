@@ -86,6 +86,7 @@ function setupSideNav(callback) {
                 // Select
                 else if($(this).hasClass('adaptation-item-selected') && relationsObj[$(this).attr('id')] === undefined){
                     $(this).children('img').attr('src', '/resources/html/mainpage/img/selected.png');
+                    getUserChanges();
                     getAdaption($(this).attr('id'), function(eid){
                         addHypoAdaptation(eid);
                         addEmpirAdaptation(eid);
