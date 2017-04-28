@@ -1532,10 +1532,13 @@ function drawLines(size) {
             var temp = relationsObj[item[0]].slice();
             var temp_l = [];
             var temp_r = [];
+            var temp_l_color = [];
+            var temp_r_color = [];
             var lineArr = [];
             var collisionArr = [];
             var min_x = 0;
             var max_x = 0;
+
             // Sort all the relationship boxes left or right for drawing
             for(var i = 0; i < temp.length; i++){
                 if(adaptObj[temp[i][0]][1] > adaptObj[item[0]][1])
@@ -1549,12 +1552,26 @@ function drawLines(size) {
                     min_x = boxLocationObj[temp[i][0]][0] - box_to_box_padding_size;
 
             }
+            temp_l.forEach(function(item2, index){
+                if((adaptObj[item2][7] < adaptObj[item[0]][7] && adaptObj[item2][1] > adaptObj[item[0]][1]) || (adaptObj[item2][7] > adaptObj[item[0]][7] && adaptObj[item2][1] < adaptObj[item[0]][1]))
+                    temp_l_color[index] = 'red';
+                else
+                    temp_l_color[index] = 'black';
+            });
+            temp_r.forEach(function(item2, index){
+                if((adaptObj[item2][7] < adaptObj[item[0]][7] && adaptObj[item2][1] > adaptObj[item[0]][1]) || (adaptObj[item2][7] > adaptObj[item[0]][7] && adaptObj[item2][1] < adaptObj[item[0]][1]))
+                    temp_r_color[index] = 'red';
+                else
+                    temp_r_color[index] = 'black';
+            });
             // Put all the location data into the left right arrays
             for (var i = 0; i < temp_l.length; i++){
                 temp_l[i] = boxLocationObj[temp_l[i]];
+                temp_l[i].push(temp_l_color[i]);
             }
             for (var i = 0; i < temp_r.length; i++){
                 temp_r[i] = boxLocationObj[temp_r[i]];
+                temp_r[i].push(temp_r_color[i]);
             }
             temp_r.sort(function(a,b) {
                 if(a[1] == b[1]) {
@@ -1692,7 +1709,7 @@ function drawLines(size) {
                     lineArr.push([x2,y1,x2,y2]);
                     lineArr.push([x2,y2,x3,y2]);
                 }
-                lineArr.forEach(function(item2){lineCanvasWrapperDraw(item2[2],item2[1],item2[0],item2[3], "black");});
+                lineArr.forEach(function(item2){lineCanvasWrapperDraw(item2[2],item2[1],item2[0],item2[3], temp_l[i][6]);});
             }
 
             // Draw lines right of item (empirical)
@@ -1782,7 +1799,7 @@ function drawLines(size) {
                     lineArr.push([x2,y1,x2,y2]);
                     lineArr.push([x2,y2,x3,y2]);
                 }
-                lineArr.forEach(function(item2){lineCanvasWrapperDraw(item2[2],item2[1],item2[0],item2[3]);});
+                lineArr.forEach(function(item2){lineCanvasWrapperDraw(item2[2],item2[1],item2[0],item2[3],temp_r[i][6]);});
             }
 
         });
