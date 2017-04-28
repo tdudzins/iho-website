@@ -1173,7 +1173,7 @@ function redrawHypo(size) {
         drawAllBoxes();
     }
 }
-// function drawLines(size) {
+/*function drawLines(size) {
     if(Math.abs(last_scroll_ratio_lines - scroll_ratio) > size || size == 0) {
         // Clearing old data
         last_scroll_ratio_lines = scroll_ratio;
@@ -1518,7 +1518,7 @@ function redrawHypo(size) {
 
         });
     }
-}
+}*/
 function drawLines(size) {
     if(Math.abs(last_scroll_ratio_lines - scroll_ratio) > size || size == 0) {
         // Clearing old data
